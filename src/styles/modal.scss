@@ -1,0 +1,415 @@
+.modal-message-container {
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  z-index: 10000;
+  justify-content: center;
+  background-color: rgb(140, 140, 140, 0.35);
+
+  .modal-data {
+    position: relative;
+    margin-top: 70px;
+    background: var(--color-white-1);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    max-width: 662px;
+    width: 100%;
+
+    .modal-close {
+      color: #d02b2b;
+      font: normal normal normal 18px/24px MontserratRegular;
+      position: absolute;
+      top: 9px;
+      cursor: pointer;
+      right: 15px;
+    }
+
+    .modal-title {
+      text-align: center;
+      font: normal normal normal 22px/32px MontserratExtraBold;
+      margin-left: 10px;
+      color: var(--color-black);
+    }
+
+    .modal-message {
+      color: var(--color-black);
+      display: block;
+      font: normal normal normal 14px/24px MontserratRegular;
+    }
+  }
+  .modal-codemessage {
+    padding-top: 4px;
+    font-family: MontserratRegular;
+    padding-left: 14px;
+    color: var(--color-black);
+    font-size: 10px;
+  }
+
+  /* Error */
+  .modal-danger-color {
+    color: #a71300;
+  }
+  &.modal-danger-bg {
+    background-color: rgba(162, 103, 93, 0.85);
+  }
+
+  /* Advertencia */
+  .modal-warning-color {
+    color: #dd8b07;
+  }
+  &.modal-warning-bg {
+    background-color: #dd8b07;
+  }
+
+  /* Exito */
+  .modal-success-color {
+    color: #2f7e05;
+  }
+  &.modal-success-bg {
+    background-color: rgba(75, 100, 59, 0.62);
+  }
+
+  /* Informativo */
+  .modal-informative-color {
+    color: #0a0a0a;
+  }
+  &.modal-informative-bg {
+    background-color: rgba(6, 101, 145, 0.71);
+  }
+}
+
+.modal {
+  position: fixed;
+  z-index: 999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100vh;
+  background-color: transparent;
+  display: none;
+  justify-content: center;
+  align-items: center;
+
+  &.modal-bg{
+    background-color: #00000080;
+  }
+}
+
+.modal-container {
+  position: relative;
+  padding: 1rem;
+  width: 80%;
+  height: 100%;
+  overflow-y: auto;
+  background-color: #fff;
+  border-radius: 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+
+  .modal-header{
+    text-align: center;
+    margin: -1rem;
+
+    .close {
+      position: absolute;
+      top: 9px;
+      cursor: pointer;
+      right: 15px;
+    }
+  }
+
+  .modal-content{
+    text-align: center;
+  }
+
+  .modal-footer{
+    display: flex;
+    justify-content: space-around;
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.modal.is-open {
+  display: flex;
+}
+
+.button-ok {
+  font-size: 0;
+  font-weight: 0;
+  text-shadow: transparent;
+  color: transparent;
+  text-decoration: none;
+  width: 3rem;
+  background-color: transparent;
+  border:none;
+}
+
+.button-cancel {
+  font-size: 0;
+  font-weight: 0;
+  text-shadow: transparent;
+  color: transparent;
+  text-decoration: none;
+  width: 3rem;
+  background-color: transparent;
+  border:none;
+}
+
+.icons{
+  width: 1.625rem;
+  height: auto;
+}
+
+.button-close {
+  @include generate-button(30px,$main-color,transparent, none);
+
+  &.tiny {
+    height: 2.5em;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  &.small {
+    width: 33%;
+    height: 2.5em;
+    font-size: 1rem;
+  }
+
+  &.medium {
+    width: 40%;
+    height: 2.5em;
+    font-size: 1rem;
+  }
+
+  &.big {
+    width: 50%;
+    height: 2.5em;
+    font-size: 1rem;
+  }
+
+  &.large {
+    width: 60%;
+    height: 2.5em;
+    font-size: 1rem;
+  }
+
+  &.hover-main:hover {
+    -webkit-box-shadow: 0px 0px 15px 0px rgba(167, 25, 137, 0.6);
+    -moz-box-shadow: 0px 0px 15px 0px rgba(167, 25, 137, 0.6);
+    box-shadow: 0px 0px 15px 0px rgba(167, 25, 137, 0.6);
+  }
+
+  &.hover-three:hover {
+    color: $three-color;
+  }
+}
+
+
+/***Desktop***/
+@media (min-width: 1024px) {
+ 
+  .modal-container {
+    position: relative;
+    padding: 1rem;
+    width: 28.1875rem;
+    height: 13rem;
+    overflow-y: auto;
+    background-color: #fff;
+    border-radius: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  
+    .modal-header{
+      text-align: center;
+      margin: -1rem;
+  
+      .close {
+        position: absolute;
+        top: 9px;
+        cursor: pointer;
+        right: 15px;
+      }
+    }
+  
+    .modal-content{
+      text-align: center;
+    }
+  
+    .modal-footer{
+      display: flex;
+      justify-content: space-around;
+    }
+  }
+  
+  .modal-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  
+  .modal.is-open {
+    display: flex;
+  }
+  .icons{
+    width: 0;
+    height:0;
+  }
+
+  .button-ok {
+    @include generate-button(30px, #fff, $main-color , none);
+  
+    &.tiny {
+      width: 20%;
+      height: 2.5em;
+      font-size: 0.7rem;
+    }
+  
+    &.small {
+      width: 33%;
+      height: 2.5em;
+      font-size: 1rem;
+    }
+  
+    &.medium {
+      width: 40%;
+      height: 2.5em;
+      font-size: 1rem;
+    }
+  
+    &.big {
+      width: 50%;
+      height: 2.5em;
+      font-size: 1rem;
+    }
+  
+    &.large {
+      width: 60%;
+      height: 2.5em;
+      font-size: 1rem;
+    }
+  
+    &.hover-main:hover {
+      -webkit-box-shadow: 0px 0px 15px 0px rgba(167, 25, 137, 0.6);
+      -moz-box-shadow: 0px 0px 15px 0px rgba(167, 25, 137, 0.6);
+      box-shadow: 0px 0px 15px 0px rgba(167, 25, 137, 0.6);
+    }
+  
+    &.hover-three:hover {
+      background-color: $three-color;
+      -webkit-box-shadow: 0px 0px 15px 0px $three-color;
+      -moz-box-shadow: 0px 0px 15px 0px $three-color;
+      box-shadow: 0px 0px 15px 0px $three-color;
+    }
+  }
+  
+  .button-cancel {
+    @include generate-button(30px, $main-color, #fff,$main-color solid 1px);
+  
+    &.tiny {
+      width: 20%;
+      height: 2.5em;
+      font-size: 0.7rem;
+    }
+  
+    &.small {
+      width: 33%;
+      height: 2.5em;
+      font-size: 1rem;
+    }
+  
+    &.medium {
+      width: 40%;
+      height: 2.5em;
+      font-size: 1rem;
+    }
+  
+    &.big {
+      width: 50%;
+      height: 2.5em;
+      font-size: 1rem;
+    }
+  
+    &.large {
+      width: 60%;
+      height: 2.5em;
+      font-size: 1rem;
+    }
+  
+    &.hover-main:hover {
+      -webkit-box-shadow: 0px 0px 15px 0px rgba(167, 25, 137, 0.6);
+      -moz-box-shadow: 0px 0px 15px 0px rgba(167, 25, 137, 0.6);
+      box-shadow: 0px 0px 15px 0px rgba(167, 25, 137, 0.6);
+    }
+  
+    &.hover-three:hover {
+      color: $three-color;
+      border:$three-color solid 1px ;
+      -webkit-box-shadow: 0px 0px 15px 0px $three-color;
+      -moz-box-shadow: 0px 0px 15px 0px $three-color;
+      box-shadow: 0px 0px 15px 0px $three-color;
+    }
+  }
+  
+  .button-close {
+    @include generate-button(30px, $main-color,transparent, none);
+  
+    &.tiny {
+      height: 2.5em;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+  
+    &.small {
+      width: 33%;
+      height: 2.5em;
+      font-size: 1rem;
+    }
+  
+    &.medium {
+      width: 40%;
+      height: 2.5em;
+      font-size: 1rem;
+    }
+  
+    &.big {
+      width: 50%;
+      height: 2.5em;
+      font-size: 1rem;
+    }
+  
+    &.large {
+      width: 60%;
+      height: 2.5em;
+      font-size: 1rem;
+    }
+  
+    &.hover-main:hover {
+      -webkit-box-shadow: 0px 0px 15px 0px rgba(167, 25, 137, 0.6);
+      -moz-box-shadow: 0px 0px 15px 0px rgba(167, 25, 137, 0.6);
+      box-shadow: 0px 0px 15px 0px rgba(167, 25, 137, 0.6);
+    }
+  
+    &.hover-three:hover {
+      color: $three-color;
+    }
+  }
+
+  
+} 
+
+

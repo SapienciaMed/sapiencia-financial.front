@@ -1,0 +1,199 @@
+@import "./mixins.scss";
+
+// text generalize
+
+.text-main {
+  font-family: $font-family-main;
+  color: $main-color;
+
+  &.tiny {
+    font-size: 0.6em;
+  }
+
+  &.small {
+    font-size: 0.7em;
+  }
+
+  &.medium {
+    font-size: 0.8em;
+  }
+
+  &.big {
+    font-size: 1em;
+  }
+
+  &.biggest {
+    font-size: 1.25em;
+  }
+
+  &.large {
+    font-size: 1.5em;
+  }
+
+  &.extra-large {
+    font-size: 1.8em;
+  }
+
+  &.huge {
+    font-size: 2em;
+  }
+}
+
+.text-primary {
+  font-family: $font-family-main;
+  color: $primary-color;
+
+  &.tiny {
+    font-size: 0.6em;
+  }
+
+  &.small {
+    font-size: 0.7em;
+  }
+
+  &.medium {
+    font-size: 0.8em;
+  }
+
+  &.big {
+    font-size: 1em;
+  }
+
+  &.biggest {
+    font-size: 1.25em;
+  }
+
+  &.large {
+    font-size: 1.5em;
+  }
+
+  &.extra-large {
+    font-size: 1.8em;
+  }
+
+  &.huge {
+    font-size: 2em;
+  }
+}
+
+.text-black {
+  font-family: $font-family-main;
+  color: $color-black;
+
+  &.tiny {
+    font-size: 0.6em;
+  }
+
+  &.small {
+    font-size: 0.7em;
+  }
+
+  &.medium {
+    font-size: 0.8em;
+  }
+
+  &.big {
+    font-size: 1em;
+  }
+
+  &.biggest {
+    font-size: 1.25em;
+  }
+
+  &.large {
+    font-size: 1.5em;
+  }
+
+  &.extra-large {
+    font-size: 1.8em;
+  }
+
+  &.huge {
+    font-size: 2em;
+  }
+}
+
+.text-three {
+  font-family: $font-family-main;
+  color: $three-color;
+
+  &.tiny {
+    font-size: 0.6em;
+  }
+
+  &.small {
+    font-size: 0.7em;
+  }
+
+  &.medium {
+    font-size: 0.8em;
+  }
+
+  &.big {
+    font-size: 1em;
+  }
+
+  &.biggest {
+    font-size: 1.25em;
+  }
+
+  &.large {
+    font-size: 1.5em;
+  }
+
+  &.extra-large {
+    font-size: 1.8em;
+  }
+
+  &.huge {
+    font-size: 2em;
+  }
+}
+
+// tags a
+
+.a-main {
+  font-family: $font-family-main;
+  color: $main-color;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &.link {
+    text-decoration: underline;
+  }
+
+  &.tiny {
+    font-size: 0.6em;
+  }
+
+  &.small {
+    font-size: 0.7em;
+  }
+
+  &.medium {
+    font-size: 0.8em;
+  }
+
+  &.big {
+    font-size: 1em;
+  }
+
+  &.biggest {
+    font-size: 1.25em;
+  }
+
+  &.large {
+    font-size: 1.5em;
+  }
+
+  &.extra-large {
+    font-size: 1.8em;
+  }
+
+  &.huge {
+    font-size: 2em;
+  }
+}

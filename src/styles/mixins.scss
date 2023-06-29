@@ -1,0 +1,117 @@
+@mixin generate-grid($columns, $column-width, $gap: null, $column-gap: null, $row-gap: null) {
+  $grid-template-columns: "";
+
+  @for $i from 1 through $columns {
+    $width-element: nth($column-width, $i);
+
+    $grid-template-columns: $grid-template-columns + $width-element + " ";
+  }
+
+  display: grid;
+  grid-template-columns: unquote($grid-template-columns);
+  grid-gap: $gap;
+  column-gap: $column-gap;
+  row-gap: $row-gap;
+}
+
+@mixin generate-flex-container(
+  $flex-direction: null,
+  $flex-wrap: null,
+  $justify-content: null,
+  $align-content: null,
+  $align-items: null,
+  $gap: null
+) {
+  display: flex;
+  flex-direction: $flex-direction;
+  flex-wrap: $flex-wrap;
+  justify-content: $justify-content;
+  align-content: $align-content;
+  align-items: $align-items;
+  gap: $gap;
+}
+
+@mixin generate-label(
+  $color: null,
+  $font-family: null,
+  $font-size: null,
+  $font-weight: null,
+  $text-align: null
+) {
+  font-family: $font-family;
+  color: $color;
+  font-size: $font-size;
+  font-weight: $font-weight;
+  text-align: $text-align;
+}
+
+@mixin generate-input(
+  $width,
+  $height,
+  $border-radius,
+  $border,
+  $background-color: null,
+  $color: null,
+  $font-size: null
+) {
+  width: $width;
+  height: $height;
+  border-radius: $border-radius;
+  border: $border;
+  background-color: $background-color;
+  color: $color;
+  font-size: $font-size;
+}
+
+@mixin generate-button($border-radius, $color, $background-color, $border) {
+  background-color: $background-color;
+  color: $color;
+  border-radius: $border-radius;
+  border: $border;
+  cursor: pointer;
+}
+
+@mixin card-component($card-height, $card-width, $padding, $show: true) {
+  height: $card-height;
+  width: $card-width;
+  padding: $padding;
+  @if $show {
+    border: 1px solid #7070701A;
+    border-radius: 13px;
+    box-shadow: inset 0px 3px 6px #00000029, 0px 3px 6px #00000029;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+  } @else {
+    border: 0px;
+    border-radius: 0px;
+    box-shadow: 0px 0px;
+    background: transparent;
+  }
+}
+
+@mixin multiple-card-component($columns, $margin-horizontal, $margin-vertical, $card-height, $card-width, $padding, $cursor: null) {
+  .card-body {
+    @include card-component(
+    $card-height,
+    $card-width,
+    $padding);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: $cursor;
+
+    .card-header {
+      height: 60%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .card-footer {
+      height: 40%;
+      width: 80%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}

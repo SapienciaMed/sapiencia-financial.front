@@ -1,0 +1,20 @@
+.alert-failed_signIn {
+  width: 100%;
+  background: $alert-failed-background-color;
+  border: 2px solid $alert-failed-color;
+  border-radius: 1px;
+  text-align: center;
+  font-size: 0.85rem;
+  padding: 20px;
+  color: $alert-failed-color;
+  position: relative;
+
+  .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1px 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+}

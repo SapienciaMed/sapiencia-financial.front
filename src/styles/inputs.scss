@@ -1,0 +1,325 @@
+@import "./mixins.scss";
+
+.form-group {
+  @include generate-flex-container(column, null, null, null, null, 8px);
+
+  &row {
+    @include generate-flex-container(column, null, null, null, null, 8px);
+  }
+  &column {
+    @include generate-flex-container(column, null, null, null, null, 8px);
+  }
+
+  .error-message {
+    font-size: 0.7rem;
+    color: $alert-failed-color;
+    text-align: left;
+  }
+}
+
+.input-basic-login {
+  @include generate-input(
+    100%,
+    41px,
+    6px,
+    1px solid $input-color-border,
+    $secondary-color,
+    null,
+    15px
+  );
+
+  padding: 10px 20px;
+
+  &:focus {
+    outline: none;
+  }
+
+  &.error {
+    border: 1px solid $alert-failed-color;
+  }
+}
+
+.input-basic {
+  @include generate-input(
+    100%,
+    41px,
+    6px,
+    1px solid $input-color-border,
+    null,
+    null,
+    15px
+  );
+
+  padding: 10px 20px;
+
+  &:focus {
+    outline: none;
+  }
+
+  &.error {
+    border: 1px solid $alert-failed-color;
+  }
+
+  &.tiny {
+    height: 1em;
+  }
+
+  &.small {
+    height: 1.5em;
+  }
+
+  &.medium {
+    height: 2.15em;
+  }
+
+  &.big {
+    height: 2.5em;
+  }
+
+  &.large {
+    height: 3em;
+  }
+}
+
+.input-group-basic {
+  @include generate-input(
+    100%,
+    41px,
+    0 6px 6px 0,
+    1px solid $input-color-border,
+    null,
+    null,
+    15px
+  );
+  border-width: 1px 1px 1px 0;
+  padding: 10px 20px 10px 0;
+
+  &:focus {
+    outline: none;
+  }
+
+  &.error {
+    border: 1px solid $alert-failed-color;
+  }
+  &.tiny {
+    height: 1em;
+  }
+
+  &.small {
+    height: 1.5em;
+  }
+
+  &.medium {
+    height: 2.15em;
+  }
+
+  &.big {
+    height: 2.5em;
+  }
+
+  &.large {
+    height: 3em;
+  }
+
+}
+
+.input-group-addon {
+  display: flex;
+  border: 1px solid #ccc;
+  border-width: 1px 0 1px 1px;
+  border-radius: 6px 0 0 6px;
+  padding: 0.5em 1em;
+  justify-content: center;
+  align-items: center;
+}
+
+.show-password {
+  position: relative;
+
+  .icon-showPassword {
+    position: absolute;
+    right: 0;
+    margin: 10px;
+  }
+}
+.container-input-group {
+  display: flex;
+  align-content: stretch;
+
+  &.tiny {
+    height: 1em;
+  }
+
+  &.small {
+    height: 1.5em;
+  }
+
+  &.medium {
+    height: 2em;
+  }
+
+  &.big {
+    height: 2.5em;
+  }
+
+  &.large {
+    height: 3em;
+  }
+}
+
+.container-icon_error {
+  position: relative;
+
+  .icon-error {
+    position: absolute;
+    right: 0;
+    margin: 8px 8px;
+  }
+}
+
+.checkbox-basic {
+  width: 15px;
+  height: 15px;
+}
+
+.select-basic {
+  @include generate-input(
+    100%,
+    41px,
+    6px !important,
+    1px solid $input-color-border,
+    $secondary-color,
+    null,
+    15px
+  );
+
+  &:focus {
+    outline: none;
+  }
+
+  &.error {
+    border: 1px solid $alert-failed-color;
+  }
+  &.tiny {
+    height: 1em;
+  }
+
+  &.small {
+    height: 1.5em;
+  }
+
+  &.medium {
+    height: 2em;
+  }
+
+  &.big {
+    height: 2.5em;
+  }
+
+  &.large {
+    height: 3em;
+  }
+}
+
+.select-basic-black {
+  @include generate-input(
+    100%,
+    41px,
+    6px,
+    1px solid $input-color-border,
+    $color-black,
+    null,
+    15px
+  );
+
+  &:focus {
+    outline: none;
+  }
+
+  &.error {
+    border: 1px solid $alert-failed-color;
+  }
+
+  &.tiny {
+    height: 1em;
+  }
+
+  &.small {
+    height: 1.5em;
+  }
+
+  &.medium {
+    height: 2em;
+  }
+
+  &.big {
+    height: 2.5em;
+  }
+
+  &.large {
+    height: 3em;
+  }
+}
+
+.transferbox-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 2fr 1fr 2fr;
+  
+  .p-tree {
+    padding: 0;
+    border: 0px;
+
+    .p-tree-container {
+      height: 12em
+    }
+
+    .p-treenode-content.p-treenode-selectable.p-highlight {
+      background: initial !important;
+      color: initial !important;
+    }
+
+    .p-tree-toggler.p-link{
+      color: initial !important;
+    }
+    
+    .p-treenode-content.p-treenode-selectable.p-highlight:hover {
+      background: #e9ecef !important;
+    }
+  }
+
+  .transferbox-buttons-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    row-gap: 2em;
+  }
+}
+
+.card-form {
+  $width: null;
+  $height: null;
+  $padding: 20px;
+  @include card-component($width, $height, $padding);
+}
+
+@media (min-width: 1024px) {
+  .transferbox-container{
+    grid-template-columns: 6fr 3fr 6fr;
+    grid-template-rows: 1fr;
+    
+    .p-tree{
+      .p-tree-container {
+        height: 22em
+      }
+    }
+  }
+
+  .card-form.mobile {
+    $width: null;
+    $height: null;
+    $padding: 20px;
+    @include card-component($width, $height, $padding, false);
+  }
+}
