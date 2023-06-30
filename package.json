@@ -1,7 +1,7 @@
 {
   "name": "@sapiencia/financial",
   "scripts": {
-    "start": "webpack serve --host 0.0.0.0 --port 9003",
+    "start": "webpack serve --host 0.0.0.0 --port 9004",
     "start:standalone": "webpack serve --env standalone",
     "build": "concurrently npm:build:*",
     "build:webpack": "webpack --mode=production",
