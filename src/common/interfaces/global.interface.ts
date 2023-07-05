@@ -22,5 +22,3 @@ export interface IGenericList {
   parentGrouper?: string;
   parentItemCode?: string;
 }
-
-

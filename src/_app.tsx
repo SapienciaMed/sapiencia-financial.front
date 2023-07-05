@@ -8,6 +8,7 @@ import ModalMessageComponent from "./common/components/modal-message.component";
 import ApplicationProvider from "./application-provider";
 
 const Home = lazy(() => import("./features/home/pages/home.page"));
+const Functionality = lazy(() => import("./features/funcionalidad/pages/functionality.page"));
 
 function App() {
   return (
@@ -18,6 +19,9 @@ function App() {
           <Suspense fallback={<p>Loading...</p>}>
             <Routes>
               <Route path={"/*"} element={<Home/>} />
+              <Route path={"/financiera/funcionalidad"} element={<Functionality/>} />
+              <Route path={"/financiera/funcionalidad/:option"} element={<Functionality/>} />
+              <Route path={"/financiera/funcionalidad/fondos/create"} element={<>test</>} />
             </Routes>
           </Suspense>
         </Router>
