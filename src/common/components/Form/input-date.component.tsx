@@ -53,7 +53,7 @@ function CalendarElement({
     }
     stateProps ? stateProps.setState(e.value) : setSelectedCity(e.value);
   }} optionLabel="name" 
-      placeholder={placeholder} className={"select-basic medium"} showIcon dateFormat="dd/mm/yy" icon={<span><HiOutlineCalendar/></span>} showButtonBar disabled={disabled}/>
+      placeholder={placeholder} className={className} showIcon dateFormat="dd/mm/yy" icon={<span><HiOutlineCalendar/></span>} showButtonBar disabled={disabled}/>
   );
 }
 

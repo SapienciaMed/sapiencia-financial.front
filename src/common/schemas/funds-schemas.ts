@@ -2,7 +2,7 @@ import * as yup from "yup";
 
 export const fundsValidator = yup.object({
     entity: yup
-        .number(),
+        .string(),
     funds: yup
         .string(),
     dateFrom: yup

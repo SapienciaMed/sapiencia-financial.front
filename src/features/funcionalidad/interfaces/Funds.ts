@@ -14,6 +14,8 @@ export interface IFounds {
 }
 
 export interface IFilterFounds {
-  nombreRol: string;
-  descripcionRol: string;
+  entity: number;
+  funds: string;
+  dateFrom: DateTime;
+  dateTo: DateTime;
 }
