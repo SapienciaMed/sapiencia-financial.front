@@ -4,10 +4,11 @@ import { ITabsMenuTemplate } from "../interfaces/tabs-menu.interface";
 interface IAppProps {
     tabs: ITabsMenuTemplate[];
     start?: ITabsMenuTemplate;
+    index?: number;
     className?: string;
 }
 
-function TabListComponent({ tabs, className, start }: IAppProps): React.JSX.Element {
+function TabListComponent({ tabs, className, start, index }: IAppProps): React.JSX.Element {
     const tabList = {};
     tabs.forEach((tab) => tabList[`${tab.title}`] = {
         content: tab.content,
@@ -20,6 +21,13 @@ function TabListComponent({ tabs, className, start }: IAppProps): React.JSX.Elem
             setSelectedTab(tabs[0]);
         }
     }, [tabs])
+    
+    useEffect(() => {
+        if(index){
+            setSelectedTab(tabs[index]);
+        }
+    }, [index])
+    
     return (
         <div className={`tabs-component ${className ? className : ""}`}>
             <div className="tabs-selection">
