@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FormComponent, InputComponent, DatePickerComponent, SelectComponent, ButtonComponent } from "../../../common/components/Form";
 import TableComponent from "../../../common/components/table.component";
 import { EDirection } from "../../../common/constants/input.enum";
@@ -6,7 +7,7 @@ import { useFoundData } from "../hooks/funds.hook";
 interface IAppProps { }
 
 function FoundsPage(props: IAppProps): React.JSX.Element {
-    const { tableActions, tableColumns, tableComponentRef, onSubmit, register, errors, setValueRegister } = useFoundData();
+    const { tableActions, tableColumns, tableComponentRef, onSubmit, register, errors, setValueRegister, reset, entitySelected, setEntitySelected } = useFoundData();
     return (
         <div>
             <FormComponent action={onSubmit}>
@@ -14,22 +15,23 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
                     <label className="text-black biggest bold">
                         Datos personales
                     </label>
-                    <div className="fonds-container">
+                    <div className="funcionality-filters-container">
                         <SelectComponent
                             idInput="entity"
                             className="select-basic"
                             register={register}
                             setValueRegister={setValueRegister}
                             errors={errors}
-                            label="Fondos"
+                            label="Entidad CP"
                             classNameLabel="text-black biggest bold"
                             direction={EDirection.row}
-                            data={[{value: 1,name: "hola" }, { value: 2,name: "hola2",}]}
+                            data={[{value: 1 ,name: "hola" }, { value: 2 ,name: "hola2"}]}
+                            stateProps={{state: entitySelected, setState: setEntitySelected}}
                         />
                         <InputComponent
-                            idInput="funds"
+                            idInput="number"
                             className="input-basic"
-                            typeInput="text"
+                            typeInput="number"
                             register={register}
                             label="Fondos"
                             classNameLabel="text-black biggest bold"
@@ -54,12 +56,15 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
                         />
                     </div>
                 </div>
-                <div>
-                    <span className="bold text-center" onClick={() => console.log("limpiar")}>
+                <div className="funcionality-buttons-container">
+                    <span className="bold text-center button" onClick={() => {
+                            reset();
+                            setEntitySelected(null);
+                        }}>
                         Limpiar campos
                     </span>
                     <ButtonComponent
-                        className="button-main big hover-three"
+                        className="button-main huge hover-three"
                         value="Buscar"
                         type="submit"
                     />

@@ -1,4 +1,4 @@
-import { useContext, useRef } from "react";
+import { useContext, useRef, useState } from "react";
 import { AppContext } from "../../../common/contexts/app.context";
 import { useNavigate } from "react-router-dom";
 import { IFilterFounds, IFounds } from "../interfaces/Funds";
@@ -13,11 +13,13 @@ export function useFoundData() {
     const { setMessage } = useContext(AppContext);
     const navigate = useNavigate();
     const resolver = useYupValidationResolver(fundsValidator);
+    const [entitySelected, setEntitySelected] = useState(null);
   const {
     handleSubmit,
     register,
     formState: { errors },
     setValue: setValueRegister,
+    reset
   } = useForm<IFilterFounds>({ resolver });
     const tableColumns: ITableElement<IFounds>[] = [
         {
@@ -86,6 +88,9 @@ export function useFoundData() {
         onSubmit,
         register,
         errors,
-        setValueRegister
+        setValueRegister,
+        reset,
+        entitySelected,
+        setEntitySelected
     }
 } 

@@ -66,22 +66,22 @@ function SelectElement({
   setValue,
   stateProps
 }: ISelectElementProps<any>): React.JSX.Element {
-  const [selectedCity, setSelectedCity] = useState(value);
+  const [selected, setSelected] = useState(value);
   const registerProp = register ? register : () => { };
 
   useEffect(() => {
     const setValueRegisterProp = setValueRegister ? setValueRegister : () => {};
-    setValueRegisterProp(idInput, selectedCity);
-  }, [selectedCity]);
+    setValueRegisterProp(idInput, (stateProps ? stateProps.state : selected));
+  }, [selected, stateProps]);
 
   return (
     <div {...registerProp(idInput)}>
-      <Dropdown value={stateProps ? stateProps.state : selectedCity} onChange={(e) => {
+      <Dropdown value={stateProps ? stateProps.state : selected} onChange={(e) => {
         if (setValue) {
           setValue(e.value);
-          setSelectedCity(e.value)
+          setSelected(e.value);
         }
-        stateProps ? stateProps.setState(e.value) : setSelectedCity(e.value);
+        stateProps ? stateProps.setState(e.value) : setSelected(e.value);
       }} options={data} optionLabel="name"
         placeholder={placeholder} className={className} />
     </div>
@@ -104,6 +104,7 @@ export function SelectComponent({
   stateProps,
   setValue
 }: ISelectProps<any>): React.JSX.Element {
+  data.unshift({name: "Seleccione", value: null} as IDropdownProps);
   return (
     <div
       className={
