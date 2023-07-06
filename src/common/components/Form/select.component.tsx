@@ -3,11 +3,7 @@ import { EDirection } from "../../constants/input.enum";
 import { LabelComponent } from "./label.component";
 import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
 import { Dropdown } from 'primereact/dropdown';
-
-interface IDropdownProps {
-  name: string,
-  value: string | number;
-}
+import { IDropdownProps } from "../../interfaces/select.interface";
 
 interface ISelectProps<T> {
   idInput: string;
@@ -104,7 +100,11 @@ export function SelectComponent({
   stateProps,
   setValue
 }: ISelectProps<any>): React.JSX.Element {
-  data.unshift({name: "Seleccione", value: null} as IDropdownProps);
+  if(data){
+    const seleccione: IDropdownProps = {name: "Seleccione", value: null};
+    const dataSelect = data.find((item) => item.name === seleccione.name && item.value === seleccione.value);
+    if(!dataSelect) data.unshift(seleccione);
+  } 
   return (
     <div
       className={

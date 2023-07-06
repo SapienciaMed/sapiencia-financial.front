@@ -1,21 +1,26 @@
 import { DateTime } from "luxon";
+import { IEntities } from "./Entities";
 
-export interface IFounds {
-  id: number;
+export interface IFunds {
+  id?: number;
   entityId: number;
-  entity: string;
-  number: number
+  number: number;
+  denomination: string;
+  description: string;
   dateFrom: DateTime;
   dateTo: DateTime;
-  userModify: DateTime;
-  dateModify: DateTime;
+  userModify?: string;
+  dateModify?: DateTime;
   userCreate: string;
   dateCreate: DateTime;
+  entity?: IEntities
 }
 
-export interface IFilterFounds {
-  entity: number;
-  funds: string;
-  dateFrom: DateTime;
-  dateTo: DateTime;
+export interface IFundsFilters {
+  page: number;
+  perPage: number;
+  entity?: number;
+  number?: number;
+  dateFrom?: DateTime;
+  dateTo?: DateTime;
 }

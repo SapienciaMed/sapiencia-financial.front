@@ -1,20 +1,26 @@
-import { useState } from "react";
+import { AiOutlinePlusCircle } from "react-icons/ai";
 import { FormComponent, InputComponent, DatePickerComponent, SelectComponent, ButtonComponent } from "../../../common/components/Form";
 import TableComponent from "../../../common/components/table.component";
 import { EDirection } from "../../../common/constants/input.enum";
-import { useFoundData } from "../hooks/funds.hook";
+import { useFundsData } from "../hooks/funds.hook";
 
 interface IAppProps { }
 
 function FoundsPage(props: IAppProps): React.JSX.Element {
-    const { tableActions, tableColumns, tableComponentRef, onSubmit, register, errors, setValueRegister, reset, entitySelected, setEntitySelected } = useFoundData();
+    const { tableActions, tableColumns, tableComponentRef, onSubmit, register, errors, setValueRegister, reset, entitySelected, setEntitySelected, dateFrom, dateTo, setDateFrom, setDateTo, entitiesData } = useFundsData();
     return (
         <div>
             <FormComponent action={onSubmit}>
                 <div className="card-form">
-                    <label className="text-black biggest bold">
-                        Datos personales
-                    </label>
+                    <div className="title-area">
+                        <label className="text-black biggest bold">
+                            Datos personales
+                        </label>
+
+                        <div className="title-button text-three biggest" onClick={() => { }}>
+                            Crear <AiOutlinePlusCircle />
+                        </div>
+                    </div>
                     <div className="funcionality-filters-container">
                         <SelectComponent
                             idInput="entity"
@@ -25,8 +31,8 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
                             label="Entidad CP"
                             classNameLabel="text-black biggest bold"
                             direction={EDirection.row}
-                            data={[{value: 1 ,name: "hola" }, { value: 2 ,name: "hola2"}]}
-                            stateProps={{state: entitySelected, setState: setEntitySelected}}
+                            data={entitiesData}
+                            stateProps={{ state: entitySelected, setState: setEntitySelected }}
                         />
                         <InputComponent
                             idInput="number"
@@ -42,13 +48,16 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
                             idInput="dateFrom"
                             direction={EDirection.row}
                             register={register}
+                            setValueRegister={setValueRegister}
                             errors={errors}
                             label="Validez de"
                             classNameLabel="text-black biggest bold"
+                            stateProps={{ setState: setDateFrom, state: dateFrom }}
                         />
                         <DatePickerComponent
                             idInput="dateTo"
                             direction={EDirection.row}
+                            setValueRegister={setValueRegister}
                             register={register}
                             errors={errors}
                             label="Validez de"
@@ -58,9 +67,9 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
                 </div>
                 <div className="funcionality-buttons-container">
                     <span className="bold text-center button" onClick={() => {
-                            reset();
-                            setEntitySelected(null);
-                        }}>
+                        reset();
+                        setEntitySelected(null);
+                    }}>
                         Limpiar campos
                     </span>
                     <ButtonComponent
@@ -73,7 +82,7 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
             <div className="card-form">
                 <TableComponent
                     ref={tableComponentRef}
-                    url={`${process.env.urlApiAuth}/api/v1/role/get-paginated`}
+                    url={`${process.env.urlApiFinancial}/api/v1/funds/get-paginated`}
                     columns={tableColumns}
                     actions={tableActions}
                 />
