@@ -36,7 +36,7 @@ function TabListComponent({ tabs, className, start, index }: IAppProps): React.J
                     if(selectedTab) if(selectedTab.id === tab.id) active = "active";
                     return (
                         <div className={`tab-option ${active}`} key={tab.id} onClick={() => {
-                                setSelectedTab(tab);
+                                if(isNaN(parseInt(`${index}`))) setSelectedTab(tab);
                                 if(tab.action) tab.action();
                             }}>
                             {tab.title}
