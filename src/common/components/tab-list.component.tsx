@@ -27,7 +27,11 @@ function TabListComponent({ tabs, className, start, index }: IAppProps): React.J
             setSelectedTab(tabs[index]);
         }
     }, [index])
-    
+
+    useEffect(() => {
+        if(selectedTab) if(selectedTab.action) selectedTab.action();
+    }, [selectedTab])
+
     return (
         <div className={`tabs-component ${className ? className : ""}`}>
             <div className="tabs-selection">
@@ -37,7 +41,6 @@ function TabListComponent({ tabs, className, start, index }: IAppProps): React.J
                     return (
                         <div className={`tab-option ${active}`} key={tab.id} onClick={() => {
                                 if(isNaN(parseInt(`${index}`))) setSelectedTab(tab);
-                                if(tab.action) tab.action();
                             }}>
                             {tab.title}
                         </div>

@@ -3,11 +3,12 @@ import { FormComponent, InputComponent, DatePickerComponent, SelectComponent, Bu
 import TableComponent from "../../../common/components/table.component";
 import { EDirection } from "../../../common/constants/input.enum";
 import { useFundsData } from "../hooks/funds.hook";
+import { Controller } from "react-hook-form";
 
 interface IAppProps { }
 
 function FoundsPage(props: IAppProps): React.JSX.Element {
-    const { tableActions, tableColumns, tableComponentRef, onSubmit, register, errors, setValueRegister, reset, entitySelected, setEntitySelected, dateFrom, dateTo, setDateFrom, setDateTo, entitiesData } = useFundsData();
+    const { tableActions, tableColumns, tableComponentRef, onSubmit, navigate, register, errors, setValueRegister, reset, controlRegister, entitySelected, setEntitySelected, entitiesData } = useFundsData();
     return (
         <div>
             <FormComponent action={onSubmit}>
@@ -17,7 +18,7 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
                             Datos personales
                         </label>
 
-                        <div className="title-button text-three biggest" onClick={() => { }}>
+                        <div className="title-button text-three biggest" onClick={() => { navigate('./create') }}>
                             Crear <AiOutlinePlusCircle />
                         </div>
                     </div>
@@ -44,25 +45,44 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
                             direction={EDirection.row}
                             errors={errors}
                         />
-                        <DatePickerComponent
-                            idInput="dateFrom"
-                            direction={EDirection.row}
-                            register={register}
-                            setValueRegister={setValueRegister}
-                            errors={errors}
-                            label="Validez de"
-                            classNameLabel="text-black biggest bold"
-                            stateProps={{ setState: setDateFrom, state: dateFrom }}
+                        <Controller
+                            name="dateFrom"
+                            control={controlRegister}
+                            render={({ field }) => (
+                                <DatePickerComponent
+                                    idInput={field.name}
+                                    value={field.value}
+                                    onchange={field.onChange}
+                                    direction={EDirection.row}
+                                    register={register}
+                                    setValueRegister={setValueRegister}
+                                    errors={errors}
+                                    className="select-basic"
+                                    label="Validez de"
+                                    classNameLabel="text-black biggest bold"
+                                />
+                            )}
                         />
-                        <DatePickerComponent
-                            idInput="dateTo"
-                            direction={EDirection.row}
-                            setValueRegister={setValueRegister}
-                            register={register}
-                            errors={errors}
-                            label="Validez de"
-                            classNameLabel="text-black biggest bold"
+                        <Controller
+                            name="dateTo"
+                            control={controlRegister}
+                            render={({ field }) => (
+                                <DatePickerComponent
+                                    idInput={field.name}
+                                    value={field.value}
+                                    onchange={field.onChange}
+                                    direction={EDirection.row}
+                                    setValueRegister={setValueRegister}
+                                    register={register}
+                                    errors={errors}
+                                    className="select-basic"
+                                    label="Validez de"
+                                    classNameLabel="text-black biggest bold"
+                                />
+                            )}
                         />
+
+
                     </div>
                 </div>
                 <div className="funcionality-buttons-container">

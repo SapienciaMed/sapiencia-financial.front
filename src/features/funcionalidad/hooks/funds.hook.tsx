@@ -7,7 +7,6 @@ import DetailsComponent from "../../../common/components/details.component";
 import { useForm } from "react-hook-form";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { fundsValidator } from "../../../common/schemas";
-import { useFundsService } from "./funds-service.hook";
 import { useEntitiesService } from "./entities-service.hook";
 import { IEntities } from "../interfaces/Entities";
 import { EResponseCodes } from "../../../common/constants/api.enum";
@@ -19,17 +18,15 @@ export function useFundsData() {
     const resolver = useYupValidationResolver(fundsValidator);
     const { setMessage } = useContext(AppContext);
     const { GetEntities } = useEntitiesService();
-    const { } = useFundsService();
     const [entitySelected, setEntitySelected] = useState(null);
-    const [dateFrom, setDateFrom] = useState(null);
-    const [dateTo, setDateTo] = useState(null);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
     const {
         handleSubmit,
         register,
         formState: { errors },
         setValue: setValueRegister,
-        reset
+        reset,
+        control: controlRegister
     } = useForm<IFundsFilters>({ resolver });
     const tableColumns: ITableElement<IFunds>[] = [
         {
@@ -116,16 +113,14 @@ export function useFundsData() {
         tableColumns,
         tableActions,
         onSubmit,
+        navigate,
         register,
         errors,
         setValueRegister,
         reset,
+        controlRegister,
         entitySelected,
         setEntitySelected,
-        dateFrom,
-        setDateFrom,
-        dateTo,
-        setDateTo,
         entitiesData
     }
 } 

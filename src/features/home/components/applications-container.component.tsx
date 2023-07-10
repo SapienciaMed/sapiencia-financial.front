@@ -32,7 +32,7 @@ function ApplicationCardComponent() {
   </Fragment>
 };
 
-function ApplicationsContainer(): JSX.Element {
+function ApplicationsContainer(): React.JSX.Element {
   return (
     <section className="applications-cards">
       <ApplicationCardComponent />

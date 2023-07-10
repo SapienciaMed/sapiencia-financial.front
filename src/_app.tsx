@@ -9,6 +9,7 @@ import ApplicationProvider from "./application-provider";
 
 const Home = lazy(() => import("./features/home/pages/home.page"));
 const Functionality = lazy(() => import("./features/funcionalidad/pages/functionality.page"));
+const FundsCrud = lazy(() => import("./features/funcionalidad/pages/funds-crud.page"));
 
 function App() {
   return (
@@ -21,7 +22,8 @@ function App() {
               <Route path={"/*"} element={<Home/>} />
               <Route path={"/financial/funcionalidad"} element={<Functionality/>} />
               <Route path={"/financial/funcionalidad/:option"} element={<Functionality/>} />
-              <Route path={"/financial/funcionalidad/fondos/create"} element={<>test</>} />
+              <Route path={"/financial/funcionalidad/fondos/create"} element={<FundsCrud action="new"/>} />
+              <Route path={"/financial/funcionalidad/fondos/edit/:id"} element={<FundsCrud action="edit"/>} />
             </Routes>
           </Suspense>
         </Router>
