@@ -3,13 +3,15 @@ import { Controller } from "react-hook-form";
 import { ButtonComponent, DatePickerComponent, FormComponent, InputComponent, SelectComponent } from "../../../common/components/Form";
 import { EDirection } from "../../../common/constants/input.enum";
 import { useFundsCrudData } from "../hooks/funds-crud.hook";
+import { useParams } from "react-router-dom";
 
 interface IAppProps {
     action: "new" | "edit";
 }
 
 function FundsForm({ action }: IAppProps) {
-    const { register, errors, reset, setValueRegister, controlRegister, entitiesData, entitySelected, setEntitySelected } = useFundsCrudData();
+    const { id: fundId } = useParams();
+    const { register, errors, setValueRegister, controlRegister, entitiesData, entitySelected, setEntitySelected, onSubmitNewFund, onSubmitEditFund, onCancelNew, onCancelEdit, confirmClose } = useFundsCrudData(fundId);
     return (
         <div className="crud-page full-height">
             <div className="main-page full-height">
@@ -18,7 +20,7 @@ function FundsForm({ action }: IAppProps) {
                         <div className="text-black extra-large bold">{action === "new" ? "Crear fondo" : "Editar fondo "}</div>
                     </div>
 
-                    <FormComponent action={undefined} className="funds-form">
+                    <FormComponent action={action === "new" ? onSubmitNewFund : onSubmitEditFund} className="funds-form" id="funds-form">
                         <div className="card-form">
                             <div className="fund-data-container">
                                 <SelectComponent
@@ -112,10 +114,7 @@ function FundsForm({ action }: IAppProps) {
                             </div>
                         </div>
                         <div className="mobile-actions mobile">
-                            <span className="bold text-center button" onClick={() => {
-                                reset();
-                                setEntitySelected(null);
-                            }}>
+                            <span className="bold text-center button" onClick={() => { confirmClose(action === "new" ? onCancelNew : onCancelEdit) }}>
                                 Cancelar
                             </span>
                             <ButtonComponent
@@ -129,16 +128,14 @@ function FundsForm({ action }: IAppProps) {
             </div>
             <div className="container-button-bot">
                 <div className="buttons-bot">
-                    <span className="bold text-center button" onClick={() => {
-                        reset();
-                        setEntitySelected(null);
-                    }}>
+                    <span className="bold text-center button" onClick={() => { confirmClose(action === "new" ? onCancelNew : onCancelEdit) }}>
                         Cancelar
                     </span>
                     <ButtonComponent
                         className="button-main huge hover-three"
                         value="Guardar"
                         type="submit"
+                        form="funds-form"
                     />
                 </div>
             </div>

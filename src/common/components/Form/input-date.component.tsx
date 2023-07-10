@@ -58,7 +58,6 @@ function CalendarElement({
   useEffect(() => {
     const setValueRegisterProp = setValueRegister ? setValueRegister : () => {};
     setValueRegisterProp(idInput, date);
-    console.log(date);
   }, [date]);
   return (
     <div {...registerProp(idInput)}>
@@ -67,7 +66,7 @@ function CalendarElement({
         mask="99/99/9999"
         dateFormat="dd/mm/yy"
         name={idInput}
-        value={date}
+        value={value}
         onChange={(e) => {
           if (setValue) {
             setValue(e.value);
@@ -101,7 +100,7 @@ export function DatePickerComponent({
   setValueRegister,
   className = "dataPicker-basic",
   placeholder = "DD/MM/AAAA",
-  value = null,
+  value,
   label,
   classNameLabel = "text-main",
   direction = EDirection.column,

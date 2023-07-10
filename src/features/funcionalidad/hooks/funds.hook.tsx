@@ -1,4 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
+import { DateTime } from "luxon";
 import { AppContext } from "../../../common/contexts/app.context";
 import { useNavigate } from "react-router-dom";
 import { IFundsFilters, IFunds } from "../interfaces/Funds";
@@ -39,11 +40,17 @@ export function useFundsData() {
         },
         {
             fieldName: "dateFrom",
-            header: "Validez de"
+            header: "Validez de",
+            renderCell: (row) => {
+                return <>{DateTime.fromISO(row.dateFrom).toLocaleString()}</>;
+            }
         },
         {
             fieldName: "dateTo",
-            header: "Validez a"
+            header: "Validez a",
+            renderCell: (row) => {
+                return <>{DateTime.fromISO(row.dateTo).toLocaleString()}</>;
+            }
         },
     ];
     const tableActions: ITableAction<IFunds>[] = [

@@ -10,9 +10,9 @@ export interface IFunds {
   dateFrom: DateTime;
   dateTo: DateTime;
   userModify?: string;
-  dateModify?: DateTime;
-  userCreate: string;
-  dateCreate: DateTime;
+  dateModify?: Date;
+  userCreate?: string;
+  dateCreate?: DateTime;
   entity?: IEntities
 }
 
