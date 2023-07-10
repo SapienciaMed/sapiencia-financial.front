@@ -6,7 +6,7 @@ import {
   Dispatch,
   SetStateAction,
 } from "react";
-import { IMessage } from "../interfaces/global.interface";
+import { IMessage, IMessageEdit } from "../interfaces/global.interface";
 import { IAuthorization } from "../interfaces/auth.interfaces";
 
 interface IAppContext {
@@ -14,6 +14,8 @@ interface IAppContext {
   setAuthorization: Dispatch<SetStateAction<IAuthorization>>;
   message: IMessage;
   setMessage: Dispatch<SetStateAction<IMessage>>;
+  messageEdit: IMessageEdit;
+  setMessageEdit: Dispatch<SetStateAction<IMessageEdit>>;
 }
 interface IProps {
   children: ReactElement | ReactElement[];
@@ -24,6 +26,8 @@ export const AppContext = createContext<IAppContext>({
   setAuthorization: () => {},
   message: {} as IMessage,
   setMessage: () => {},
+  messageEdit: {} as IMessageEdit,
+  setMessageEdit: () => {},
 });
 
 export function AppContextProvider({ children }: IProps) {
@@ -31,7 +35,8 @@ export function AppContextProvider({ children }: IProps) {
   const [message, setMessage] = useState<IMessage>({} as IMessage);
   const [authorization, setAuthorization] = useState<IAuthorization>(
     {} as IAuthorization
-  );
+  )
+  const [messageEdit, setMessageEdit] = useState<IMessageEdit>({} as IMessageEdit); ;
 
   const values = useMemo<IAppContext>(() => {
     return {
@@ -39,8 +44,10 @@ export function AppContextProvider({ children }: IProps) {
       setAuthorization,
       message,
       setMessage,
+      messageEdit,
+      setMessageEdit,
     };
-  }, [message, authorization]);
+  }, [message, authorization,messageEdit]);
 
   return <AppContext.Provider value={values}>{children}</AppContext.Provider>;
 }

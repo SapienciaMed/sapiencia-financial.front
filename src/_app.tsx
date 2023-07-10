@@ -10,6 +10,7 @@ import ApplicationProvider from "./application-provider";
 const Home = lazy(() => import("./features/home/pages/home.page"));
 const Functionality = lazy(() => import("./features/funcionalidad/pages/functionality.page"));
 const FundsCrud = lazy(() => import("./features/funcionalidad/pages/funds-crud.page"));
+const BudgetsCrud = lazy(()  => import("./features/funcionalidad/pages/budgets-crud.page"));
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
               <Route path={"/gestion-financiera/funcionalidad/fondos/edit/:id"} element={<FundsCrud action="edit"/>} />
              
             
+              <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/create"} element={<BudgetsCrud action="new"/>} />
+              <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/edit/:id"} element={<BudgetsCrud action="edit"/>} />
             </Routes>
           </Suspense>
         </Router>

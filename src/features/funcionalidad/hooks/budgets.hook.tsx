@@ -1,59 +1,53 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { DateTime } from "luxon";
 import { AppContext } from "../../../common/contexts/app.context";
 import { useNavigate } from "react-router-dom";
-import { IFundsFilters, IFunds } from "../interfaces/Funds";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import DetailsComponent from "../../../common/components/details.component";
 import { useForm } from "react-hook-form";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { fundsValidator } from "../../../common/schemas";
-import { useEntitiesService } from "./entities-service.hook";
-import { IEntities } from "../interfaces/Entities";
-import { EResponseCodes } from "../../../common/constants/api.enum";
+import { IBudgets, IFilterBudgets } from "../interfaces/Budgets";
 import { IDropdownProps } from "../../../common/interfaces/select.interface";
+import { useEntitiesService } from "./entities-service.hook";
+import { EResponseCodes } from "../../../common/constants/api.enum";
+import { IEntities } from "../interfaces/Entities";
 
-export function useFundsData() {
+export function useFoundData() {
     const tableComponentRef = useRef(null);
+    const { setMessage } = useContext(AppContext);
     const navigate = useNavigate();
-    const resolver = useYupValidationResolver(fundsValidator);
-    const { setMessageEdit } = useContext(AppContext);
     const { GetEntities } = useEntitiesService();
+    const resolver = useYupValidationResolver(fundsValidator);
     const [entitySelected, setEntitySelected] = useState(null);
+    const [dateFrom, setDateFrom] = useState(null);
+    const [dateTo, setDateTo] = useState(null);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
-    const {
-        handleSubmit,
-        register,
-        formState: { errors },
-        setValue: setValueRegister,
-        reset,
-        control: controlRegister
-    } = useForm<IFundsFilters>({ resolver });
-    const tableColumns: ITableElement<IFunds>[] = [
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+    setValue: setValueRegister,
+    reset
+  } = useForm<IFilterBudgets>({ resolver });
+    const tableColumns: ITableElement<IBudgets>[] = [
         {
             fieldName: "entity.name",
             header: "Entidad CP",
         },
         {
+            fieldName: "ejercise",
+            header: "Ejercicio"
+        },
+        {
             fieldName: "number",
-            header: "Fondo"
+            header: "Posición presupuestaria"
         },
         {
-            fieldName: "dateFrom",
-            header: "Validez de",
-            renderCell: (row) => {
-                return <>{DateTime.fromISO(row.dateFrom).toLocaleString()}</>;
-            }
-        },
-        {
-            fieldName: "dateTo",
-            header: "Validez a",
-            renderCell: (row) => {
-                return <>{DateTime.fromISO(row.dateTo).toLocaleString()}</>;
-            }
+            fieldName: "denomination",
+            header: "Denominacion"
         },
     ];
-    const tableActions: ITableAction<IFunds>[] = [
+    const tableActions: ITableAction<IBudgets>[] = [
         {
             icon: "Detail",
             onClick: (row) => {
@@ -64,19 +58,19 @@ export function useFundsData() {
                     },
                     {
                         title: "Fondo",
+                        value: `${row.ejercise}`
+                    },
+                    {
+                        title: "Posición presupuestaria",
                         value: `${row.number}`
                     },
                     {
-                        title: "Validez de",
-                        value: `${row.dateFrom}`
-                    },
-                    {
-                        title: "Validez a",
-                        value: `${row.dateTo}`
+                        title: "Denominación",
+                        value: `${row.denomination}`
                     }
                 ]
-                setMessageEdit({
-                    title: "Detalle de Fondos",
+                setMessage({
+                    title: "Detalles",
                     show: true,
                     OkTitle: "Aceptar",
                     description: <DetailsComponent rows={rows} />,
@@ -98,7 +92,7 @@ export function useFundsData() {
         }
     }
 
-    const onSubmit = handleSubmit(async (data: IFundsFilters) => {
+    const onSubmit = handleSubmit(async (data: IFilterBudgets) => {
         loadTableData(data);
     });
 
@@ -114,20 +108,23 @@ export function useFundsData() {
             }
         }).catch(() => { });
     }, [])
-
+    
     return {
         tableComponentRef,
         tableColumns,
         tableActions,
         onSubmit,
-        navigate,
         register,
+        navigate,
         errors,
         setValueRegister,
         reset,
-        controlRegister,
         entitySelected,
         setEntitySelected,
+        dateFrom,
+        setDateFrom,
+        dateTo,
+        setDateTo,
         entitiesData
     }
 } 

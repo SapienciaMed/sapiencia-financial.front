@@ -14,6 +14,20 @@ export interface IMessage {
   background?: boolean;
 }
 
+export interface IMessageEdit {
+  type?: EResponseCodes;
+  title?: string;
+  description?: string | React.JSX.Element;
+  show?: boolean;
+  OkTitle?: string;
+  cancelTitle?: string;
+  onOk?: () => void;
+  onCancel?: () => void;
+  onClickOutClose?: boolean;
+  onClose?: () => void;
+  background?: boolean;
+}
+
 export interface IGenericList {
   id: number;
   grouper: string;
