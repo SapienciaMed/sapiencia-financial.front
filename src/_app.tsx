@@ -20,7 +20,7 @@ function App() {
         <Router>
           <Suspense fallback={<p>Loading...</p>}>
             <Routes>
-              <Route path={"/*"} element={<Home/>} />
+              <Route path={"/"} element={<Home/>} />
               <Route path={"/gestion-financiera/funcionalidad"} element={<Functionality/>} />
               <Route path={"/gestion-financiera/funcionalidad/:option"} element={<Functionality/>} />
               <Route path={"/gestion-financiera/funcionalidad/fondos/create"} element={<FundsCrud action="new"/>} />
