@@ -17,7 +17,7 @@ export function useFundsData() {
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
     const resolver = useYupValidationResolver(fundsValidator);
-    const { setMessageEdit } = useContext(AppContext);
+    const { setMessage } = useContext(AppContext);
     const { GetEntities } = useEntitiesService();
     const [entitySelected, setEntitySelected] = useState(null);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
@@ -68,14 +68,22 @@ export function useFundsData() {
                     },
                     {
                         title: "Validez de",
-                        value: `${row.dateFrom}`
+                        value: `${DateTime.fromISO(row.dateTo).toLocaleString()}`
                     },
                     {
                         title: "Validez a",
-                        value: `${row.dateTo}`
+                        value: `${DateTime.fromISO(row.dateTo).toLocaleString()}`
+                    },
+                    {
+                        title: "Denominación",
+                        value: `${row.denomination}`
+                    },
+                    {
+                        title: "Descripción",
+                        value: `${row.description}`
                     }
                 ]
-                setMessageEdit({
+                setMessage({
                     title: "Detalle de Fondos",
                     show: true,
                     OkTitle: "Aceptar",
