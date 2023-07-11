@@ -86,6 +86,7 @@ return (
                     url={`${process.env.urlApiFinancial}/api/v1/budgets/get-paginated`}
                     columns={tableColumns}
                     actions={tableActions}
+                    isShowModal={false}
                 />
             </div>
         </div>

@@ -18,7 +18,7 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
                             Datos personales
                         </label>
 
-                        <div className="title-button text-three biggest" onClick={() => { navigate('./create') }}>
+                        <div className="title-button text-main biggest" onClick={() => { navigate('./create') }}>
                             Crear <AiOutlinePlusCircle />
                         </div>
                     </div>
@@ -104,8 +104,8 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
                     ref={tableComponentRef}
                     url={`${process.env.urlApiFinancial}/api/v1/funds/get-paginated`}
                     columns={tableColumns}
-                    actions={tableActions}
-                />
+                    actions={tableActions} 
+                    isShowModal={false}/>
             </div>
         </div>
     )

@@ -3,6 +3,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
   useEffect,
+  useContext,
 } from "react";
 import { ITableAction, ITableElement } from "../interfaces/table.interfaces";
 import { DataTable } from "primereact/datatable";
@@ -24,6 +25,8 @@ import { EResponseCodes } from "../constants/api.enum";
 import { classNames } from "primereact/utils";
 import * as Icons from "react-icons/fa";
 import { Dropdown } from "primereact/dropdown";
+import { useWidth } from "../hooks/use-width";
+import { AppContext } from "../contexts/app.context";
 
 interface IProps<T> {
   url: string;
@@ -31,6 +34,8 @@ interface IProps<T> {
   columns: ITableElement<T>[];
   actions?: ITableAction<T>[];
   searchItems?: object;
+  isShowModal: boolean,
+  titleMessageModalNoResult?: string
 }
 
 interface IRef {
@@ -38,13 +43,7 @@ interface IRef {
 }
 
 const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
-  const { title, columns, actions, url } = props;
-
-  // Declaraciones
-  const { post } = useCrudService(null, url);
-  useImperativeHandle(ref, () => ({
-    loadData: loadData,
-  }));
+  const { title, columns, actions, url, titleMessageModalNoResult, isShowModal } = props;
 
   // States
   const [charged, setCharged] = useState<boolean>(false);
@@ -54,6 +53,16 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
   const [page, setPage] = useState<number>(0);
   const [first, setFirst] = useState<number>(0);
   const [searchCriteria, setSearchCriteria] = useState<object>();
+  const { width } = useWidth()
+  const { setMessage } = useContext(AppContext);
+
+  const token = localStorage.getItem("token");
+
+  // Declaraciones
+  const { post } = useCrudService(token, url);
+  useImperativeHandle(ref, () => ({
+    loadData: loadData,
+  }));
 
   // Metodo que hace la peticion para realizar la carga de datos
   async function loadData(
@@ -76,6 +85,15 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
       setResultData(res.data);
     } else {
       // generar mensaje de error / advetencia
+    }
+    if (res.data.array.length <= 0 && isShowModal) {
+      setMessage({
+        title: `${titleMessageModalNoResult || ''}`,
+        show: true,
+        description: 'No hay resultado para la búsqueda',
+        OkTitle: "Aceptar",
+        background: true,
+      })
     }
     setLoading(false);
   }
@@ -107,7 +125,8 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
             return (
               <div key={item} className="item-value-container">
                 <p className="text-black bold">{column.header}</p>
-                <p>{item[column.fieldName]}</p>
+                <p> { column.renderCell ? column.renderCell(item) : item[column.fieldName] } </p>
+                
               </div>
             )
           })}
@@ -138,7 +157,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
       />
 
       {
-        document.body.offsetWidth > 460 ?
+        width > 830 ?
           <DataTable
             className="spc-table full-height"
             value={resultData?.array || []}
@@ -186,18 +205,18 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
 function getIconElement(icon: string, element: "name" | "src") {
   switch (icon) {
     case "Detail":
-      return element == "name" ? "Detalle" : <Icons.FaEye className="button grid-button" />;
+      return element == "name" ? "Detalle" : <Icons.FaEye className="button grid-button button-detail" />;
     case "Edit":
       return element == "name" ? (
         "Editar"
       ) : (
-        <Icons.FaPencilAlt className="button grid-button" />
+        <Icons.FaPencilAlt className="button grid-button button-edit" />
       );
     case "Delete":
       return element == "name" ? (
         "Eliminar"
       ) : (
-        <Icons.FaTrashAlt className="button grid-button" />
+        <Icons.FaTrashAlt className="button grid-button button-delete" />
       );
     default:
       return "";
