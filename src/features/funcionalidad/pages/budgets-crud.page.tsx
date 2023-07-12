@@ -16,7 +16,7 @@ function BudgetsForm({ action }: IAppProps) {
             <div className="main-page full-height">
                 <div className="card-table">
                     <div className="title-area">
-                        <div className="text-black extra-large bold">{action === "new" ? "Crear Pospre" : "Editar Pospre "}</div>
+                        <div className="text-black extra-large bold">{action === "new" ? "Crear Posición Presupuestaria" : "Editar Posición Presupuestaria "}</div>
                     </div>
 
                     <FormComponent action={action === "new" ? onSubmitNewBudgets : onSubmitEditBudgets} className="funds-form" id="budgets-form">
