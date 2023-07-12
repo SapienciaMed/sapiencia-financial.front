@@ -8,9 +8,9 @@ import ModalMessageComponent from "./common/components/modal-message.component";
 import ApplicationProvider from "./application-provider";
 
 const Home = lazy(() => import("./features/home/pages/home.page"));
-const Functionality = lazy(() => import("./features/funcionalidad/pages/functionality.page"));
-const FundsCrud = lazy(() => import("./features/funcionalidad/pages/funds-crud.page"));
-const BudgetsCrud = lazy(()  => import("./features/funcionalidad/pages/budgets-crud.page"));
+const Functionality = lazy(() => import("./features/functionality/pages/functionality.page"));
+const FundsCrud = lazy(() => import("./features/functionality/pages/funds-crud.page"));
+const BudgetsCrud = lazy(()  => import("./features/functionality/pages/budgets-crud.page"));
 
 function App() {
   return (
