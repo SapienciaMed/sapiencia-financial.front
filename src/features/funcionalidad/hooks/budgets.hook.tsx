@@ -57,7 +57,7 @@ export function useFoundData() {
                         value: `${row.entity.name}`
                     },
                     {
-                        title: "Fondo",
+                        title: "Ejercicio",
                         value: `${row.ejercise}`
                     },
                     {
@@ -67,10 +67,14 @@ export function useFoundData() {
                     {
                         title: "Denominación",
                         value: `${row.denomination}`
+                    },
+                    {
+                        title: "Descripción",
+                        value: `${row.description}`
                     }
                 ]
                 setMessage({
-                    title: "Detalles",
+                    title: "Detalle posición presupuestaria ",
                     show: true,
                     OkTitle: "Aceptar",
                     description: <DetailsComponent rows={rows} />,
