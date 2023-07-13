@@ -2,7 +2,6 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { DateTime } from "luxon";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
-import { fundsCrudValidator } from "../../../common/schemas";
 import { useContext, useEffect, useState } from "react";
 import { IDropdownProps } from "../../../common/interfaces/select.interface";
 import { EResponseCodes } from "../../../common/constants/api.enum";
@@ -11,6 +10,7 @@ import { useEntitiesService } from "./entities-service.hook";
 import { useBudgetsService } from "./budgets-service.hook";
 import { IBudgets } from "../interfaces/Budgets";
 import { AppContext } from "../../../common/contexts/app.context";
+import { budgetsCrudValidator } from "../../../common/schemas/budgets-schemas";
 
 interface IBudgetsCrudForm {
     number:number;
@@ -25,7 +25,7 @@ export function useBudgetsCrudData(budgetsId: string) {
     const [entitySelected, setEntitySelected] = useState(null);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
 
-    const resolver = useYupValidationResolver(fundsCrudValidator);
+    const resolver = useYupValidationResolver(budgetsCrudValidator);
     const { GetEntities } = useEntitiesService();
     const { CreateBudgets, GetBudgets, UpdateBudgets } = useBudgetsService();
     const { authorization, setMessage } = useContext(AppContext);
