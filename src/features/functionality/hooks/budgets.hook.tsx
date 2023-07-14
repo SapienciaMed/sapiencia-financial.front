@@ -87,6 +87,12 @@ export function useFoundData() {
             onClick: (row) => {
                 navigate(`./edit/${row.id}`);
             },
+        },
+        {
+            icon: "Link",
+            onClick: (row) => {
+                navigate(`./vinculacion/${row.id}`);
+            }
         }
     ];
 

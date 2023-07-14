@@ -11,6 +11,7 @@ const Home = lazy(() => import("./features/home/pages/home.page"));
 const Functionality = lazy(() => import("./features/functionality/pages/functionality.page"));
 const FundsCrud = lazy(() => import("./features/functionality/pages/funds-crud.page"));
 const BudgetsCrud = lazy(()  => import("./features/functionality/pages/budgets-crud.page"));
+const Link = lazy(()  => import("./features/functionality/pages/link.page"));
 
 function App() {
   return (
@@ -23,12 +24,15 @@ function App() {
               <Route path={"/*"} element={<Home/>} />
               <Route path={"/gestion-financiera/funcionalidad"} element={<Functionality/>} />
               <Route path={"/gestion-financiera/funcionalidad/:option"} element={<Functionality/>} />
+
               <Route path={"/gestion-financiera/funcionalidad/fondos/create"} element={<FundsCrud action="new"/>} />
               <Route path={"/gestion-financiera/funcionalidad/fondos/edit/:id"} element={<FundsCrud action="edit"/>} />
-             
             
               <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/create"} element={<BudgetsCrud action="new"/>} />
               <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/edit/:id"} element={<BudgetsCrud action="edit"/>} />
+
+              <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/vinculacion/:id"} element={<Link />} />
+              <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/vinculacion/:id/:option"} element={<Link />} />
             </Routes>
           </Suspense>
         </Router>
