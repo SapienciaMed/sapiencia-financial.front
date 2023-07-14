@@ -77,7 +77,7 @@ export function useBudgetsCrudData(budgetsId: string) {
             denomination: data.denomination,
             description: data.description,
             userCreate: authorization.user.numberDocument,
-            ejercise: data.number,
+            ejercise: data.ejercise,
         }
         CreateBudgets(insertData).then(response => {
             if (response.operation.code === EResponseCodes.OK) {
