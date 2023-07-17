@@ -23,8 +23,8 @@ interface IFundsCrudForm {
 
 export function useFundsCrudData(fundId: string) {
     const [fundData, setFundData] = useState<IFunds>(null);
-    const [entitySelected, setEntitySelected] = useState(null);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
+    const [changedData, changeData] = useState<number>(null);
 
     const resolver = useYupValidationResolver(fundsCrudValidator);
     const { GetEntities } = useEntitiesService();
@@ -36,41 +36,45 @@ export function useFundsCrudData(fundId: string) {
         formState: { errors },
         setValue: setValueRegister,
         reset,
-        control: controlRegister
+        control: controlRegister,
+        getValues: getValueRegister,
     } = useForm<IFundsCrudForm>({ resolver });
     const navigate = useNavigate();
 
-    useEffect(() => {
-        GetEntities().then(response => {
-            if (response.operation.code === EResponseCodes.OK) {
-                const entities: IEntities[] = response.data;
-                const arrayEntities: IDropdownProps[] = entities.map((entity) => {
-                    return { name: entity.name, value: entity.id };
-                });
-                setEntitiesData(arrayEntities);
-            }
-        }).catch(() => { });
-    }, [])
+    async function loadInitList(): Promise<void> {
+        const response = await GetEntities();
+        if (response.operation.code === EResponseCodes.OK) {
+            const entities: IEntities[] = response.data;
+            const arrayEntities: IDropdownProps[] = entities.map((entity) => {
+                return { name: entity.name, value: entity.id };
+            });
+            setEntitiesData(arrayEntities);
+        }
+    }
 
     useEffect(() => {
-        if (fundId) {
-            GetFund(parseInt(fundId)).then(response => {
-                if (response.operation.code === EResponseCodes.OK) {
-                    setFundData(response.data);
-                };
-            });
-        }
+        loadInitList().then(() => {
+            if (fundId) {
+                GetFund(parseInt(fundId)).then(response => {
+                    if (response.operation.code === EResponseCodes.OK) {
+                        setFundData(response.data);
+                    };
+                });
+            }
+        })
     }, [fundId]);
 
     useEffect(() => {
         if (!fundData) return;
         setValueRegister("number", fundData.number);
         setValueRegister("entity", fundData.entityId);
-        setEntitySelected(fundData.entityId);
         setValueRegister("denomination", fundData.denomination);
         setValueRegister("description", fundData.description);
         setValueRegister("dateFrom", DateTime.fromISO(fundData.dateFrom).toJSDate());
         setValueRegister("dateTo", DateTime.fromISO(fundData.dateTo).toJSDate());
+        changeData((prev) => {
+            return prev+1;
+        });
     }, [fundData])
 
     const onSubmitNewFund = handleSubmit(async (data: IFundsCrudForm) => {
@@ -172,5 +176,5 @@ export function useFundsCrudData(fundId: string) {
         });
     }
 
-    return { register, errors, reset, setValueRegister, controlRegister, entitiesData, entitySelected, setEntitySelected, onSubmitNewFund, onSubmitEditFund, onCancelNew, onCancelEdit, confirmClose };
+    return { changedData, register, errors, reset, setValueRegister, getValueRegister, controlRegister, entitiesData, onSubmitNewFund, onSubmitEditFund, onCancelNew, onCancelEdit, confirmClose };
 }

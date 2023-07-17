@@ -304,6 +304,28 @@
   @include card-component($width, $height, $padding);
 }
 
+.text-area-basic {
+  @include generate-text-area(
+    100%,
+    6px,
+    1px solid $input-color-border,
+    null,
+    null,
+    15px
+  );
+  overflow: hidden;
+  resize: none;
+  padding: 10px 20px;
+
+  &:focus {
+    outline: none;
+  }
+
+  &.error {
+    border: 1px solid $alert-failed-color;
+  }
+}
+
 @media (min-width: 1024px) {
   .transferbox-container{
     grid-template-columns: 6fr 3fr 6fr;
