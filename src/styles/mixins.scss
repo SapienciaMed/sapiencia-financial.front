@@ -115,3 +115,19 @@
     }
   }
 }
+
+@mixin generate-text-area(
+  $width,
+  $border-radius,
+  $border,
+  $background-color: null,
+  $color: null,
+  $font-size: null
+) {
+  width: $width;
+  border-radius: $border-radius;
+  border: $border;
+  background-color: $background-color;
+  color: $color;
+  font-size: $font-size;
+}

@@ -11,7 +11,7 @@ interface IAppProps {
 
 function FundsForm({ action }: IAppProps) {
     const { id: fundId } = useParams();
-    const { register, errors, setValueRegister, controlRegister, entitiesData, entitySelected, setEntitySelected, onSubmitNewFund, onSubmitEditFund, onCancelNew, onCancelEdit, confirmClose } = useFundsCrudData(fundId);
+    const { changedData, register, errors, setValueRegister, getValueRegister, controlRegister, entitiesData, onSubmitNewFund, onSubmitEditFund, onCancelNew, onCancelEdit, confirmClose } = useFundsCrudData(fundId);
     return (
         <div className="crud-page full-height">
             <div className="main-page full-height">
@@ -28,12 +28,13 @@ function FundsForm({ action }: IAppProps) {
                                     className="select-basic"
                                     register={register}
                                     setValueRegister={setValueRegister}
+                                    getValueRegister={getValueRegister}
+                                    change={changedData}
                                     errors={errors}
                                     label="Entidad CP"
                                     classNameLabel="text-black biggest bold"
                                     direction={EDirection.row}
                                     data={entitiesData}
-                                    stateProps={{ state: entitySelected, setState: setEntitySelected }}
                                 />
                                 <InputComponent
                                     idInput="number"
