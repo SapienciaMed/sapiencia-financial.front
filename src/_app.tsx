@@ -17,7 +17,7 @@ function App() {
   return (
     <AppContextProvider>
       <ModalMessageComponent />
-      <ApplicationProvider>
+      <ApplicationProvider> 
         <Router>
           <Suspense fallback={<p>Loading...</p>}>
             <Routes>
@@ -31,8 +31,8 @@ function App() {
               <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/create"} element={<BudgetsCrud action="new"/>} />
               <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/edit/:id"} element={<BudgetsCrud action="edit"/>} />
 
-              <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/vinculacion/:id"} element={<Link />} />
-              <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/vinculacion/:id/:option"} element={<Link />} />
+              <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/vinculacion/:pospre"} element={<Link />} />
+              <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/vinculacion/:pospre/:option"} element={<Link />} />
             </Routes>
           </Suspense>
         </Router>
