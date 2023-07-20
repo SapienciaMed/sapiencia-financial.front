@@ -7,15 +7,15 @@ import TableComponent from "../../../common/components/table.component";
 
 
 function PosPreSapienca(): React.JSX.Element {
-    const { id } = useParams();
+    const { pospre } = useParams();
     const navigate = useNavigate();
-    const { register, reset, errors, tableComponentRef, tableColumns, tableActions } = usePospreSapienciaData();
+    const { register, reset, errors, tableComponentRef, tableColumns, tableActions, onSubmitSearch } = usePospreSapienciaData(pospre);
     return (
         <div>
             <div className="title-area">
                 <div className="text-black extra-large bold">Pospre Sapiencia</div>
             </div>
-            <FormComponent action={undefined}>
+            <FormComponent action={onSubmitSearch}>
                 <div className="card-form">
                     <div className="title-area">
                         <label className="text-black large bold">
@@ -26,7 +26,7 @@ function PosPreSapienca(): React.JSX.Element {
                             Crear Pospre sapiencia<AiOutlinePlusCircle />
                         </div>
                     </div>
-                    <div className="funcionality-filters-container">
+                    <div className="pospre-sapiencia-filters">
                         <InputComponent
                             idInput="number"
                             className="input-basic"

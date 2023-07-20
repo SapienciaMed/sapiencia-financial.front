@@ -121,6 +121,7 @@ function FundsForm({ action }: IAppProps) {
                             <ButtonComponent
                                 value="Guardar"
                                 type="submit"
+                                className="button-main huge"
                             />
                         </div>
                     </FormComponent>

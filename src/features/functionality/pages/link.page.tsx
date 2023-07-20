@@ -5,7 +5,7 @@ import TabListComponent from "../../../common/components/tab-list.component";
 interface IAppProps { }
 
 function LinkPage(props: IAppProps) : React.JSX.Element {
-    const { pospre , option } = useParams();
+    const { pospre, option } = useParams();
     const { tabs, start } = useLinkData(pospre, option);
     return (
         <div className='main-page'>

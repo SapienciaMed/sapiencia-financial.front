@@ -9,3 +9,4 @@ export * from "./transfer-box.component";
 export * from "./fieldset.component";
 export * from "./input-date.component";
 export * from "./switch.component";
+export * from "./input-text-area.component";

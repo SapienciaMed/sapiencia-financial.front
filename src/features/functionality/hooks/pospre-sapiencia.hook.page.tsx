@@ -1,9 +1,7 @@
 import { useForm } from "react-hook-form";
-import { DateTime } from "luxon";
 import { pospreSapienciaValidator } from "../../../common/schemas";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
-import { AppContext } from "../../../common/contexts/app.context";
-import { useContext, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { useNavigate } from "react-router-dom";
 
@@ -11,21 +9,19 @@ interface IPospreSapienciaFilters {
     number: string
 }
 
-export function usePospreSapienciaData() {
+export function usePospreSapienciaData(pospre: string) {
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
     const resolver = useYupValidationResolver(pospreSapienciaValidator);
-    const { setMessage } = useContext(AppContext);
     const {
         handleSubmit,
         register,
         formState: { errors },
-        setValue: setValueRegister,
         reset,
     } = useForm<IPospreSapienciaFilters>({ resolver });
     const tableColumns: ITableElement<any>[] = [
         {
-            fieldName: "entity.name",
+            fieldName: "budget.number",
             header: "Codigo pospre",
         },
         {
@@ -33,11 +29,11 @@ export function usePospreSapienciaData() {
             header: "Código sapiensa"
         },
         {
-            fieldName: "number",
+            fieldName: "ejercise",
             header: "Ejercicio"
         },
         {
-            fieldName: "number",
+            fieldName: "description",
             header: "Descripción"
         },
     ];
@@ -56,5 +52,13 @@ export function usePospreSapienciaData() {
         }
     }
 
-    return { register, reset, errors, tableComponentRef, tableColumns, tableActions }
+    const onSubmitSearch = handleSubmit(async (data: IPospreSapienciaFilters) => {
+        if(pospre) loadTableData({budgetId: pospre, number: data.number});
+    });
+
+    useEffect(() => {
+        if(pospre) loadTableData({budgetId: pospre});
+    }, [pospre]);
+
+    return { register, reset, errors, tableComponentRef, tableColumns, tableActions, onSubmitSearch }
 } 
