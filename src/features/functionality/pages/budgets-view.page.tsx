@@ -15,7 +15,7 @@ import TableComponent from "../../../common/components/table.component";
 function BudgetsForm() {
   const navigate = useNavigate();
   const { id: budgetsId } = useParams();
-  const { tableComponentRef, tableColumnsEdit, tableActions, vinculateActivities } =
+  const { tableComponentRef, tableColumnsEdit, tableActions,loadTableData, vinculateActivities } =
     useVinculationMGAData(budgetsId);
   const {
     register,
@@ -30,7 +30,7 @@ function BudgetsForm() {
     confirmClose,
     onCancelNew,
     onCancelEdit,
-  } = useBudgetsCrudData(budgetsId);
+  } = useBudgetsCrudData(budgetsId,vinculateActivities,loadTableData);
   return (
     <div className="crud-page full-height">
       <div className="main-page full-height">
@@ -136,7 +136,7 @@ function BudgetsForm() {
           </span>
           <ButtonComponent
             className="button-main huge hover-three"
-            value="Guardar"
+            value="Aceptar"
             type="button"
             form="budgets-form"
             action={() => {

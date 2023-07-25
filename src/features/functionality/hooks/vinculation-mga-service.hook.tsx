@@ -23,7 +23,6 @@ export function useVinculationService() {
     }
 
     async function DeleteVinculation(id:number , activities: number[]): Promise<ApiResponse<boolean>> {
-        debugger;
         const endpoint: string = "/delete";
         const data = {
             budgetId : id,

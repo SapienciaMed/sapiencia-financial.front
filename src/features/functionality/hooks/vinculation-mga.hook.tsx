@@ -226,7 +226,6 @@ export function useVinculationMGAData(pospre: string) {
     }
 
     const onSubmit = handleSubmit(async (data: IVinculationMGAFilters) => {
-        debugger;
         loadTableData({mgaId: data.number, budgetId:pospre  });
     });
 

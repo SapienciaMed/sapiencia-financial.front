@@ -63,7 +63,7 @@ function VinculationMGA(): React.JSX.Element {
             </div>
             <div className="container-button-bot">
                 <div className="buttons-bot">
-                    <span className="bold text-center button" onClick={() => { navigate("./../"); }}>
+                    <span className="bold text-center button" onClick={() => { navigate("./../../../"); }}>
                         Cancelar
                     </span>
                     <ButtonComponent
