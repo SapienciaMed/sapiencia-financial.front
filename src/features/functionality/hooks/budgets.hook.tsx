@@ -11,8 +11,9 @@ import { IDropdownProps } from "../../../common/interfaces/select.interface";
 import { useEntitiesService } from "./entities-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import { IEntities } from "../interfaces/Entities";
+import BudgetsPage from "../pages/budgets-view.page";
 
-export function useFoundData() {
+export function useBudgetsData() {
     const tableComponentRef = useRef(null);
     const { setMessage } = useContext(AppContext);
     const navigate = useNavigate();
@@ -51,35 +52,7 @@ export function useFoundData() {
         {
             icon: "Detail",
             onClick: (row) => {
-                const rows = [
-                    {
-                        title: "Entidad CP",
-                        value: `${row.entity.name}`
-                    },
-                    {
-                        title: "Ejercicio",
-                        value: `${row.ejercise}`
-                    },
-                    {
-                        title: "Posición presupuestaria",
-                        value: `${row.number}`
-                    },
-                    {
-                        title: "Denominación",
-                        value: `${row.denomination}`
-                    },
-                    {
-                        title: "Descripción",
-                        value: `${row.description}`
-                    }
-                ]
-                setMessage({
-                    title: "Detalle posición presupuestaria ",
-                    show: true,
-                    OkTitle: "Aceptar",
-                    description: <DetailsComponent rows={rows} />,
-                    background: true
-                })
+                navigate(`./view/${row.id}`);
             },
         },
         {

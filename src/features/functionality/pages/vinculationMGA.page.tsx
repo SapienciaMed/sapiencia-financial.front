@@ -4,18 +4,23 @@ import { AiOutlinePlusCircle } from "react-icons/ai";
 import { EDirection } from "../../../common/constants/input.enum";
 import { useVinculationMGAData } from "../hooks/vinculation-mga.hook";
 import TableComponent from "../../../common/components/table.component";
+import { useEffect } from "react";
 
 
 function VinculationMGA(): React.JSX.Element {
     const { pospre } = useParams();
     const navigate = useNavigate();
-    const { register, reset, errors, tableComponentRef, tableColumns, tableActions, vinculateActivities } = useVinculationMGAData(pospre);
+    const { register, reset, errors, tableComponentRef, tableColumns, loadTableData ,onSubmit ,tableActions, vinculateActivities } = useVinculationMGAData(pospre);
+    
+     useEffect(() => {
+         if(Number(pospre)) loadTableData({budgetId: Number(pospre)});
+     }, [pospre])
     return (
         <div>
             <div className="title-area">
                 <div className="text-black extra-large bold">Vinculación MGA</div>
             </div>
-            <FormComponent action={undefined}>
+            <FormComponent action={onSubmit}>
                 <div className="card-form">
                     <div className="title-area">
                         <label className="text-black large bold">
@@ -47,7 +52,7 @@ function VinculationMGA(): React.JSX.Element {
                         type="submit"
                     />
                 </div>
-            </FormComponent>
+            
             <div className="card-form">
                 <TableComponent
                     ref={tableComponentRef}
@@ -65,10 +70,11 @@ function VinculationMGA(): React.JSX.Element {
                         className="button-main huge hover-three"
                         value="Guardar"
                         type="button"
-                        action={vinculateActivities}
+                        action={()=>{vinculateActivities(true)}}
                     />
                 </div>
             </div>
+            </FormComponent>
         </div>
     )
 }

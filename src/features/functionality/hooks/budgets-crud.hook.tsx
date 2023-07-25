@@ -20,7 +20,7 @@ interface IBudgetsCrudForm {
     description: string;
 }
 
-export function useBudgetsCrudData(budgetsId: string) {
+export function useBudgetsCrudData(budgetsId: string,vinculateActivities?: () => Promise<void>,loadTableData?: (searchCriteria?: object) => void) {
     const [budgetsData, setBudgetsData] = useState<IBudgets>(null);
     const [entitySelected, setEntitySelected] = useState(null);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
@@ -37,6 +37,10 @@ export function useBudgetsCrudData(budgetsId: string) {
         reset,
     } = useForm<IBudgetsCrudForm>({ resolver });
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if(Number(budgetsId)) loadTableData({budgetId: Number(budgetsId),active:true});
+    }, [budgetsId])
 
     useEffect(() => {
         GetEntities().then(response => {
@@ -116,6 +120,7 @@ export function useBudgetsCrudData(budgetsId: string) {
             userCreate: authorization.user.numberDocument,
             ejercise: data.ejercise,
         }
+        vinculateActivities && await vinculateActivities();
         UpdateBudgets(parseInt(budgetsId), insertData).then(response => {
             if (response.operation.code === EResponseCodes.OK) {
                 setMessage({

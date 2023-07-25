@@ -11,14 +11,11 @@ import { useBudgetsCrudData } from "../hooks/budgets-crud.hook";
 import { useParams, useNavigate } from "react-router-dom";
 import TableComponent from "../../../common/components/table.component";
 
-interface IAppProps {
-  action: "new" | "edit";
-}
 
-function BudgetsForm({ action }: IAppProps) {
+function BudgetsForm() {
   const navigate = useNavigate();
   const { id: budgetsId } = useParams();
-  const { tableComponentRef, tableColumns, tableActions, vinculateActivities, loadTableData } =
+  const { tableComponentRef, tableColumnsEdit, tableActions, vinculateActivities } =
     useVinculationMGAData(budgetsId);
   const {
     register,
@@ -33,21 +30,19 @@ function BudgetsForm({ action }: IAppProps) {
     confirmClose,
     onCancelNew,
     onCancelEdit,
-  } = useBudgetsCrudData(budgetsId,vinculateActivities,loadTableData);
+  } = useBudgetsCrudData(budgetsId);
   return (
     <div className="crud-page full-height">
       <div className="main-page full-height">
         <div className="card-table">
           <div className="title-area">
             <div className="text-black extra-large bold">
-              {action === "new"
-                ? "Crear Posición Presupuestaria"
-                : "Editar Posición Presupuestaria "}
+              {"Ver Detalle Posición Presupuestaria "}
             </div>
           </div>
 
           <FormComponent
-            action={action === "new" ? onSubmitNewBudgets : onSubmitEditBudgets}
+            action={"undefined"}
             className="funds-form"
             id="budgets-form"
           >
@@ -60,6 +55,7 @@ function BudgetsForm({ action }: IAppProps) {
                   errors={errors}
                   label="Posicion Presupuestaria"
                   classNameLabel="text-black biggest bold"
+                  disabled={true}
                 />
 
                 <InputComponent
@@ -70,6 +66,7 @@ function BudgetsForm({ action }: IAppProps) {
                   label="Ejercicio"
                   classNameLabel="text-black biggest bold"
                   direction={EDirection.row}
+                  disabled={true}
                   errors={errors}
                 />
 
@@ -83,10 +80,12 @@ function BudgetsForm({ action }: IAppProps) {
                   classNameLabel="text-black biggest bold"
                   direction={EDirection.row}
                   data={entitiesData}
+                  disabled={true}
                   stateProps={{
                     state: entitySelected,
                     setState: setEntitySelected,
                   }}
+                  
                 />
               </div>
             </div>
@@ -102,6 +101,7 @@ function BudgetsForm({ action }: IAppProps) {
                   errors={errors}
                   label="Denominación"
                   classNameLabel="text-black biggest bold"
+                  disabled={true}
                 />
               </div>
               <div className="fund-denomination-container">
@@ -112,53 +112,39 @@ function BudgetsForm({ action }: IAppProps) {
                   errors={errors}
                   label="Descripción"
                   classNameLabel="text-black biggest bold"
+                  disabled={true}
                 />
               </div>
             </div>
-                {action ==="new" ? <></> : 
-                    <div>
-                    <div className="card-form">
+                <div>
+                  <div className="card-form">
                     <TableComponent
-                        ref={tableComponentRef}
-                        url={`${process.env.urlApiFinancial}/api/v1/vinculation-mga/get-paginated`}
-                        columns={tableColumns}
-                        actions={tableActions}
-                        isShowModal={false}
+                      ref={tableComponentRef}
+                      url={`${process.env.urlApiFinancial}/api/v1/vinculation-mga/get-paginated`}
+                      columns={tableColumnsEdit}
+                      actions={tableActions}
+                      isShowModal={false}
                     />
-                    </div>
+                  </div>
                 </div>
-                }
-            <div className="mobile-actions mobile">
-              <span
-                className="bold text-center button"
-                onClick={() => {
-                  confirmClose(action === "new" ? onCancelNew : onCancelEdit);
-                }}
-              >
-                Cancelar
-              </span>
-              <ButtonComponent value="Guardar" type="submit" />
-            </div>
           </FormComponent>
         </div>
-      </div>
-      <div className="container-button-bot">
+        <div className="container-button-bot">
         <div className="buttons-bot">
           <span
-            className="bold text-center button"
-            onClick={() => {
-              confirmClose(action === "new" ? onCancelNew : onCancelEdit);
-            }}
-          >
-            Cancelar
+            className="bold text-center button" >
           </span>
           <ButtonComponent
             className="button-main huge hover-three"
             value="Guardar"
-            type="submit"
+            type="button"
             form="budgets-form"
+            action={() => {
+                navigate("./../..")
+              }}
           />
         </div>
+      </div>
       </div>
     </div>
   );

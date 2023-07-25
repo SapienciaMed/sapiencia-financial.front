@@ -1,12 +1,12 @@
 import { FormComponent, InputComponent, SelectComponent, ButtonComponent} from "../../../common/components/Form";
 import TableComponent from "../../../common/components/table.component";
 import { EDirection } from "../../../common/constants/input.enum";
-import { useFoundData } from "../hooks/budgets.hook";
+import { useBudgetsData } from "../hooks/budgets.hook";
 import {AiOutlinePlusCircle} from "react-icons/ai";
 interface IAppProps { }
 
 function BudgetsPage(props: IAppProps): React.JSX.Element {
-const { tableActions, tableColumns, tableComponentRef,navigate, onSubmit, register, errors, setValueRegister, reset, entitySelected, setEntitySelected,entitiesData } = useFoundData();
+const { tableActions, tableColumns, tableComponentRef,navigate, onSubmit, register, errors, setValueRegister, reset, entitySelected, setEntitySelected,entitiesData } = useBudgetsData();
 return (
         <div>
             <FormComponent action={onSubmit}>

@@ -16,6 +16,7 @@ interface ISelectProps<T> {
   data?: Array<IDropdownProps>;
   value?: string;
   label?: string;
+  disabled?: boolean;
   classNameLabel?: string;
   direction?: EDirection;
   children?: React.JSX.Element | React.JSX.Element[];
@@ -33,6 +34,7 @@ interface ISelectElementProps<T> {
   placeholder?: string;
   data?: Array<IDropdownProps>;
   value?: string;
+  disabled?: boolean;
   register?: UseFormRegister<T>;
   getValueRegister? : UseFormGetValues<T>;
   setValueRegister?: UseFormSetValue<T>;
@@ -61,6 +63,7 @@ function SelectElement({
   placeholder,
   data,
   value,
+  disabled,
   register,
   setValueRegister,
   getValueRegister,
@@ -92,7 +95,7 @@ function SelectElement({
         }
         stateProps ? stateProps.setState(e.value) : setSelected(e.value);
       }} options={data} optionLabel="name"
-        placeholder={placeholder} className={className} />
+        placeholder={placeholder} className={className} disabled={disabled} />
     </div>
   );
 }
@@ -108,6 +111,7 @@ export function SelectComponent({
   data = [{} as IDropdownProps],
   value = null,
   label,
+  disabled,
   classNameLabel = "text-main",
   direction = EDirection.column,
   children,
@@ -134,7 +138,7 @@ export function SelectComponent({
         classNameLabel={classNameLabel}
       />
       <div>
-        <SelectElement idInput={idInput} className={className} setValue={setValue} placeholder={placeholder} data={data} change={change} value={value} register={register} getValueRegister={getValueRegister} setValueRegister={setValueRegister} stateProps={stateProps} />
+        <SelectElement idInput={idInput} className={className} setValue={setValue} placeholder={placeholder} data={data} change={change} value={value} register={register} disabled={disabled} getValueRegister={getValueRegister} setValueRegister={setValueRegister} stateProps={stateProps} />
         {errors[idInput]?.message && <span className="icon-error"></span>}
       </div>
       {errors[idInput]?.message && (

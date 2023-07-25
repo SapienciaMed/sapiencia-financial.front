@@ -53,6 +53,7 @@ export function useVinculationMGAData(pospre: string) {
             fieldName: "id",
             header: "Vincular",
             renderCell:(row) => {
+                console.log(row);
                 return <SwitchComponent idInput={`checkRow${row.id}`} value={row.vinculation ? true : false } onChange={(e) => {
                     if(e.value === true) {
                         const activityLink = activitiesLink.find(activity => activity == row.id)
@@ -81,6 +82,25 @@ export function useVinculationMGAData(pospre: string) {
                     }
                 }} /> 
             }
+        },
+    ];
+
+    const tableColumnsEdit: ITableElement<IActivityMGA>[] = [
+        {
+            fieldName: "id",
+            header: "Codigo",
+        },
+        {
+            fieldName: "unit",
+            header: "Unidad de medida"
+        },
+        {
+            fieldName: "quantity",
+            header: "Cantidad"
+        },
+        {
+            fieldName: "cost",
+            header: "Costo"
         },
     ];
    
@@ -136,32 +156,21 @@ export function useVinculationMGAData(pospre: string) {
         }
     }
 
-    useEffect(() => {
-        if(Number(pospre)) loadTableData({budgetId: Number(pospre)});
-    }, [pospre])
-
-    async function vinculateActivities() {
-        const res = await actionsVinculated();
-        if(res){
-            console.log("OK")
-        }else {
-            console.log("chulo")
-        }
-        console.log(activitiesLink,activitiesUnLink);
-    };
+    // useEffect(() => {
+    //     if(Number(pospre)) loadTableData({budgetId: Number(pospre)});
+    // }, [pospre])
 
     const onNew = () => {
         navigate("./../../../");
     };
 
-    async function actionsVinculated():Promise<boolean> {
+    async function vinculateActivities(message?:boolean):Promise<void> {
 
         let status = true;
         if(activitiesUnLink){
             const res = await DeleteVinculation(Number(pospre),activitiesUnLink);
             if(res.operation.code != EResponseCodes.OK){
-
-                setMessage({
+                    message && setMessage({
                     title: "Hubo un problema...",
                     description: res.operation.message,
                     show: true,
@@ -173,7 +182,7 @@ export function useVinculationMGAData(pospre: string) {
                 });
                 status = false;
             }else {
-                setMessage({
+                message && setMessage({
                     title: "Vinculación MGA",
                     description: "Se ha Eliminado la vinculación MGA exitosamente",
                     show: true,
@@ -190,7 +199,7 @@ export function useVinculationMGAData(pospre: string) {
             const res = await CreateVinculation(Number(pospre), activitiesLink);
             if(res.operation.code != EResponseCodes.OK){
                 status = false;
-                setMessage({
+                message && setMessage({
                     title: "Hubo un problema...",
                     description: res.operation.message,
                     show: true,
@@ -201,7 +210,7 @@ export function useVinculationMGAData(pospre: string) {
                     background: true
                 });
             } else {
-                setMessage({
+                message && setMessage({
                     title: "Vinculación MGA",
                     description: "Se ha creado la vinculación MGA exitosamente",
                     show: true,
@@ -214,8 +223,12 @@ export function useVinculationMGAData(pospre: string) {
                 });
             }
         }
-        return status;
     }
 
-    return { register, reset, errors, tableComponentRef, tableColumns, tableActions, vinculateActivities }
+    const onSubmit = handleSubmit(async (data: IVinculationMGAFilters) => {
+        debugger;
+        loadTableData({mgaId: data.number, budgetId:pospre  });
+    });
+
+    return { register, reset, errors, tableComponentRef, tableColumns ,onSubmit, tableActions,tableColumnsEdit, vinculateActivities,loadTableData }
 } 

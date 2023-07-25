@@ -13,6 +13,7 @@ const FundsCrud = lazy(() => import("./features/functionality/pages/funds-crud.p
 const BudgetsCrud = lazy(()  => import("./features/functionality/pages/budgets-crud.page"));
 const Link = lazy(()  => import("./features/functionality/pages/link.page"));
 const PosPreSapienciaForm = lazy(()  => import("./features/functionality/pages/pospre-sapiencia-crud.page"));
+const BudgetsView = lazy(()  => import("./features/functionality/pages/budgets-view.page"));
 
 function App() {
   return (
@@ -37,6 +38,8 @@ function App() {
 
               <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/vinculacion/:pospre/pospre-sapiencia/create"} element={<PosPreSapienciaForm action="new"/>} />
               <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/vinculacion/:pospre/pospre-sapiencia/edit/:id"} element={<PosPreSapienciaForm action="edit" />} />
+              <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/view/:id"} element={<BudgetsView/>} />
+
             </Routes>
           </Suspense>
         </Router>
