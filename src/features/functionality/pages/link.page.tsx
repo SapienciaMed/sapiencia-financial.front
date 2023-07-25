@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useLinkData } from "../hooks/link.hook.";
+import { useLinkData } from "../hooks/link.hook";
 import TabListComponent from "../../../common/components/tab-list.component";
 
 interface IAppProps { }

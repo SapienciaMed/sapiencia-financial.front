@@ -12,6 +12,7 @@ const Functionality = lazy(() => import("./features/functionality/pages/function
 const FundsCrud = lazy(() => import("./features/functionality/pages/funds-crud.page"));
 const BudgetsCrud = lazy(()  => import("./features/functionality/pages/budgets-crud.page"));
 const Link = lazy(()  => import("./features/functionality/pages/link.page"));
+const FunctionalAreaCrudPage = lazy(()  => import("./features/functionality/pages/functional-area-crud.page"));
 const PosPreSapienciaForm = lazy(()  => import("./features/functionality/pages/pospre-sapiencia-crud.page"));
 const BudgetsView = lazy(()  => import("./features/functionality/pages/budgets-view.page"));
 
@@ -39,6 +40,10 @@ function App() {
               <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/vinculacion/:pospre/pospre-sapiencia/create"} element={<PosPreSapienciaForm action="new"/>} />
               <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/vinculacion/:pospre/pospre-sapiencia/edit/:id"} element={<PosPreSapienciaForm action="edit" />} />
               <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/view/:id"} element={<BudgetsView/>} />
+
+              <Route path={"/gestion-financiera/funcionalidad/area-funcional/create"} element={<FunctionalAreaCrudPage action="new"/>} />
+              <Route path={"/gestion-financiera/funcionalidad/area-funcional/edit/:id"} element={<FunctionalAreaCrudPage action="edit"/>} />
+              <Route path={"/gestion-financiera/funcionalidad/area-funcional/view/:id"} element={<FunctionalAreaCrudPage action="view"/>} />
 
             </Routes>
           </Suspense>

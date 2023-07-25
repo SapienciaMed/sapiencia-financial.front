@@ -4,6 +4,7 @@ import TableComponent from "../../../common/components/table.component";
 import { EDirection } from "../../../common/constants/input.enum";
 import { useFundsData } from "../hooks/funds.hook";
 import { Controller } from "react-hook-form";
+import React from "react";
 
 interface IAppProps { }
 
@@ -111,4 +112,4 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
     )
 }
 
-export default FoundsPage;
+export default React.memo(FoundsPage);
