@@ -19,6 +19,7 @@ interface IVinculationMGAFilters {
 
 export function useVinculationMGAData(pospre: string) {
     const navigate = useNavigate();
+    const [lastMove,setLastMove] = useState([]);
     const tableComponentRef = useRef(null);
     const {CreateVinculation,DeleteVinculation} = useVinculationService();
     const resolver = useYupValidationResolver(vinculationValidator);
@@ -53,9 +54,11 @@ export function useVinculationMGAData(pospre: string) {
             fieldName: "id",
             header: "Vincular",
             renderCell:(row) => {
+                
                 console.log(row);
                 return <SwitchComponent idInput={`checkRow${row.id}`} value={row.vinculation ? true : false } onChange={(e) => {
                     if(e.value === true) {
+                        setLastMove([...lastMove,{id:row}])
                         const activityLink = activitiesLink.find(activity => activity == row.id)
                         if(!activityLink){
                            const array = activitiesLink;
@@ -68,6 +71,15 @@ export function useVinculationMGAData(pospre: string) {
                            setActivitiesUnLink(array);
                         }
                     } else {
+                        const auxLast = lastMove;
+                        if (auxLast.findIndex((value)=>{
+                            value.id == row.id;}))
+                        {
+                            auxLast.splice(auxLast.findIndex((value)=>{
+                                value.id == row.id;
+                            }),1)
+                            setLastMove(auxLast);
+                        }
                         const activityUnLink = activitiesUnLink.find(activity => activity == row.id)
                         if(!activityUnLink){
                             const array = activitiesUnLink;
@@ -181,18 +193,6 @@ export function useVinculationMGAData(pospre: string) {
                     background: true
                 });
                 status = false;
-            }else {
-                message && setMessage({
-                    title: "Vinculación MGA",
-                    description: "Se ha Eliminado la vinculación MGA exitosamente",
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        onNew();
-                        setMessage({});
-                    },
-                    background: true
-                });
             }
         }
         if(status && activitiesLink){
@@ -209,19 +209,34 @@ export function useVinculationMGAData(pospre: string) {
                     },
                     background: true
                 });
-            } else {
-                message && setMessage({
-                    title: "Vinculación MGA",
-                    description: "Se ha creado la vinculación MGA exitosamente",
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        onNew();
-                        setMessage({});
-                    },
-                    background: true
-                });
-            }
+            } 
+        }
+        console.log(lastMove);
+        if (lastMove.length <= 0) {
+            
+            message && setMessage({
+                title: "Vinculación MGA",
+                description: "Se ha Eliminado la vinculación MGA exitosamente",
+                show: true,
+                OkTitle: "Aceptar",
+                onOk: () => {
+                    onNew();
+                    setMessage({});
+                },
+                background: true
+            });
+        } else {
+            message && setMessage({
+                title: "Vinculación MGA",
+                description: "Se ha creado la vinculación MGA exitosamente",
+                show: true,
+                OkTitle: "Aceptar",
+                onOk: () => {
+                    onNew();
+                    setMessage({});
+                },
+                background: true
+            });
         }
     }
 
