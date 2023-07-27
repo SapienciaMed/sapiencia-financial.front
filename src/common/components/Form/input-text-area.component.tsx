@@ -21,8 +21,9 @@ interface IInputProps<T> {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   id?: string;
   fieldArray?: boolean;
-  rows?:number;
-  cols?:number;
+  rows?: number;
+  cols?: number;
+  optionsRegister?: {};
 }
 
 function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
@@ -47,11 +48,12 @@ function TextAreaElement({
   defaultValue,
   id,
   rows,
-  cols
+  cols,
+  optionsRegister = {},
 }): React.JSX.Element {
   return (
     <textarea
-      {...(register ? register(idInput) : {})}
+      {...(register ? register(idInput, optionsRegister) : {})}
       id={id}
       name={idInput}
       className={className}
@@ -83,7 +85,8 @@ export function TextAreaComponent({
   id,
   fieldArray,
   rows,
-  cols
+  cols,
+  optionsRegister = {},
 }: IInputProps<any>): React.JSX.Element {
   const messageError = () => {
     const keysError = idInput.split(".");
@@ -126,6 +129,7 @@ export function TextAreaComponent({
           id={id}
           rows={rows}
           cols={cols}
+          optionsRegister={optionsRegister}
         />
         {messageError() && (
           <MdOutlineError

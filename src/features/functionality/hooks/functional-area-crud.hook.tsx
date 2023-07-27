@@ -41,7 +41,7 @@ export function useFunctionalAreaCrudData(id: string) {
 
     const confirmClose = (callback) =>{
         setMessage({
-            title: "Cancelar pospre sapiencia",
+            title: "Cancelar área funcional",
             description: "¿Seguro que desea cancelar la operación?",
             show: true,
             OkTitle: "Si, cancelar",

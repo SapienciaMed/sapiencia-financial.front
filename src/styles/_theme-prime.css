@@ -79,7 +79,7 @@
 }
 
 .p-icon {
-  width: 1rem;
+  width: 0.6rem;
   height: 1rem;
 }
 
@@ -320,14 +320,16 @@
 }
 
 .p-calendar.p-invalid.p-component > .p-inputtext {
-  border-color: #ced4da #ced4da #ced4da #e4677e;
+  /* border-color: #ced4da #ced4da #ced4da #e4677e; */
+  border-color: #ff0000;
 }
 
 .p-datepicker {
   padding: 0.5rem;
-  background: #ffffff;
+  background: transparent;
   color: #495057;
-  border: 1px solid #ced4da;
+  /* border: 1px solid #ced4da; */
+  border: 0 none;
   border-radius: 3px;
 }
 .p-datepicker:not(.p-datepicker-inline) {
@@ -787,7 +789,8 @@
   right: 2.357rem;
 }
 .p-dropdown.p-invalid.p-component {
-  border-color: #ced4da #ced4da #ced4da #e4677e;
+  /* border-color: #ced4da #ced4da #ced4da #e4677e; */
+  border-color: #ff0000;
 }
 
 .p-dropdown-panel {
@@ -1037,7 +1040,8 @@
 }
 
 .p-inputnumber.p-invalid.p-component > .p-inputtext {
-  border-color: #ced4da #ced4da #ced4da #e4677e;
+  /* border-color: #ced4da #ced4da #ced4da #e4677e; */
+  border-color: #ff0000;
 }
 
 .p-inputswitch {
@@ -1087,11 +1091,11 @@
   font-size: 1rem;
   color: #495057;
   background: #ffffff;
-  padding: 0.5rem 0.5rem;
-  border: 1px solid #ced4da;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #b5bac5;
   transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
   appearance: none;
-  border-radius: 3px;
+  border-radius: 6px;
 }
 .p-inputtext:enabled:hover {
   border-color: #533893;
@@ -2666,7 +2670,6 @@
   color: #000;
   background: #ffffff;
   transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
-  text-wrap: nowrap;
 }
 .p-datatable .p-datatable-tfoot > tr > td {
   text-align: center;

@@ -22,6 +22,7 @@ interface IInputProps<T> {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   id?: string;
   fieldArray?: boolean;
+  optionsRegister?: {};
 }
 
 function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
@@ -46,10 +47,11 @@ function InputElement({
   onChange,
   defaultValue,
   id,
+  optionsRegister,
 }): React.JSX.Element {
   return (
     <input
-      {...(register ? register(idInput) : {})}
+      {...(register ? register(idInput, optionsRegister) : {})}
       id={id}
       name={idInput}
       type={typeInput}
@@ -80,10 +82,13 @@ export function InputComponent({
   defaultValue,
   id,
   fieldArray,
+  optionsRegister = {},
 }: IInputProps<any>): React.JSX.Element {
   const messageError = () => {
+    console.log(fieldArray)
     const keysError = idInput.split(".");
     let errs = errors;
+
     if (fieldArray) {
       const errorKey = `${keysError[0]}[${keysError[1]}].${keysError[2]}`;
       return errors[errorKey]?.message;
@@ -121,6 +126,7 @@ export function InputComponent({
           onChange={onChange}
           defaultValue={defaultValue}
           id={id}
+          optionsRegister={optionsRegister}
         />
         {messageError() && (
           <MdOutlineError

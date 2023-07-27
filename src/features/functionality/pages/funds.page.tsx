@@ -46,41 +46,25 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
                             direction={EDirection.row}
                             errors={errors}
                         />
-                        <Controller
-                            name="dateFrom"
+                        <DatePickerComponent
+                            idInput="dateFrom"
                             control={controlRegister}
-                            render={({ field }) => (
-                                <DatePickerComponent
-                                    idInput={field.name}
-                                    value={field.value}
-                                    onchange={field.onChange}
-                                    direction={EDirection.row}
-                                    register={register}
-                                    setValueRegister={setValueRegister}
-                                    errors={errors}
-                                    className="select-basic"
-                                    label="Validez de"
-                                    classNameLabel="text-black biggest bold"
-                                />
-                            )}
+                            label={"Validez de"}
+                            errors={errors}
+                            classNameLabel="text-black biggest bold"
+                            className="dataPicker-basic"
+                            placeholder="DD/MM/YYYY"
+                            dateFormat="dd/mm/yy"
                         />
-                        <Controller
-                            name="dateTo"
+                        <DatePickerComponent
+                            idInput="dateTo"
                             control={controlRegister}
-                            render={({ field }) => (
-                                <DatePickerComponent
-                                    idInput={field.name}
-                                    value={field.value}
-                                    onchange={field.onChange}
-                                    direction={EDirection.row}
-                                    setValueRegister={setValueRegister}
-                                    register={register}
-                                    errors={errors}
-                                    className="select-basic"
-                                    label="Validez de"
-                                    classNameLabel="text-black biggest bold"
-                                />
-                            )}
+                            label={"Validez hasta"}
+                            errors={errors}
+                            classNameLabel="text-black biggest bold"
+                            className="dataPicker-basic"
+                            placeholder="DD/MM/YYYY"
+                            dateFormat="dd/mm/yy"
                         />
 
 

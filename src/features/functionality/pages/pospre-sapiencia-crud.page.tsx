@@ -1,6 +1,5 @@
 import React from "react";
-import { Controller } from "react-hook-form";
-import { ButtonComponent, DatePickerComponent, FormComponent, InputComponent, SelectComponent, TextAreaComponent } from "../../../common/components/Form";
+import { ButtonComponent, FormComponent, InputComponent, TextAreaComponent } from "../../../common/components/Form";
 import { EDirection } from "../../../common/constants/input.enum";
 import { useParams } from "react-router-dom";
 import { usePosPreSapienciaCrudData } from "../hooks/pospre-sapiencia-crud.hook";
@@ -33,6 +32,7 @@ function PosPreSapienciaForm({ action }: IAppProps) {
                                         classNameLabel="text-black biggest bold"
                                         direction={EDirection.row}
                                         errors={errors}
+                                        disabled={action === "new" ? false : true}
                                     />
                                     <InputComponent
                                         idInput="ejercise"
@@ -43,6 +43,7 @@ function PosPreSapienciaForm({ action }: IAppProps) {
                                         classNameLabel="text-black biggest bold"
                                         direction={EDirection.row}
                                         errors={errors}
+                                        disabled={action === "new" ? false : true}
                                     />
                                 </div>
                                 <div>

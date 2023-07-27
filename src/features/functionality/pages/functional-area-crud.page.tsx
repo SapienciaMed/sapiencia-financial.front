@@ -62,39 +62,61 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                                 </div>
                             </div>
                         </div>
-                        
 
-                        <div className="mobile-actions mobile">
-                            <span className="bold text-center button" onClick={() => {
-                                confirmClose(action === "new" ? onCancelNew : onCancelEdit)
-                            }}>
-                                Cancelar
-                            </span>
-                            <ButtonComponent
-                                value="Guardar"
-                                type="submit"
-                                className="button-main huge"
-                            />
-                        </div>
+                        {action === "view" ?
+                            <div className="mobile-actions mobile">
+                                <ButtonComponent
+                                    value="Guardar"
+                                    type="submit"
+                                    className="button-main huge"
+                                    action={onCancelEdit}
+                                />
+                            </div> :
+                            <div className="mobile-actions mobile">
+                                <span className="bold text-center button" onClick={() => {
+                                    confirmClose(action === "new" ? onCancelNew : onCancelEdit)
+                                }}>
+                                    Cancelar
+                                </span>
+                                <ButtonComponent
+                                    value="Guardar"
+                                    type="submit"
+                                    className="button-main huge"
+                                />
+                            </div>
+                        }
                     </FormComponent>
                 </div>
 
             </div>
-            <div className="container-button-bot">
-                <div className="buttons-bot">
-                    <span className="bold text-center button" onClick={() => {
-                        confirmClose(action === "new" ? onCancelNew : onCancelEdit)
-                    }}>
-                        Cancelar
-                    </span>
-                    <ButtonComponent
-                        className="button-main huge hover-three"
-                        value="Guardar"
-                        type="submit"
-                        form="pospre-sapiencia-form"
-                    />
+            {action === "view" ?
+                <div className="container-button-bot">
+                    <div className="buttons-bot">
+                        <ButtonComponent
+                            className="button-main huge hover-three"
+                            value="Aceptar"
+                            type="button"
+                            form="pospre-sapiencia-form"
+                            action={onCancelEdit}
+                        />
+                    </div>
+                </div> :
+                <div className="container-button-bot">
+                    <div className="buttons-bot">
+                        <span className="bold text-center button" onClick={() => {
+                            confirmClose(action === "new" ? onCancelNew : onCancelEdit)
+                        }}>
+                            Cancelar
+                        </span>
+                        <ButtonComponent
+                            className="button-main huge hover-three"
+                            value="Guardar"
+                            type="button"
+                            form="pospre-sapiencia-form"
+                        />
+                    </div>
                 </div>
-            </div>
+            }
         </div>
     );
 }

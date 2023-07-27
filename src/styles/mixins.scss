@@ -1,4 +1,10 @@
-@mixin generate-grid($columns, $column-width, $gap: null, $column-gap: null, $row-gap: null) {
+@mixin generate-grid(
+  $columns,
+  $column-width,
+  $gap: null,
+  $column-gap: null,
+  $row-gap: null
+) {
   $grid-template-columns: "";
 
   @for $i from 1 through $columns {
@@ -76,10 +82,10 @@
   width: $card-width;
   padding: $padding;
   @if $show {
-    border: 1px solid #7070701A;
+    border: 1px solid #7070701a;
     border-radius: 13px;
     box-shadow: inset 0px 3px 6px #00000029, 0px 3px 6px #00000029;
-    background: #FFFFFF 0% 0% no-repeat padding-box;
+    background: #ffffff 0% 0% no-repeat padding-box;
   } @else {
     border: 0px;
     border-radius: 0px;
@@ -88,12 +94,17 @@
   }
 }
 
-@mixin multiple-card-component($columns, $margin-horizontal, $margin-vertical, $card-height, $card-width, $padding, $cursor: null) {
+@mixin multiple-card-component(
+  $columns,
+  $margin-horizontal,
+  $margin-vertical,
+  $card-height,
+  $card-width,
+  $padding,
+  $cursor: null
+) {
   .card-body {
-    @include card-component(
-    $card-height,
-    $card-width,
-    $padding);
+    @include card-component($card-height, $card-width, $padding);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -105,7 +116,7 @@
       display: flex;
       justify-content: center;
     }
-    
+
     .card-footer {
       height: 40%;
       width: 80%;
@@ -115,7 +126,6 @@
     }
   }
 }
-
 @mixin generate-text-area(
   $width,
   $border-radius,
@@ -130,4 +140,5 @@
   background-color: $background-color;
   color: $color;
   font-size: $font-size;
+  font-family: sans-serif;
 }

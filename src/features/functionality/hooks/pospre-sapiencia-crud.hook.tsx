@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { DateTime } from "luxon";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { pospreSapienciaCrudValidator } from "../../../common/schemas";
 import { useContext, useEffect } from "react";
@@ -33,7 +32,6 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
 
     useEffect(() => {
         GetBudgets(Number(pospre)).then(response => {
-            console.log("hola")
             if(response.operation.code === EResponseCodes.OK) {
                 setValueRegister("assignedTo", response.data.number.toString())
             } else {

@@ -8,7 +8,7 @@ import React, {
 import { ITableAction, ITableElement } from "../interfaces/table.interfaces";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { DataView } from 'primereact/dataview';
+import { DataView } from "primereact/dataview";
 import {
   Paginator,
   PaginatorCurrentPageReportOptions,
@@ -30,12 +30,13 @@ import { AppContext } from "../contexts/app.context";
 
 interface IProps<T> {
   url: string;
+  emptyMessage?: string;
   title?: string;
   columns: ITableElement<T>[];
   actions?: ITableAction<T>[];
   searchItems?: object;
-  isShowModal: boolean,
-  titleMessageModalNoResult?: string
+  isShowModal: boolean;
+  titleMessageModalNoResult?: string;
 }
 
 interface IRef {
@@ -43,7 +44,15 @@ interface IRef {
 }
 
 const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
-  const { title, columns, actions, url, titleMessageModalNoResult, isShowModal } = props;
+  const {
+    title,
+    columns,
+    actions,
+    url,
+    titleMessageModalNoResult,
+    isShowModal,
+    emptyMessage = "No hay resultados.",
+  } = props;
 
   // States
   const [charged, setCharged] = useState<boolean>(false);
@@ -53,7 +62,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
   const [page, setPage] = useState<number>(0);
   const [first, setFirst] = useState<number>(0);
   const [searchCriteria, setSearchCriteria] = useState<object>();
-  const { width } = useWidth()
+  const { width } = useWidth();
   const { setMessage } = useContext(AppContext);
 
   const token = localStorage.getItem("token");
@@ -88,12 +97,12 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
     }
     if (res.data.array.length <= 0 && isShowModal) {
       setMessage({
-        title: `${titleMessageModalNoResult || ''}`,
+        title: `${titleMessageModalNoResult || ""}`,
         show: true,
-        description: 'No hay resultado para la búsqueda',
+        description: "No hay resultado para la búsqueda",
         OkTitle: "Aceptar",
         background: true,
-      })
+      });
     }
     setLoading(false);
   }
@@ -121,14 +130,18 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
     return (
       <div className="card-grid-item">
         <div className="card-header">
-          {columns.map(column => {
+          {columns.map((column) => {
             return (
               <div key={item} className="item-value-container">
                 <p className="text-black bold">{column.header}</p>
-                <p> { column.renderCell ? column.renderCell(item) : item[column.fieldName] } </p>
-                
+                <p>
+                  {" "}
+                  {column.renderCell
+                    ? column.renderCell(item)
+                    : item[column.fieldName]}{" "}
+                </p>
               </div>
-            )
+            );
           })}
         </div>
         <div className="card-footer">
@@ -156,38 +169,42 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
         leftContent={leftContent}
       />
 
-      {
-        width > 830 ?
-          <DataTable
-            className="spc-table full-height"
-            value={resultData?.array || []}
-            loading={loading}
-            scrollable={true}
-          >
-            {columns.map((col) => (
-              <Column
-                key={col.fieldName}
-                field={col.fieldName}
-                header={col.header}
-                body={col.renderCell}
-              />
-            ))}
+      {width > 830 ? (
+        <DataTable
+          className="spc-table full-height"
+          value={resultData?.array || []}
+          loading={loading}
+          scrollable={true}
+          emptyMessage={emptyMessage}
+        >
+          {columns.map((col) => (
+            <Column
+              key={col.fieldName}
+              field={col.fieldName}
+              header={col.header}
+              body={col.renderCell}
+            />
+          ))}
 
-            {actions && (
-              <Column
-                className="spc-table-actions"
-                header={
-                  <div>
-                    <div className="spc-header-title">Acciones</div>
-                  </div>
-                }
-                body={(row) => <ActionComponent row={row} actions={actions} />}
-              />
-            )}
-          </DataTable>
-          :
-          <DataView value={resultData?.array || []} itemTemplate={mobilTemplate} rows={5} />
-      }
+          {actions && (
+            <Column
+              className="spc-table-actions"
+              header={
+                <div>
+                  <div className="spc-header-title">Acciones</div>
+                </div>
+              }
+              body={(row) => <ActionComponent row={row} actions={actions} />}
+            />
+          )}
+        </DataTable>
+      ) : (
+        <DataView
+          value={resultData?.array || []}
+          itemTemplate={mobilTemplate}
+          rows={5}
+        />
+      )}
       <Paginator
         className="spc-table-paginator"
         template={paginatorFooter}
@@ -200,12 +217,15 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
   );
 });
 
-
 // Metodo que retorna el icono o nombre de la accion
 function getIconElement(icon: string, element: "name" | "src") {
   switch (icon) {
     case "Detail":
-      return element == "name" ? "Detalle" : <Icons.FaEye className="button grid-button button-detail" />;
+      return element == "name" ? (
+        "Detalle"
+      ) : (
+        <Icons.FaEye className="button grid-button button-detail" />
+      );
     case "Edit":
       return element == "name" ? (
         "Editar"
@@ -218,18 +238,16 @@ function getIconElement(icon: string, element: "name" | "src") {
       ) : (
         <Icons.FaTrashAlt className="button grid-button button-delete" />
       );
-    case "Link":
-      return element == "name" ? (
-        "Vincular"
-      ) : (
-        <Icons.FaLink className="button grid-button button-link" />
-      );
     default:
       return "";
   }
 }
 
-const leftContent = <p className="header-information text-black bold biggest">Resultados de búsqueda</p>
+const leftContent = (
+  <p className="header-information text-black bold biggest">
+    Resultados de búsqueda
+  </p>
+);
 
 const paginatorHeader: PaginatorTemplateOptions = {
   layout: "CurrentPageReport RowsPerPageDropdown",
@@ -237,7 +255,7 @@ const paginatorHeader: PaginatorTemplateOptions = {
     return (
       <>
         <p className="header-information text-black bold big">
-          Total de resultados 
+          Total de resultados
         </p>
         <p className="header-information text-three bold big">
           {options.totalRecords}
@@ -250,15 +268,20 @@ const paginatorHeader: PaginatorTemplateOptions = {
       { label: 10, value: 10 },
       { label: 30, value: 30 },
       { label: 50, value: 50 },
-      { label: 100, value: 100 }
+      { label: 100, value: 100 },
     ];
 
     return (
       <React.Fragment>
         <p className="header-information text-black bold big">
-          Registros por página{' '}
+          Registros por página{" "}
         </p>
-        <Dropdown value={options.value} className="header-information" options={dropdownOptions} onChange={options.onChange} />
+        <Dropdown
+          value={options.value}
+          className="header-information"
+          options={dropdownOptions}
+          onChange={options.onChange}
+        />
       </React.Fragment>
     );
   },
@@ -319,7 +342,10 @@ const paginatorFooter: PaginatorTemplateOptions = {
 };
 
 // Metodo que genera el elemento del icono
-const ActionComponent = (props: { row: any, actions: ITableAction<any>[] }): React.JSX.Element => {
+const ActionComponent = (props: {
+  row: any;
+  actions: ITableAction<any>[];
+}): React.JSX.Element => {
   return (
     <div className="spc-table-action-button">
       {props.actions.map((action) => (
