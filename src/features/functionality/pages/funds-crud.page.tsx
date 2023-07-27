@@ -82,7 +82,7 @@ function FundsForm({ action }: IAppProps) {
                                     label={"Validez de"}
                                     errors={errors}
                                     classNameLabel="text-black biggest bold"
-                                    className="select-basic"
+                                    className="dataPicker-basic"
                                     placeholder="DD/MM/YYYY"
                                     dateFormat="dd/mm/yy"
                                 />
@@ -92,7 +92,7 @@ function FundsForm({ action }: IAppProps) {
                                     label={"Validez hasta"}
                                     errors={errors}
                                     classNameLabel="text-black biggest bold"
-                                    className="select-basic"
+                                    className="dataPicker-basic"
                                     placeholder="DD/MM/YYYY"
                                     dateFormat="dd/mm/yy"
                                 />
