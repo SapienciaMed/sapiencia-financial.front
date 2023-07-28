@@ -3,6 +3,8 @@ import TabListComponent from '../../../common/components/tab-list.component';
 import { ITabsMenuTemplate } from '../../../common/interfaces/tabs-menu.interface';
 import FoundsPage from './funds.page';
 import BudgetsPage from './budgets.page';
+import FunctionalAreaPage from './functional-area.page';
+import React from 'react';
 
 interface IAppProps { }
 
@@ -12,8 +14,7 @@ function FunctionalityPage(props: IAppProps): React.JSX.Element {
     const tabs: ITabsMenuTemplate[] = [
         { id: "fondos", title: "Fondos", content: <FoundsPage/>, action: () => { navigate("/gestion-financiera/funcionalidad/fondos") } },
         { id: "posicion-presupuestal", title: "Posición presupuestal", content: <BudgetsPage/>, action: () => { navigate("/gestion-financiera/funcionalidad/posicion-presupuestal") } },
-        { id: "proyectos", title: "Proyectos", content: <>aqui va tu pagina c:</>, action: () => { navigate("/gestion-financiera/funcionalidad/proyectos") } },
-        { id: "area-funcional", title: "Area funcional", content: <>aqui va tu pagina c:</>, action: () => { navigate("/gestion-financiera/funcionalidad/area-funcional") } },
+        { id: "area-funcional", title: "Área funcional", content: <FunctionalAreaPage />, action: () => { navigate("/gestion-financiera/funcionalidad/area-funcional") } },
     ];
     const start = tabs.find((tab) => tab.id.toString().toLowerCase() === option?.toLowerCase());
     return (
@@ -28,4 +29,4 @@ function FunctionalityPage(props: IAppProps): React.JSX.Element {
     )
 }
 
-export default FunctionalityPage;
+export default React.memo(FunctionalityPage);

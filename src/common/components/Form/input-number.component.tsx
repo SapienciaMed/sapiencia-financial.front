@@ -1,14 +1,13 @@
 import React from "react";
 import { EDirection } from "../../constants/input.enum";
 import { LabelComponent } from "./label.component";
-import { Controller, Control } from "react-hook-form";
-import { Calendar } from "primereact/calendar";
-import { IoCalendarOutline } from "react-icons/io5";
 
-interface IDateProps<T> {
+import { Control, Controller } from "react-hook-form";
+import { InputNumber } from "primereact/inputnumber";
+
+interface IInputnumber<T> {
   idInput: string;
   control: Control<any>;
-  dateFormat: string;
   className?: string;
   placeholder?: string;
   label?: string | React.JSX.Element;
@@ -17,9 +16,17 @@ interface IDateProps<T> {
   children?: React.JSX.Element | React.JSX.Element[];
   errors?: any;
   disabled?: boolean;
-  maxDate?: Date;
-  minDate?: Date;
   fieldArray?: boolean;
+  mode?: "decimal" | "currency";
+  minFractionDigits?: number;
+  maxFractionDigits?: number;
+  prefix?: string;
+  suffix?: string;
+  currency?: string;
+  locale?: string;
+  min?: number;
+  max?: number;
+  optionsRegister?: {};
 }
 
 function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
@@ -33,22 +40,29 @@ function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
   );
 }
 
-export function DatePickerComponent({
+export function InputNumberComponent({
   idInput,
-  className = "dataPicker-basic",
-  placeholder = "DD/MM/AAAA",
+  control,
+  className = "select-basic",
+  placeholder = "00",
   label,
   classNameLabel = "text-main",
   direction = EDirection.column,
   children,
   errors = {},
-  maxDate,
-  minDate,
-  fieldArray,
-  control,
-  dateFormat,
   disabled,
-}: IDateProps<any>): React.JSX.Element {
+  fieldArray,
+  mode,
+  minFractionDigits,
+  maxFractionDigits,
+  prefix,
+  suffix,
+  currency,
+  locale,
+  min,
+  max,
+  optionsRegister,
+}: IInputnumber<any>): React.JSX.Element {
   const messageError = () => {
     const keysError = idInput.split(".");
     let errs = errors;
@@ -81,30 +95,27 @@ export function DatePickerComponent({
         <Controller
           name={idInput}
           control={control}
+          rules={optionsRegister}
           render={({ field }) => (
-            <Calendar
+            <InputNumber
               id={field.name}
-              mask="99/99/9999"
-              dateFormat={dateFormat}
-              placeholder={placeholder}
-              className={`${className} ${messageError() ? "p-invalid" : ""}`}
-              showIcon
-              icon={
-                <span>
-                  <IoCalendarOutline />
-                </span>
-              }
-              showButtonBar
-              value={field.value && new Date(field.value)}
               onChange={(e) => field.onChange(e.value)}
-              inputStyle={{ borderRight: "none" }}
-              minDate={minDate}
-              maxDate={maxDate}
+              placeholder={placeholder}
+              value={field.value}
+              className={`${className} ${messageError() ? "p-invalid" : ""}`}
               disabled={disabled}
+              mode={mode}
+              minFractionDigits={minFractionDigits}
+              maxFractionDigits={maxFractionDigits}
+              prefix={prefix}
+              suffix={suffix}
+              currency={currency}
+              locale={locale}
+              min={min}
+              max={max}
             />
           )}
         />
-
         {messageError() && <span className="icon-error"></span>}
       </div>
       {messageError() && (

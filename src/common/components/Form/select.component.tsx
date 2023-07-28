@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { EDirection } from "../../constants/input.enum";
 import { LabelComponent } from "./label.component";
-import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
+import { FieldErrors, UseFormGetValues, UseFormRegister, UseFormSetValue } from "react-hook-form";
 import { Dropdown } from 'primereact/dropdown';
 import { IDropdownProps } from "../../interfaces/select.interface";
 
 interface ISelectProps<T> {
   idInput: string;
   register?: UseFormRegister<T>;
+  getValueRegister?: UseFormGetValues<T>;
   setValueRegister?: UseFormSetValue<T>;
+  change?: number;
   className?: string;
   placeholder?: string;
   data?: Array<IDropdownProps>;
   value?: string;
   label?: string;
+  disabled?: boolean;
   classNameLabel?: string;
   direction?: EDirection;
   children?: React.JSX.Element | React.JSX.Element[];
@@ -31,8 +34,11 @@ interface ISelectElementProps<T> {
   placeholder?: string;
   data?: Array<IDropdownProps>;
   value?: string;
+  disabled?: boolean;
   register?: UseFormRegister<T>;
+  getValueRegister? : UseFormGetValues<T>;
   setValueRegister?: UseFormSetValue<T>;
+  change?: number;
   setValue?: React.Dispatch<any>;
   stateProps?: {
     state: any,
@@ -57,13 +63,23 @@ function SelectElement({
   placeholder,
   data,
   value,
+  disabled,
   register,
   setValueRegister,
+  getValueRegister,
+  change,
   setValue,
   stateProps
 }: ISelectElementProps<any>): React.JSX.Element {
+  
   const [selected, setSelected] = useState(value);
   const registerProp = register ? register : () => { };
+  
+  useEffect(() => {
+    if(getValueRegister) setTimeout(() => {
+      setSelected(getValueRegister(idInput));
+    }, 0)
+  }, [change])
 
   useEffect(() => {
     const setValueRegisterProp = setValueRegister ? setValueRegister : () => {};
@@ -79,7 +95,7 @@ function SelectElement({
         }
         stateProps ? stateProps.setState(e.value) : setSelected(e.value);
       }} options={data} optionLabel="name"
-        placeholder={placeholder} className={className} />
+        placeholder={placeholder} className={className} disabled={disabled} />
     </div>
   );
 }
@@ -87,12 +103,15 @@ function SelectElement({
 export function SelectComponent({
   idInput,
   register,
+  getValueRegister,
   setValueRegister,
+  change,
   className = "select-basic",
   placeholder = "Seleccione",
   data = [{} as IDropdownProps],
   value = null,
   label,
+  disabled,
   classNameLabel = "text-main",
   direction = EDirection.column,
   children,
@@ -119,7 +138,7 @@ export function SelectComponent({
         classNameLabel={classNameLabel}
       />
       <div>
-        <SelectElement idInput={idInput} className={className} setValue={setValue} placeholder={placeholder} data={data} value={value} register={register} setValueRegister={setValueRegister} stateProps={stateProps} />
+        <SelectElement idInput={idInput} className={className} setValue={setValue} placeholder={placeholder} data={data} change={change} value={value} register={register} disabled={disabled} getValueRegister={getValueRegister} setValueRegister={setValueRegister} stateProps={stateProps} />
         {errors[idInput]?.message && <span className="icon-error"></span>}
       </div>
       {errors[idInput]?.message && (

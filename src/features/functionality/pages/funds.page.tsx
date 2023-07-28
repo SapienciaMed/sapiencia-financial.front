@@ -1,26 +1,28 @@
-import { FormComponent, InputComponent, SelectComponent, ButtonComponent} from "../../../common/components/Form";
+import { AiOutlinePlusCircle } from "react-icons/ai";
+import { FormComponent, InputComponent, DatePickerComponent, SelectComponent, ButtonComponent } from "../../../common/components/Form";
 import TableComponent from "../../../common/components/table.component";
 import { EDirection } from "../../../common/constants/input.enum";
-import { useFoundData } from "../hooks/budgets.hook";
-import {AiOutlinePlusCircle} from "react-icons/ai";
+import { useFundsData } from "../hooks/funds.hook";
+import { Controller } from "react-hook-form";
+import React from "react";
+
 interface IAppProps { }
 
-function BudgetsPage(props: IAppProps): React.JSX.Element {
-const { tableActions, tableColumns, tableComponentRef,navigate, onSubmit, register, errors, setValueRegister, reset, entitySelected, setEntitySelected,entitiesData } = useFoundData();
-return (
+function FoundsPage(props: IAppProps): React.JSX.Element {
+    const { tableActions, tableColumns, tableComponentRef, onSubmit, navigate, register, errors, setValueRegister, reset, controlRegister, entitySelected, setEntitySelected, entitiesData } = useFundsData();
+    return (
         <div>
             <FormComponent action={onSubmit}>
                 <div className="card-form">
-                    <div className="title-area"> 
+                    <div className="title-area">
                         <label className="text-black biggest bold">
-                            Consultar Posición Presupuestaria
+                            Datos personales
                         </label>
-                        <div className="title-button text-three biggest">
-                        <span style={{ marginRight: '0.5em' }} onClick={() => { navigate('./create') }}> Crear Pospre</span>
-                           {<AiOutlinePlusCircle size={20} color="533893" />}
+
+                        <div className="title-button text-main biggest" onClick={() => { navigate('./create') }}>
+                            Crear <AiOutlinePlusCircle />
                         </div>
                     </div>
-                 
                     <div className="funcionality-filters-container">
                         <SelectComponent
                             idInput="entity"
@@ -35,42 +37,44 @@ return (
                             stateProps={{ state: entitySelected, setState: setEntitySelected }}
                         />
                         <InputComponent
-                            idInput="ejercise"
-                            className="input-basic"
-                            typeInput="number"
-                            register={register}
-                            label="Ejercicio"
-                            classNameLabel="text-black biggest bold"
-                            direction={EDirection.row}
-                            errors={errors}
-                        />
-                        <InputComponent
                             idInput="number"
                             className="input-basic"
                             typeInput="number"
                             register={register}
-                            label="Posición presupuestaria"
+                            label="Fondos"
                             classNameLabel="text-black biggest bold"
                             direction={EDirection.row}
                             errors={errors}
                         />
-                         <InputComponent
-                            idInput="denomination"
-                            className="input-basic"
-                            typeInput="string"
-                            register={register}
-                            label="Denominación"
-                            classNameLabel="text-black biggest bold"
-                            direction={EDirection.row}
+                        <DatePickerComponent
+                            idInput="dateFrom"
+                            control={controlRegister}
+                            label={"Validez de"}
                             errors={errors}
+                            classNameLabel="text-black biggest bold"
+                            className="dataPicker-basic"
+                            placeholder="DD/MM/YYYY"
+                            dateFormat="dd/mm/yy"
                         />
+                        <DatePickerComponent
+                            idInput="dateTo"
+                            control={controlRegister}
+                            label={"Validez hasta"}
+                            errors={errors}
+                            classNameLabel="text-black biggest bold"
+                            className="dataPicker-basic"
+                            placeholder="DD/MM/YYYY"
+                            dateFormat="dd/mm/yy"
+                        />
+
+
                     </div>
                 </div>
                 <div className="funcionality-buttons-container">
                     <span className="bold text-center button" onClick={() => {
-                            reset();
-                            setEntitySelected(null);
-                        }}>
+                        reset();
+                        setEntitySelected(null);
+                    }}>
                         Limpiar campos
                     </span>
                     <ButtonComponent
@@ -83,13 +87,13 @@ return (
             <div className="card-form">
                 <TableComponent
                     ref={tableComponentRef}
-                    url={`${process.env.urlApiFinancial}/api/v1/budgets/get-paginated`}
+                    url={`${process.env.urlApiFinancial}/api/v1/funds/get-paginated`}
                     columns={tableColumns}
-                    actions={tableActions}
-                    isShowModal={false}
-                />
+                    actions={tableActions} 
+                    isShowModal={false}/>
             </div>
         </div>
     )
 }
-export default BudgetsPage;
+
+export default React.memo(FoundsPage);
