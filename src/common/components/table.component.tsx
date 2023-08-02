@@ -76,22 +76,49 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
   // Metodo que hace la peticion para realizar la carga de datos
   async function loadData(
     newSearchCriteria?: object,
+    filterTable?: object,
     currentPage?: number
   ): Promise<void> {
-    setLoading(true);
 
+    /*  ----  ALERTA  ----  */
+    /* Evitar usar la propiedad 'filterTable' para filtrar los datos porque hace pesada la consulta si existen muchos registros. */
+    /* Solo usar en el caso extremo de no poder filtrar desde el backend ya que el uso de esta traera todos los registros en la peticion. */
+
+    setLoading(true);
     if (newSearchCriteria) {
       setSearchCriteria(newSearchCriteria);
     }
-
     const body = newSearchCriteria || searchCriteria || {};
     const res = await post<IPagingData<any>>(url, {
       ...body,
       page: currentPage || 1,
-      perPage: perPage,
+      perPage: filterTable ? "Infinity" : perPage,
     });
     if (res.operation.code === EResponseCodes.OK) {
-      setResultData(res.data);
+      if (filterTable) {
+        const filters = Reflect.ownKeys(filterTable);
+        let filteredData = [];
+        filters.forEach(filter => {
+          if (!Reflect.has(res.data.array[0], filter)) return;
+          if(Array.isArray(filterTable[filter])) {
+            filterTable[filter].forEach(filt => {
+              filteredData = filteredData.concat(res.data.array.filter(item => item[filter] === filt));
+            });
+          } else {
+            filteredData = filteredData.concat(res.data.array.filter(item => item[filter] === filterTable[filter]));
+          }
+        });
+        const meta = {
+          "total": filteredData.length,
+          "per_page": perPage,
+          "current_page": page,
+          "last_page": Math.trunc(filteredData.length / perPage),
+          "first_page": 1,
+        };
+        setResultData({ array: filteredData.slice(perPage * page, (perPage * page) + perPage), meta: meta });
+      } else {
+        setResultData(res.data);
+      }
     } else {
       // generar mensaje de error / advetencia
     }
@@ -115,7 +142,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
   }
 
   useEffect(() => {
-    if (charged) loadData(undefined, page + 1);
+    if (charged) loadData(undefined, undefined, page + 1);
   }, [perPage, first, page]);
 
   useEffect(() => {

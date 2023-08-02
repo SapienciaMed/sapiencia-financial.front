@@ -54,8 +54,6 @@ export function useVinculationMGAData(pospre: string) {
             fieldName: "id",
             header: "Vincular",
             renderCell:(row) => {
-                
-                console.log(row);
                 return <SwitchComponent idInput={`checkRow${row.id}`} value={row.vinculation ? true : false } onChange={(e) => {
                     if(e.value === true) {
                         setLastMove([...lastMove,{id:row}])
@@ -168,10 +166,6 @@ export function useVinculationMGAData(pospre: string) {
         }
     }
 
-    // useEffect(() => {
-    //     if(Number(pospre)) loadTableData({budgetId: Number(pospre)});
-    // }, [pospre])
-
     const onNew = () => {
         navigate("./../../../");
     };
@@ -198,7 +192,6 @@ export function useVinculationMGAData(pospre: string) {
         if(status && activitiesLink){
             const res = await CreateVinculation(Number(pospre), activitiesLink);
             if(res.operation.code != EResponseCodes.OK){
-                status = false;
                 message && setMessage({
                     title: "Hubo un problema...",
                     description: res.operation.message,
@@ -211,7 +204,6 @@ export function useVinculationMGAData(pospre: string) {
                 });
             } 
         }
-        console.log(lastMove);
         if (lastMove.length <= 0) {
             
             message && setMessage({

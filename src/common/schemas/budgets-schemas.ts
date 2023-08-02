@@ -21,6 +21,5 @@ export const budgetsCrudValidator = yup.object({
     description: yup
         .string()
         .required("El campo es obligatorio")
-        .max(250, "Solo se permiten 250 caracteres"),
-
+        .max(250, "Solo se permiten 250 caracteres")
 });

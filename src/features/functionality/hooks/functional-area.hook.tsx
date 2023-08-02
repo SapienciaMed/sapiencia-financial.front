@@ -44,12 +44,24 @@ export function useFunctionalAreaData() {
             onClick: (row) => {
                 navigate(`./view/${row.id}`);
             },
+        },
+        {
+            icon: "Edit",
+            onClick: (row) => {
+                navigate(`./edit/${row.id}`);
+            },
+        },
+        {
+            icon: "Link",
+            onClick: (row) => {
+                navigate(`./link/${row.id}`);
+            },
         }
     ];
 
-    function loadTableData(searchCriteria?: object): void {
+    function loadTableData(searchCriteria?: object, filterTable?: object): void {
         if (tableComponentRef.current) {
-            tableComponentRef.current.loadData(searchCriteria);
+            tableComponentRef.current.loadData(searchCriteria, filterTable);
         }
     }
 
