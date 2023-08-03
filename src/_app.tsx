@@ -20,10 +20,13 @@ const BudgetsView = lazy(()  => import("./features/functionality/pages/budgets-v
 function App() {
   const { publish } = useAppCominicator();
 
+  // Effect que cominica la aplicacion actual
   useEffect(() => {
-    publish("currentAplication", process.env.aplicationId);
+    setTimeout(
+      () => publish("currentAplication", process.env.aplicationId),
+      500
+    );
   }, []);
-
 
   return (
     <AppContextProvider>
