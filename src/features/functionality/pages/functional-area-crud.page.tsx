@@ -33,7 +33,7 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                                     Consultar Área funcional
                                 </label>
 
-                                {action === "view" ? <></> :
+                                {action !== "edit" ? <></> :
                                     <div className="title-button text-main biggest" onClick={() => { navigate(`./link/`) }}>
                                         Vincular proyecto <AiOutlinePlusCircle />
                                     </div>
