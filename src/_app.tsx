@@ -10,9 +10,11 @@ import useAppCominicator from "./common/hooks/app-communicator.hook";
 
 const Home = lazy(() => import("./features/home/pages/home.page"));
 const Functionality = lazy(() => import("./features/functionality/pages/functionality.page"));
+const FunctionalityCenterManagerPage = lazy(() => import("./features/functionality/pages/funcionality-center-manager.page"));
 const FundsCrud = lazy(() => import("./features/functionality/pages/funds-crud.page"));
 const BudgetsCrud = lazy(()  => import("./features/functionality/pages/budgets-crud.page"));
 const Link = lazy(()  => import("./features/functionality/pages/link.page"));
+const ProjectsLinkPage = lazy(()  => import("./features/functionality/pages/projects-link.page"));
 const FunctionalAreaCrudPage = lazy(()  => import("./features/functionality/pages/functional-area-crud.page"));
 const PosPreSapienciaForm = lazy(()  => import("./features/functionality/pages/pospre-sapiencia-crud.page"));
 const BudgetsView = lazy(()  => import("./features/functionality/pages/budgets-view.page"));
@@ -36,7 +38,7 @@ function App() {
         <Router>
           <Suspense fallback={<p>Loading...</p>}>
             <Routes>
-              <Route path={"/"} element={<Home/>} />
+              <Route path={"/*"} element={<Home/>} />
               <Route path={"/gestion-financiera/funcionalidad"} element={<Functionality/>} />
               <Route path={"/gestion-financiera/funcionalidad/:option"} element={<Functionality/>} />
 
@@ -56,7 +58,12 @@ function App() {
               <Route path={"/gestion-financiera/funcionalidad/area-funcional/create"} element={<FunctionalAreaCrudPage action="new"/>} />
               <Route path={"/gestion-financiera/funcionalidad/area-funcional/edit/:id"} element={<FunctionalAreaCrudPage action="edit"/>} />
               <Route path={"/gestion-financiera/funcionalidad/area-funcional/view/:id"} element={<FunctionalAreaCrudPage action="view"/>} />
-
+              <Route path={"/gestion-financiera/funcionalidad/area-funcional/link/:id"} element={<ProjectsLinkPage action="new"/>} />
+              <Route path={"/gestion-financiera/funcionalidad/area-funcional/edit/:id/link/"} element={<ProjectsLinkPage action="edit"/>} />
+              
+              <Route path={"/gestion-financiera/centro-gestor/"} element={<FunctionalityCenterManagerPage/>} />
+              <Route path={"/gestion-financiera/centro-gestor/:option"} element={<FunctionalityCenterManagerPage/>} />
+            
             </Routes>
           </Suspense>
         </Router>

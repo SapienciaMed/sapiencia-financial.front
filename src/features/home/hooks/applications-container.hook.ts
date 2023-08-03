@@ -18,9 +18,9 @@ export function useApplicationsData() {
       },
       {
         id: 3,
-        name: "CDP",
+        name: "Centro Gestor",
         order: 30,
-        url: "/cdp"
+        url: "/centro-gestor"
       },
       {
         id: 4,

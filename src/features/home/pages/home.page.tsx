@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import WelcomeContainerComponent from "../components/welcome-container.component";
 import ApplicationsContainerComponent from "../components/applications-container.component";
+
 
 interface IAppProps {}
 

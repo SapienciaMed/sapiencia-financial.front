@@ -20,7 +20,7 @@ interface IBudgetsCrudForm {
     description: string;
 }
 
-export function useBudgetsCrudData(budgetsId: string,vinculateActivities?: () => Promise<void>, loadTableData?: (searchCriteria?: object) => void) {
+export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () => Promise<void>, loadTableData?: (searchCriteria?: object) => void) {
     const [budgetsData, setBudgetsData] = useState<IBudgets>(null);
     const [entitySelected, setEntitySelected] = useState(null);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
