@@ -1,4 +1,4 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AppContextProvider } from "./common/contexts/app.context";
 import "./styles/_app.scss";
@@ -6,6 +6,7 @@ import "./styles/_theme-prime.css";
 import "primereact/resources/primereact.min.css";
 import ModalMessageComponent from "./common/components/modal-message.component";
 import ApplicationProvider from "./application-provider";
+import useAppCominicator from "./common/hooks/app-communicator.hook";
 
 const Home = lazy(() => import("./features/home/pages/home.page"));
 const Functionality = lazy(() => import("./features/functionality/pages/functionality.page"));
@@ -17,6 +18,13 @@ const PosPreSapienciaForm = lazy(()  => import("./features/functionality/pages/p
 const BudgetsView = lazy(()  => import("./features/functionality/pages/budgets-view.page"));
 
 function App() {
+  const { publish } = useAppCominicator();
+
+  useEffect(() => {
+    publish("currentAplication", process.env.aplicationId);
+  }, []);
+
+
   return (
     <AppContextProvider>
       <ModalMessageComponent />
