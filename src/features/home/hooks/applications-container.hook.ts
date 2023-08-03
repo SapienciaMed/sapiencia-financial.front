@@ -6,39 +6,9 @@ export function useApplicationsData() {
     [
       {
         id: 1,
-        name: "Funcionalidad",
+        name: "Modulo de presupuesto",
         order: 10,
-        url: "/funcionalidad"
-      },
-      {
-        id: 2,
-        name: "Ruta presupuestal",
-        order: 20,
-        url: "/ruta-presupuestal"
-      },
-      {
-        id: 3,
-        name: "Centro Gestor",
-        order: 30,
-        url: "/centro-gestor"
-      },
-      {
-        id: 4,
-        name: "RP",
-        order: 40,
-        url: "/rp"
-      },
-      {
-        id: 5,
-        name: "Informes",
-        order: 50,
-        url: "/informes"
-      },
-      {
-        id: 6,
-        name: "Cierre",
-        order: 60,
-        url: "/cierre"
+        url: ""
       },
     ], []);
 

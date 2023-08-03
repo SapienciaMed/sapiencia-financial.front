@@ -1,15 +1,17 @@
-import React, { useContext, useEffect } from "react";
+import React from "react";
 import WelcomeContainerComponent from "../components/welcome-container.component";
 import ApplicationsContainerComponent from "../components/applications-container.component";
 
 
-interface IAppProps {}
+interface IAppProps { }
 
 function HomePage(props: IAppProps) {
   return (
     <div className="dashboard-margin full-height">
-      <WelcomeContainerComponent />
-      <ApplicationsContainerComponent />
+      <div style={{marginTop: '10%'}}>
+        <WelcomeContainerComponent />
+        <ApplicationsContainerComponent />
+      </div>
     </div>
   );
 }

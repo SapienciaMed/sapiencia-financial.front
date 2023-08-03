@@ -23,7 +23,7 @@ function ApplicationCardComponent() {
               />
             </div>
             <div className="card-footer">
-              <p className="text-black biggest text-center bold">{app.name}</p>
+              <p className="text-dasboard-name-applications big text-center weight-500">{app.name}</p>
             </div>
           </div>
         );
