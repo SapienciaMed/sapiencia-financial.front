@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { EDirection } from "../../constants/input.enum";
 import { LabelComponent } from "./label.component";
 import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
@@ -41,7 +41,10 @@ function SwitchElement({
 }: ISwitchElement<any>): React.JSX.Element {
   const switchRegister = register ? register : () => {};
   const switchOnChange = onChange ? onChange : (e) => {};
-  const [checked, setChecked] = useState(value);
+  const [checked, setChecked] = useState(false);
+  useEffect(() => {
+    setChecked(value)
+  }, [value]);
   return (
     <InputSwitch
       {...switchRegister}

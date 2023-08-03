@@ -1,25 +1,26 @@
-import { useContext, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { functionalArea } from "../../../common/schemas";
-import { AppContext } from "../../../common/contexts/app.context";
 import { useForm } from "react-hook-form";
 import { IFunctionalAreaFilters, IFunctionalArea } from "../interfaces/Functional-Area";
-import DetailsComponent from "../../../common/components/details.component";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
+import { IProjectsVinculation } from "../interfaces/Projects";
+import { EResponseCodes } from "../../../common/constants/api.enum";
+import { useProjectsLinkService } from "./projects-link-service.hook";
 
 export function useFunctionalAreaData() {
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
     const resolver = useYupValidationResolver(functionalArea);
-    const { setMessage } = useContext(AppContext);
     const {
         handleSubmit,
         register,
         formState: { errors },
-        setValue: setValueRegister,
         reset,
     } = useForm<IFunctionalAreaFilters>({ resolver });
+    const { GetAllProjectsVinculations } = useProjectsLinkService();
+    const [projects, setProjects] = useState<IProjectsVinculation[]>(null);
     const tableColumns: ITableElement<IFunctionalArea>[] = [
         {
             fieldName: "number",
@@ -27,7 +28,12 @@ export function useFunctionalAreaData() {
         },
         {
             fieldName: "projects",
-            header: "Proyectos"
+            header: "Proyectos",
+            renderCell: (row) => {
+                let projectsFunctionalArea:IProjectsVinculation[] = []
+                if(projects) projectsFunctionalArea = projects.filter(project => project.functionalAreaId === row.id);
+                return <>{projectsFunctionalArea.length}</>
+            }
         },
         {
             fieldName: "denomination",
@@ -66,8 +72,16 @@ export function useFunctionalAreaData() {
     }
 
     useEffect(() => {
-        loadTableData();
+        GetAllProjectsVinculations().then(response => {
+            if (response.operation.code === EResponseCodes.OK) {
+                setProjects(response.data);
+            }
+        });
     }, []);
+
+    useEffect(() => {
+        if(projects) loadTableData();
+    }, [projects]);
 
     const onSubmit = handleSubmit(async (data: IFunctionalAreaFilters) => {
         loadTableData(data);

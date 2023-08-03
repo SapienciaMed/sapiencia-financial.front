@@ -9,7 +9,7 @@ import { IProjectsVinculation } from "../interfaces/Projects";
 export function useProjectsLinkService() {
     const baseURL: string = process.env.urlApiFinancial;
     const vinculationUrl: string = "/api/v1/functional-area";
-    const { post, get } = useCrudService(null, baseURL);
+    const { post, get, deleted } = useCrudService(null, baseURL);
     const { authorization } = useContext(AppContext);
 
 
@@ -45,7 +45,7 @@ export function useProjectsLinkService() {
         return post(`${vinculationUrl}${endpoint}`, data);
     }
 
-    async function UnLinkVinculation(id:number , projects: number[]): Promise<ApiResponse<IProjectsVinculation[]>> {
+    async function UnLinkVinculation(id: number, projects: number[]): Promise<ApiResponse<IProjectsVinculation[]>> {
         const endpoint: string = "/link/update";
         const projectsLinks = projects.map(project => {
             return {
@@ -61,12 +61,16 @@ export function useProjectsLinkService() {
         return post(`${vinculationUrl}${endpoint}`, data);
     }
 
-
     async function GetAllProjectsVinculations(): Promise<ApiResponse<IProjectsVinculation[]>> {
         const endpoint: string = "/link/get-all";
         return get(`${vinculationUrl}${endpoint}`);
     }
 
+    async function DeleteLinkVinculation(id: number): Promise<ApiResponse<boolean>>{
+        const endpoint: string = `/link/delete/${id}`;
+        return deleted(`${vinculationUrl}${endpoint}`);
+    }
 
-    return {  CreateVinculation, LinkVinculation, UnLinkVinculation, GetAllProjectsVinculations }
+
+    return {  CreateVinculation, LinkVinculation, UnLinkVinculation, GetAllProjectsVinculations, DeleteLinkVinculation }
 }

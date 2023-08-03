@@ -28,6 +28,7 @@ export function useFunctionalAreaService() {
         const endpoint: string = `/update/${id}`;
         return put(`${vinculationUrl}${endpoint}`, data);
     }
+    
 
     return { GetFunctionalArea, CreateFunctionalArea, GetAllProjects, UpdateFunctionalArea };
 }

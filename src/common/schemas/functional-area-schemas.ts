@@ -5,6 +5,7 @@ export const functionalArea = yup.object({});
 export const functionalAreaCrud = yup.object({
     number: yup
         .string()
+        .matches(/^[0-9]+$/, "Solo se permiten numeros")
         .required("El campo es obligatorio")
         .max(15, "Solo se permiten 15 caracteres"),
     denomination: yup

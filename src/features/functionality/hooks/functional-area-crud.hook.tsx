@@ -10,13 +10,12 @@ import { EResponseCodes } from "../../../common/constants/api.enum";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { IProject, IProjectsVinculation } from "../interfaces/Projects";
 import { SwitchComponent } from "../../../common/components/Form";
-import { render } from "react-dom";
 import { useProjectsLinkService } from "./projects-link-service.hook";
 
 export function useFunctionalAreaCrudData(id: string) {
     const tableComponentRef = useRef(null);
     const { GetFunctionalArea, CreateFunctionalArea, GetAllProjects, UpdateFunctionalArea } = useFunctionalAreaService();
-    const { UnLinkVinculation, LinkVinculation } = useProjectsLinkService();
+    const { UnLinkVinculation, LinkVinculation, DeleteLinkVinculation } = useProjectsLinkService();
     const resolver = useYupValidationResolver(functionalAreaCrud);
     const {
         handleSubmit,
@@ -53,10 +52,14 @@ export function useFunctionalAreaCrudData(id: string) {
             }
         },
         {
-            fieldName: "id",
+            fieldName: "projectId",
             header: "Vincular",
             renderCell: (row) => {
-                return <SwitchComponent idInput={`checkRow${row.id}`} value={row.linked} onChange={(e) => {
+                let checked = row.linked;
+                if(projectsLink.find(project => project === row.id)) checked = true;
+                if(projectsUnLink.find(project => project === row.id)) checked = false;
+                return <div>
+                    <SwitchComponent idInput={`checkRow${row.id}`} value={checked} onChange={(e) => {
                     if (e.value === true) {
                         setLastMove([...lastMove, { id: row }])
                         const projectLink = projectsLink.find(project => project == row.id)
@@ -93,6 +96,7 @@ export function useFunctionalAreaCrudData(id: string) {
                         }
                     }
                 }} />
+                </div>
             }
         },
     ];
@@ -103,20 +107,63 @@ export function useFunctionalAreaCrudData(id: string) {
             header: "Id proyecto",
         },
         {
-            fieldName: "name",
-            header: "Nombre proyecto"
+            fieldName: "projectId",
+            header: "Nombre proyecto",
+            renderCell: (row) => {
+                const projectSelect = projects.find(project => project.id === row.projectId)
+                return <>{projectSelect.name}</>
+            }
         },
         {
-            fieldName: "plannedValue",
-            header: "Valor programado"
-        }
+            fieldName: "projectId",
+            header: "Valor programado",
+            renderCell: (row) => {
+                const projectSelect = projects.find(project => project.id === row.projectId)
+                return <>{projectSelect.plannedValue}</>
+            }
+        },
     ];
 
-    const tableActions: ITableAction<IProject>[] = [
+    const tableActions: ITableAction<IProjectsVinculation>[] = [
         {
             icon: "Delete",
             onClick: (row) => {
-
+                setMessage({
+                    title: "Eliminar proyecto",
+                    description: "¿Seguro que desea eliminar el proyecto?",
+                    show: true,
+                    OkTitle: "Si, eliminar",
+                    cancelTitle: "Cancelar",
+                    onOk: () => {
+                        DeleteLinkVinculation(row.id).then(response => {
+                            if(response.operation.code === EResponseCodes.OK) {
+                                setMessage({
+                                    title: "Eliminar proyecto",
+                                    description: "Se ha eliminado el proyecto exitosamente",
+                                    show: true,
+                                    OkTitle: "Aceptar",
+                                    onOk: () => {
+                                        setMessage({});
+                                        loadTableData({ id: id });
+                                    },
+                                    background: true
+                                });
+                            } else {
+                                setMessage({
+                                    title: "Hubo un problema...",
+                                    description: response.operation.message,
+                                    show: true,
+                                    OkTitle: "Aceptar",
+                                    onOk: () => {
+                                        setMessage({});
+                                    },
+                                    background: true
+                                });
+                            }
+                        })
+                    },
+                    background: true
+                });
             },
         }
     ];
@@ -144,7 +191,7 @@ export function useFunctionalAreaCrudData(id: string) {
     }, [id]);
 
     useEffect(() => {
-        if (projects) loadTableData({ id: id });
+        if(projects) loadTableData({ id: id });
     }, [projects])
 
     const onSubmitNewFunctionalArea = handleSubmit(async (data: IFunctionalAreaCrud) => {
@@ -267,5 +314,5 @@ export function useFunctionalAreaCrudData(id: string) {
     }
 
 
-    return { register, errors, confirmClose, onCancelNew, onCancelEdit, onSubmitNewFunctionalArea, onSubmitEditFunctionalArea, tableComponentRef, tableColumns, tableActions, loadTableData, tableColumnsView, navigate };
+    return { register, errors, confirmClose, onCancelNew, onCancelEdit, onSubmitNewFunctionalArea, onSubmitEditFunctionalArea, tableComponentRef, tableColumns, tableActions, tableColumnsView, navigate };
 }

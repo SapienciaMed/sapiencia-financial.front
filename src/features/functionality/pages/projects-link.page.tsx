@@ -70,7 +70,7 @@ function ProjectsLinkPage({ action }: IAppProps): React.JSX.Element {
                             value="Guardar"
                             type="submit"
                             className="button-main huge"
-                            action={vinculateProjects}
+                            action={() => {vinculateProjects(action)}}
                         />
                     </div>
                 </div>
@@ -87,7 +87,7 @@ function ProjectsLinkPage({ action }: IAppProps): React.JSX.Element {
                         className="button-main huge hover-three"
                         value="Guardar"
                         type="button"
-                        action={vinculateProjects}
+                        action={() => {vinculateProjects(action)}}
                     />
                 </div>
             </div>

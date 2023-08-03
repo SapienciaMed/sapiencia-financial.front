@@ -44,7 +44,10 @@ export function useProjectsLinkData(functionalArea: string) {
             fieldName: "id",
             header: "Vincular",
             renderCell: (row) => {
-                return <SwitchComponent idInput={`checkRow${row.id}`} onChange={(e) => {
+                let checked = false;
+                if(projectsLink.find(project => project === row.id)) checked = true;
+                if(projectsUnLink.find(project => project === row.id)) checked = false;
+                return <SwitchComponent idInput={`checkRow${row.id}`} value={checked} onChange={(e) => {
                     if (e.value === true) {
                         setLastMove([...lastMove, { id: row }])
                         const projectLink = projectsLink.find(project => project == row.id)
@@ -85,9 +88,9 @@ export function useProjectsLinkData(functionalArea: string) {
         },
     ];
 
-    function loadTableData(searchCriteria?: object, filterTable?: object): void {
+    function loadTableData(searchCriteria?: object, sameData?: object, excludeData?: object): void {
         if (tableComponentRef.current) {
-            tableComponentRef.current.loadData(searchCriteria, filterTable);
+            tableComponentRef.current.loadData(searchCriteria, sameData, excludeData);
         }
     }
 
@@ -102,14 +105,14 @@ export function useProjectsLinkData(functionalArea: string) {
     }, [functionalArea]);
 
     useEffect(() => {
-        if(filterTable) loadTableData();
+        if(filterTable) loadTableData(undefined, undefined, filterTable);
     }, [filterTable]);
 
     const onSubmit = handleSubmit(async (data: IProjectFilters) => {
-        loadTableData({ id: data.id }, filterTable);
+        loadTableData({ id: data.id }, undefined, filterTable);
     });
 
-    async function vinculateProjects(): Promise<void> {
+    async function vinculateProjects(action: "new" | "edit"): Promise<void> {
         if (projectsLink) {
             const res = await CreateVinculation(Number(functionalArea), projectsLink);
             if (res.operation.code != EResponseCodes.OK) {
@@ -131,7 +134,11 @@ export function useProjectsLinkData(functionalArea: string) {
                     OkTitle: "Aceptar",
                     onOk: () => {
                         reset();
-                        loadTableData(undefined, filterTable);
+                        if(action === "new") {
+                            onCancelNew();
+                        } else if (action === "edit") {
+                            onCancelEdit();
+                        }
                         setMessage({});
                     },
                     background: true
@@ -150,7 +157,7 @@ export function useProjectsLinkData(functionalArea: string) {
 
     const confirmClose = (callback) => {
         setMessage({
-            title: "Cancelar pospre sapiencia",
+            title: "Cancelar proyecto",
             description: "¿Seguro que desea cancelar la operación?",
             show: true,
             OkTitle: "Si, cancelar",

@@ -33,9 +33,11 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                                     Consultar Área funcional
                                 </label>
 
-                                <div className="title-button text-main biggest" onClick={() => { navigate(`./link/`) }}>
-                                    Vincular proyecto <AiOutlinePlusCircle />
-                                </div>
+                                {action === "view" ? <></> :
+                                    <div className="title-button text-main biggest" onClick={() => { navigate(`./link/`) }}>
+                                        Vincular proyecto <AiOutlinePlusCircle />
+                                    </div>
+                                }
                             </div>
                             <div className="pospre-sapiencia-data">
                                 <div className="pospre-sapiencia-basic">
@@ -52,6 +54,7 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                                         classNameLabel="text-black biggest bold"
                                         direction={EDirection.row}
                                         errors={errors}
+                                        disabled={action !== "new"}
                                     />
                                     <InputComponent
                                         idInput="denomination"
@@ -66,6 +69,7 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                                         classNameLabel="text-black biggest bold"
                                         direction={EDirection.row}
                                         errors={errors}
+                                        disabled={action !== "new"}
                                     />
                                 </div>
                                 <div>
@@ -81,6 +85,7 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                                         classNameLabel="text-black biggest bold"
                                         className="text-area-basic"
                                         rows={4}
+                                        disabled={action === "view"}
                                     />
                                 </div>
                             </div>
