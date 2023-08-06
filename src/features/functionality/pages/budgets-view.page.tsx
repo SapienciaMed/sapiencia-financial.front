@@ -17,20 +17,7 @@ function BudgetsForm() {
   const { id: budgetsId } = useParams();
   const { tableComponentRef, tableColumnsEdit, tableActions,loadTableData, vinculateActivities } =
     useVinculationMGAData(budgetsId);
-  const {
-    register,
-    errors,
-    reset,
-    setValueRegister,
-    entitiesData,
-    entitySelected,
-    setEntitySelected,
-    onSubmitEditBudgets,
-    onSubmitNewBudgets,
-    confirmClose,
-    onCancelNew,
-    onCancelEdit,
-  } = useBudgetsCrudData(budgetsId,vinculateActivities,loadTableData);
+  const { register, errors, entitiesData, controlRegister} = useBudgetsCrudData(budgetsId,vinculateActivities,loadTableData);
   return (
     <div className="crud-page full-height">
       <div className="main-page full-height">
@@ -73,19 +60,13 @@ function BudgetsForm() {
                 <SelectComponent
                   idInput="entity"
                   className="select-basic"
-                  register={register}
-                  setValueRegister={setValueRegister}
+                  control={controlRegister}
                   errors={errors}
                   label="Entidad CP"
                   classNameLabel="text-black biggest bold"
                   direction={EDirection.row}
                   data={entitiesData}
                   disabled={true}
-                  stateProps={{
-                    state: entitySelected,
-                    setState: setEntitySelected,
-                  }}
-                  
                 />
               </div>
             </div>

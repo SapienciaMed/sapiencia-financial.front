@@ -16,23 +16,19 @@ interface IAppProps {
 }
 
 function BudgetsForm({ action }: IAppProps) {
-  const navigate = useNavigate();
   const { id: budgetsId } = useParams();
   const { tableComponentRef, tableColumns, tableActions, vinculateActivities, loadTableData } =
     useVinculationMGAData(budgetsId);
   const {
     register,
     errors,
-    reset,
-    setValueRegister,
     entitiesData,
-    entitySelected,
-    setEntitySelected,
     onSubmitEditBudgets,
     onSubmitNewBudgets,
     confirmClose,
     onCancelNew,
     onCancelEdit,
+    controlRegister
   } = useBudgetsCrudData(budgetsId,vinculateActivities,loadTableData);
   return (
     <div className="crud-page full-height">
@@ -76,17 +72,12 @@ function BudgetsForm({ action }: IAppProps) {
                 <SelectComponent
                   idInput="entity"
                   className="select-basic"
-                  register={register}
-                  setValueRegister={setValueRegister}
+                  control={controlRegister}
                   errors={errors}
                   label="Entidad CP"
                   classNameLabel="text-black biggest bold"
                   direction={EDirection.row}
                   data={entitiesData}
-                  stateProps={{
-                    state: entitySelected,
-                    setState: setEntitySelected,
-                  }}
                 />
               </div>
             </div>

@@ -6,7 +6,7 @@ import {AiOutlinePlusCircle} from "react-icons/ai";
 interface IAppProps { }
 
 function ManagementCenterPage(props: IAppProps): React.JSX.Element {
-const { tableActions, tableColumns, tableComponentRef,navigate, onSubmit, register, errors, setValueRegister, reset, typesTransfersSelected, setTypesTransfersSelected,typesTransfersData } = useManagementCenterData();
+const { tableActions, tableColumns, tableComponentRef, navigate, onSubmit, register, errors, reset,typesTransfersData, controlRegister } = useManagementCenterData();
 return (
         <div>
             <FormComponent action={onSubmit}>
@@ -25,14 +25,12 @@ return (
                         <SelectComponent
                             idInput="entity"
                             className="select-basic"
-                            register={register}
-                            setValueRegister={setValueRegister}
+                            control={controlRegister}
                             errors={errors}
                             label="Entidad CP"
                             classNameLabel="text-black biggest bold"
                             direction={EDirection.row}
                             data={typesTransfersData}
-                            stateProps={{ state: typesTransfersSelected, setState: setTypesTransfersSelected }}
                         />
                         <InputComponent
                             idInput="actSapiencia"
@@ -69,7 +67,6 @@ return (
                 <div className="funcionality-buttons-container">
                     <span className="bold text-center button" onClick={() => {
                             reset();
-                            setTypesTransfersSelected(null);
                         }}>
                         Limpiar campos
                     </span>

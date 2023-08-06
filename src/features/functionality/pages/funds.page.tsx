@@ -3,13 +3,12 @@ import { FormComponent, InputComponent, DatePickerComponent, SelectComponent, Bu
 import TableComponent from "../../../common/components/table.component";
 import { EDirection } from "../../../common/constants/input.enum";
 import { useFundsData } from "../hooks/funds.hook";
-import { Controller } from "react-hook-form";
 import React from "react";
 
 interface IAppProps { }
 
 function FoundsPage(props: IAppProps): React.JSX.Element {
-    const { tableActions, tableColumns, tableComponentRef, onSubmit, navigate, register, errors, setValueRegister, reset, controlRegister, entitySelected, setEntitySelected, entitiesData } = useFundsData();
+    const { tableActions, tableColumns, tableComponentRef, onSubmit, navigate, register, errors, reset, controlRegister, entitiesData } = useFundsData();
     return (
         <div>
             <FormComponent action={onSubmit}>
@@ -27,14 +26,12 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
                         <SelectComponent
                             idInput="entity"
                             className="select-basic"
-                            register={register}
-                            setValueRegister={setValueRegister}
                             errors={errors}
                             label="Entidad CP"
                             classNameLabel="text-black biggest bold"
                             direction={EDirection.row}
                             data={entitiesData}
-                            stateProps={{ state: entitySelected, setState: setEntitySelected }}
+                            control={controlRegister}
                         />
                         <InputComponent
                             idInput="number"
@@ -73,7 +70,6 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
                 <div className="funcionality-buttons-container">
                     <span className="bold text-center button" onClick={() => {
                         reset();
-                        setEntitySelected(null);
                     }}>
                         Limpiar campos
                     </span>
