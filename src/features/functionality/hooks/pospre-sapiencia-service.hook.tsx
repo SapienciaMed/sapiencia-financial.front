@@ -25,5 +25,10 @@ export function usePosPreSapienciaService() {
         return put(`${roleUrl}${endpoint}`, data);
     }
 
-    return { GetPosPreSapiencia, CreatePosPreSapiencia, UpdatePosPreSapiencia }
+    async function GetAllPosPreSapiencia(): Promise<ApiResponse<IPosPreSapiencia[]>> {
+        const endpoint: string = `/get-all`;
+        return get(`${roleUrl}${endpoint}`);
+    }
+
+    return { GetPosPreSapiencia, CreatePosPreSapiencia, UpdatePosPreSapiencia, GetAllPosPreSapiencia }
 }

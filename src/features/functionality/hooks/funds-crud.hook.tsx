@@ -17,8 +17,8 @@ interface IFundsCrudForm {
     number: number;
     denomination: string;
     description: string;
-    dateFrom: DateTime;
-    dateTo: DateTime;
+    dateFrom: Date;
+    dateTo: Date;
 }
 
 export function useFundsCrudData(fundId: string) {
@@ -68,8 +68,8 @@ export function useFundsCrudData(fundId: string) {
         setValueRegister("entity", fundData.entityId);
         setValueRegister("denomination", fundData.denomination);
         setValueRegister("description", fundData.description);
-        setValueRegister("dateFrom", DateTime.fromISO(fundData.dateFrom).toJSDate());
-        setValueRegister("dateTo", DateTime.fromISO(fundData.dateTo).toJSDate());
+        setValueRegister("dateFrom", new Date(fundData.dateFrom));
+        setValueRegister("dateTo", new Date(fundData.dateTo));
     }, [fundData])
 
     const onSubmitNewFund = handleSubmit(async (data: IFundsCrudForm) => {

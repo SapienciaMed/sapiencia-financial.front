@@ -22,7 +22,7 @@ function FunctionalAreaPage(props: IAppProps): React.JSX.Element {
                             Crear área funcional <AiOutlinePlusCircle />
                         </div>
                     </div>
-                    <div className="funcionality-filters-container">
+                    <div className="one-filter-container">
                         <InputComponent
                             idInput="number"
                             className="input-basic"

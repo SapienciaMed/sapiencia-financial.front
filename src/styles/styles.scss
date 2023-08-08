@@ -141,6 +141,14 @@ div[id="single-spa-application:@sapiencia/financial"] {
   row-gap: 1rem;
 }
 
+.one-filter-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  padding: 1rem 0px;
+  row-gap: 1rem;
+}
+
 .funcionality-buttons-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -221,6 +229,13 @@ div[id="single-spa-application:@sapiencia/financial"] {
   }
   
   .funcionality-filters-container{
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    column-gap: 1rem;
+    row-gap: 0rem;
+  }
+  
+  .one-filter-container {
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-rows: 1fr;
     column-gap: 1rem;
