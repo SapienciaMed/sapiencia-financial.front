@@ -41,6 +41,7 @@ interface IProps<T> {
 
 interface IRef {
   loadData: (newSearchCriteria?: object) => void;
+  emptyData:() =>void;
 }
 
 const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
@@ -71,6 +72,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
   const { post } = useCrudService(token, url);
   useImperativeHandle(ref, () => ({
     loadData: loadData,
+    emptyData: EmptyData
   }));
 
   // Metodo que hace la peticion para realizar la carga de datos
@@ -201,6 +203,12 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
         background: true,
       });
     }
+    setLoading(false);
+  }
+
+  async function EmptyData(): Promise<void> {
+    setLoading(true);
+    setResultData({ array: [], meta: { total: 0 } });
     setLoading(false);
   }
 
