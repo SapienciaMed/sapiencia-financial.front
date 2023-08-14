@@ -4,21 +4,22 @@ import useYupValidationResolver from "../../../common/hooks/form-validator.hook"
 import { fundsAdditional } from "../../../common/schemas";
 import { useNavigate } from "react-router-dom";
 import { IDropdownProps } from "../../../common/interfaces/select.interface";
-import { useFunctionalAreaService } from "./functional-area-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { IAdditionsFilters, IAdditionsWithMovements } from "../interfaces/Additions";
+import { useAdditionsTransfersService } from "./additions-transfers-service.hook";
 
 export function useManagementCenterAdditional(){
 
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
     const resolver = useYupValidationResolver(fundsAdditional);
-    const { GetAllProjects } = useFunctionalAreaService();
 
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
-    const [projectsData, setProjectsData] = useState<IDropdownProps[]>([]);
+    const [AdditionsByDistrictData, setAdditionsByDistrictData] = useState<IDropdownProps[]>([]);
+    const [AdditionsBySapienciaData, setAdditionsBySapienciaData] = useState<IDropdownProps[]>([]);
     const [showTable, setShowTable] = useState(false);
+    const { GetAllAdditionsByDistrict, GetAllAdditionsBySapiencia } = useAdditionsTransfersService()
 
     const {
         handleSubmit,
@@ -39,8 +40,19 @@ export function useManagementCenterAdditional(){
             header: "Acto administrativo sapiencia"
         },
         {
-            fieldName: "number",
-            header: "Total adición"
+            fieldName: "additionMove",
+            header: "Total adición",
+            renderCell: (row) => {
+                const { totalIncome, totalSpends } = row.additionMove.reduce(
+                    (totals, move) => {
+                      const value = parseFloat(move.value);
+                      totals[move.type === "Ingreso" ? "totalIncome" : "totalSpends"] += value;
+                      return totals;
+                    },
+                    { totalIncome: 0, totalSpends: 0 }
+                  );
+                return <> { totalIncome === totalSpends ? `$${totalIncome}` : <>-</> } </>
+            }
         }
     ];
 
@@ -57,16 +69,6 @@ export function useManagementCenterAdditional(){
 
     const inputValue =  watch(['adminDistrict', 'adminSapiencia'])
 
-    async function loadInitList(): Promise<void> {
-        const response2 = await GetAllProjects(); //TODO: modificar
-        if (response2.operation.code === EResponseCodes.OK) {
-            const arrayProjects: IDropdownProps[] = response2.data.map((projectVinculate) => {
-                return { name: projectVinculate.name, value: projectVinculate.id };
-            });
-            setProjectsData(arrayProjects);
-        }
-    }
-
     function loadTableData(searchCriteria?: object): void {
         if (tableComponentRef.current) {
             tableComponentRef.current.loadData(searchCriteria);
@@ -74,7 +76,28 @@ export function useManagementCenterAdditional(){
     }
 
     useEffect(() => {
-        loadInitList().then(() => {})
+        loadTableData()
+        GetAllAdditionsByDistrict().then(response => {
+            if (response.operation.code === EResponseCodes.OK) {
+                const typeTransfers = response.data;
+                const arrayEntities = typeTransfers.map((entity) => {
+                    return { name: entity.actAdminDistrict, value: entity.actAdminDistrict };
+                });
+                setAdditionsByDistrictData(arrayEntities)
+            }
+
+        }).catch((error) => console.log(error));
+
+        GetAllAdditionsBySapiencia().then(response => {
+            if (response.operation.code === EResponseCodes.OK) {
+                const typeTransfers = response.data;
+                const arrayEntities = typeTransfers.map((entity) => {
+                    return { name: entity.actAdminSapiencia, value: entity.actAdminSapiencia };
+                });
+                setAdditionsBySapienciaData(arrayEntities)
+            }
+        }).catch((error) => console.log(error))
+
     },[])
 
     useEffect(() => {
@@ -91,10 +114,11 @@ export function useManagementCenterAdditional(){
         errors,
         isBtnDisable,
         controlRegister,
-        projectsData,
+        AdditionsByDistrictData,
         showTable,
         tableColumns,
         tableActions,
+        AdditionsBySapienciaData,
         onSubmit,
         navigate,
         register,

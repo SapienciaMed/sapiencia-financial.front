@@ -8,7 +8,7 @@ export interface IAdditionsMovements {
   projectId: number;
   fundId: number;
   budgetPosition: string;
-  value: number;
+  value: string;
 }
 
 export interface IAdditions {
