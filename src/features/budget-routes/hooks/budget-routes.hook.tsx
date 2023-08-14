@@ -31,7 +31,7 @@ export function useBudgetRoutesData() {
     const tableColumns: ITableElement<IBudgetsRoutes>[] = [
         {
             fieldName: "idProjectVinculation",
-            header: "ID Proyectos",
+            header: "ID Proyecto",
             renderCell: (row) => {
                 const projectVinculate = projectsVinculation.find((item) => item.id === row.idProjectVinculation);
                 return <>{projectVinculate.projectId}</>

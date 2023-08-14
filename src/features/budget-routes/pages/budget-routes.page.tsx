@@ -33,7 +33,7 @@ function BudgetRoutesPage(props: IAppProps): React.JSX.Element {
                                 className="input-basic"
                                 typeInput="text"
                                 register={register}
-                                label="Posición presupuestaria"
+                                label="ID Proyecto"
                                 classNameLabel="text-black biggest bold"
                                 direction={EDirection.row}
                                 errors={errors}
