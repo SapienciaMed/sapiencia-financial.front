@@ -51,16 +51,12 @@ function InputElement({
 }): React.JSX.Element {
   return (
     <input
-      {...(register ? register(idInput, optionsRegister) : {})}
-      id={id}
+      {...register(idInput)}
       name={idInput}
       type={typeInput}
       className={className}
       placeholder={placeholder}
-      defaultValue={defaultValue}
-      disabled={disabled}
-      onChange={onChange}
-      value={value}
+      defaultValue={value}
     />
   );
 }
@@ -84,28 +80,11 @@ export function InputComponent({
   fieldArray,
   optionsRegister = {},
 }: IInputProps<any>): React.JSX.Element {
-  const messageError = () => {
-    const keysError = idInput.split(".");
-    let errs = errors;
-
-    if (fieldArray) {
-      const errorKey = `${keysError[0]}[${keysError[1]}].${keysError[2]}`;
-      return errors[errorKey]?.message;
-    } else {
-      for (let key of keysError) {
-        errs = errs?.[key];
-        if (!errs) {
-          break;
-        }
-      }
-      return errs?.message ?? null;
-    }
-  };
 
   return (
     <div
       className={
-        messageError() ? `${direction} container-icon_error` : direction
+        errors[idInput]?.message  ? `${direction} container-icon_error` : direction
       }
     >
       <LabelElement
@@ -117,7 +96,7 @@ export function InputComponent({
         <InputElement
           typeInput={typeInput}
           idInput={idInput}
-          className={messageError() ? `${className} error` : className}
+          className={errors[idInput]?.message  ? `${className} error` : className}
           placeholder={placeholder}
           register={register}
           value={value}
@@ -127,7 +106,7 @@ export function InputComponent({
           id={id}
           optionsRegister={optionsRegister}
         />
-        {messageError() && (
+        {errors[idInput]?.message && (
           <MdOutlineError
             className="icon-error"
             fontSize={"22px"}
@@ -135,9 +114,9 @@ export function InputComponent({
           />
         )}
       </div>
-      {messageError() && (
+      {errors[idInput]?.message  && (
         <p className="error-message bold not-margin-padding">
-          {messageError()}
+          {errors[idInput]?.message }
         </p>
       )}
       {children}
