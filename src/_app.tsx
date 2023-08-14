@@ -7,6 +7,7 @@ import "primereact/resources/primereact.min.css";
 import ModalMessageComponent from "./common/components/modal-message.component";
 import ApplicationProvider from "./application-provider";
 import useAppCominicator from "./common/hooks/app-communicator.hook";
+// import additionAreaCrudPage from "./features/functionality/pages/addition-area-crud.page";
 
 const Home = lazy(() => import("./features/home/pages/home.page"));
 const Functionality = lazy(() => import("./features/functionality/pages/functionality.page"));
@@ -20,6 +21,7 @@ const PosPreSapienciaForm = lazy(()  => import("./features/functionality/pages/p
 const BudgetsView = lazy(()  => import("./features/functionality/pages/budgets-view.page"));
 const BudgetRoutes = lazy(()  => import("./features/budget-routes/pages/budget-routes.page"));
 const BudgetRoutesCrudPage = lazy(()  => import("./features/budget-routes/pages/budget-routes-crud.page"));
+const AdditionAreaCrudPage = lazy(() => import("./features/functionality/pages/addition-area-crud.page"))
 
 function App() {
   const { publish } = useAppCominicator();
@@ -65,6 +67,8 @@ function App() {
               
               <Route path={"/gestion-financiera/centro-gestor/"} element={<FunctionalityCenterManagerPage/>} />
               <Route path={"/gestion-financiera/centro-gestor/:option"} element={<FunctionalityCenterManagerPage/>} />
+
+              <Route path={"/gestion-financiera/centro-gestor/adicion/create"} element={<AdditionAreaCrudPage action="new"/>} />
 
               <Route path={"/gestion-financiera/ruta-presupuestal"} element={<BudgetRoutes/>} />
               <Route path={"/gestion-financiera/ruta-presupuestal/create"} element={<BudgetRoutesCrudPage action="new"/>} />
