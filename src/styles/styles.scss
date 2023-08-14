@@ -136,7 +136,7 @@ div[id="single-spa-application:@sapiencia/financial"] {
 .funcionality-filters-container {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-template-rows: repeat(auto-fit, minmax(100px, 1fr));
   padding: 1rem 0px;
   row-gap: 1rem;
 }
@@ -229,7 +229,7 @@ div[id="single-spa-application:@sapiencia/financial"] {
   }
   
   .funcionality-filters-container{
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     grid-template-rows: 1fr;
     column-gap: 1rem;
     row-gap: 0rem;
