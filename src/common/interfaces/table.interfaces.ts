@@ -5,6 +5,7 @@ export interface ITableElement<T> {
   dataList?: IListTableElement[];
   renderCell?: (row: T) => JSX.Element;
   width?: string | number;
+  sortable?: boolean;
 }
 
 export interface IListTableElement {
