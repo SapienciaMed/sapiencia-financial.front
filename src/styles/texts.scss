@@ -111,6 +111,10 @@
   &.huge {
     font-size: 2em;
   }
+  
+  span {
+    color: $alert-failed-color;
+  }
 }
 
 .text-three {

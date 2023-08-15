@@ -1,4 +1,4 @@
-div[id="single-spa-application:financial"] {
+div[id="single-spa-application:@sapiencia/financial"] {
   height: 100%;
   width: 100vw;
 }
@@ -14,50 +14,6 @@ div[id="single-spa-application:financial"] {
 
 .button {
   cursor: pointer;
-}
-
-.dashboard-margin {
-  display: grid;
-  grid-template-rows: 14em 1fr;
-  justify-content: center;
-  grid-template-columns: 1fr;
-  align-items: center;
-  font-size: 11px;
-}
-
-.welcome-container {
-  display: grid;
-  align-items: center;
-  grid-template-rows: 1fr 1fr;
-  margin: 0px 1rem;
-  gap: 1em;
-  height: 65%;
-}
-
-.applications-cards {
-  padding: 25px 0px;
-  background-image: url($base-path-url-image + "login-visualization-main.png");
-  height: 100%;
-  overflow: auto;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-content: flex-start;
-  gap: 2em;
-  $card-height: 14em;
-  $card-width: 17em;
-  $margin-horizontal: 2em;
-  $margin-vertical: 2em;
-  $columns: repeat(auto-fit, $card-width);
-  $cursor: pointer;
-  $padding: 10px;
-  @include multiple-card-component($columns,
-    $margin-horizontal,
-    $margin-vertical,
-    $card-height,
-    $card-width,
-    $padding,
-    $cursor );
 }
 
 .container-form {
@@ -127,28 +83,6 @@ div[id="single-spa-application:financial"] {
 
   hr {
     display: none;
-  }
-}
-
-.details-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-  margin: 1em 0em;
-
-  th {
-    width: 50%;
-    border: 1px solid black;
-  }
-
-  .th-title {
-    text-align: start;
-    padding: 0em 2em;
-    background-color: #D6D6D6;
-  }
-
-  .th-content {
-    font-weight: 100;
   }
 }
 
@@ -222,6 +156,7 @@ div[id="single-spa-application:financial"] {
   .mobile-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    align-items: center;
   }
   .fund-data-container, .fund-denomination-container{
     row-gap: 0.5rem;
@@ -229,37 +164,25 @@ div[id="single-spa-application:financial"] {
   }
 }
 
+.pospre-sapiencia-filters {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.pospre-sapiencia-data {
+  display: grid;
+  row-gap: 1rem;
+  .pospre-sapiencia-basic {
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 1rem;
+    column-gap: 1.5rem;
+  }
+}
+
 @media (min-width: 1024px) {
-  div[id="single-spa-application:financial"] {
+  div[id="single-spa-application:@sapiencia/financial"] {
     width: initial;
-  }
-
-  .dashboard-margin {
-    grid-template-rows: 16em 1fr;
-    font-size: inherit;
-  }
-
-  .welcome-container {
-    margin: 0px 0px;
-    gap: 0px;
-  }
-
-  .applications-cards {
-    justify-content: center;
-    $card-height: 14em;
-    $card-width: 19em;
-    $margin-horizontal: 4em;
-    $margin-vertical: 2em;
-    $columns: repeat(auto-fit, $card-width);
-    $cursor: pointer;
-    $padding: 10px;
-    @include multiple-card-component($columns,
-      $margin-horizontal,
-      $margin-vertical,
-      $card-height,
-      $card-width,
-      $padding,
-      $cursor );
   }
 
   .select-applications {
@@ -305,7 +228,7 @@ div[id="single-spa-application:financial"] {
   }
 
   .funcionality-buttons-container{
-    grid-template-columns: 10% 10%;
+    grid-template-columns: 10rem 10rem;
     justify-content: end;
     column-gap: 0rem;
   }
@@ -330,5 +253,27 @@ div[id="single-spa-application:financial"] {
 
   .container-button-bot {
     display: flex;
+  }
+
+  .pospre-sapiencia-filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+
+  .pospre-sapiencia-data {
+    display: grid;
+    row-gap: 1rem;
+    .pospre-sapiencia-basic {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      row-gap: 1rem;
+      column-gap: 1.5rem;
+    }
+  }
+
+  .pospre-sapiencia-code {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 1fr;
+    column-gap: 1.5rem;
   }
 }

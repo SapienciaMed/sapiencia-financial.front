@@ -1,18 +1,12 @@
 import * as yup from "yup";
 
-export const budgetsValidator = yup.object({});
+export const functionalArea = yup.object({});
 
-export const budgetsCrudValidator = yup.object({
-    entity: yup.string().required("El campo es obligatorio"),
+export const functionalAreaCrud = yup.object({
     number: yup
         .string()
-        .required("El campo es obligatorio")
         .matches(/^[0-9]+$/, "Solo se permiten numeros")
-        .max(15, "Solo se permiten 15 caracteres"),   
-    ejercise:yup
-        .string()
         .required("El campo es obligatorio")
-        .matches(/^[0-9]+$/, "Solo se permiten numeros")
         .max(15, "Solo se permiten 15 caracteres"),
     denomination: yup
         .string()
@@ -21,5 +15,5 @@ export const budgetsCrudValidator = yup.object({
     description: yup
         .string()
         .required("El campo es obligatorio")
-        .max(250, "Solo se permiten 250 caracteres")
+        .max(500, "Solo se permiten 500 caracteres"),
 });

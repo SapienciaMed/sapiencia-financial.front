@@ -2,7 +2,6 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { DateTime } from "luxon";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
-import { fundsCrudValidator } from "../../../common/schemas";
 import { useContext, useEffect, useState } from "react";
 import { IDropdownProps } from "../../../common/interfaces/select.interface";
 import { EResponseCodes } from "../../../common/constants/api.enum";
@@ -11,6 +10,7 @@ import { useEntitiesService } from "./entities-service.hook";
 import { useBudgetsService } from "./budgets-service.hook";
 import { IBudgets } from "../interfaces/Budgets";
 import { AppContext } from "../../../common/contexts/app.context";
+import { budgetsCrudValidator } from "../../../common/schemas/budgets-schemas";
 
 interface IBudgetsCrudForm {
     number:number;
@@ -20,12 +20,12 @@ interface IBudgetsCrudForm {
     description: string;
 }
 
-export function useBudgetsCrudData(budgetsId: string) {
+export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () => Promise<void>, loadTableData?: (searchCriteria?: object) => void) {
     const [budgetsData, setBudgetsData] = useState<IBudgets>(null);
     const [entitySelected, setEntitySelected] = useState(null);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
 
-    const resolver = useYupValidationResolver(fundsCrudValidator);
+    const resolver = useYupValidationResolver(budgetsCrudValidator);
     const { GetEntities } = useEntitiesService();
     const { CreateBudgets, GetBudgets, UpdateBudgets } = useBudgetsService();
     const { authorization, setMessage } = useContext(AppContext);
@@ -37,6 +37,10 @@ export function useBudgetsCrudData(budgetsId: string) {
         reset,
     } = useForm<IBudgetsCrudForm>({ resolver });
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if(Number(budgetsId)) loadTableData({budgetId: Number(budgetsId),active:true});
+    }, [budgetsId])
 
     useEffect(() => {
         GetEntities().then(response => {
@@ -77,7 +81,7 @@ export function useBudgetsCrudData(budgetsId: string) {
             denomination: data.denomination,
             description: data.description,
             userCreate: authorization.user.numberDocument,
-            ejercise: data.number,
+            ejercise: data.ejercise,
         }
         CreateBudgets(insertData).then(response => {
             if (response.operation.code === EResponseCodes.OK) {
@@ -116,6 +120,7 @@ export function useBudgetsCrudData(budgetsId: string) {
             userCreate: authorization.user.numberDocument,
             ejercise: data.ejercise,
         }
+        vinculateActivities && await vinculateActivities();
         UpdateBudgets(parseInt(budgetsId), insertData).then(response => {
             if (response.operation.code === EResponseCodes.OK) {
                 setMessage({

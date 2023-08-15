@@ -11,7 +11,7 @@ interface IAppProps {
 
 function FundsForm({ action }: IAppProps) {
     const { id: fundId } = useParams();
-    const { register, errors, setValueRegister, controlRegister, entitiesData, entitySelected, setEntitySelected, onSubmitNewFund, onSubmitEditFund, onCancelNew, onCancelEdit, confirmClose } = useFundsCrudData(fundId);
+    const { changedData, register, errors, setValueRegister, getValueRegister, controlRegister, entitiesData, onSubmitNewFund, onSubmitEditFund, onCancelNew, onCancelEdit, confirmClose } = useFundsCrudData(fundId);
     return (
         <div className="crud-page full-height">
             <div className="main-page full-height">
@@ -28,12 +28,13 @@ function FundsForm({ action }: IAppProps) {
                                     className="select-basic"
                                     register={register}
                                     setValueRegister={setValueRegister}
+                                    getValueRegister={getValueRegister}
+                                    change={changedData}
                                     errors={errors}
                                     label="Entidad CP"
                                     classNameLabel="text-black biggest bold"
                                     direction={EDirection.row}
                                     data={entitiesData}
-                                    stateProps={{ state: entitySelected, setState: setEntitySelected }}
                                 />
                                 <InputComponent
                                     idInput="number"
@@ -75,41 +76,25 @@ function FundsForm({ action }: IAppProps) {
                                 <div className="text-black biggest bold">Datos básicos</div>
                             </div>
                             <div className="fund-data-container">
-                                <Controller
-                                    name="dateFrom"
+                                <DatePickerComponent
+                                    idInput="dateFrom"
                                     control={controlRegister}
-                                    render={({ field }) => (
-                                        <DatePickerComponent
-                                            idInput={field.name}
-                                            value={field.value}
-                                            onchange={field.onChange}
-                                            direction={EDirection.row}
-                                            register={register}
-                                            setValueRegister={setValueRegister}
-                                            errors={errors}
-                                            className="select-basic"
-                                            label="Validez de"
-                                            classNameLabel="text-black biggest bold"
-                                        />
-                                    )}
+                                    label={"Validez de"}
+                                    errors={errors}
+                                    classNameLabel="text-black biggest bold"
+                                    className="dataPicker-basic"
+                                    placeholder="DD/MM/YYYY"
+                                    dateFormat="dd/mm/yy"
                                 />
-                                <Controller
-                                    name="dateTo"
+                                <DatePickerComponent
+                                    idInput="dateTo"
                                     control={controlRegister}
-                                    render={({ field }) => (
-                                        <DatePickerComponent
-                                            idInput={field.name}
-                                            value={field.value}
-                                            onchange={field.onChange}
-                                            direction={EDirection.row}
-                                            setValueRegister={setValueRegister}
-                                            register={register}
-                                            errors={errors}
-                                            className="select-basic"
-                                            label="Validez de"
-                                            classNameLabel="text-black biggest bold"
-                                        />
-                                    )}
+                                    label={"Validez hasta"}
+                                    errors={errors}
+                                    classNameLabel="text-black biggest bold"
+                                    className="dataPicker-basic"
+                                    placeholder="DD/MM/YYYY"
+                                    dateFormat="dd/mm/yy"
                                 />
                             </div>
                         </div>
@@ -120,6 +105,7 @@ function FundsForm({ action }: IAppProps) {
                             <ButtonComponent
                                 value="Guardar"
                                 type="submit"
+                                className="button-main huge"
                             />
                         </div>
                     </FormComponent>
