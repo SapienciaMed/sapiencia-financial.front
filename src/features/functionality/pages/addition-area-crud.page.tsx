@@ -1,69 +1,74 @@
 
 import React from 'react'
-import { ButtonComponent, FormComponent, InputComponent, SelectComponent } from '../../../common/components/Form';
-import { EDirection } from '../../../common/constants/input.enum';
-import { useForm } from 'react-hook-form';
-import { FaRegCopy } from 'react-icons/fa';
-import { BiPlusCircle } from 'react-icons/bi';
+import {  ButtonComponent, FormComponent, SelectComponent } from '../../../common/components/Form';
+import { useManagementCenterAdditional } from '../hooks/management-center-additional.hook';
+import TabManagerAdditionPage from './tab-manager-addition.page';
 
 interface IAppProps {
     action: "new" | "edit";
-  }
+}
 
 function AdditionAreaCrud({action}: IAppProps) {
-    const {
-        handleSubmit,
-        register,
-        formState: { errors },
-        setValue,
-        setError,
-      } = useForm();
 
-      const onSubmitSignIn = handleSubmit(async (data: { numberDocument:string, password: string }) => {
-        
-      })
+    const { errors, controlRegister, AdditionsByDistrictData, AdditionsBySapienciaData } = useManagementCenterAdditional()
 
-  return (
-    <div className="crud-page full-height">
-        <div className="main-page full-height">
-            <p className="text-black extra-large"> { action === "new" ? "Crear adición" : "Editar adición" } </p>
-            <div className="card-table">
-                <FormComponent action={onSubmitSignIn} >
-                    <div className="card-form">
-                        <div className="funcionality-filters-container">
-                            {/* <InputComponent
-                                idInput="prueba1"
-                                className="input-basic"
-                                typeInput="number"
-                                register={register}
-                                label="Posición presupuestaria"
-                                classNameLabel="text-black biggest bold"                          
+    return (
+        <div className="crud-page">
+            <div className="main-page full-height">
+                <p className="text-black extra-large"> { action === "new" ? "Crear adición" : "Editar adición" } </p>
+                <FormComponent action={() => {}} >
+                    <div className="card-user">
+                            <section className="card-form">
+                                <div className="funcionality-filters-container">
+                                    <SelectComponent
+                                        idInput="adminDistrict"
+                                        className="select-basic"
+                                        label="Acto administrativo distrito"
+                                        classNameLabel="text-black biggest text-required"
+                                        errors={errors}
+                                        control={controlRegister}
+                                        data={AdditionsByDistrictData}
+                                        filter={true}
+                                    />
+                                    <SelectComponent
+                                        idInput="adminSapiencia"
+                                        className="select-basic"
+                                        label="Acto administrativo sapiencia"
+                                        classNameLabel="text-black biggest text-required"
+                                        errors={errors}
+                                        control={controlRegister}
+                                        data={AdditionsBySapienciaData}
+                                        filter={true}
+                                    />
+                                </div>
+                            </section>
+
+                            <TabManagerAdditionPage control={controlRegister}/>
+
+                            <label className="text-black biggest ml-16px mt-14px"> Total ingreso: $ </label>
+
+                    </div>
+                    <section className="container-button-core mt-24px">
+                        <div className="display-justify-space-between">
+                            <ButtonComponent
+                                form='useQueryForm'
+                                value="Cancelar"
+                                type="button"
+                                className="button-clean-fields bold"
+                                action={() => {}}
                             />
-                                <InputComponent
-                                idInput="prueba2"
-                                className="input-basic"
-                                typeInput="string"
-                                register={register}
-                                label="Denominación"
-                                classNameLabel="text-black biggest bold"
-                                
-                            /> */}
+                            <ButtonComponent
+                                className="button-search"
+                                value="Guardar"
+                                type="submit"
+                                // disabled={!isBtnDisable}
+                            />
                         </div>
-                    </div>
-                    <div className="card-table">
-                        <div className="title-area"> 
-                            <label className="text-black biggest"> Lista de ingreso </label>
-                            <div className='display-justify-flex-center p-rating'>
-                                <div className="title-button text-three large"> Pegar <FaRegCopy/> </div>
-                                <div className="title-button text-three large"> Añadir ingreso <BiPlusCircle/> </div>
-                            </div>
-                        </div>
-                    </div>
+                    </section>     
                 </FormComponent>
             </div>
         </div>
-    </div>
-  )
+    )
 }
 
 export default React.memo(AdditionAreaCrud);

@@ -400,7 +400,7 @@ const paginatorHeader: PaginatorTemplateOptions = {
   },
 };
 
-const paginatorFooter: PaginatorTemplateOptions = {
+export const paginatorFooter: PaginatorTemplateOptions = {
   layout: "PrevPageLink PageLinks NextPageLink",
   PrevPageLink: (options: PaginatorPrevPageLinkOptions) => {
     return (

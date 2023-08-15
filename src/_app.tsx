@@ -7,7 +7,6 @@ import "primereact/resources/primereact.min.css";
 import ModalMessageComponent from "./common/components/modal-message.component";
 import ApplicationProvider from "./application-provider";
 import useAppCominicator from "./common/hooks/app-communicator.hook";
-// import additionAreaCrudPage from "./features/functionality/pages/addition-area-crud.page";
 
 const Home = lazy(() => import("./features/home/pages/home.page"));
 const Functionality = lazy(() => import("./features/functionality/pages/functionality.page"));
