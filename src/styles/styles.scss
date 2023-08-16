@@ -1,6 +1,6 @@
 div[id="single-spa-application:@sapiencia/financial"] {
   height: 100%;
-  width: 100vw;
+  width: 98vw;
 }
 
 .crud-page {
@@ -290,5 +290,11 @@ div[id="single-spa-application:@sapiencia/financial"] {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr 1fr;
     column-gap: 1.5rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .funcionality-filters-container {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   }
 }
