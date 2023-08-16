@@ -33,3 +33,33 @@ export const fundsAdditional = yup.object({
     actAdministrativeSapiencia: yup 
         .string()
 })
+
+export const fundsAdditionalValidation =  yup.object().shape({
+    actAdministrativeDistrict: yup
+        .string()
+        .required("El campo es obligatorio"),
+    actAdministrativeSapiencia: yup 
+        .string()
+        .required("El campo es obligatorio"),
+    ingreso: yup.array()
+        .of(yup.object().shape({
+            managerCenter : yup 
+                .string()
+                .required("El campo es obligatorio"),
+            projectId: yup 
+                .string()
+                .required("El campo es obligatorio"),
+            functionalArea: yup 
+                .string()
+                .required("El campo es obligatorio"),
+            funds: yup 
+                .string()
+                .required("El campo es obligatorio"),
+            posPre:  yup 
+                .string()
+                .required("El campo es obligatorio"),
+            value: yup 
+                .string()
+                .required("El campo es obligatorio"),
+        }))
+});

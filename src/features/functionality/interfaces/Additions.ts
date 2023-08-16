@@ -35,7 +35,21 @@ export interface IAdditionsWithMovements {
 export interface IAdditionsFilters {
   page: number;
   perPage: number;
-
   adminDistrict?: string;
   adminSapiencia?: string;
+}
+
+export interface IAdditionsIncome{
+  actAdministrativeDistrict: string,
+  actAdministrativeSapiencia: string,
+  ingreso: IIncome[]
+}
+
+export interface IIncome{
+  managerCenter: string,
+  projectId: string,
+  functionalArea: string,
+  funds: number,
+  posPre: string,
+  value: string
 }

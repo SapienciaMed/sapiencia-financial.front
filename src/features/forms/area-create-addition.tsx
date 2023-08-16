@@ -1,35 +1,104 @@
 
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { BiPlusCircle } from 'react-icons/bi'
 import { FaRegCopy } from 'react-icons/fa'
-import {  useFieldArray } from 'react-hook-form';
-import { ButtonComponent, SelectComponent } from '../../common/components/Form';
+import { useFieldArray, FieldErrors } from 'react-hook-form';
+import { ButtonComponent, InputComponent, SelectComponent } from '../../common/components/Form';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { paginatorFooter } from '../../common/components/table.component';
-import TestPage from '../functionality/pages/test.page';
+import ScreenAddIncome from '../functionality/pages/screen-add-income.page';
+import { IAdditionsIncome } from '../functionality/interfaces/Additions';
+import { AppContext } from '../../common/contexts/app.context';
+import { IMessage } from '../../common/interfaces/global.interface';
 
 interface IAppProps {
     titleAdd: string,
-    control: any
+    control: any,
+    errors: FieldErrors<IAdditionsIncome>,
+    showModal: (values: IMessage) => void
 }
 
-function AreaCreateAddition({ titleAdd, control }: IAppProps ){
+function AreaCreateAddition({ titleAdd, control, errors, showModal }: IAppProps ){
 
     const { fields, append, remove } = useFieldArray({
         control,
-        name: titleAdd
+        name: 'ingreso'
     });
-
+    
     const [perPage, setPerPage] = useState<number>(2);
     const [page, setPage] = useState<number>(0);
     const [first, setFirst] = useState<number>(0);
     const [resultData, setResultData] = useState<number>(0);
+    const [dataPaste, setDataPaste] = useState([])
+    const [isPaste, setIsPaste] = useState<boolean>(false)
 
     function onPageChange(event: PaginatorPageChangeEvent): void {
         setPerPage(event.rows);
         setFirst(event.first);
         setPage(event.page);
-      }
+    }
+
+    const onPaste = async () => {
+        try {
+            const text = await navigator.clipboard.readText()
+            constructJSONFromPastedInput(text);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const arregloValido = [
+        " CENTRO GESTOR  ",
+        " POS PRE  ",
+        " FONDO  ",
+        " ÁREA FUNCIONAL ",
+        " PROYECTO ",
+        " VALOR  ",
+        " NOMBRE PROYECTO  \r"
+      ];
+    
+    let constructJSONFromPastedInput = (pastedInput) => {
+        let rawRows = pastedInput.split("\n");
+        let headersArray = rawRows[0].split("\t");  
+        let output = [];
+        
+        (headersArray.every(value => arregloValido.includes(value)) && headersArray.length == arregloValido.length) ?
+            rawRows.forEach((rawRow, idx) => {
+                if (rawRow != '') {
+                    if (idx > 0) {
+                        let rowObject = {};
+                        let values = rawRow.split("\t");
+                        headersArray.forEach((header, idx) => {
+                            Reflect.set(rowObject, header.trim().replaceAll(" ", ""), values[idx].trim())
+                        });
+                        output.push(rowObject);
+                        setIsPaste(true)
+                    }
+                } 
+            })
+        : 
+        showModal({
+            title: "Validación de datos",
+            description: "Se ha encontrado un error en los datos,revisa las rutas presupuestales",
+            show: true,
+            OkTitle: "Aceptar",
+        })
+        
+
+        output.length > 0 && setDataPaste(output.map(item => ({
+            managerCenter: item.CENTROGESTOR,
+            projectId: `${item.PROYECTO} - ${item.NOMBREPROYECTO}` ,
+            functionalArea: item.ÁREAFUNCIONAL,
+            funds: item.FONDO,
+            posPre: item.POSPRE,
+            value: item.VALOR
+        })))  
+    }
+
+    useEffect(() => {
+        dataPaste.length > 0 && append(dataPaste)
+    },[dataPaste])
+
 
     useEffect(() => {
       setResultData(fields.length)
@@ -40,96 +109,31 @@ function AreaCreateAddition({ titleAdd, control }: IAppProps ){
             <div className="title-area"> 
                 <label className="text-black biggest"> Lista de { titleAdd } </label>
                 <div className='display-justify-flex-center p-rating'>
-                    <div className="title-button text-three large"> Pegar <FaRegCopy/> </div>
-                    <div className="title-button text-three large" onClick={append}> Añadir { titleAdd } <BiPlusCircle/> </div>
+                    <div className="title-button text-three large" id='pages' onClick={onPaste}> Pegar <FaRegCopy/> </div>
+                    <div className="title-button text-three large" 
+                        onClick={() =>{ append({
+                            managerCenter: '',
+                            projectId: '',
+                            functionalArea: '',
+                            funds: '',
+                            posPre: '',
+                            value: ''
+                        })
+                        setIsPaste(false)
+                    }}
+                    > Añadir { titleAdd } <BiPlusCircle/> </div>
                 </div>
             </div>
-            <TestPage/>
-            {
-            fields.map((field, index) => (
-                <div key={field.id}>
-                    <div className='card-user mt-14px'>
-                        <div className="title-area">
-                            <label className="text-black biggest"> {index + 1}. {titleAdd}</label>
-                            <ButtonComponent
-                                value={"Eliminar"}
-                                type="button"
-                                action={() => { remove(index) }}
-                                className="button-delete biggest bold"         
-                            />
-                           
-                        </div>
-                        <div>
-                            <section className='grid-form-2-container-reverse mt-5px'>
-                                <SelectComponent
-                                    idInput={`centro.gestor.${index}`} 
-                                    control={control}                               
-                                    label={'Centro gestor'}
-                                    className="select-basic medium"
-                                    classNameLabel="text-black big bold text-required"
-                                    placeholder={'Seleccionar'}
-                                    data={[
-                                        {
-                                            name: "1",
-                                            value: "1234"
-                                        }
-                                    ]}               
-                                    fieldArray={true}
-                                />
-                                <SelectComponent
-                                    idInput={`id.proyecto.nombre.${index}`} 
-                                    control={control}                               
-                                    label={'Id - Proyecto nombre'}
-                                    className="select-basic medium"
-                                    classNameLabel="text-black big bold text-required"    
-                                    placeholder={'Seleccionar'}               
-                                    fieldArray={true}
-                                />
-                            </section>
-                            <section className='grid-form-3-container-area mt-5px'>
-                                <SelectComponent
-                                    idInput={`area.funcional.${index}`} 
-                                    control={control}                               
-                                    label={'Área funcional'}
-                                    className="select-basic medium"
-                                    classNameLabel="text-black big bold text-required"
-                                    placeholder={'Seleccionar'}                
-                                    fieldArray={true}
-                                />
-                                <SelectComponent
-                                    idInput={`fondo.${index}`} 
-                                    control={control}                               
-                                    label={'Fondo'}
-                                    className="select-basic medium"
-                                    classNameLabel="text-black big bold text-required"    
-                                    placeholder={'Seleccionar'}               
-                                    fieldArray={true}
-                                />
-                                <SelectComponent
-                                    idInput={`pospre.${index}`} 
-                                    control={control}                               
-                                    label={'Pospre'}
-                                    className="select-basic medium"
-                                    classNameLabel="text-black big bold text-required"    
-                                    placeholder={'Seleccionar'}               
-                                    fieldArray={true}
-                                />
-                                 <SelectComponent
-                                    idInput={`valor.${index}`} 
-                                    control={control}                               
-                                    label={'Valor'}
-                                    className="select-basic medium"
-                                    classNameLabel="text-black big bold text-required"    
-                                    placeholder={'Seleccionar'}               
-                                    fieldArray={true}
-                                />
-                            </section>
-                        </div>
-                    </div>
 
-                </div>
-            ))}
             {
+                fields.map((field, index) => (
+                    <div key={field.id}>
+                        <ScreenAddIncome control={control} titleAdd={titleAdd} isPaste={isPaste}
+                            remove={remove} count={index} errors={errors}/>
+                    </div>
+                ))
+            }
+            {/* {
                 fields.length >= 2 && 
                     <div className="spc-common-table">
                         <Paginator
@@ -141,7 +145,7 @@ function AreaCreateAddition({ titleAdd, control }: IAppProps ){
                             onPageChange={onPageChange}
                         /> 
                     </div>
-            }
+            } */}
         </div>
     )
 }

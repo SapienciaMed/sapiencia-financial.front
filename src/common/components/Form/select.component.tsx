@@ -62,7 +62,7 @@ export function SelectComponent({
     const keysError = idInput.split(".");
     let errs = errors;
     if (fieldArray) {
-      const errorKey = `${keysError[0]}[${keysError[1]}].${keysError[2]}`;
+      const errorKey = `${keysError[0]}.${keysError[1]}`;
       return errors[errorKey]?.message;
     } else {
       for (let key of keysError) {

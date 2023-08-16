@@ -1,8 +1,8 @@
 
 import React from 'react'
 import {  ButtonComponent, FormComponent, SelectComponent } from '../../../common/components/Form';
-import { useManagementCenterAdditional } from '../hooks/management-center-additional.hook';
 import TabManagerAdditionPage from './tab-manager-addition.page';
+import { useAdditionAreaCrud } from '../hooks/addition-area-crud.hook';
 
 interface IAppProps {
     action: "new" | "edit";
@@ -10,18 +10,18 @@ interface IAppProps {
 
 function AdditionAreaCrud({action}: IAppProps) {
 
-    const { errors, controlRegister, AdditionsByDistrictData, AdditionsBySapienciaData } = useManagementCenterAdditional()
-
+    const {controlRegister, errors, AdditionsByDistrictData, AdditionsBySapienciaData , onSubmit, showModal} = useAdditionAreaCrud()
+    
     return (
         <div className="crud-page">
             <div className="main-page full-height">
                 <p className="text-black extra-large"> { action === "new" ? "Crear adición" : "Editar adición" } </p>
-                <FormComponent action={() => {}} >
+                <FormComponent action={onSubmit} >
                     <div className="card-user">
                             <section className="card-form">
                                 <div className="funcionality-filters-container">
                                     <SelectComponent
-                                        idInput="adminDistrict"
+                                        idInput="actAdministrativeDistrict"
                                         className="select-basic"
                                         label="Acto administrativo distrito"
                                         classNameLabel="text-black biggest text-required"
@@ -31,7 +31,7 @@ function AdditionAreaCrud({action}: IAppProps) {
                                         filter={true}
                                     />
                                     <SelectComponent
-                                        idInput="adminSapiencia"
+                                        idInput="actAdministrativeSapiencia"
                                         className="select-basic"
                                         label="Acto administrativo sapiencia"
                                         classNameLabel="text-black biggest text-required"
@@ -43,7 +43,7 @@ function AdditionAreaCrud({action}: IAppProps) {
                                 </div>
                             </section>
 
-                            <TabManagerAdditionPage control={controlRegister}/>
+                            <TabManagerAdditionPage control={controlRegister} errors={errors} showModal={showModal}/>
 
                             <label className="text-black biggest ml-16px mt-14px"> Total ingreso: $ </label>
 
