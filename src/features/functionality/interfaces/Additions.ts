@@ -40,8 +40,6 @@ export interface IAdditionsFilters {
 }
 
 export interface IAdditionsIncome{
-  actAdministrativeDistrict: string,
-  actAdministrativeSapiencia: string,
   ingreso: IIncome[]
 }
 
@@ -49,7 +47,7 @@ export interface IIncome{
   managerCenter: string,
   projectId: string,
   functionalArea: string,
-  funds: number,
+  funds: string,
   posPre: string,
   value: string
 }

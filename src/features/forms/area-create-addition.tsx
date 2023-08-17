@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { BiPlusCircle } from 'react-icons/bi'
 import { FaRegCopy } from 'react-icons/fa'
-import { useFieldArray, FieldErrors } from 'react-hook-form';
+import { useFieldArray, FieldErrors, useWatch } from 'react-hook-form';
 import { ButtonComponent, InputComponent, SelectComponent } from '../../common/components/Form';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { paginatorFooter } from '../../common/components/table.component';
@@ -13,15 +13,15 @@ import { IMessage } from '../../common/interfaces/global.interface';
 
 interface IAppProps {
     titleAdd: string,
-    control: any,
+    controlRegister: any,
     errors: FieldErrors<IAdditionsIncome>,
-    showModal: (values: IMessage) => void
+    showModal: (values: IMessage) => void,
 }
 
-function AreaCreateAddition({ titleAdd, control, errors, showModal }: IAppProps ){
+function AreaCreateAddition({ titleAdd, controlRegister, errors, showModal }: IAppProps ){
 
     const { fields, append, remove } = useFieldArray({
-        control,
+        control: controlRegister,
         name: 'ingreso'
     });
     
@@ -72,7 +72,6 @@ function AreaCreateAddition({ titleAdd, control, errors, showModal }: IAppProps 
                             Reflect.set(rowObject, header.trim().replaceAll(" ", ""), values[idx].trim())
                         });
                         output.push(rowObject);
-                        setIsPaste(true)
                     }
                 } 
             })
@@ -119,7 +118,6 @@ function AreaCreateAddition({ titleAdd, control, errors, showModal }: IAppProps 
                             posPre: '',
                             value: ''
                         })
-                        setIsPaste(false)
                     }}
                     > Añadir { titleAdd } <BiPlusCircle/> </div>
                 </div>
@@ -128,7 +126,7 @@ function AreaCreateAddition({ titleAdd, control, errors, showModal }: IAppProps 
             {
                 fields.map((field, index) => (
                     <div key={field.id}>
-                        <ScreenAddIncome control={control} titleAdd={titleAdd} isPaste={isPaste}
+                        <ScreenAddIncome controlRegister={controlRegister} titleAdd={titleAdd} fields={fields}
                             remove={remove} count={index} errors={errors}/>
                     </div>
                 ))

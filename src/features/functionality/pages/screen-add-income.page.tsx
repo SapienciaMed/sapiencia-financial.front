@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ButtonComponent, InputComponent, SelectComponent } from "../../../common/components/Form";
-import { Control, FieldErrors } from 'react-hook-form';
+import { Control, FieldErrors, useWatch, useFormState } from 'react-hook-form';
 import { IAdditionsIncome } from "../interfaces/Additions";
+import { AppContext } from "../../../common/contexts/app.context";
 
 interface IAppProps {
-    control: Control<IAdditionsIncome, any>,
+    controlRegister: Control<IAdditionsIncome, any>,
     titleAdd: string,
     remove: (index?: number | number[]) => void,
     count: number,
     errors: FieldErrors<IAdditionsIncome>,
-    isPaste: boolean
+    fields: any
  }
 
 interface ImportInterface {
@@ -23,10 +24,10 @@ interface ImportInterface {
     ÁREAFUNCIONAL: string;
 }
 
-function ScreenAddIncome({count, control, errors, isPaste, remove, titleAdd }: IAppProps) {
+function ScreenAddIncome({count, controlRegister, errors, fields, remove, titleAdd }: IAppProps) {
+
     return (
-        <>
-            
+        <>   
             <div className='card-user mt-14px'>
                 <div className="title-area">
                     <label className="text-black biggest"> { count + 1 }. {titleAdd}</label>
@@ -42,7 +43,7 @@ function ScreenAddIncome({count, control, errors, isPaste, remove, titleAdd }: I
                     <section className='grid-form-2-container-reverse mt-5px'>
                         <SelectComponent
                             idInput={`ingreso[${count}].managerCenter`}
-                            control={control}                               
+                            control={controlRegister}                               
                             label={'Centro gestor'}
                             className="select-basic medium"
                             classNameLabel="text-black big bold text-required"
@@ -51,12 +52,10 @@ function ScreenAddIncome({count, control, errors, isPaste, remove, titleAdd }: I
                             filter={true}
                             fieldArray={true}
                             errors={errors}
-                            disabled={isPaste}
-
                         />
                         <SelectComponent
                             idInput={`ingreso[${count}].projectId`} 
-                            control={control}                               
+                            control={controlRegister}                               
                             label={'Id - Proyecto nombre'}
                             className="select-basic medium"
                             classNameLabel="text-black big bold text-required"    
@@ -65,13 +64,12 @@ function ScreenAddIncome({count, control, errors, isPaste, remove, titleAdd }: I
                             filter={true}
                             fieldArray={true}
                             errors={errors}
-                            disabled={isPaste}
                         />
                     </section>
                     <section className='grid-form-3-container-area mt-5px'>
                         <SelectComponent
                             idInput={`ingreso[${count}].functionalArea`} 
-                            control={control}                               
+                            control={controlRegister}                               
                             label={'Área funcional'}
                             className="select-basic medium"
                             classNameLabel="text-black big bold text-required"
@@ -80,11 +78,10 @@ function ScreenAddIncome({count, control, errors, isPaste, remove, titleAdd }: I
                             fieldArray={true}
                             data={[ { name: '00000.00000.0001', value: '00000.00000.0001' } ]}
                             errors={errors}
-                            disabled={isPaste}
                         />
                         <SelectComponent
                             idInput={`ingreso[${count}].funds`} 
-                            control={control}                               
+                            control={controlRegister}                               
                             label={'Fondo'}
                             className="select-basic medium"
                             classNameLabel="text-black big bold text-required"    
@@ -93,11 +90,10 @@ function ScreenAddIncome({count, control, errors, isPaste, remove, titleAdd }: I
                             fieldArray={true}
                             data={[{ name: '911000123', value: '911000123' }]}
                             errors={errors}
-                            disabled={isPaste}
                         />
                         <SelectComponent
                             idInput={`ingreso[${count}].posPre`} 
-                            control={control}                               
+                            control={controlRegister}                               
                             label={'Pospre'}
                             className="select-basic medium"
                             classNameLabel="text-black big bold text-required"    
@@ -106,11 +102,10 @@ function ScreenAddIncome({count, control, errors, isPaste, remove, titleAdd }: I
                             fieldArray={true}
                             data={[ { name: '91102060060602', value: '91102060060602' } ]}
                             errors={errors}
-                            disabled={isPaste}
                         />
                         <SelectComponent
                             idInput={`ingreso[${count}].value`} 
-                            control={control}                               
+                            control={controlRegister}                               
                             label={'Valor'}
                             className="select-basic medium"
                             classNameLabel="text-black big bold text-required"    
@@ -119,7 +114,6 @@ function ScreenAddIncome({count, control, errors, isPaste, remove, titleAdd }: I
                             fieldArray={true}
                             data={[ { name: '20.439.790.866', value: '20.439.790.866'} ]}
                             errors={errors}
-                            disabled={isPaste}
                         />
                     </section>
                 </div>

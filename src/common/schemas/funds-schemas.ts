@@ -34,13 +34,7 @@ export const fundsAdditional = yup.object({
         .string()
 })
 
-export const fundsAdditionalValidation =  yup.object().shape({
-    actAdministrativeDistrict: yup
-        .string()
-        .required("El campo es obligatorio"),
-    actAdministrativeSapiencia: yup 
-        .string()
-        .required("El campo es obligatorio"),
+export const fundsAdditionalValidation =  yup.object({
     ingreso: yup.array()
         .of(yup.object().shape({
             managerCenter : yup 

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
-import { IAdditionsIncome } from '../interfaces/Additions';
+import { IAdditionsIncome, IIncome } from '../interfaces/Additions';
 import { IDropdownProps } from '../../../common/interfaces/select.interface';
 import { useAdditionsTransfersService } from './additions-transfers-service.hook';
 import { EResponseCodes } from '../../../common/constants/api.enum';
@@ -11,78 +11,50 @@ import { IMessage } from '../../../common/interfaces/global.interface';
 
 export function useAdditionAreaCrud(){
 
-  const [AdditionsByDistrictData, setAdditionsByDistrictData] = useState<IDropdownProps[]>([]);
-  const [AdditionsBySapienciaData, setAdditionsBySapienciaData] = useState<IDropdownProps[]>([]);
-  const { GetAllAdditionsByDistrict, GetAllAdditionsBySapiencia } = useAdditionsTransfersService()
+  const [isNextTab, setIsNextTab] = useState<boolean>(false)
   const resolver = useYupValidationResolver(fundsAdditionalValidation);
   const { setMessage } = useContext(AppContext);
 
   const {
     handleSubmit,
-    register,
-    formState: { errors },
-    control: controlRegister,
+    register: registerTabs,
+    formState: { errors: errosTabs},  
+    control: controlRegisterTabs,
     watch,
-    reset,
-    getValues
   } = useForm<IAdditionsIncome>({
     defaultValues: {
-      ingreso: [],
-      actAdministrativeDistrict: '',
-      actAdministrativeSapiencia: ''
+      ingreso: []
     },
     mode: 'all',
-    resolver
+    resolver,
   });
+  
+  const incomeSelected = watch('ingreso')
 
-  const budgetSelected = watch("ingreso");
-
-  useEffect(() => {
-    GetAllAdditionsByDistrict().then(response => {
-        if (response.operation.code === EResponseCodes.OK) {
-            const typeTransfers = response.data;
-            const arrayEntities = typeTransfers.map((entity) => {
-                return { name: entity.actAdminDistrict, value: entity.actAdminDistrict };
-            });
-            setAdditionsByDistrictData(arrayEntities)
-        }
-
-    }).catch((error) => console.log(error));
-
-    GetAllAdditionsBySapiencia().then(response => {
-        if (response.operation.code === EResponseCodes.OK) {
-            const typeTransfers = response.data;
-            const arrayEntities = typeTransfers.map((entity) => {
-                return { name: entity.actAdminSapiencia, value: entity.actAdminSapiencia };
-            });
-            setAdditionsBySapienciaData(arrayEntities)
-        }
-    }).catch((error) => console.log(error))
-
-  },[])
-
-  const onSubmit = handleSubmit(async (data: {actAdministrativeDistrict: string, actAdministrativeSapiencia: string}) => {
-    console.log("entro");
-    
+  const onSubmitTab = handleSubmit(async  => {
+    setIsNextTab(incomeSelected.length > 0 )
   });
 
   const showModal = (values: IMessage) => {
-    setMessage({
-      title: values.title,
-      description: values.description,
-      show: true,
-      OkTitle: values.OkTitle,
-      onOk: () => setMessage({}),
-  });
+      setMessage({
+        title: values.title,
+        description: values.description,
+        show: true,
+        OkTitle: values.OkTitle,
+        onOk: () => setMessage({}),
+    });
   }
 
+  useEffect(() => {
+
+  },[])
+
   return {
-    controlRegister,
-    errors,
-    AdditionsByDistrictData,
-    AdditionsBySapienciaData,
-    register,
-    onSubmit,
-    showModal
+    controlRegisterTabs,
+    errosTabs,
+    isNextTab,
+    registerTabs,
+    onSubmitTab,
+    showModal,
   }
 }
