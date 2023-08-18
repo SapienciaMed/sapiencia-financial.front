@@ -19,7 +19,7 @@ export function useFunctionalAreaData() {
         formState: { errors },
         reset,
     } = useForm<IFunctionalAreaFilters>({ resolver });
-    const { GetAllProjectsVinculations } = useProjectsLinkService();
+    const { getAllProjectsVinculations } = useProjectsLinkService();
     const [projects, setProjects] = useState<IProjectsVinculation[]>(null);
     const tableColumns: ITableElement<IFunctionalArea>[] = [
         {
@@ -72,7 +72,7 @@ export function useFunctionalAreaData() {
     }
 
     useEffect(() => {
-        GetAllProjectsVinculations().then(response => {
+        getAllProjectsVinculations().then(response => {
             if (response.operation.code === EResponseCodes.OK) {
                 setProjects(response.data);
             }

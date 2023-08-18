@@ -14,7 +14,7 @@ import { useProjectsLinkService } from "./projects-link-service.hook";
 
 export function useFunctionalAreaCrudData(id: string) {
     const tableComponentRef = useRef(null);
-    const { GetFunctionalArea, CreateFunctionalArea, GetAllProjects, UpdateFunctionalArea } = useFunctionalAreaService();
+    const { GetFunctionalArea, CreateFunctionalArea, getAllProjects, UpdateFunctionalArea } = useFunctionalAreaService();
     const { UnLinkVinculation, LinkVinculation, DeleteLinkVinculation } = useProjectsLinkService();
     const resolver = useYupValidationResolver(functionalAreaCrud);
     const {
@@ -184,7 +184,7 @@ export function useFunctionalAreaCrudData(id: string) {
                 setValueRegister("description", response.data.description);
             }
         });
-        GetAllProjects().then(response => {
+        getAllProjects().then(response => {
             if (response.operation.code === EResponseCodes.OK) {
                 setProjects(response.data);
             }

@@ -25,10 +25,10 @@ export function useFundsService() {
         return put(`${roleUrl}${endpoint}`, data);
     }
 
-    async function GetAllFunds(): Promise<ApiResponse<IFunds[]>> {
+    async function getAllFunds(): Promise<ApiResponse<IFunds[]>> {
         const endpoint: string = `/get-all`;
         return get(`${roleUrl}${endpoint}`);
     }
 
-    return { GetFund, CreateFund, UpdateFund, GetAllFunds }
+    return { GetFund, CreateFund, UpdateFund, getAllFunds }
 }
