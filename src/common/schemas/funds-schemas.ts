@@ -1,4 +1,5 @@
 import * as yup from "yup";
+import _ from 'lodash'
 
 export const fundsValidator = yup.object({});
 
@@ -56,4 +57,16 @@ export const fundsAdditionalValidation =  yup.object({
                 .string()
                 .required("El campo es obligatorio"),
         }))
+        .test('uniqueValues', 'datos duplicados en el sistema', function (value) {
+            const nonEmptyValues = value.filter((item) => {
+                const hasAnyValue = Object.values(item).some((property) => property !== undefined && property !== '');
+                return hasAnyValue;
+            });
+    
+            const duplicatesFound = nonEmptyValues.some((item, index) =>
+                nonEmptyValues.slice(0, index).some((otherItem) => _.isEqual(item, otherItem))
+            );
+        
+              return !duplicatesFound;
+        }),
 });

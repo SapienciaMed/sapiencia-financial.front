@@ -1,9 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { IAdditionsIncome, IIncome } from '../interfaces/Additions';
-import { IDropdownProps } from '../../../common/interfaces/select.interface';
-import { useAdditionsTransfersService } from './additions-transfers-service.hook';
-import { EResponseCodes } from '../../../common/constants/api.enum';
 import useYupValidationResolver from '../../../common/hooks/form-validator.hook';
 import { fundsAdditional, fundsAdditionalValidation } from '../../../common/schemas';
 import { AppContext } from '../../../common/contexts/app.context';
@@ -11,16 +8,15 @@ import { IMessage } from '../../../common/interfaces/global.interface';
 
 export function useAdditionAreaCrud(){
 
-  const [isNextTab, setIsNextTab] = useState<boolean>(false)
   const resolver = useYupValidationResolver(fundsAdditionalValidation);
-  const { setMessage } = useContext(AppContext);
+  const { setMessage } = useContext(AppContext);   
 
   const {
     handleSubmit,
     register: registerTabs,
-    formState: { errors: errosTabs},  
     control: controlRegisterTabs,
     watch,
+    getValues
   } = useForm<IAdditionsIncome>({
     defaultValues: {
       ingreso: []
@@ -30,9 +26,9 @@ export function useAdditionAreaCrud(){
   });
   
   const incomeSelected = watch('ingreso')
-
-  const onSubmitTab = handleSubmit(async  => {
-    setIsNextTab(incomeSelected.length > 0 )
+    
+  const onSubmitTab = handleSubmit(async (data: IAdditionsIncome ) => {
+  
   });
 
   const showModal = (values: IMessage) => {
@@ -41,20 +37,17 @@ export function useAdditionAreaCrud(){
         description: values.description,
         show: true,
         OkTitle: values.OkTitle,
-        onOk: () => setMessage({}),
+        onOk: values.onOk,
     });
   }
 
-  useEffect(() => {
-
-  },[])
 
   return {
     controlRegisterTabs,
-    errosTabs,
-    isNextTab,
     registerTabs,
     onSubmitTab,
     showModal,
+    setMessage,
+    getValues
   }
 }

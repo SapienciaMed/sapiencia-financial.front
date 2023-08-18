@@ -1,42 +1,37 @@
-
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BiPlusCircle } from 'react-icons/bi'
 import { FaRegCopy } from 'react-icons/fa'
-import { useFieldArray, FieldErrors, useWatch } from 'react-hook-form';
-import { ButtonComponent, InputComponent, SelectComponent } from '../../common/components/Form';
-import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
+import { useFieldArray, useFormState, UseFormGetValues } from 'react-hook-form';
+import { Paginator } from 'primereact/paginator';
 import { paginatorFooter } from '../../common/components/table.component';
 import ScreenAddIncome from '../functionality/pages/screen-add-income.page';
-import { IAdditionsIncome } from '../functionality/interfaces/Additions';
-import { AppContext } from '../../common/contexts/app.context';
 import { IMessage } from '../../common/interfaces/global.interface';
+import { AddValidHeaders } from '../../common/constants/doc.enum';
+import { IAdditionsIncome } from '../functionality/interfaces/Additions';
 
 interface IAppProps {
     titleAdd: string,
     controlRegister: any,
-    errors: FieldErrors<IAdditionsIncome>,
     showModal: (values: IMessage) => void,
+    getValues: UseFormGetValues<IAdditionsIncome>
 }
 
-function AreaCreateAddition({ titleAdd, controlRegister, errors, showModal }: IAppProps ){
-
+function AreaCreateAddition({ titleAdd, controlRegister, getValues,showModal }: IAppProps ){
+    
     const { fields, append, remove } = useFieldArray({
         control: controlRegister,
         name: 'ingreso'
     });
-    
-    const [perPage, setPerPage] = useState<number>(2);
-    const [page, setPage] = useState<number>(0);
-    const [first, setFirst] = useState<number>(0);
-    const [resultData, setResultData] = useState<number>(0);
-    const [dataPaste, setDataPaste] = useState([])
-    const [isPaste, setIsPaste] = useState<boolean>(false)
 
-    function onPageChange(event: PaginatorPageChangeEvent): void {
-        setPerPage(event.rows);
-        setFirst(event.first);
-        setPage(event.page);
-    }
+    const { errors, isValid, dirtyFields } = useFormState({
+        control: controlRegister 
+    })
+
+    const [dataPaste, setDataPaste] = useState([])
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 2;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const visibleFields = fields.slice(startIndex, startIndex + itemsPerPage);
 
     const onPaste = async () => {
         try {
@@ -47,22 +42,12 @@ function AreaCreateAddition({ titleAdd, controlRegister, errors, showModal }: IA
         }
     }
 
-    const arregloValido = [
-        " CENTRO GESTOR  ",
-        " POS PRE  ",
-        " FONDO  ",
-        " ÁREA FUNCIONAL ",
-        " PROYECTO ",
-        " VALOR  ",
-        " NOMBRE PROYECTO  \r"
-      ];
-    
-    let constructJSONFromPastedInput = (pastedInput) => {
+    const constructJSONFromPastedInput = (pastedInput) => {
         let rawRows = pastedInput.split("\n");
         let headersArray = rawRows[0].split("\t");  
         let output = [];
         
-        (headersArray.every(value => arregloValido.includes(value)) && headersArray.length == arregloValido.length) ?
+        (headersArray.every(value => AddValidHeaders.includes(value)) && headersArray.length == AddValidHeaders.length) ?
             rawRows.forEach((rawRow, idx) => {
                 if (rawRow != '') {
                     if (idx > 0) {
@@ -93,15 +78,36 @@ function AreaCreateAddition({ titleAdd, controlRegister, errors, showModal }: IA
             value: item.VALOR
         })))  
     }
+ 
+    const onPageChange = event => {
+      setCurrentPage(event.page + 1);
+    };
 
+    const calculateTotal = () => {
+        const values = getValues('ingreso');
+        const total = values?.reduce((acc, curr) => {
+          const value = parseFloat(curr.value.replace(/\./g, '').replace(/,/g, '.'));
+          return acc + (isNaN(value) ? 0 : value);
+        }, 0);
+        return total;
+    };
+
+    const formatMoney = (amount) => {
+        return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    };
+  
     useEffect(() => {
         dataPaste.length > 0 && append(dataPaste)
     },[dataPaste])
 
-
     useEffect(() => {
-      setResultData(fields.length)
-    },[fields])
+        errors?.ingreso?.message == 'datos duplicados en el sistema' &&  showModal({
+            title: 'Validación de datos',
+            description: errors?.ingreso?.message,
+            show: true,
+            OkTitle: 'Aceptar',
+        });
+    },[errors?.ingreso?.message, isValid, dirtyFields])
 
     return (
         <div className="card-user mt-14px">
@@ -124,26 +130,31 @@ function AreaCreateAddition({ titleAdd, controlRegister, errors, showModal }: IA
             </div>
 
             {
-                fields.map((field, index) => (
+                visibleFields.map((field, index) => (
                     <div key={field.id}>
                         <ScreenAddIncome controlRegister={controlRegister} titleAdd={titleAdd} fields={fields}
-                            remove={remove} count={index} errors={errors}/>
+                            remove={remove} count={startIndex + index} errors={errors}/>
                     </div>
                 ))
             }
-            {/* {
+            {
                 fields.length >= 2 && 
                     <div className="spc-common-table">
                         <Paginator
                             className="spc-table-paginator"
                             template={paginatorFooter}
-                            first={first}
-                            rows={perPage}
-                            totalRecords={resultData}
+                            first={startIndex}
+                            rows={itemsPerPage}
+                            totalRecords={fields.length}
                             onPageChange={onPageChange}
-                        /> 
+                        />
                     </div>
-            } */}
+            }
+            {
+                visibleFields.length > 0 && 
+                    <label className="text-black biggest ml-16px mt-14px"> Total ingreso: $  {formatMoney(calculateTotal())} </label> 
+
+            }
         </div>
     )
 }

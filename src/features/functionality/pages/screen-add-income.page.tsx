@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
-import { ButtonComponent, InputComponent, SelectComponent } from "../../../common/components/Form";
-import { Control, FieldErrors, useWatch, useFormState } from 'react-hook-form';
+import React from "react";
+import { ButtonComponent,  SelectComponent } from "../../../common/components/Form";
+import { Control, FieldErrors} from 'react-hook-form';
 import { IAdditionsIncome } from "../interfaces/Additions";
-import { AppContext } from "../../../common/contexts/app.context";
 
 interface IAppProps {
     controlRegister: Control<IAdditionsIncome, any>,
@@ -13,19 +12,7 @@ interface IAppProps {
     fields: any
  }
 
-interface ImportInterface {
-    CENTROGESTOR: string;
-    FONDO: string;
-    NOMBREPROYECTO: string;
-    POSICIÓNPRESUPUESTAL: string;
-    PROYECTO: string;
-    VALORCONTRACRÉDITO: string;
-    VALORCRÉDITO: string;
-    ÁREAFUNCIONAL: string;
-}
-
 function ScreenAddIncome({count, controlRegister, errors, fields, remove, titleAdd }: IAppProps) {
-
     return (
         <>   
             <div className='card-user mt-14px'>

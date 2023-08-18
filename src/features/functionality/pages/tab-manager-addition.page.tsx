@@ -1,31 +1,32 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import { ITabsMenuTemplate } from '../../../common/interfaces/tabs-menu.interface';
-import TabListComponent from '../../../common/components/tab-list.component';
 import AreaCreateAddition from '../../forms/area-create-addition';
 import AreaCreateExpense from '../../forms/area-create-expense';
-import { FieldErrors, Control } from 'react-hook-form';
+import { Control, useFormState, UseFormGetValues } from 'react-hook-form';
 import { IAdditionsIncome } from '../interfaces/Additions';
 import { IMessage } from '../../../common/interfaces/global.interface';
-import { TabCreateAddition } from '../../../common/components/tab-create-addition';
 
 interface IAppProps {
     controlRegister: Control<IAdditionsIncome, any>,
-    errors: FieldErrors<IAdditionsIncome>
     showModal: (values: IMessage) => void,
-    isNextTab: boolean,
-    onSubmitTab: (e?: React.BaseSyntheticEvent<object, any, any>) => Promise<void>
+    onSubmitTab: (e?: React.BaseSyntheticEvent<object, any, any>) => Promise<void>,
+    getValues: UseFormGetValues<IAdditionsIncome>
 }
 
-function TabManagerAdditionPage({controlRegister, errors, showModal, isNextTab, onSubmitTab}: IAppProps) {
+function TabManagerAdditionPage({controlRegister, showModal, getValues, onSubmitTab}: IAppProps) {
     const { option } = useParams();
     const navigate = useNavigate();
+
+    const { dirtyFields, isValid, errors } = useFormState({
+        control: controlRegister 
+    })
 
     const tabs: ITabsMenuTemplate[] = [
         { 
             id: "ingreso", 
             title: "Ingreso",  
-            content: <AreaCreateAddition titleAdd='ingreso' controlRegister={controlRegister} errors={errors} showModal={showModal}/>, 
+            content: <AreaCreateAddition titleAdd='ingreso' controlRegister={controlRegister} showModal={showModal} getValues={getValues}/>, 
             action: () => {  } 
         },
         { 
@@ -47,7 +48,15 @@ function TabManagerAdditionPage({controlRegister, errors, showModal, isNextTab, 
     
     const handleTabClick = (tab: ITabsMenuTemplate) => {
         onSubmitTab()
-        if (isNextTab) {        
+        errors?.ingreso?.message == 'datos duplicados en el sistema' &&  showModal({
+            title: 'Validación de datos',
+            description: errors?.ingreso?.message,
+            show: true,
+            OkTitle: 'Aceptar',
+            onOk: () => showModal({}),
+        });
+
+        if (dirtyFields?.ingreso?.length > 0 && isValid) {       
             setSelectedTab(tab);
         }
     };
@@ -66,7 +75,7 @@ function TabManagerAdditionPage({controlRegister, errors, showModal, isNextTab, 
         <div className='pt-24px'>
             <div className='tabs-component'>
                 <div className="tabs-selection">
-                    {tabs.map((tab) => {
+                    { tabs.map((tab) => {
                         let active = "";
                         if(selectedTab) if(selectedTab.id === tab.id) active = "active";
                         return (
