@@ -61,7 +61,7 @@ export function useProjectsLinkService() {
         return post(`${vinculationUrl}${endpoint}`, data);
     }
 
-    async function GetAllProjectsVinculations(): Promise<ApiResponse<IProjectsVinculation[]>> {
+    async function getAllProjectsVinculations(): Promise<ApiResponse<IProjectsVinculation[]>> {
         const endpoint: string = "/link/get-all";
         return get(`${vinculationUrl}${endpoint}`);
     }
@@ -72,5 +72,5 @@ export function useProjectsLinkService() {
     }
 
 
-    return {  CreateVinculation, LinkVinculation, UnLinkVinculation, GetAllProjectsVinculations, DeleteLinkVinculation }
+    return {  CreateVinculation, LinkVinculation, UnLinkVinculation, getAllProjectsVinculations, DeleteLinkVinculation }
 }

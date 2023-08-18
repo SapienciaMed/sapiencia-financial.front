@@ -15,7 +15,7 @@ export function useProjectsLinkData(functionalArea: string) {
     const navigate = useNavigate();
     const resolver = useYupValidationResolver(projects);
     const { setMessage } = useContext(AppContext);
-    const { CreateVinculation, GetAllProjectsVinculations } = useProjectsLinkService();
+    const { CreateVinculation, getAllProjectsVinculations } = useProjectsLinkService();
     const {
         handleSubmit,
         register,
@@ -95,7 +95,7 @@ export function useProjectsLinkData(functionalArea: string) {
     }
 
     useEffect(() => {
-        if(Number(functionalArea)) GetAllProjectsVinculations().then((response => {
+        if(Number(functionalArea)) getAllProjectsVinculations().then((response => {
             if(response.operation.code === EResponseCodes.OK) {
                 const data = response.data;
                 const projectsLinked = data.map(linked => linked.projectId);

@@ -15,8 +15,8 @@ import { useProjectsLinkService } from "../../functionality/hooks/projects-link-
 export function useBudgetRoutesData() {
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
-    const { GetAllProjects } = useFunctionalAreaService();
-    const { GetAllProjectsVinculations } = useProjectsLinkService();
+    const { getAllProjects } = useFunctionalAreaService();
+    const { getAllProjectsVinculations } = useProjectsLinkService();
     const { setMessage } = useContext(AppContext);
     const resolver = useYupValidationResolver(budgetRoutesValidator);
     const {
@@ -43,7 +43,7 @@ export function useBudgetRoutesData() {
             renderCell: (row) => {
                 const projectVinculate = projectsVinculation.find((item) => item.id === row.idProjectVinculation);
                 const project = projects.find((item) => item.id === projectVinculate.projectId);
-                return <>{project.name}</>
+                return <>{project?.name}</>
             }
         },
         {
@@ -68,7 +68,7 @@ export function useBudgetRoutesData() {
                     },
                     {
                         title: "Nombre proyecto",
-                        value: `${project.name}`
+                        value: `${project?.name}`
                     },
                     {
                         title: "Centro gestor",
@@ -119,12 +119,12 @@ export function useBudgetRoutesData() {
     });
 
     useEffect(() => {
-        GetAllProjectsVinculations().then(response => {
+        getAllProjectsVinculations().then(response => {
             if(response.operation.code === EResponseCodes.OK) {
                 setProjectsVinculation(response.data);
             }
         });
-        GetAllProjects().then(response => {
+        getAllProjects().then(response => {
             if(response.operation.code === EResponseCodes.OK) {
                 setProjects(response.data);
             }

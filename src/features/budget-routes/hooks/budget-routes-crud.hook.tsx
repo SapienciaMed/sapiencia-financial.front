@@ -18,11 +18,11 @@ import { useBudgetRoutesService } from "./budget-routes-service.hook";
 
 export function useBudgetRoutesCrudData(id: string) {
     const resolver = useYupValidationResolver(budgetRoutesCrudValidator);
-    const { GetAllProjectsVinculations } = useProjectsLinkService();
-    const { GetAllProjects, GetAllFunctionalAreas } = useFunctionalAreaService();
-    const { GetAllBudgets } = useBudgetsService();
+    const { getAllProjectsVinculations } = useProjectsLinkService();
+    const { getAllProjects, GetAllFunctionalAreas } = useFunctionalAreaService();
+    const { getAllBudgets } = useBudgetsService();
     const { GetAllPosPreSapiencia } = usePosPreSapienciaService();
-    const { GetAllFunds } = useFundsService();
+    const { getAllFunds } = useFundsService();
     const { CreateBudgetRoutes, GetBudgetRoutes, UpdateBudgetRoutes } = useBudgetRoutesService();
     const { authorization, setMessage } = useContext(AppContext);
     const {
@@ -46,11 +46,11 @@ export function useBudgetRoutesCrudData(id: string) {
 
     async function loadInitList(): Promise<void> {
         let projectsVinculate: IProjectsVinculation[];
-        const response = await GetAllProjectsVinculations();
+        const response = await getAllProjectsVinculations();
         if (response.operation.code === EResponseCodes.OK) {
             projectsVinculate = response.data;
         }
-        const response2 = await GetAllProjects();
+        const response2 = await getAllProjects();
         if (response2.operation.code === EResponseCodes.OK) {
             const arrayProjects: IDropdownProps[] = projectsVinculate.map((projectVinculate) => {
                 const project = response2.data.find((data) => data.id === projectVinculate.projectId);
@@ -58,14 +58,14 @@ export function useBudgetRoutesCrudData(id: string) {
             });
             setProjectsData(arrayProjects);
         }
-        const response3 = await GetAllBudgets();
+        const response3 = await getAllBudgets();
         if (response3.operation.code === EResponseCodes.OK) {
             const arrayBudgets: IDropdownProps[] = response3.data.map((budget) => {
                 return { name: budget.number.toString(), value: budget.id };
             });
             setBudgetData(arrayBudgets);
         }
-        const response4 = await GetAllFunds();
+        const response4 = await getAllFunds();
         if (response4.operation.code === EResponseCodes.OK) {
             const arrayFunds: IDropdownProps[] = response4.data.map((fund) => {
                 return { name: fund.number.toString(), value: fund.id };
