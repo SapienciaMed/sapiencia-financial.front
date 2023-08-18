@@ -19,13 +19,11 @@ export function useFundsData() {
     const resolver = useYupValidationResolver(fundsValidator);
     const { setMessage } = useContext(AppContext);
     const { GetEntities } = useEntitiesService();
-    const [entitySelected, setEntitySelected] = useState(null);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
     const {
         handleSubmit,
         register,
         formState: { errors },
-        setValue: setValueRegister,
         reset,
         control: controlRegister
     } = useForm<IFundsFilters>({ resolver });
@@ -131,11 +129,8 @@ export function useFundsData() {
         navigate,
         register,
         errors,
-        setValueRegister,
         reset,
         controlRegister,
-        entitySelected,
-        setEntitySelected,
         entitiesData
     }
 } 

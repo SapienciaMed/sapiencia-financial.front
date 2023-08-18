@@ -41,6 +41,7 @@ interface IProps<T> {
 
 interface IRef {
   loadData: (newSearchCriteria?: object) => void;
+  emptyData:() =>void;
 }
 
 const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
@@ -71,6 +72,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
   const { post } = useCrudService(token, url);
   useImperativeHandle(ref, () => ({
     loadData: loadData,
+    emptyData: EmptyData
   }));
 
   // Metodo que hace la peticion para realizar la carga de datos
@@ -204,6 +206,12 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
     setLoading(false);
   }
 
+  async function EmptyData(): Promise<void> {
+    setLoading(true);
+    setResultData({ array: [], meta: { total: 0 } });
+    setLoading(false);
+  }
+
   // Metodo que alamacena el el estado del paginador
   function onPageChange(event: PaginatorPageChangeEvent): void {
     setPerPage(event.rows);
@@ -228,6 +236,8 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
       <div className="card-grid-item">
         <div className="card-header">
           {columns.map((column) => {
+            const properties = column.fieldName.split(".");
+            let field = properties.length === 2 ? item[properties[0]][properties[1]] : item[properties[0]];
             return (
               <div key={item} className="item-value-container">
                 <p className="text-black bold">{column.header}</p>
@@ -235,7 +245,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
                   {" "}
                   {column.renderCell
                     ? column.renderCell(item)
-                    : item[column.fieldName]}{" "}
+                    : field}{" "}
                 </p>
               </div>
             );
@@ -280,6 +290,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
               field={col.fieldName}
               header={col.header}
               body={col.renderCell}
+              sortable={col.sortable}
             />
           ))}
 

@@ -18,6 +18,8 @@ const ProjectsLinkPage = lazy(()  => import("./features/functionality/pages/proj
 const FunctionalAreaCrudPage = lazy(()  => import("./features/functionality/pages/functional-area-crud.page"));
 const PosPreSapienciaForm = lazy(()  => import("./features/functionality/pages/pospre-sapiencia-crud.page"));
 const BudgetsView = lazy(()  => import("./features/functionality/pages/budgets-view.page"));
+const BudgetRoutes = lazy(()  => import("./features/budget-routes/pages/budget-routes.page"));
+const BudgetRoutesCrudPage = lazy(()  => import("./features/budget-routes/pages/budget-routes-crud.page"));
 
 function App() {
   const { publish } = useAppCominicator();
@@ -63,7 +65,10 @@ function App() {
               
               <Route path={"/gestion-financiera/centro-gestor/"} element={<FunctionalityCenterManagerPage/>} />
               <Route path={"/gestion-financiera/centro-gestor/:option"} element={<FunctionalityCenterManagerPage/>} />
-            
+
+              <Route path={"/gestion-financiera/ruta-presupuestal"} element={<BudgetRoutes/>} />
+              <Route path={"/gestion-financiera/ruta-presupuestal/create"} element={<BudgetRoutesCrudPage action="new"/>} />
+              <Route path={"/gestion-financiera/ruta-presupuestal/edit/:id"} element={<BudgetRoutesCrudPage action="edit"/>} />
             </Routes>
           </Suspense>
         </Router>

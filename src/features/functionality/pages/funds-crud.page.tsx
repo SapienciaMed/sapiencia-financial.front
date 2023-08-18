@@ -11,7 +11,7 @@ interface IAppProps {
 
 function FundsForm({ action }: IAppProps) {
     const { id: fundId } = useParams();
-    const { changedData, register, errors, setValueRegister, getValueRegister, controlRegister, entitiesData, onSubmitNewFund, onSubmitEditFund, onCancelNew, onCancelEdit, confirmClose } = useFundsCrudData(fundId);
+    const { register, errors, controlRegister, entitiesData, onSubmitNewFund, onSubmitEditFund, onCancelNew, onCancelEdit, confirmClose } = useFundsCrudData(fundId);
     return (
         <div className="crud-page full-height">
             <div className="main-page full-height">
@@ -26,10 +26,7 @@ function FundsForm({ action }: IAppProps) {
                                 <SelectComponent
                                     idInput="entity"
                                     className="select-basic"
-                                    register={register}
-                                    setValueRegister={setValueRegister}
-                                    getValueRegister={getValueRegister}
-                                    change={changedData}
+                                    control={controlRegister}
                                     errors={errors}
                                     label="Entidad CP"
                                     classNameLabel="text-black biggest bold"

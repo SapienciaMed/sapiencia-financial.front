@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { DateTime } from "luxon";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { useContext, useEffect, useState } from "react";
 import { IDropdownProps } from "../../../common/interfaces/select.interface";
@@ -22,7 +21,6 @@ interface IBudgetsCrudForm {
 
 export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () => Promise<void>, loadTableData?: (searchCriteria?: object) => void) {
     const [budgetsData, setBudgetsData] = useState<IBudgets>(null);
-    const [entitySelected, setEntitySelected] = useState(null);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
 
     const resolver = useYupValidationResolver(budgetsCrudValidator);
@@ -34,7 +32,7 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
         register,
         formState: { errors },
         setValue: setValueRegister,
-        reset,
+        control: controlRegister
     } = useForm<IBudgetsCrudForm>({ resolver });
     const navigate = useNavigate();
 
@@ -68,7 +66,6 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
         if (!budgetsData) return;
         setValueRegister("number", budgetsData.number);
         setValueRegister("entity", budgetsData.entityId);
-        setEntitySelected(budgetsData.entityId);
         setValueRegister("denomination", budgetsData.denomination);
         setValueRegister("description", budgetsData.description);
         setValueRegister("ejercise",budgetsData.ejercise);
@@ -172,5 +169,5 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
         });
     }
 
-    return { register, errors, reset, setValueRegister, entitiesData, entitySelected, setEntitySelected, onSubmitNewBudgets, onSubmitEditBudgets, onCancelNew, onCancelEdit, confirmClose };
+    return { register, errors, entitiesData, onSubmitNewBudgets, onSubmitEditBudgets, onCancelNew, onCancelEdit, confirmClose, controlRegister };
 }

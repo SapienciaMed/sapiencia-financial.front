@@ -17,14 +17,13 @@ interface IFundsCrudForm {
     number: number;
     denomination: string;
     description: string;
-    dateFrom: DateTime;
-    dateTo: DateTime;
+    dateFrom: Date;
+    dateTo: Date;
 }
 
 export function useFundsCrudData(fundId: string) {
     const [fundData, setFundData] = useState<IFunds>(null);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
-    const [changedData, changeData] = useState<number>(null);
 
     const resolver = useYupValidationResolver(fundsCrudValidator);
     const { GetEntities } = useEntitiesService();
@@ -37,7 +36,6 @@ export function useFundsCrudData(fundId: string) {
         setValue: setValueRegister,
         reset,
         control: controlRegister,
-        getValues: getValueRegister,
     } = useForm<IFundsCrudForm>({ resolver });
     const navigate = useNavigate();
 
@@ -70,11 +68,8 @@ export function useFundsCrudData(fundId: string) {
         setValueRegister("entity", fundData.entityId);
         setValueRegister("denomination", fundData.denomination);
         setValueRegister("description", fundData.description);
-        setValueRegister("dateFrom", DateTime.fromISO(fundData.dateFrom).toJSDate());
-        setValueRegister("dateTo", DateTime.fromISO(fundData.dateTo).toJSDate());
-        changeData((prev) => {
-            return prev+1;
-        });
+        setValueRegister("dateFrom", new Date(fundData.dateFrom));
+        setValueRegister("dateTo", new Date(fundData.dateTo));
     }, [fundData])
 
     const onSubmitNewFund = handleSubmit(async (data: IFundsCrudForm) => {
@@ -176,5 +171,5 @@ export function useFundsCrudData(fundId: string) {
         });
     }
 
-    return { changedData, register, errors, reset, setValueRegister, getValueRegister, controlRegister, entitiesData, onSubmitNewFund, onSubmitEditFund, onCancelNew, onCancelEdit, confirmClose };
+    return { register, errors, reset, controlRegister, entitiesData, onSubmitNewFund, onSubmitEditFund, onCancelNew, onCancelEdit, confirmClose };
 }

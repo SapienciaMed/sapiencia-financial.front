@@ -26,3 +26,10 @@ export const fundsCrudValidator = yup.object({
         .required("El campo es obligatorio")
         .typeError("Fecha invalida"),
 });
+
+export const fundsAdditional = yup.object({
+    actAdministrativeDistrict: yup
+        .string(),
+    actAdministrativeSapiencia: yup 
+        .string()
+})

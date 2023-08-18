@@ -1,8 +1,6 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { AppContext } from "../../../common/contexts/app.context";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
-import DetailsComponent from "../../../common/components/details.component";
 import { useForm } from "react-hook-form";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { fundsValidator } from "../../../common/schemas";
@@ -11,15 +9,12 @@ import { IDropdownProps } from "../../../common/interfaces/select.interface";
 import { useEntitiesService } from "./entities-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import { IEntities } from "../interfaces/Entities";
-import BudgetsPage from "../pages/budgets-view.page";
 
 export function useBudgetsData() {
     const tableComponentRef = useRef(null);
-    const { setMessage } = useContext(AppContext);
     const navigate = useNavigate();
     const { GetEntities } = useEntitiesService();
     const resolver = useYupValidationResolver(fundsValidator);
-    const [entitySelected, setEntitySelected] = useState(null);
     const [dateFrom, setDateFrom] = useState(null);
     const [dateTo, setDateTo] = useState(null);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
@@ -27,7 +22,7 @@ export function useBudgetsData() {
     handleSubmit,
     register,
     formState: { errors },
-    setValue: setValueRegister,
+    control: controlRegister,
     reset
   } = useForm<IFilterBudgets>({ resolver });
     const tableColumns: ITableElement<IBudgets>[] = [
@@ -100,14 +95,12 @@ export function useBudgetsData() {
         register,
         navigate,
         errors,
-        setValueRegister,
         reset,
-        entitySelected,
-        setEntitySelected,
         dateFrom,
         setDateFrom,
         dateTo,
         setDateTo,
-        entitiesData
+        entitiesData,
+        controlRegister
     }
 } 

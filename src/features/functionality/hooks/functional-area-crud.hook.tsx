@@ -8,7 +8,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { useFunctionalAreaService } from "./functional-area-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
-import { IProject, IProjectsVinculation } from "../interfaces/Projects";
+import { IProject, IProjectsVinculation, IProjectsVinculationTable } from "../interfaces/Projects";
 import { SwitchComponent } from "../../../common/components/Form";
 import { useProjectsLinkService } from "./projects-link-service.hook";
 
@@ -30,7 +30,7 @@ export function useFunctionalAreaCrudData(id: string) {
     const [projectsLink, setProjectsLink] = useState<number[]>([]);
     const [projectsUnLink, setProjectsUnLink] = useState<number[]>([]);
 
-    const tableColumns: ITableElement<IProjectsVinculation>[] = [
+    const tableColumns: ITableElement<IProjectsVinculationTable>[] = [
         {
             fieldName: "projectId",
             header: "Id proyecto",
@@ -55,7 +55,8 @@ export function useFunctionalAreaCrudData(id: string) {
             fieldName: "projectId",
             header: "Vincular",
             renderCell: (row) => {
-                let checked = row.linked;
+                console.log(row.linked)
+                let checked = row.linked === 1;
                 if(projectsLink.find(project => project === row.id)) checked = true;
                 if(projectsUnLink.find(project => project === row.id)) checked = false;
                 return <div>

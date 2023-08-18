@@ -6,7 +6,7 @@ import {AiOutlinePlusCircle} from "react-icons/ai";
 interface IAppProps { }
 
 function BudgetsPage(props: IAppProps): React.JSX.Element {
-const { tableActions, tableColumns, tableComponentRef,navigate, onSubmit, register, errors, setValueRegister, reset, entitySelected, setEntitySelected,entitiesData } = useBudgetsData();
+const { tableActions, tableColumns, tableComponentRef,navigate, onSubmit, register, errors, reset, entitiesData, controlRegister } = useBudgetsData();
 return (
         <div>
             <FormComponent action={onSubmit}>
@@ -25,14 +25,12 @@ return (
                         <SelectComponent
                             idInput="entity"
                             className="select-basic"
-                            register={register}
-                            setValueRegister={setValueRegister}
+                            control={controlRegister}
                             errors={errors}
                             label="Entidad CP"
                             classNameLabel="text-black biggest bold"
                             direction={EDirection.row}
                             data={entitiesData}
-                            stateProps={{ state: entitySelected, setState: setEntitySelected }}
                         />
                         <InputComponent
                             idInput="ejercise"
@@ -69,7 +67,6 @@ return (
                 <div className="funcionality-buttons-container">
                     <span className="bold text-center button" onClick={() => {
                             reset();
-                            setEntitySelected(null);
                         }}>
                         Limpiar campos
                     </span>

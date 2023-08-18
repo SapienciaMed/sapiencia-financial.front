@@ -1,16 +1,13 @@
 import { useForm } from "react-hook-form";
-import { DateTime } from "luxon";
 import { vinculationValidator } from "../../../common/schemas";
 import DetailsComponent from "../../../common/components/details.component";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { AppContext } from "../../../common/contexts/app.context";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { useNavigate } from "react-router-dom";
-import { InputSwitch } from 'primereact/inputswitch';
 import { IActivityMGA } from "../interfaces/VinculationMGAInterfaces";
 import { SwitchComponent } from "../../../common/components/Form";
-import { number } from "yup";
 import {useVinculationService} from "../hooks/vinculation-mga-service.hook"
 import { EResponseCodes } from "../../../common/constants/api.enum";
 interface IVinculationMGAFilters {
@@ -30,7 +27,6 @@ export function useVinculationMGAData(pospre: string) {
         handleSubmit,
         register,
         formState: { errors },
-        setValue: setValueRegister,
         reset,
     } = useForm<IVinculationMGAFilters>({ resolver });
     const tableColumns: ITableElement<IActivityMGA>[] = [

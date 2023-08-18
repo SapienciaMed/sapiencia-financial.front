@@ -7,8 +7,8 @@ export interface IFunds {
   number: number;
   denomination: string;
   description: string;
-  dateFrom: DateTime;
-  dateTo: DateTime;
+  dateFrom: Date;
+  dateTo: Date;
   userModify?: string;
   dateModify?: Date;
   userCreate?: string;
