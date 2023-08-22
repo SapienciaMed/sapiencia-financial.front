@@ -57,6 +57,8 @@ function InputElement({
       className={className}
       placeholder={placeholder}
       defaultValue={value}
+      onChange={onChange}
+      disabled={disabled}
     />
   );
 }

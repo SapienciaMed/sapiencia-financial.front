@@ -216,11 +216,11 @@ export function useBudgetRoutesCrudData(id: string) {
 
     const confirmClose = (callback) => {
         setMessage({
-            title: "Cancelar fondo",
-            description: "¿Seguro que desea cancelar la operación?",
+            title: "Cancelar",
+            description: "¿Estas segur@ de cancelar la información en el sistema?",
             show: true,
-            OkTitle: "Si, cancelar",
-            cancelTitle: "Continuar",
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
             onOk: () => {
                 callback();
                 setMessage({});

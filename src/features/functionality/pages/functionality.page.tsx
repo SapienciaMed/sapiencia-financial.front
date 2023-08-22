@@ -12,7 +12,7 @@ function FunctionalityPage(props: IAppProps): React.JSX.Element {
     const { option } = useParams();
     const navigate = useNavigate();
     const tabs: ITabsMenuTemplate[] = [
-        { id: "fondos", title: "Fondos", content: <FoundsPage/>, action: () => { navigate("/gestion-financiera/funcionalidad/fondos") } },
+        { id: "fondos", title: "Consulta de fondos", content: <FoundsPage/>, action: () => { navigate("/gestion-financiera/funcionalidad/fondos") } },
         { id: "posicion-presupuestal", title: "Posición presupuestal", content: <BudgetsPage/>, action: () => { navigate("/gestion-financiera/funcionalidad/posicion-presupuestal") } },
         { id: "area-funcional", title: "Área funcional", content: <FunctionalAreaPage />, action: () => { navigate("/gestion-financiera/funcionalidad/area-funcional") } },
     ];

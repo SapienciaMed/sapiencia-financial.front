@@ -11,119 +11,149 @@ interface IAppProps {
 
 function FundsForm({ action }: IAppProps) {
     const { id: fundId } = useParams();
-    const { register, errors, controlRegister, entitiesData, onSubmitNewFund, onSubmitEditFund, onCancelNew, onCancelEdit, confirmClose } = useFundsCrudData(fundId);
+    const {
+      register,
+      errors,
+      controlRegister,
+      entitiesData,
+      onSubmitNewFund,
+      onSubmitEditFund,
+      onCancelNew,
+      onCancelEdit,
+      confirmClose,
+      validatorNumber,
+      isValid,
+    } = useFundsCrudData(fundId);
     return (
-        <div className="crud-page full-height">
-            <div className="main-page full-height">
-                <div className="card-table">
-                    <div className="title-area">
-                        <div className="text-black extra-large bold">{action === "new" ? "Crear fondo" : "Editar fondo "}</div>
-                    </div>
-
-                    <FormComponent action={action === "new" ? onSubmitNewFund : onSubmitEditFund} className="funds-form" id="funds-form">
-                        <div className="card-form">
-                            <div className="fund-data-container">
-                                <SelectComponent
-                                    idInput="entity"
-                                    className="select-basic"
-                                    control={controlRegister}
-                                    errors={errors}
-                                    label="Entidad CP"
-                                    classNameLabel="text-black biggest bold"
-                                    direction={EDirection.row}
-                                    data={entitiesData}
-                                />
-                                <InputComponent
-                                    idInput="number"
-                                    className="input-basic"
-                                    typeInput="number"
-                                    register={register}
-                                    label="Fondos"
-                                    classNameLabel="text-black biggest bold"
-                                    direction={EDirection.row}
-                                    errors={errors}
-                                />
-                            </div>
-                        </div>
-                        <div className="card-form">
-                            <div className="title-area">
-                                <div className="text-black biggest bold">Denominaciones</div>
-                            </div>
-                            <div className="fund-denomination-container">
-                                <InputComponent
-                                    idInput="denomination"
-                                    register={register}
-                                    typeInput="text"
-                                    errors={errors}
-                                    label="Denominación"
-                                    classNameLabel="text-black biggest bold"
-                                />
-                                <InputComponent
-                                    idInput="description"
-                                    register={register}
-                                    typeInput="text"
-                                    errors={errors}
-                                    label="Descripción"
-                                    classNameLabel="text-black biggest bold"
-                                />
-                            </div>
-                        </div>
-                        <div className="card-form">
-                            <div className="title-area">
-                                <div className="text-black biggest bold">Datos básicos</div>
-                            </div>
-                            <div className="fund-data-container">
-                                <DatePickerComponent
-                                    idInput="dateFrom"
-                                    control={controlRegister}
-                                    label={"Validez de"}
-                                    errors={errors}
-                                    classNameLabel="text-black biggest bold"
-                                    className="dataPicker-basic"
-                                    placeholder="DD/MM/YYYY"
-                                    dateFormat="dd/mm/yy"
-                                />
-                                <DatePickerComponent
-                                    idInput="dateTo"
-                                    control={controlRegister}
-                                    label={"Validez hasta"}
-                                    errors={errors}
-                                    classNameLabel="text-black biggest bold"
-                                    className="dataPicker-basic"
-                                    placeholder="DD/MM/YYYY"
-                                    dateFormat="dd/mm/yy"
-                                />
-                            </div>
-                        </div>
-                        <div className="mobile-actions mobile">
-                            <span className="bold text-center button" onClick={() => { confirmClose(action === "new" ? onCancelNew : onCancelEdit) }}>
-                                Cancelar
-                            </span>
-                            <ButtonComponent
-                                value="Guardar"
-                                type="submit"
-                                className="button-main huge"
-                            />
-                        </div>
-                    </FormComponent>
-                </div>
-
+      <div className="crud-page full-height">
+        <div className="main-page full-height">
+          <div className="card-table">
+            <div className="title-area">
+              <div className="text-black extra-large bold">
+                {action === "new" ? "Crear fondo" : "Editar fondo "}
+              </div>
             </div>
-            <div className="container-button-bot">
-                <div className="buttons-bot">
-                    <span className="bold text-center button" onClick={() => { confirmClose(action === "new" ? onCancelNew : onCancelEdit) }}>
-                        Cancelar
-                    </span>
-                    <ButtonComponent
-                        className="button-main huge hover-three"
-                        value="Guardar"
-                        type="submit"
-                        form="funds-form"
-                    />
+
+            <FormComponent
+              action={action === "new" ? onSubmitNewFund : onSubmitEditFund}
+              className="funds-form"
+              id="funds-form"
+            >
+              <div className="card-form">
+                <div className="fund-data-container">
+                  <SelectComponent
+                    idInput="entity"
+                    className="select-basic"
+                    control={controlRegister}
+                    errors={errors}
+                    label="Entidad CP"
+                    classNameLabel="text-black biggest bold"
+                    direction={EDirection.row}
+                    data={entitiesData}
+                    disabled={action === "new" ? false : true}
+                  />
+                  <InputComponent
+                    idInput="number"
+                    className="input-basic"
+                    typeInput="number"
+                    register={register}
+                    label="Fondos"
+                    classNameLabel="text-black biggest bold"
+                    direction={EDirection.row}
+                    errors={errors}
+                    onChange={validatorNumber}
+                    disabled={action === "new" ? false : true}
+                  />
                 </div>
-            </div>
+              </div>
+              <div className="card-form">
+                <div className="title-area">
+                  <div className="text-black biggest bold">Denominaciones</div>
+                </div>
+                <div className="fund-denomination-container">
+                  <InputComponent
+                    idInput="denomination"
+                    register={register}
+                    typeInput="text"
+                    errors={errors}
+                    label="Denominación"
+                    classNameLabel="text-black biggest bold"
+                  />
+                  <InputComponent
+                    idInput="description"
+                    register={register}
+                    typeInput="text"
+                    errors={errors}
+                    label="Descripción"
+                    classNameLabel="text-black biggest bold"
+                  />
+                </div>
+              </div>
+              <div className="card-form">
+                <div className="title-area">
+                  <div className="text-black biggest bold">Datos básicos</div>
+                </div>
+                <div className="fund-data-container">
+                  <DatePickerComponent
+                    idInput="dateFrom"
+                    control={controlRegister}
+                    label={"Validez a"}
+                    errors={errors}
+                    classNameLabel="text-black biggest bold"
+                    className="dataPicker-basic"
+                    placeholder="DD/MM/YYYY"
+                    dateFormat="dd/mm/yy"
+                  />
+                  <DatePickerComponent
+                    idInput="dateTo"
+                    control={controlRegister}
+                    label={"Validez hasta"}
+                    errors={errors}
+                    classNameLabel="text-black biggest bold"
+                    className="dataPicker-basic"
+                    placeholder="DD/MM/YYYY"
+                    dateFormat="dd/mm/yy"
+                  />
+                </div>
+              </div>
+              <div className="mobile-actions mobile">
+                <span
+                  className="bold text-center button"
+                  onClick={() => {
+                    confirmClose(action === "new" ? onCancelNew : onCancelEdit);
+                  }}
+                >
+                  Cancelar
+                </span>
+                <ButtonComponent
+                  value="Guardar"
+                  type="submit"
+                  className="button-main huge"
+                />
+              </div>
+            </FormComponent>
+          </div>
         </div>
-
+        <div className="container-button-bot">
+          <div className="buttons-bot">
+            <span
+              className="bold text-center button"
+              onClick={() => {
+                confirmClose(action === "new" ? onCancelNew : onCancelEdit);
+              }}
+            >
+              Cancelar
+            </span>
+            <ButtonComponent
+              className="button-main huge hover-three"
+              value="Guardar"
+              type="submit"
+              form="funds-form"
+              disabled={action === "new" ? (isValid ? false : true) : false}
+            />
+          </div>
+        </div>
+      </div>
     );
 }
 

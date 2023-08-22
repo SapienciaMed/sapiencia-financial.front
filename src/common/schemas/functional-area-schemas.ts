@@ -11,7 +11,7 @@ export const functionalAreaCrud = yup.object({
     denomination: yup
         .string()
         .required("El campo es obligatorio")
-        .max(250, "Solo se permiten 250 caracteres"),
+        .max(100, "Solo se permiten 250 caracteres"),
     description: yup
         .string()
         .required("El campo es obligatorio")

@@ -8,15 +8,15 @@ export const fundsCrudValidator = yup.object({
         .string()
         .required("El campo es obligatorio")
         .matches(/^[0-9]+$/, "Solo se permiten numeros")
-        .max(15, "Solo se permiten 15 caracteres"),
+        .max(30, "Solo se permiten 30 caracteres"),
     denomination: yup
         .string()
         .required("El campo es obligatorio")
-        .max(250, "Solo se permiten 250 caracteres"),
+        .max(100, "Solo se permiten 250 caracteres"),
     description: yup
         .string()
         .required("El campo es obligatorio")
-        .max(250, "Solo se permiten 250 caracteres"),
+        .max(500, "Solo se permiten 500 caracteres"),
     dateFrom: yup
         .date()
         .required("El campo es obligatorio")

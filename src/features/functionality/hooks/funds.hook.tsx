@@ -20,6 +20,7 @@ export function useFundsData() {
     const { setMessage } = useContext(AppContext);
     const { GetEntities } = useEntitiesService();
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
+    const [isVisibleTable, setIsVisibleTable] = useState<Boolean>(false);
     const {
         handleSubmit,
         register,
@@ -38,7 +39,7 @@ export function useFundsData() {
         },
         {
             fieldName: "dateFrom",
-            header: "Validez de",
+            header: "Validez a",
             renderCell: (row) => {
                 return <>{DateTime.fromISO(row.dateFrom).toLocaleString()}</>;
             }
@@ -51,6 +52,13 @@ export function useFundsData() {
             }
         },
     ];
+
+    async function validatorNumber(e) {
+        if (parseInt(e.target.value) < 0) {
+        return (e.target.value = "");
+        }
+    }
+    
     const tableActions: ITableAction<IFunds>[] = [
         {
             icon: "Detail",
@@ -65,7 +73,7 @@ export function useFundsData() {
                         value: `${row.number}`
                     },
                     {
-                        title: "Validez de",
+                        title: "Validez a",
                         value: `${DateTime.fromISO(row.dateTo).toLocaleString()}`
                     },
                     {
@@ -106,6 +114,7 @@ export function useFundsData() {
 
     const onSubmit = handleSubmit(async (data: IFundsFilters) => {
         loadTableData(data);
+        setIsVisibleTable(true);
     });
 
     useEffect(() => {
@@ -122,15 +131,18 @@ export function useFundsData() {
     }, [])
 
     return {
-        tableComponentRef,
-        tableColumns,
-        tableActions,
-        onSubmit,
-        navigate,
-        register,
-        errors,
-        reset,
-        controlRegister,
-        entitiesData
-    }
+      tableComponentRef,
+      tableColumns,
+      tableActions,
+      onSubmit,
+      navigate,
+      register,
+      errors,
+      reset,
+      controlRegister,
+      entitiesData,
+      isVisibleTable,
+      setIsVisibleTable,
+      validatorNumber,
+    };
 } 

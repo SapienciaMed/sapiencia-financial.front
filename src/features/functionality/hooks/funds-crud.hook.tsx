@@ -32,7 +32,7 @@ export function useFundsCrudData(fundId: string) {
     const {
         handleSubmit,
         register,
-        formState: { errors },
+        formState: { errors, isValid },
         setValue: setValueRegister,
         reset,
         control: controlRegister,
@@ -47,6 +47,12 @@ export function useFundsCrudData(fundId: string) {
                 return { name: entity.name, value: entity.id };
             });
             setEntitiesData(arrayEntities);
+        }
+    }
+
+    async function validatorNumber(e) {
+        if (parseInt(e.target.value) < 0) {
+            return e.target.value = '';
         }
     }
 
@@ -82,32 +88,48 @@ export function useFundsCrudData(fundId: string) {
             dateFrom: data.dateFrom,
             dateTo: data.dateTo
         }
-        CreateFund(insertData).then(response => {
-            if (response.operation.code === EResponseCodes.OK) {
-                setMessage({
-                    title: "Crear fondos",
-                    description: "Se ha creado el fondo exitosamente",
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        onCancelNew();
-                        setMessage({});
-                    },
-                    background: true
-                });
-            } else {
-                setMessage({
-                    title: "Hubo un problema...",
-                    description: response.operation.message,
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        setMessage({});
-                    },
-                    background: true
-                });
-            }
-        })
+        setMessage({
+          title: "Guardar",
+          description:
+            "¿Estas segur@ de guardar la información en el sistema?",
+          show: true,
+          OkTitle: "Aceptar",
+          cancelTitle: "Cancelar",
+          onOk: () => {
+                    CreateFund(insertData).then((response) => {
+                      if (response.operation.code === EResponseCodes.OK) {
+                        setMessage({
+                          title: "Crear fondos",
+                          description: "Se ha creado el fondo exitosamente",
+                          show: true,
+                          OkTitle: "Aceptar",
+                          onOk: () => {
+                            onCancelNew();
+                            setMessage({});
+                          },
+                          background: true,
+                        });
+                      } else {
+                        setMessage({
+                          title: "Hubo un problema...",
+                          description: response.operation.message,
+                          show: true,
+                          OkTitle: "Aceptar",
+                          onOk: () => {
+                            setMessage({});
+                          },
+                          background: true,
+                        });
+                      }
+                    });
+            },
+            onCancel: () => {
+                setMessage({});
+                onCancelNew();
+            },
+          background: true,
+        });
+
     });
 
     const onSubmitEditFund = handleSubmit(async (data: IFundsCrudForm) => {
@@ -120,32 +142,47 @@ export function useFundsCrudData(fundId: string) {
             dateFrom: data.dateFrom,
             dateTo: data.dateTo
         }
-        UpdateFund(parseInt(fundId), insertData).then(response => {
-            if (response.operation.code === EResponseCodes.OK) {
+        setMessage({
+          title: "Editar fondos",
+          description: "¿Estas segur@ de guardar la información en el sistema?",
+          show: true,
+          OkTitle: "Aceptar",
+          cancelTitle: "Cancelar",
+          onOk: () => {
+            UpdateFund(parseInt(fundId), insertData).then((response) => {
+              if (response.operation.code === EResponseCodes.OK) {
                 setMessage({
-                    title: "Editar fondos",
-                    description: "Se ha editado el fondo exitosamente",
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        onCancelEdit();
-                        setMessage({});
-                    },
-                    background: true
+                  title: "Editar fondos",
+                  description: "Se ha editado el fondo exitosamente",
+                  show: true,
+                  OkTitle: "Aceptar",
+                  onOk: () => {
+                    onCancelEdit();
+                    setMessage({});
+                  },
+                  background: true,
                 });
-            } else {
+              } else {
                 setMessage({
-                    title: "Hubo un problema...",
-                    description: response.operation.message,
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        setMessage({});
-                    },
-                    background: true
+                  title: "Hubo un problema...",
+                  description: response.operation.message,
+                  show: true,
+                  OkTitle: "Aceptar",
+                  onOk: () => {
+                    setMessage({});
+                  },
+                  background: true,
                 });
-            }
-        })
+              }
+            });
+          },
+          onCancel: () => {
+            setMessage({});
+            onCancelNew();
+          },
+          background: true,
+        });
+
     });
 
     const onCancelNew = () => {
@@ -158,18 +195,32 @@ export function useFundsCrudData(fundId: string) {
 
     const confirmClose = (callback) =>{
         setMessage({
-            title: "Cancelar fondo",
-            description: "¿Seguro que desea cancelar la operación?",
-            show: true,
-            OkTitle: "Si, cancelar",
-            cancelTitle: "Continuar",
-            onOk: () => {
-                callback();
-                setMessage({});
-            },
-            background: true
+          title: "Cancelar",
+          description:
+            "¿Estas segur@ de cancelar la información en el sistema?",
+          show: true,
+          OkTitle: "Aceptar",
+          cancelTitle: "Cancelar",
+          onOk: () => {
+            callback();
+            setMessage({});
+          },
+          background: true,
         });
     }
 
-    return { register, errors, reset, controlRegister, entitiesData, onSubmitNewFund, onSubmitEditFund, onCancelNew, onCancelEdit, confirmClose };
+    return {
+      register,
+      errors,
+      reset,
+      controlRegister,
+      entitiesData,
+      onSubmitNewFund,
+      onSubmitEditFund,
+      onCancelNew,
+      onCancelEdit,
+      confirmClose,
+      validatorNumber,
+      isValid,
+    };
 }
