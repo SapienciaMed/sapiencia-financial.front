@@ -3,6 +3,7 @@ import { ButtonComponent, FormComponent, InputComponent, TextAreaComponent } fro
 import { EDirection } from "../../../common/constants/input.enum";
 import { useParams } from "react-router-dom";
 import { usePosPreSapienciaCrudData } from "../hooks/pospre-sapiencia-crud.hook";
+import { Controller } from "react-hook-form";
 
 interface IAppProps {
     action: "new" | "edit";
@@ -10,7 +11,8 @@ interface IAppProps {
 
 function PosPreSapienciaForm({ action }: IAppProps) {
     const { pospre, id } = useParams();
-    const { register, errors, onSubmitNewPosPreSapiencia, onSubmitEditPosPreSapiencia, onCancelNew, onCancelEdit, confirmClose } = usePosPreSapienciaCrudData(pospre, id);
+    const { register, errors, control, onSubmitNewPosPreSapiencia, onSubmitEditPosPreSapiencia, onCancelNew, 
+        onCancelEdit, confirmClose, validatorNumber } = usePosPreSapienciaCrudData(pospre, id);
     return (
         <div className="crud-page full-height">
             <div className="main-page full-height">
@@ -28,7 +30,7 @@ function PosPreSapienciaForm({ action }: IAppProps) {
                                         className="input-basic"
                                         typeInput="text"
                                         register={register}
-                                        label="Código pospre sapiencia"
+                                        label="Código pospre"
                                         classNameLabel="text-black biggest bold"
                                         direction={EDirection.row}
                                         errors={errors}
@@ -64,14 +66,29 @@ function PosPreSapienciaForm({ action }: IAppProps) {
                                 <div className="text-black biggest bold">Asignar código pospre sapiencia</div>
                             </div>
                             <div className="pospre-sapiencia-code">
-                                <InputComponent
-                                    idInput="consecutive"
-                                    register={register}
-                                    typeInput="number"
-                                    errors={errors}
-                                    label="Consecutivo"
-                                    classNameLabel="text-black biggest bold"
+                                <Controller
+                                    control={control}
+                                    name={"consecutive"}
+                                    render={({ field }) => {
+                                        return (
+                                            <InputComponent
+                                                id={field.name}
+                                                idInput={field.name}
+                                                value={`${field.value}`}
+                                                className="input-basic"
+                                                typeInput="number"
+                                                register={register}
+                                                label="Pospre sapiencia"
+                                                classNameLabel="text-black biggest bold"
+                                                direction={EDirection.row}
+                                                errors={errors}
+                                                onChange={field.onChange}
+                                                min={0}
+                                            /> 
+                                        )
+                                    }}
                                 />
+
                                 <InputComponent
                                     idInput="assignedTo"
                                     register={register}
