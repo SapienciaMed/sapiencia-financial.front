@@ -67,7 +67,7 @@ function App() {
               <Route path={"/gestion-financiera/centro-gestor/"} element={<FunctionalityCenterManagerPage/>} />
               <Route path={"/gestion-financiera/centro-gestor/:option"} element={<FunctionalityCenterManagerPage/>} />
 
-              <Route path={"/gestion-financiera/centro-gestor/adicion/create"} element={<AdditionAreaCrudPage action="new"/>} />
+              <Route path={"/gestion-financiera/centro-gestor/adicion/create"} element={<AdditionAreaCrudPage actionForm="new"/>} />
 
               <Route path={"/gestion-financiera/ruta-presupuestal"} element={<BudgetRoutes/>} />
               <Route path={"/gestion-financiera/ruta-presupuestal/create"} element={<BudgetRoutesCrudPage action="new"/>} />

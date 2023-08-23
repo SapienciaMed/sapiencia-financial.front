@@ -40,33 +40,74 @@ export const fundsAdditionalValidation =  yup.object({
         .of(yup.object().shape({
             managerCenter : yup 
                 .string()
-                .required("El campo es obligatorio"),
+                .required("Completar información del campo"),
             projectId: yup 
                 .string()
-                .required("El campo es obligatorio"),
+                .required("Completar información del campo"),
             functionalArea: yup 
                 .string()
-                .required("El campo es obligatorio"),
+                .required("Completar información del campo"),
             funds: yup 
                 .string()
-                .required("El campo es obligatorio"),
+                .required("Completar información del campo"),
             posPre:  yup 
                 .string()
-                .required("El campo es obligatorio"),
+                .required("Completar información del campo"),
             value: yup 
                 .string()
-                .required("El campo es obligatorio"),
+                .required("Completar información del campo"),
         }))
         .test('uniqueValues', 'datos duplicados en el sistema', function (value) {
             const nonEmptyValues = value.filter((item) => {
-                const hasAnyValue = Object.values(item).some((property) => property !== undefined && property !== '');
-                return hasAnyValue;
+                const hasAllValues = Object.keys(item).every((key) => item[key] !== undefined && item[key] !== '');
+                return hasAllValues;
             });
-    
+            
             const duplicatesFound = nonEmptyValues.some((item, index) =>
                 nonEmptyValues.slice(0, index).some((otherItem) => _.isEqual(item, otherItem))
             );
-        
-              return !duplicatesFound;
+            
+            return !duplicatesFound;
         }),
+        gasto: yup.array()
+            .of(yup.object().shape({
+                managerCenter : yup 
+                    .string()
+                    .required("Completar información del campo"),
+                projectId: yup 
+                    .string()
+                    .required("Completar información del campo"),
+                functionalArea: yup 
+                    .string()
+                    .required("El campo es obligatorio"),
+                funds: yup 
+                    .string()
+                    .required("Completar información del campo"),
+                posPre:  yup 
+                    .string()
+                    .required("Completar información del campo"),
+                value: yup 
+                    .string()
+                    .required("Completar información del campo"),
+            }))
+        .test('uniqueValues', 'datos duplicados en el sistema', function (value) {
+            const nonEmptyValues = value.filter((item) => {
+                const hasAllValues = Object.keys(item).every((key) => item[key] !== undefined && item[key] !== '');
+                return hasAllValues;
+            });
+            
+            const duplicatesFound = nonEmptyValues.some((item, index) =>
+                nonEmptyValues.slice(0, index).some((otherItem) => _.isEqual(item, otherItem))
+            );
+            
+            return !duplicatesFound;
+        }),
+        actAdministrativeDistrict: yup
+            .string()
+            .required("El campo es obligatorio")
+            .max(200, "Solo se permiten 200 caracteres"),
+        actAdministrativeSapiencia: yup 
+            .string()
+            .required("El campo es obligatorio")
+            .max(100, "Solo se permiten 100 caracteres"),
 });

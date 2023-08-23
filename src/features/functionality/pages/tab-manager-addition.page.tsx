@@ -3,22 +3,24 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ITabsMenuTemplate } from "../../../common/interfaces/tabs-menu.interface";
 import AreaCreateAddition from "../../forms/area-create-addition";
 import AreaCreateExpense from "../../forms/area-create-expense";
-import { Control, useFormState, UseFormGetValues } from "react-hook-form";
-import { IAdditionsIncome } from "../interfaces/Additions";
-import { IMessage } from "../../../common/interfaces/global.interface";
+import { Control, useFormState, UseFormGetValues, UseFormWatch, UseFormRegister } from "react-hook-form";
+import { IAdditionsForm } from "../interfaces/Additions";
+import { IArrayDataSelect, IMessage } from "../../../common/interfaces/global.interface";
 
 interface IAppProps {
-  controlRegister: Control<IAdditionsIncome, any>;
+  controlRegister: Control<IAdditionsForm, any>;
+  arrayDataSelect: IArrayDataSelect,
+  register: UseFormRegister<IAdditionsForm>,
   showModal: (values: IMessage) => void;
-  watch: () => void;
-  onSubmitTab: (
-    e?: React.BaseSyntheticEvent<object, any, any>
-  ) => Promise<void>;
-  getValues: UseFormGetValues<IAdditionsIncome>;
+  watch:  UseFormWatch<IAdditionsForm>,
+  onSubmitTab: (e?: React.BaseSyntheticEvent<object, any, any>) => Promise<void>;
+  getValues: UseFormGetValues<IAdditionsForm>;
 }
 
 function TabManagerAdditionPage({
   controlRegister,
+  arrayDataSelect,
+  register,
   showModal,
   getValues,
   onSubmitTab,
@@ -41,6 +43,8 @@ function TabManagerAdditionPage({
           controlRegister={controlRegister}
           showModal={showModal}
           getValues={getValues}
+          arrayDataSelect={arrayDataSelect}
+          register={register}
         />
       ),
       action: () => {},
@@ -48,7 +52,16 @@ function TabManagerAdditionPage({
     {
       id: "gasto",
       title: "Gasto",
-      content: <AreaCreateExpense titleAdd="gasto" control={controlRegister} />,
+      content: (
+        <AreaCreateExpense
+          titleAdd="gasto"
+          controlRegister={controlRegister}
+          showModal={showModal}
+          getValues={getValues}
+          arrayDataSelect={arrayDataSelect}
+          register={register}
+        />
+      ),
       action: () => {},
     },
   ];
@@ -56,9 +69,7 @@ function TabManagerAdditionPage({
   const start = tabs.find(
     (tab) => tab.id.toString().toLowerCase() === option?.toLowerCase()
   );
-  const [selectedTab, setSelectedTab] = useState<ITabsMenuTemplate>(
-    start ? start : null
-  );
+  const [selectedTab, setSelectedTab] = useState<ITabsMenuTemplate>( start ? start : null );
 
   const tabList = {};
   tabs.forEach(
@@ -70,21 +81,20 @@ function TabManagerAdditionPage({
   );
 
   const handleTabClick = (tab: ITabsMenuTemplate) => {
-    watch();
-    onSubmitTab();
+    setSelectedTab(tab);
+    // watch();
+    // onSubmitTab();
+    // errors?.ingreso?.message == "datos duplicados en el sistema" &&
+    //   showModal({
+    //     title: "Validación de datos",
+    //     description: errors?.ingreso?.message,
+    //     show: true,
+    //     OkTitle: "Aceptar",
+    //   });
 
-    errors?.ingreso?.message == "datos duplicados en el sistema" &&
-      showModal({
-        title: "Validación de datos",
-        description: errors?.ingreso?.message,
-        show: true,
-        OkTitle: "Aceptar",
-        onOk: () => showModal({}),
-      });
-
-    if (dirtyFields?.ingreso?.length > 0 && isValid) {
-      setSelectedTab(tab);
-    }
+    // if (dirtyFields?.ingreso?.length > 0 && isValid) {
+    //   setSelectedTab(tab);
+    // }
   };
 
   useEffect(() => {

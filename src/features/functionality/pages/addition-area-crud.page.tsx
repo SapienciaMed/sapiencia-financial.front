@@ -2,72 +2,67 @@ import React from "react";
 import {
   ButtonComponent,
   FormComponent,
-  SelectComponent,
+  InputComponent,
 } from "../../../common/components/Form";
 import TabManagerAdditionPage from "./tab-manager-addition.page";
 import { useAdditionAreaCrud } from "../hooks/addition-area-crud.hook";
 import { useManagementCenterAdditional } from "../hooks/management-center-additional.hook";
 import { useNavigate } from "react-router-dom";
+import { EDirection } from "../../../common/constants/input.enum";
+import { useAdditionsTransfersService } from "../hooks/additions-transfers-service.hook";
 
 interface IAppProps {
-  action: "new" | "edit";
+  actionForm: "new" | "edit";
 }
 
-function AdditionAreaCrud({ action }: IAppProps) {
+function AdditionAreaCrud({ actionForm }: IAppProps) {
   const navigate = useNavigate();
 
-  const { controlRegisterTabs, onSubmitTab, showModal, setMessage, getValues , watch} =
-    useAdditionAreaCrud();
+  const { control, arrayDataSelect, errors, onSubmitTab, showModal, setMessage, getValues, watch, register} = useAdditionAreaCrud();
 
-  const {
-    controlRegister,
-    errors,
-    AdditionsByDistrictData,
-    AdditionsBySapienciaData,
-    onSubmit,
-  } = useManagementCenterAdditional();
+  // const { errors, register, onSubmit } = useManagementCenterAdditional(); //utilizar otro hook
 
   return (
     <div className="crud-page">
       <div className="main-page full-height">
         <p className="text-black extra-large">
-          {action === "new" ? "Crear adición" : "Editar adición"}
+          {actionForm === "new" ? "Crear adición" : "Editar adición"}
         </p>
-        <div className="card-user">
-          <FormComponent action={onSubmit}>
+        <div className="card-user" >
+          <FormComponent action={onSubmitTab} id="form-acts">
             <div className="card-form">
               <div className="funcionality-filters-container">
-                <SelectComponent
-                  idInput="actAdministrativeDistrict"
-                  className="select-basic"
-                  label="Acto administrativo distrito"
-                  classNameLabel="text-black biggest text-required"
-                  errors={errors}
-                  control={controlRegister}
-                  data={AdditionsByDistrictData}
-                  filter={true}
+                <InputComponent
+                    idInput="actAdministrativeDistrict"
+                    className="input-basic"
+                    typeInput="text"
+                    register={register}
+                    label="Acto administrativo distrito"
+                    classNameLabel="text-black biggest bold text-required"
+                    direction={EDirection.row}
+                    errors={errors}
                 />
-                <SelectComponent
-                  idInput="actAdministrativeSapiencia"
-                  className="select-basic"
-                  label="Acto administrativo sapiencia"
-                  classNameLabel="text-black biggest text-required"
-                  errors={errors}
-                  control={controlRegister}
-                  data={AdditionsBySapienciaData}
-                  filter={true}
+                 <InputComponent
+                    idInput="actAdministrativeSapiencia"
+                    className="input-basic"
+                    typeInput="text"
+                    register={register}
+                    label="Acto administrativo sapiencia"
+                    classNameLabel="text-black biggest bold text-required"
+                    direction={EDirection.row}
+                    errors={errors}
                 />
               </div>
             </div>
-          </FormComponent>
 
-          <FormComponent action={onSubmitTab} id="form-acts">
-            <TabManagerAdditionPage
-              controlRegister={controlRegisterTabs}
+            <TabManagerAdditionPage        
+              controlRegister={control}
               watch={watch}
               showModal={showModal}
               onSubmitTab={onSubmitTab}
               getValues={getValues}
+              arrayDataSelect={arrayDataSelect}
+              register={register}
             />
           </FormComponent>
 
@@ -95,8 +90,8 @@ function AdditionAreaCrud({ action }: IAppProps) {
                 className="button-search"
                 value="Guardar"
                 type="submit"
-                // form='form-acts'
-                // disabled={!isBtnDisable}
+                form='form-acts'
+                
               />
             </div>
           </section>

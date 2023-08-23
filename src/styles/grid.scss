@@ -7,7 +7,7 @@
 
 .grid-form-2-container-reverse {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   grid-gap: 0px 1rem;
   align-items: stretch;
 }
@@ -21,7 +21,7 @@
   }
 
   .grid-form-2-container-reverse{
-    grid-template-columns: 1fr; 
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 0.8rem
   }
 }

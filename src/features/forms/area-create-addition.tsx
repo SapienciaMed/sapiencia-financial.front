@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import { BiPlusCircle } from 'react-icons/bi'
 import { FaRegCopy } from 'react-icons/fa'
-import { useFieldArray, useFormState, UseFormGetValues } from 'react-hook-form';
+import { useFieldArray, useFormState, useWatch, Control, UseFormGetValues, UseFormRegister} from 'react-hook-form';
 import { Paginator } from 'primereact/paginator';
 import { paginatorFooter } from '../../common/components/table.component';
 import ScreenAddIncome from '../functionality/pages/screen-add-income.page';
-import { IMessage } from '../../common/interfaces/global.interface';
+import { IArrayDataSelect, IMessage } from '../../common/interfaces/global.interface';
 import { AddValidHeaders } from '../../common/constants/doc.enum';
-import { IAdditionsIncome } from '../functionality/interfaces/Additions';
+import { IAdditionsForm, IIncome  } from '../functionality/interfaces/Additions';
 
 interface IAppProps {
     titleAdd: string,
-    controlRegister: any,
+    controlRegister: Control<IAdditionsForm, any>,
+    arrayDataSelect: IArrayDataSelect,
     showModal: (values: IMessage) => void,
-    getValues: UseFormGetValues<IAdditionsIncome>
+    getValues: UseFormGetValues<IAdditionsForm>,
+    register: UseFormRegister<IAdditionsForm>,
 }
 
-function AreaCreateAddition({ titleAdd, controlRegister, getValues,showModal }: IAppProps ){
-    
+function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getValues, showModal, register }: IAppProps ){
+
     const { fields, append, remove } = useFieldArray({
         control: controlRegister,
         name: 'ingreso'
@@ -27,9 +29,14 @@ function AreaCreateAddition({ titleAdd, controlRegister, getValues,showModal }: 
         control: controlRegister 
     })
 
+    const watchIncome = useWatch({
+        control: controlRegister,
+        name: 'ingreso'
+    })
+
     const [dataPaste, setDataPaste] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 2;
+    const itemsPerPage = 5;
     const startIndex = (currentPage - 1) * itemsPerPage;
     const visibleFields = fields.slice(startIndex, startIndex + itemsPerPage);
 
@@ -101,6 +108,7 @@ function AreaCreateAddition({ titleAdd, controlRegister, getValues,showModal }: 
     },[dataPaste])
 
     useEffect(() => {
+
         errors?.ingreso?.message == 'datos duplicados en el sistema' &&  showModal({
             title: 'Validación de datos',
             description: errors?.ingreso?.message,
@@ -132,13 +140,13 @@ function AreaCreateAddition({ titleAdd, controlRegister, getValues,showModal }: 
             {
                 visibleFields.map((field, index) => (
                     <div key={field.id}>
-                        <ScreenAddIncome controlRegister={controlRegister} titleAdd={titleAdd} fields={fields}
-                            remove={remove} count={startIndex + index} errors={errors}/>
+                        <ScreenAddIncome controlRegister={controlRegister} titleAdd={titleAdd} fields={fields} arrayDataSelect={arrayDataSelect}
+                            remove={remove} count={startIndex + index} errors={errors} register={register}/>
                     </div>
                 ))
             }
             {
-                fields.length >= 2 && 
+                fields.length >= 6  && 
                     <div className="spc-common-table">
                         <Paginator
                             className="spc-table-paginator"
@@ -151,8 +159,8 @@ function AreaCreateAddition({ titleAdd, controlRegister, getValues,showModal }: 
                     </div>
             }
             {
-                visibleFields.length > 0 && 
-                    <label className="text-black biggest ml-16px mt-14px"> Total ingreso: $  {formatMoney(calculateTotal())} </label> 
+                watchIncome.some(use => use.value != '') && 
+                    <label className="text-black biggest ml-16px mt-14px"> Total ${titleAdd.toLowerCase()}: $  {formatMoney(calculateTotal())} </label> 
 
             }
         </div>

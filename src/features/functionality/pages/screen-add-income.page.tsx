@@ -1,23 +1,29 @@
 import React from "react";
-import { ButtonComponent,  SelectComponent } from "../../../common/components/Form";
-import { Control, FieldErrors} from 'react-hook-form';
-import { IAdditionsIncome } from "../interfaces/Additions";
+import { ButtonComponent,  InputComponent,  SelectComponent } from "../../../common/components/Form";
+import { Control, FieldErrors, UseFormRegister} from 'react-hook-form';
+import { IAdditionsForm } from "../interfaces/Additions";
+import { IArrayDataSelect } from "../../../common/interfaces/global.interface";
+import { EDirection } from "../../../common/constants/input.enum";
+import { projectIdName } from "../../../common/constants/nameProject";
 
 interface IAppProps {
-    controlRegister: Control<IAdditionsIncome, any>,
+    controlRegister: Control<IAdditionsForm, any>,
     titleAdd: string,
-    remove: (index?: number | number[]) => void,
+    arrayDataSelect: IArrayDataSelect,
     count: number,
-    errors: FieldErrors<IAdditionsIncome>,
-    fields: any
+    errors: FieldErrors<IAdditionsForm>,
+    fields: any,
+    remove: (index?: number | number[]) => void,
+    register: UseFormRegister<IAdditionsForm>,
  }
 
-function ScreenAddIncome({count, controlRegister, errors, fields, remove, titleAdd }: IAppProps) {
+function ScreenAddIncome({count, controlRegister, errors, fields, arrayDataSelect, remove, titleAdd, register }: IAppProps) {
+    const { functionalArea, funds, posPre } = arrayDataSelect
     return (
         <>   
             <div className='card-user mt-14px'>
                 <div className="title-area">
-                    <label className="text-black biggest"> { count + 1 }. {titleAdd}</label>
+                    <label className="text-black biggest"> { count + 1 }. {titleAdd.charAt(0).toUpperCase() + titleAdd.slice(1)}</label>
                     <ButtonComponent
                         value={"Eliminar"}
                         type="button"
@@ -29,7 +35,7 @@ function ScreenAddIncome({count, controlRegister, errors, fields, remove, titleA
                 <div>
                     <section className='grid-form-2-container-reverse mt-5px'>
                         <SelectComponent
-                            idInput={`ingreso[${count}].managerCenter`}
+                            idInput={`${titleAdd.toLowerCase()}[${count}].managerCenter`}
                             control={controlRegister}                               
                             label={'Centro gestor'}
                             className="select-basic medium"
@@ -41,13 +47,13 @@ function ScreenAddIncome({count, controlRegister, errors, fields, remove, titleA
                             errors={errors}
                         />
                         <SelectComponent
-                            idInput={`ingreso[${count}].projectId`} 
+                            idInput={`${titleAdd.toLowerCase()}[${count}].projectId`} 
                             control={controlRegister}                               
-                            label={'Id - Proyecto nombre'}
+                            label={'Id - Nombre proyecto'}
                             className="select-basic medium"
                             classNameLabel="text-black big bold text-required"    
                             placeholder={'Seleccionar'}        
-                            data={[ { name: '9000000 - Transferencias Municipio - Inversión', value: '9000000 - Transferencias Municipio - Inversión'} ]}        
+                            data={projectIdName}        
                             filter={true}
                             fieldArray={true}
                             errors={errors}
@@ -55,7 +61,7 @@ function ScreenAddIncome({count, controlRegister, errors, fields, remove, titleA
                     </section>
                     <section className='grid-form-3-container-area mt-5px'>
                         <SelectComponent
-                            idInput={`ingreso[${count}].functionalArea`} 
+                            idInput={`${titleAdd.toLowerCase()}[${count}].functionalArea`} 
                             control={controlRegister}                               
                             label={'Área funcional'}
                             className="select-basic medium"
@@ -63,11 +69,11 @@ function ScreenAddIncome({count, controlRegister, errors, fields, remove, titleA
                             placeholder={'Seleccionar'}                
                             filter={true}
                             fieldArray={true}
-                            data={[ { name: '00000.00000.0001', value: '00000.00000.0001' } ]}
+                            data={functionalArea}
                             errors={errors}
                         />
                         <SelectComponent
-                            idInput={`ingreso[${count}].funds`} 
+                            idInput={`${titleAdd.toLowerCase()}[${count}].funds`} 
                             control={controlRegister}                               
                             label={'Fondo'}
                             className="select-basic medium"
@@ -75,11 +81,11 @@ function ScreenAddIncome({count, controlRegister, errors, fields, remove, titleA
                             placeholder={'Seleccionar'}               
                             filter={true}
                             fieldArray={true}
-                            data={[{ name: '911000123', value: '911000123' }]}
+                            data={funds}
                             errors={errors}
                         />
                         <SelectComponent
-                            idInput={`ingreso[${count}].posPre`} 
+                            idInput={`${titleAdd.toLowerCase()}[${count}].posPre`} 
                             control={controlRegister}                               
                             label={'Pospre'}
                             className="select-basic medium"
@@ -87,20 +93,19 @@ function ScreenAddIncome({count, controlRegister, errors, fields, remove, titleA
                             placeholder={'Seleccionar'}               
                             filter={true}
                             fieldArray={true}
-                            data={[ { name: '91102060060602', value: '91102060060602' } ]}
+                            data={posPre}
                             errors={errors}
                         />
-                        <SelectComponent
-                            idInput={`ingreso[${count}].value`} 
-                            control={controlRegister}                               
-                            label={'Valor'}
-                            className="select-basic medium"
-                            classNameLabel="text-black big bold text-required"    
+                        <InputComponent
+                            idInput={`${titleAdd.toLowerCase()}[${count}].value`}                            
+                            label="valor"
+                            typeInput="text"
+                            className="input-basic"
                             placeholder={'Seleccionar'}               
-                            filter={true}
-                            fieldArray={true}
-                            data={[ { name: '20.439.790.866', value: '20.439.790.866'} ]}
+                            classNameLabel="text-black biggest bold text-required"
+                            direction={EDirection.row}
                             errors={errors}
+                            register={register}
                         />
                     </section>
                 </div>

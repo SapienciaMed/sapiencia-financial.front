@@ -39,8 +39,11 @@ export interface IAdditionsFilters {
   adminSapiencia?: string;
 }
 
-export interface IAdditionsIncome{
-  ingreso: IIncome[]
+export interface IAdditionsForm{
+  ingreso: IIncome[],
+  gasto: IIncome[],
+  actAdministrativeDistrict: string;
+  actAdministrativeSapiencia: string;
 }
 
 export interface IIncome{
