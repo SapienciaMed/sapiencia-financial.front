@@ -14,7 +14,7 @@ export function FormComponent({
   id,
 }: IFormProps): React.JSX.Element {
   return (
-    <form className={className} id={id} onSubmit={action}>
+    <form className={className} id={id} onSubmit={action} noValidate>
       {children}
     </form>
   );
