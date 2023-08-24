@@ -23,6 +23,7 @@ interface IInputProps<T> {
   id?: string;
   fieldArray?: boolean;
   optionsRegister?: {};
+  minValue?:number;
 }
 
 function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
@@ -48,6 +49,7 @@ function InputElement({
   defaultValue,
   id,
   optionsRegister,
+  minValue
 }): React.JSX.Element {
   return (
     <input
@@ -59,6 +61,7 @@ function InputElement({
       defaultValue={value}
       onChange={onChange}
       disabled={disabled}
+      min={minValue}
     />
   );
 }
@@ -81,6 +84,7 @@ export function InputComponent({
   id,
   fieldArray,
   optionsRegister = {},
+  minValue
 }: IInputProps<any>): React.JSX.Element {
 
   return (
@@ -107,6 +111,7 @@ export function InputComponent({
           defaultValue={defaultValue}
           id={id}
           optionsRegister={optionsRegister}
+          minValue={minValue}
         />
         {errors[idInput]?.message && (
           <MdOutlineError
