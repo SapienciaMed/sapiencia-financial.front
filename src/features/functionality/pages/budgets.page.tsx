@@ -3,20 +3,25 @@ import TableComponent from "../../../common/components/table.component";
 import { EDirection } from "../../../common/constants/input.enum";
 import { useBudgetsData } from "../hooks/budgets.hook";
 import { AiOutlinePlusCircle } from "react-icons/ai";
-import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 interface IAppProps { }
 
 
 function BudgetsPage(props: IAppProps): React.JSX.Element {
-    const { tableActions, tableColumns, tableComponentRef, navigate, onSubmit, register, errors, reset, entitiesData, controlRegister } = useBudgetsData();
+    const [inputBuggetPosition, setInputBuggetPosition] = useState('')
+    const [isBtnDisable, setIsBtnDisable] = useState(false)
+    const { tableActions, tableColumns, tableComponentRef, navigate, onSubmit, register, errors, reset, showTable, setShowTable, controlRegister } = useBudgetsData();
 
-    const { pospre, option } = useParams();
-    const [isTableShow, setIsTableShow] = useState(false)
-
-    const action = () => {
-        setIsTableShow(true)
+   
+    const handleChange = (e:any)=>{
+        setInputBuggetPosition(e.target.value)
     }
+
+    useEffect(() => {
+        inputBuggetPosition.length>0 
+            ? setIsBtnDisable(true)
+            : setIsBtnDisable(false)
+    }, [inputBuggetPosition])
 
     return (
         <div>
@@ -43,24 +48,32 @@ function BudgetsPage(props: IAppProps): React.JSX.Element {
                             direction={EDirection.row}
                             errors={errors}
                             min={0}
+                            onChange={handleChange}
                         />
                     </div>
                 </div>
                 <div className="funcionality-buttons-container">
                     <span className="bold text-center button" onClick={() => {
-                        reset(); setIsTableShow(false);
+                        reset();
+                        setIsBtnDisable(false)
+                        if(showTable)  {
+                            tableComponentRef.current.emptyData();
+                            setShowTable(false)
+                        }
                     }}>
+                        Limpiar campos
                     </span>
                     <ButtonComponent
                         className="button-main huge hover-three"
                         value="Buscar"
                         type="submit"
-                        action={action}
+                        disabled={!isBtnDisable}
+                        //disabled={false}
                     />
                 </div>
             </FormComponent>
             {
-                isTableShow && (
+            showTable && (
                     <div className="card-form">
                         <TableComponent
                             ref={tableComponentRef}
