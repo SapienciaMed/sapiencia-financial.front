@@ -42,7 +42,7 @@ function BudgetsPage(props: IAppProps): React.JSX.Element {
                             classNameLabel="text-black biggest bold"
                             direction={EDirection.row}
                             errors={errors}
-                            minValue={0}
+                            min={0}
                         />
                     </div>
                 </div>
