@@ -37,8 +37,12 @@ export function useProjectsLinkData(functionalArea: string) {
             header: "Nombre proyecto"
         },
         {
+            fieldName: 'assignmentValue',
+            header: "Valor asignado"
+        },
+        {
             fieldName: "plannedValue",
-            header: "Valor programado"
+            header: "Valor planeado"
         },
         {
             fieldName: "id",
@@ -158,10 +162,10 @@ export function useProjectsLinkData(functionalArea: string) {
     const confirmClose = (callback) => {
         setMessage({
             title: "Cancelar proyecto",
-            description: "¿Seguro que desea cancelar la operación?",
+            description: "¿Segur@ que desea cancelar la operación?",
             show: true,
-            OkTitle: "Si, cancelar",
-            cancelTitle: "Continuar",
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
             onOk: () => {
                 callback();
                 setMessage({});

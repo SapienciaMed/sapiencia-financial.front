@@ -40,22 +40,29 @@ export function useFunctionalAreaCrudData(id: string) {
             header: "Nombre proyecto",
             renderCell: (row) => {
                 const projectSelect = projects.find(project => project.id === row.projectId)
-                return <>{projectSelect.name}</>
+                return <>{projectSelect ? projectSelect.name : '-' }</>
             }
         },
         {
             fieldName: "projectId",
-            header: "Valor programado",
+            header: "Valor asignado",
             renderCell: (row) => {
                 const projectSelect = projects.find(project => project.id === row.projectId)
-                return <>{projectSelect.plannedValue}</>
+                return <>{ projectSelect ? projectSelect.assignmentValue : '-' }</>
+            }
+        },
+        {
+            fieldName: "projectId",
+            header: "Valor planeado",
+            renderCell: (row) => {
+                const projectSelect = projects.find(project => project.id === row.projectId)
+                return <>{projectSelect ? projectSelect.plannedValue : '-' }</>
             }
         },
         {
             fieldName: "projectId",
             header: "Vincular",
             renderCell: (row) => {
-                console.log(row.linked)
                 let checked = row.linked === 1;
                 if(projectsLink.find(project => project === row.id)) checked = true;
                 if(projectsUnLink.find(project => project === row.id)) checked = false;
@@ -112,15 +119,23 @@ export function useFunctionalAreaCrudData(id: string) {
             header: "Nombre proyecto",
             renderCell: (row) => {
                 const projectSelect = projects.find(project => project.id === row.projectId)
-                return <>{projectSelect.name}</>
+                return <>{ projectSelect ? projectSelect.name : '-' }</>
             }
         },
         {
             fieldName: "projectId",
-            header: "Valor programado",
+            header: "Valor asignado",
             renderCell: (row) => {
                 const projectSelect = projects.find(project => project.id === row.projectId)
-                return <>{projectSelect.plannedValue}</>
+                return <>{ projectSelect ? projectSelect.assignmentValue : '-' }</>
+            }
+        },
+        {
+            fieldName: "projectId",
+            header: "Valor planeado",
+            renderCell: (row) => {
+                const projectSelect = projects.find(project => project.id === row.projectId)
+                return <>{ projectSelect ? projectSelect.plannedValue : '-' }</>
             }
         },
     ];
@@ -202,32 +217,46 @@ export function useFunctionalAreaCrudData(id: string) {
             description: data.description,
             userCreate: authorization.user.numberDocument
         };
-        CreateFunctionalArea(insertData).then(response => {
-            if (response.operation.code === EResponseCodes.OK) {
-                setMessage({
-                    title: "Crear área funcional",
-                    description: "Se ha creado la área funcional exitosamente",
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        onCancelNew();
-                        setMessage({});
-                    },
-                    background: true
-                });
-            } else {
-                setMessage({
-                    title: "Hubo un problema...",
-                    description: response.operation.message,
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        setMessage({});
-                    },
-                    background: true
-                });
-            }
-        })
+        setMessage({
+            title: "Guardar",
+            description: "¿Estas segur@ de guardar la información en el sistema?",
+            show: true,
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
+            onOk: () => {
+                CreateFunctionalArea(insertData).then(response => {
+                    if (response.operation.code === EResponseCodes.OK) {
+                        setMessage({
+                            title: "Crear área funcional",
+                            description: "Se ha creado la área funcional exitosamente",
+                            show: true,
+                            OkTitle: "Aceptar",
+                            onOk: () => {
+                                onCancelNew();
+                                setMessage({});
+                            },
+                            background: true
+                        });
+                    } else {
+                        setMessage({
+                            title: "Hubo un problema...",
+                            description: response.operation.message,
+                            show: true,
+                            OkTitle: "Aceptar",
+                            onOk: () => {
+                                setMessage({});
+                            },
+                            background: true
+                        });
+                    }
+                })
+            },
+            onCancel: () => {
+              setMessage({});
+            },
+            background: true,
+          });
+       
     });
 
     const onSubmitEditFunctionalArea = handleSubmit(async (data: IFunctionalAreaCrud) => {
@@ -236,59 +265,73 @@ export function useFunctionalAreaCrudData(id: string) {
             denomination: data.denomination,
             description: data.description,
         };
-        UpdateFunctionalArea(insertData, Number(id)).then(response => {
-            if (response.operation.code === EResponseCodes.OK) {
-                if(projectsUnLink.length !== 0) UnLinkVinculation(Number(id), projectsUnLink).then(res2 => {
-                    if (res2.operation.code !== EResponseCodes.OK) return setMessage({
-                        title: "Hubo un problema...",
-                        description: res2.operation.message,
-                        show: true,
-                        OkTitle: "Aceptar",
-                        onOk: () => {
-                            setMessage({});
-                            onCancelEdit();
-                        },
-                        background: true
-                    });
-                })
-                if(projectsLink.length !== 0) LinkVinculation(Number(id), projectsLink).then(res2 => {
-                    if (res2.operation.code !== EResponseCodes.OK) return setMessage({
-                        title: "Hubo un problema...",
-                        description: res2.operation.message,
-                        show: true,
-                        OkTitle: "Aceptar",
-                        onOk: () => {
-                            setMessage({});
-                            onCancelEdit();
-                        },
-                        background: true
-                    });
-                })
-                setMessage({
-                    title: "Editar área funcional",
-                    description: "Se ha editado la área funcional exitosamente",
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        onCancelEdit();
-                        setMessage({});
-                    },
-                    background: true
+        setMessage({
+            title: "Editar",
+            description: "¿Estas segur@ de editar la información en el sistema?",
+            show: true,
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
+            onOk: () => {
+                UpdateFunctionalArea(insertData, Number(id)).then(response => {
+                    if (response.operation.code === EResponseCodes.OK) {
+                        if(projectsUnLink.length !== 0) UnLinkVinculation(Number(id), projectsUnLink).then(res2 => {
+                            if (res2.operation.code !== EResponseCodes.OK) return setMessage({
+                                title: "Hubo un problema...",
+                                description: res2.operation.message,
+                                show: true,
+                                OkTitle: "Aceptar",
+                                onOk: () => {
+                                    setMessage({});
+                                    onCancelEdit();
+                                },
+                                background: true
+                            });
+                        })
+                        if(projectsLink.length !== 0) LinkVinculation(Number(id), projectsLink).then(res2 => {
+                            if (res2.operation.code !== EResponseCodes.OK) return setMessage({
+                                title: "Hubo un problema...",
+                                description: res2.operation.message,
+                                show: true,
+                                OkTitle: "Aceptar",
+                                onOk: () => {
+                                    setMessage({});
+                                    onCancelEdit();
+                                },
+                                background: true
+                            });
+                        })
+                        setMessage({
+                            title: "Editar área funcional",
+                            description: "Se ha editado la área funcional exitosamente",
+                            show: true,
+                            OkTitle: "Aceptar",
+                            onOk: () => {
+                                onCancelEdit();
+                                setMessage({});
+                            },
+                            background: true
+                        });
+                    } else {
+                        setMessage({
+                            title: "Hubo un problema...",
+                            description: response.operation.message,
+                            show: true,
+                            OkTitle: "Aceptar",
+                            onOk: () => {
+                                setMessage({});
+                                onCancelEdit();
+                            },
+                            background: true
+                        });
+                    }
                 });
-            } else {
-                setMessage({
-                    title: "Hubo un problema...",
-                    description: response.operation.message,
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        setMessage({});
-                        onCancelEdit();
-                    },
-                    background: true
-                });
-            }
-        });
+            },
+            onCancel: () => {
+              setMessage({});
+            },
+            background: true,
+          });
+       
     });
 
     const onCancelNew = () => {
@@ -302,10 +345,10 @@ export function useFunctionalAreaCrudData(id: string) {
     const confirmClose = (callback) => {
         setMessage({
             title: "Cancelar área funcional",
-            description: "¿Seguro que desea cancelar la operación?",
+            description: "¿Segur@ que desea cancelar la operación?",
             show: true,
-            OkTitle: "Si, cancelar",
-            cancelTitle: "Continuar",
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
             onOk: () => {
                 callback();
                 setMessage({});
@@ -315,5 +358,6 @@ export function useFunctionalAreaCrudData(id: string) {
     }
 
 
-    return { register, errors, confirmClose, onCancelNew, onCancelEdit, onSubmitNewFunctionalArea, onSubmitEditFunctionalArea, tableComponentRef, tableColumns, tableActions, tableColumnsView, navigate };
+    return { register, errors, confirmClose, onCancelNew, onCancelEdit, onSubmitNewFunctionalArea, onSubmitEditFunctionalArea, 
+        tableComponentRef, tableColumns, tableActions, tableColumnsView, navigate };
 }

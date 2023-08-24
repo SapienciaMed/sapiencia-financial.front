@@ -25,39 +25,76 @@ function PosPreSapienciaForm({ action }: IAppProps) {
                         <div className="card-form">
                             <div className="pospre-sapiencia-data">
                                 <div className="pospre-sapiencia-basic">
-                                    <InputComponent
-                                        idInput="number"
-                                        className="input-basic"
-                                        typeInput="text"
-                                        register={register}
-                                        label="Código pospre"
-                                        classNameLabel="text-black biggest bold"
-                                        direction={EDirection.row}
-                                        errors={errors}
-                                        disabled={action === "new" ? false : true}
+                                    <Controller
+                                        control={control}
+                                        name={"number"}
+                                        defaultValue=""
+                                        render={({ field }) => {
+                                            return (
+                                                <InputComponent
+                                                    id={field.name}
+                                                    idInput={field.name}
+                                                    value={`${field.value}`}
+                                                    className="input-basic"
+                                                    typeInput="text"
+                                                    register={register}
+                                                    label="Código pospre"
+                                                    classNameLabel="text-black biggest bold"
+                                                    direction={EDirection.row}
+                                                    errors={errors}
+                                                    onChange={field.onChange}
+                                                    disabled={action === "new" ? false : true}
+                                                /> 
+                                            )
+                                        }}
                                     />
-                                    <InputComponent
-                                        idInput="ejercise"
-                                        className="input-basic"
-                                        typeInput="text"
-                                        register={register}
-                                        label="Ejercicio"
-                                        classNameLabel="text-black biggest bold"
-                                        direction={EDirection.row}
-                                        errors={errors}
-                                        disabled={action === "new" ? false : true}
+                                    <Controller
+                                        control={control}
+                                        name={"ejercise"}
+                                        defaultValue=""     
+                                        render={({ field }) => {
+                                            return (
+                                                <InputComponent
+                                                    id={field.name}
+                                                    idInput={field.name}
+                                                    value={`${field.value}`}
+                                                    className="input-basic"
+                                                    typeInput="text"
+                                                    register={register}
+                                                    label="Ejercicio"
+                                                    classNameLabel="text-black biggest bold"
+                                                    direction={EDirection.row}
+                                                    errors={errors}
+                                                    onChange={field.onChange}
+                                                    disabled={action === "new" ? false : true}
+                                                /> 
+                                            )
+                                        }}
                                     />
                                 </div>
                                 <div>
-                                    <TextAreaComponent
-                                        idInput="description"
-                                        register={register}
-                                        errors={errors}
-                                        label="Descripción"
-                                        classNameLabel="text-black biggest bold"
-                                        className="text-area-basic"
-                                        rows={4}
+                                <Controller
+                                        control={control}
+                                        name={"description"}
+                                        defaultValue=""     
+                                        render={({ field }) => {
+                                            return (
+                                                <TextAreaComponent
+                                                    id={field.name}
+                                                    idInput={field.name}
+                                                    value={`${field.value}`}
+                                                    className="text-area-basic"
+                                                    register={register}
+                                                    label="Descripción"
+                                                    classNameLabel="text-black biggest bold"
+                                                    errors={errors}
+                                                    onChange={field.onChange}
+                                                    rows={4}
+                                                /> 
+                                            )
+                                        }}
                                     />
+                                  
                                 </div>
                             </div>
                         </div>
@@ -96,7 +133,6 @@ function PosPreSapienciaForm({ action }: IAppProps) {
                                     errors={errors}
                                     label="Asignar a"
                                     classNameLabel="text-black biggest bold"
-                                    disabled={true}
                                 />
                             </div>
                         </div>

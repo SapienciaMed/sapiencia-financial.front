@@ -9,7 +9,7 @@ export const pospreSapienciaCrudValidator = yup.object({
     number: yup
         .string()
         .required("El campo es obligatorio")
-        .max(11, "Solo se permiten 11 caracteres"),
+        .max(30, "Solo se permiten 30 caracteres"),
     ejercise: yup
         .string()
         .matches(/^[0-9]+$/, "Solo se permiten numeros")
@@ -22,7 +22,7 @@ export const pospreSapienciaCrudValidator = yup.object({
     consecutive: yup
         .string()
         .matches(/^[0-9]+$/, "Solo se permiten numeros")
-        .max(10, "Solo se permiten 10 caracteres")
+        .max(2, "Solo se permiten 2 caracteres")
         .min(2, "Ingrese al menos 2 caracteres")
         .test('es-numero', 'El campo es obligatorio', value => {
             if (!value) { return false; }
