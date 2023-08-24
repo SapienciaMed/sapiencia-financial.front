@@ -4,11 +4,13 @@ import { ITableAction, ITableElement } from "../../../common/interfaces/table.in
 import { useForm } from "react-hook-form";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { fundsValidator } from "../../../common/schemas";
-import { IBudgets, IFilterBudgets } from "../interfaces/Budgets";
+import { IBudgets } from "../interfaces/Budgets";
 import { IDropdownProps } from "../../../common/interfaces/select.interface";
 import { useEntitiesService } from "./entities-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import { IEntities } from "../interfaces/Entities";
+
+interface IFilterBudgets {}
 
 export function useBudgetsData() {
     const tableComponentRef = useRef(null);
@@ -18,22 +20,22 @@ export function useBudgetsData() {
     const [dateFrom, setDateFrom] = useState(null);
     const [dateTo, setDateTo] = useState(null);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
-  const {
+    const [showTable, setShowTable] = useState(false);
+    const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
+    
+
+    const {
     handleSubmit,
     register,
     formState: { errors },
     control: controlRegister,
-    reset
+    reset,
+    watch
   } = useForm<IFilterBudgets>({ resolver });
+
+  //const inputValue =  watch(['inputBuggetPosition'])
+
     const tableColumns: ITableElement<IBudgets>[] = [
-        {
-            fieldName: "entity.name",
-            header: "Entidad CP",
-        },
-        {
-            fieldName: "ejercise",
-            header: "Ejercicio"
-        },
         {
             fieldName: "number",
             header: "Posición presupuestaria"
@@ -42,6 +44,16 @@ export function useBudgetsData() {
             fieldName: "denomination",
             header: "Denominacion"
         },
+        {
+            fieldName: "",
+            header: "Vinculación MGA",
+        },
+        {
+            fieldName: "",
+            header: "Pospre Sapiencia"
+        },
+        
+        
     ];
     const tableActions: ITableAction<IBudgets>[] = [
         {
@@ -71,6 +83,7 @@ export function useBudgetsData() {
     }
 
     const onSubmit = handleSubmit(async (data: IFilterBudgets) => {
+        setShowTable(true)
         loadTableData(data);
     });
 
@@ -86,6 +99,7 @@ export function useBudgetsData() {
             }
         }).catch(() => { });
     }, [])
+
     
     return {
         tableComponentRef,
@@ -101,6 +115,10 @@ export function useBudgetsData() {
         dateTo,
         setDateTo,
         entitiesData,
-        controlRegister
+        controlRegister,
+        setShowTable,
+        isBtnDisable,
+        showTable
+
     }
 } 

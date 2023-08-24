@@ -10,6 +10,8 @@ import { EDirection } from "../../../common/constants/input.enum";
 import { useBudgetsCrudData } from "../hooks/budgets-crud.hook";
 import { useParams, useNavigate } from "react-router-dom";
 import TableComponent from "../../../common/components/table.component";
+import { useLinkData } from "../hooks/link.hook";
+import TabListComponent from "../../../common/components/tab-list.component";
 
 interface IAppProps {
   action: "new" | "edit";
@@ -17,6 +19,7 @@ interface IAppProps {
 
 function BudgetsForm({ action }: IAppProps) {
   const { id: budgetsId } = useParams();
+  
   const { tableComponentRef, tableColumns, tableActions, vinculateActivities, loadTableData } =
     useVinculationMGAData(budgetsId);
   const {
@@ -29,7 +32,7 @@ function BudgetsForm({ action }: IAppProps) {
     onCancelNew,
     onCancelEdit,
     controlRegister
-  } = useBudgetsCrudData(budgetsId,vinculateActivities,loadTableData);
+  } = useBudgetsCrudData(budgetsId, vinculateActivities, loadTableData);
   return (
     <div className="crud-page full-height">
       <div className="main-page full-height">
@@ -56,6 +59,7 @@ function BudgetsForm({ action }: IAppProps) {
                   errors={errors}
                   label="Posicion Presupuestaria"
                   classNameLabel="text-black biggest bold"
+                  min={0}
                 />
 
                 <InputComponent
@@ -67,6 +71,7 @@ function BudgetsForm({ action }: IAppProps) {
                   classNameLabel="text-black biggest bold"
                   direction={EDirection.row}
                   errors={errors}
+                  min={0}
                 />
 
                 <SelectComponent
@@ -95,6 +100,7 @@ function BudgetsForm({ action }: IAppProps) {
                   classNameLabel="text-black biggest bold"
                 />
               </div>
+
               <div className="fund-denomination-container">
                 <InputComponent
                   idInput="description"
@@ -105,36 +111,35 @@ function BudgetsForm({ action }: IAppProps) {
                   classNameLabel="text-black biggest bold"
                 />
               </div>
+
+
+
             </div>
-                {action ==="new" ? <></> : 
-                    <div>
-                    <div className="card-form">
-                    <TableComponent
-                        ref={tableComponentRef}
-                        url={`${process.env.urlApiFinancial}/api/v1/vinculation-mga/get-paginated`}
-                        columns={tableColumns}
-                        actions={tableActions}
-                        isShowModal={false}
-                    />
-                    </div>
+            {action === "new" ? <></> :
+              <div>
+                <div className={`tabs-component`}>
+                <div className="tabs-selection">
+                  <div className={`tab-option active`}>
+                    Vinculación MGA
+                  </div>
+                  <div className={`tab-option`}>
+                    ProspeSapiencia
+                  </div>
+                  </div>
                 </div>
-                }
-            <div className="mobile-actions mobile">
-              <span
-                className="bold text-center button"
-                onClick={() => {
-                  confirmClose(action === "new" ? onCancelNew : onCancelEdit);
-                }}
-              >
-                Cancelar
-              </span>
-              <ButtonComponent value="Guardar" type="submit" />
-            </div>
-          </FormComponent>
-        </div>
-      </div>
-      <div className="container-button-bot">
-        <div className="buttons-bot">
+                <br/>
+                <div className="card-form">
+                  <TableComponent
+                    ref={tableComponentRef}
+                    url={`${process.env.urlApiFinancial}/api/v1/vinculation-mga/get-paginated`}
+                    columns={tableColumns}
+                    actions={tableActions}
+                    isShowModal={false}
+                  />
+                </div>
+              </div>
+            }
+        <div className="mobile-actions mobile">
           <span
             className="bold text-center button"
             onClick={() => {
@@ -143,15 +148,30 @@ function BudgetsForm({ action }: IAppProps) {
           >
             Cancelar
           </span>
-          <ButtonComponent
-            className="button-main huge hover-three"
-            value="Guardar"
-            type="submit"
-            form="budgets-form"
-          />
+          <ButtonComponent value="Guardar" type="submit" />
         </div>
+      </FormComponent>
+    </div>
+      </div >
+    <div className="container-button-bot">
+      <div className="buttons-bot">
+        <span
+          className="bold text-center button"
+          onClick={() => {
+            confirmClose(action === "new" ? onCancelNew : onCancelEdit);
+          }}
+        >
+          Cancelar
+        </span>
+        <ButtonComponent
+          className="button-main huge hover-three"
+          value="Guardar"
+          type="submit"
+          form="budgets-form"
+        />
       </div>
     </div>
+    </div >
   );
 }
 
