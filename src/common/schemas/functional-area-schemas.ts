@@ -1,6 +1,9 @@
 import * as yup from "yup";
 
-export const functionalArea = yup.object({});
+export const functionalArea = yup.object({
+    inputCodigoFuncional: yup
+        .string()
+});
 
 export const functionalAreaCrud = yup.object({
     number: yup
