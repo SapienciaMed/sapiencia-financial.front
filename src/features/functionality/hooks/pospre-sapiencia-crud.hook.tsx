@@ -26,6 +26,7 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
         register,
         formState: { errors },
         setValue: setValueRegister,
+        control
     } = useForm<IPosPreSapienciaCrudForm>({ resolver });
     const navigate = useNavigate();
     const { setMessage, authorization } = useContext(AppContext);
@@ -79,7 +80,7 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
                 });
             } else {
                 setMessage({
-                    title: "Hubo un problema...",
+                    title: "Validacion de datos",
                     description: response.operation.message,
                     show: true,
                     OkTitle: "Aceptar",
@@ -141,7 +142,7 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
     const confirmClose = (callback) =>{
         setMessage({
             title: "Cancelar pospre sapiencia",
-            description: "¿Seguro que desea cancelar la operación?",
+            description: "¿Segur@ que desea cancelar la operación?",
             show: true,
             OkTitle: "Si, cancelar",
             cancelTitle: "Continuar",
@@ -153,5 +154,13 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
         });
     }
 
-    return { register, errors, onSubmitNewPosPreSapiencia, onSubmitEditPosPreSapiencia, onCancelNew, onCancelEdit, confirmClose };
+    async function validatorNumber(e) {
+        if (parseInt(e.target.value) < 0) {
+            return e.target.value == '';
+        }
+        
+    }
+
+    return { register, errors, control, onSubmitNewPosPreSapiencia, onSubmitEditPosPreSapiencia, onCancelNew, onCancelEdit, 
+        confirmClose, validatorNumber };
 }
