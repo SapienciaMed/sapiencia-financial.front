@@ -74,7 +74,7 @@ export function usePospreSapienciaData(pospre: string) {
     }, [pospre]);
 
     useEffect(() => {
-        setIsBtnDisable(inputValue.some(value => value != ''))
+        setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
     },[inputValue])
 
 
