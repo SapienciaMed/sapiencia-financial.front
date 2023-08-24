@@ -17,7 +17,8 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
         edit: "Editar Área funcional",
         view: "Detalle Área funcional",
     };
-    const { register, errors, confirmClose, onCancelNew, onCancelEdit, onSubmitNewFunctionalArea, onSubmitEditFunctionalArea, tableComponentRef, tableColumns, tableActions, tableColumnsView, navigate } = useFunctionalAreaCrudData(id);
+    const { register, errors, confirmClose, onCancelNew, onCancelEdit, onSubmitNewFunctionalArea, onSubmitEditFunctionalArea, 
+        tableComponentRef, tableColumns, tableActions, tableColumnsView, navigate } = useFunctionalAreaCrudData(id);
     return (
         <div className="crud-page full-height">
             <div className="main-page full-height">
@@ -46,12 +47,8 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                                         className="input-basic"
                                         typeInput="text"
                                         register={register}
-                                        label={
-                                            <>
-                                                Código <span>*</span>
-                                            </>
-                                        }
-                                        classNameLabel="text-black biggest bold"
+                                        label='Código'
+                                        classNameLabel="text-black biggest bold text-required"
                                         direction={EDirection.row}
                                         errors={errors}
                                         disabled={action !== "new"}
@@ -61,12 +58,8 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                                         className="input-basic"
                                         typeInput="text"
                                         register={register}
-                                        label={
-                                            <>
-                                                Denominación <span>*</span>
-                                            </>
-                                        }
-                                        classNameLabel="text-black biggest bold"
+                                        label='Denominación'
+                                        classNameLabel="text-black biggest bold text-required"
                                         direction={EDirection.row}
                                         errors={errors}
                                         disabled={action !== "new"}
@@ -77,12 +70,8 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                                         idInput="description"
                                         register={register}
                                         errors={errors}
-                                        label={
-                                            <>
-                                                Descripción <span>*</span>
-                                            </>
-                                        }
-                                        classNameLabel="text-black biggest bold"
+                                        label='Descripción'
+                                        classNameLabel="text-black biggest bold text-required"
                                         className="text-area-basic"
                                         rows={4}
                                         disabled={action === "view"}

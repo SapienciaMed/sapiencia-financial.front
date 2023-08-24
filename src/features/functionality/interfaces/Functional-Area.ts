@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 export interface IFunctionalAreaFilters {
   page: number;
   perPage: number;
-  number?: number;
+  inputCodigoFuncional?: string;
 }
 
 export interface IFunctionalArea {

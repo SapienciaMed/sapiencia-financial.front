@@ -4,7 +4,8 @@ import { DateTime } from 'luxon';
 export interface IProject {
   id: string,
   name: string,
-  plannedValue: number
+  plannedValue: number,
+  assignmentValue: number
 }
 
 export interface IProjectFilters {
