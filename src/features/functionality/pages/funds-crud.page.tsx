@@ -97,7 +97,7 @@ function FundsForm({ action }: IAppProps) {
                   <DatePickerComponent
                     idInput="dateFrom"
                     control={controlRegister}
-                    label={"Validez a"}
+                    label={"Validez de"}
                     errors={errors}
                     classNameLabel="text-black biggest bold"
                     className="dataPicker-basic"
@@ -107,7 +107,7 @@ function FundsForm({ action }: IAppProps) {
                   <DatePickerComponent
                     idInput="dateTo"
                     control={controlRegister}
-                    label={"Validez hasta"}
+                    label={"Validez a"}
                     errors={errors}
                     classNameLabel="text-black biggest bold"
                     className="dataPicker-basic"

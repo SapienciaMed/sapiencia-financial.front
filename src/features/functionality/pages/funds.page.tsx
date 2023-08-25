@@ -22,7 +22,9 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
       isVisibleTable,
       setIsVisibleTable,
       validatorNumber,
-    } = useFundsData();
+      isValid,
+  } = useFundsData();
+  console.log(isValid);
     return (
       <div>
         <FormComponent action={onSubmit}>
@@ -64,7 +66,7 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
               <DatePickerComponent
                 idInput="dateFrom"
                 control={controlRegister}
-                label={"Validez a"}
+                label={"Validez de"}
                 errors={errors}
                 classNameLabel="text-black biggest bold"
                 className="dataPicker-basic"
@@ -74,7 +76,7 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
               <DatePickerComponent
                 idInput="dateTo"
                 control={controlRegister}
-                label={"Validez hasta"}
+                label={"Validez a"}
                 errors={errors}
                 classNameLabel="text-black biggest bold"
                 className="dataPicker-basic"
@@ -98,6 +100,7 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
               className="button-main huge hover-three"
               value="Buscar"
               type="submit"
+              disabled={false}
             />
           </div>
         </FormComponent>
@@ -112,6 +115,7 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
             columns={tableColumns}
             actions={tableActions}
             isShowModal={true}
+            titleMessageModalNoResult={"Buscar"}
           />
         </div>
       </div>

@@ -24,10 +24,10 @@ export function useFundsData() {
     const {
         handleSubmit,
         register,
-        formState: { errors },
+        formState: { errors, isValid },
         reset,
         control: controlRegister
-    } = useForm<IFundsFilters>({ resolver });
+    } = useForm<IFundsFilters>({ resolver, mode:'all' });
     const tableColumns: ITableElement<IFunds>[] = [
         {
             fieldName: "entity.name",
@@ -39,7 +39,7 @@ export function useFundsData() {
         },
         {
             fieldName: "dateFrom",
-            header: "Validez a",
+            header: "Validez de",
             renderCell: (row) => {
                 return <>{DateTime.fromISO(row.dateFrom).toLocaleString()}</>;
             }
@@ -73,7 +73,7 @@ export function useFundsData() {
                         value: `${row.number}`
                     },
                     {
-                        title: "Validez a",
+                        title: "Validez de",
                         value: `${DateTime.fromISO(row.dateTo).toLocaleString()}`
                     },
                     {
@@ -144,5 +144,6 @@ export function useFundsData() {
       isVisibleTable,
       setIsVisibleTable,
       validatorNumber,
+      isValid,
     };
 } 
