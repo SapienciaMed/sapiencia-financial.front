@@ -40,8 +40,8 @@ function BudgetsForm({ action }: IAppProps) {
           <div className="title-area">
             <div className="text-black extra-large bold">
               {action === "new"
-                ? "Crear Posición Presupuestaria"
-                : "Editar Posición Presupuestaria "}
+                ? "Crear Posición Presupuestal"
+                : "Editar Posición Presupuestal "}
             </div>
           </div>
 
@@ -135,6 +135,7 @@ function BudgetsForm({ action }: IAppProps) {
                     columns={tableColumns}
                     actions={tableActions}
                     isShowModal={false}
+                    //secondaryTitle="Vinculación MGA"
                   />
                 </div>
               </div>
