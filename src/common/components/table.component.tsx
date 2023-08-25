@@ -32,6 +32,7 @@ interface IProps<T> {
   url: string;
   emptyMessage?: string;
   title?: string;
+  secondaryTitle?:string;
   columns: ITableElement<T>[];
   actions?: ITableAction<T>[];
   searchItems?: object;
@@ -46,6 +47,7 @@ interface IRef {
 const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
   const {
     title,
+    secondaryTitle,
     columns,
     actions,
     url,
@@ -64,7 +66,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
   const [searchCriteria, setSearchCriteria] = useState<object>();
   const { width } = useWidth();
   const { setMessage } = useContext(AppContext);
-
+  
   const token = localStorage.getItem("token");
 
   // Declaraciones
@@ -303,7 +305,13 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
         rows={perPage}
         totalRecords={resultData?.meta?.total || 0}
         onPageChange={onPageChange}
-        leftContent={leftContent}
+        leftContent={
+          <p className="header-information text-black bold biggest">
+            {
+              secondaryTitle ?? 'Resultados de búsqueda'
+            }
+          </p>
+        }
       />
 
       {width > 830 ? (

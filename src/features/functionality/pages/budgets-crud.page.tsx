@@ -135,6 +135,7 @@ function BudgetsForm({ action }: IAppProps) {
                     columns={tableColumns}
                     actions={tableActions}
                     isShowModal={false}
+                    secondaryTitle="Vinculación MGA"
                   />
                 </div>
               </div>
