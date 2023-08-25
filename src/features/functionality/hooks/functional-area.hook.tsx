@@ -26,7 +26,7 @@ export function useFunctionalAreaData() {
     const [showTable, setShowTable] = useState(false);
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
 
-    const inputValue =  watch(['inputCodigoFuncional'])
+    const inputValue =  watch(['number'])
 
     const tableColumns: ITableElement<IFunctionalArea>[] = [
         {
