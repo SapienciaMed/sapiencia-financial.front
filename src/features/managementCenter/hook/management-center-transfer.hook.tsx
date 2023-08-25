@@ -4,13 +4,14 @@ import { ITableAction, ITableElement } from "../../../common/interfaces/table.in
 import { useForm } from "react-hook-form";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { fundsValidator } from "../../../common/schemas";
-import { IBudgets, IFilterBudgets } from "../interfaces/Budgets";
+import { IBudgets } from "../../functionality/interfaces/Budgets";
 import { IDropdownProps } from "../../../common/interfaces/select.interface";
 import { useTypesTranfersService } from "./types-transfers-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import { ITypeTransfers } from "../interfaces/TypesTranfersInterfaces";
+import { IFilterBudgets } from "../interfaces/FilterBudgets";
 
-export function useManagementCenterData() {
+export function useManagementCenterTransfer() {
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
     const { GetTypesTransfers } = useTypesTranfersService();

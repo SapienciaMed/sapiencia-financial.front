@@ -2,7 +2,7 @@ import React from 'react'
 import { ButtonComponent, FormComponent, SelectComponent } from '../../../common/components/Form';
 import { BiPlusCircle } from 'react-icons/bi';
 import TableComponent from '../../../common/components/table.component';
-import { useManagementCenterAdditional } from '../hooks/management-center-additional.hook';
+import { useManagementCenterAdditional } from '../hook/management-center-additional.hook';
 
 function ManagementCenterAdditionalPage(): React.JSX.Element{
 

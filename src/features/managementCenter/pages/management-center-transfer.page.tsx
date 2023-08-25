@@ -2,12 +2,12 @@ import { BiPlusCircle } from "react-icons/bi";
 import { FormComponent, InputComponent, SelectComponent, ButtonComponent} from "../../../common/components/Form";
 import TableComponent from "../../../common/components/table.component";
 import { EDirection } from "../../../common/constants/input.enum";
-import { useManagementCenterData } from "../hooks/management-center-hook";
+import { useManagementCenterTransfer } from "../hook/management-center-transfer.hook";
 
 interface IAppProps { }
 
-function ManagementCenterPage(props: IAppProps): React.JSX.Element {
-const { tableActions, tableColumns, tableComponentRef, navigate, onSubmit, register, errors, reset, typesTransfersData, controlRegister } = useManagementCenterData();
+function ManagementCenterTransferPage(props: IAppProps): React.JSX.Element {
+const { tableActions, tableColumns, tableComponentRef, navigate, onSubmit, register, errors, reset, typesTransfersData, controlRegister } = useManagementCenterTransfer();
     return (
         <div className='main-page'>
             <div className='card-table'>
@@ -96,4 +96,4 @@ const { tableActions, tableColumns, tableComponentRef, navigate, onSubmit, regis
         </div>
     )
 }
-export default ManagementCenterPage;
+export default ManagementCenterTransferPage;
