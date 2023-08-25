@@ -8,10 +8,8 @@ import {
 } from "../../../common/components/Form";
 import { EDirection } from "../../../common/constants/input.enum";
 import { useBudgetsCrudData } from "../hooks/budgets-crud.hook";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import TableComponent from "../../../common/components/table.component";
-import { useLinkData } from "../hooks/link.hook";
-import TabListComponent from "../../../common/components/tab-list.component";
 
 interface IAppProps {
   action: "new" | "edit";

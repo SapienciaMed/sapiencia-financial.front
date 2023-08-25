@@ -10,74 +10,79 @@ function ManagementCenterAdditionalPage(): React.JSX.Element{
         AdditionsBySapienciaData, reset, onSubmit, navigate, setShowTable } = useManagementCenterAdditional()
 
     return (
-        <div>
-            <FormComponent action={onSubmit} >
-                <div className="card-form">
-                    <div className="title-area"> 
-                        <label className="text-black biggest bold"> Consultar adición </label>
-                        <div className="title-button text-three large" onClick={() => { navigate('') }}> Crear adición <BiPlusCircle/> </div>
-                    </div>
-                    
-                    <div className="funcionality-filters-container">
-                        <SelectComponent
-                            idInput="adminDistrict"
-                            className="select-basic"
-                            label="Acto administrativo distrito"
-                            classNameLabel="text-black biggest bold"
-                            errors={errors}
-                            control={controlRegister}
-                            data={AdditionsByDistrictData}
-                            filter={true}
-                        />
-                        <SelectComponent
-                            idInput="adminSapiencia"
-                            className="select-basic"
-                            label="Acto administrativo sapiencia"
-                            classNameLabel="text-black biggest bold"
-                            errors={errors}
-                            control={controlRegister}
-                            data={AdditionsBySapienciaData}
-                            filter={true}
-                        />
-                    </div>
+        <div className='main-page'>
+            <div className='card-table'>
+                <div className="title-area">
+                    <div className="text-black extra-large bold">Adicion</div>
                 </div>
-                <div className="container-button-core mt-24px">
-                    <div className="display-justify-space-between">
-                        <ButtonComponent
-                            form='useQueryForm'
-                            value="Limpiar campos"
-                            type="button"
-                            className="button-clean-fields bold"
-                            action={() => {
-                                reset()
-                                if(showTable)  {
-                                    tableComponentRef.current.emptyData();
-                                    setShowTable(false)
-                                }
-                            }}
-                        />
-                        <ButtonComponent
-                            className="button-search"
-                            value="Buscar"
-                            type="submit"
-                            disabled={!isBtnDisable}
-                        />
-                    </div>                
-                </div>
-            </FormComponent>
-            {
-                showTable && 
+                <FormComponent action={onSubmit} >
                     <div className="card-form">
-                        <TableComponent
-                            ref={tableComponentRef}
-                            url={`${process.env.urlApiFinancial}/api/v1/additions/get-paginated`}
-                            columns={tableColumns}
-                            actions={tableActions}
-                            isShowModal={true}
-                            titleMessageModalNoResult='Adición'
-                        />
+                        <div className="title-area"> 
+                            <label className="text-black biggest bold"> Consultar adición </label>
+                            <div className="title-button text-three large" onClick={() => { navigate('') }}> Crear adición <BiPlusCircle/> </div>
+                        </div>
+                        
+                        <div className="funcionality-filters-container">
+                            <SelectComponent
+                                idInput="adminDistrict"
+                                className="select-basic"
+                                label="Acto administrativo distrito"
+                                classNameLabel="text-black biggest bold"
+                                errors={errors}
+                                control={controlRegister}
+                                data={AdditionsByDistrictData}
+                                filter={true}
+                            />
+                            <SelectComponent
+                                idInput="adminSapiencia"
+                                className="select-basic"
+                                label="Acto administrativo sapiencia"
+                                classNameLabel="text-black biggest bold"
+                                errors={errors}
+                                control={controlRegister}
+                                data={AdditionsBySapienciaData}
+                                filter={true}
+                            />
+                        </div>
                     </div>
-            }
+                    <div className="container-button-core mt-24px">
+                        <div className="display-justify-space-between">
+                            <ButtonComponent
+                                form='useQueryForm'
+                                value="Limpiar campos"
+                                type="button"
+                                className="button-clean-fields bold"
+                                action={() => {
+                                    reset()
+                                    if(showTable)  {
+                                        tableComponentRef.current.emptyData();
+                                        setShowTable(false)
+                                    }
+                                }}
+                            />
+                            <ButtonComponent
+                                className="button-search"
+                                value="Buscar"
+                                type="submit"
+                                disabled={!isBtnDisable}
+                            />
+                        </div>                
+                    </div>
+                </FormComponent>
+                {
+                    showTable && 
+                        <div className="card-form">
+                            <TableComponent
+                                ref={tableComponentRef}
+                                url={`${process.env.urlApiFinancial}/api/v1/additions/get-paginated`}
+                                columns={tableColumns}
+                                actions={tableActions}
+                                isShowModal={true}
+                                titleMessageModalNoResult='Adición'
+                            />
+                        </div>
+                }
+           </div> 
         </div>
     )
 }

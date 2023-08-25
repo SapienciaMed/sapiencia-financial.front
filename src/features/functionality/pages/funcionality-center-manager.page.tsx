@@ -7,6 +7,7 @@ import ManagementCenterAdditionalPage from './management-center-additional.page'
 
 interface IAppProps { }
 
+//TODO: ELIMINAR
 function FunctionalityCenterManagerPage(props: IAppProps): React.JSX.Element {
     const { option } = useParams();
     const navigate = useNavigate();
