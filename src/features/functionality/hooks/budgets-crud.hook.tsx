@@ -118,32 +118,46 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
             ejercise: data.ejercise,
         }
         vinculateActivities && await vinculateActivities();
-        UpdateBudgets(parseInt(budgetsId), insertData).then(response => {
-            if (response.operation.code === EResponseCodes.OK) {
-                setMessage({
-                    title: "Editar Pospre",
-                    description: "Se ha editado el Pospre exitosamente",
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        onCancelEdit();
-                        setMessage({});
-                    },
-                    background: true
-                });
-            } else {
-                setMessage({
-                    title: "Hubo un problema...",
-                    description: response.operation.message,
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        setMessage({});
-                    },
-                    background: true
-                });
-            }
-        })
+        setMessage({
+            title: "Guardar",
+            description: "¿Estas segur@ de guardar la información en el sistema?",
+            show: true,
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
+            onOk: () => {
+                UpdateBudgets(parseInt(budgetsId), insertData).then(response => {
+                    if (response.operation.code === EResponseCodes.OK) {
+                        setMessage({
+                            title: "Editar Pospre",
+                            description: "Se ha editado el Pospre exitosamente",
+                            show: true,
+                            OkTitle: "Aceptar",
+                            onOk: () => {
+                                onCancelEdit();
+                                setMessage({});
+                            },
+                            background: true
+                        });
+                    } else {
+                        setMessage({
+                            title: "Hubo un problema...",
+                            description: response.operation.message,
+                            show: true,
+                            OkTitle: "Aceptar",
+                            onOk: () => {
+                                setMessage({});
+                            },
+                            background: true
+                        });
+                    }
+                })
+            },
+            onCancel: () => {
+              setMessage({});
+            },
+            background: true,
+          });
+        
     });
 
     const onCancelNew = () => {
@@ -157,10 +171,10 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
     const confirmClose = (callback) =>{
         setMessage({
             title: "Cancelar Pospre",
-            description: "¿Seguro que desea cancelar la operación?",
+            description: "¿Segur@ que desea cancelar la operación?",
             show: true,
-            OkTitle: "Si, cancelar",
-            cancelTitle: "Continuar",
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
             onOk: () => {
                 callback();
                 setMessage({});
