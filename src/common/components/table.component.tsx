@@ -307,9 +307,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
         onPageChange={onPageChange}
         leftContent={
           <p className="header-information text-black bold biggest">
-            {
-              secondaryTitle ?? 'Resultados de búsqueda'
-            }
+            { secondaryTitle ?? 'Resultados de búsqueda'}
           </p>
         }
       />
@@ -395,11 +393,11 @@ function getIconElement(icon: string, element: "name" | "src") {
   }
 }
 
-const leftContent = (
+/* const leftContent = (
   <p className="header-information text-black bold biggest">
     Resultados de búsqueda
   </p>
-);
+); */
 
 const paginatorHeader: PaginatorTemplateOptions = {
   layout: "CurrentPageReport RowsPerPageDropdown",
