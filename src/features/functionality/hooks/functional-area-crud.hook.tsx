@@ -22,6 +22,7 @@ export function useFunctionalAreaCrudData(id: string) {
         register,
         formState: { errors },
         setValue: setValueRegister,
+        control
     } = useForm<IFunctionalAreaCrud>({ resolver });
     const navigate = useNavigate();
     const { authorization, setMessage } = useContext(AppContext);
@@ -359,5 +360,5 @@ export function useFunctionalAreaCrudData(id: string) {
 
 
     return { register, errors, confirmClose, onCancelNew, onCancelEdit, onSubmitNewFunctionalArea, onSubmitEditFunctionalArea, 
-        tableComponentRef, tableColumns, tableActions, tableColumnsView, navigate };
+        tableComponentRef, control, tableColumns, tableActions, tableColumnsView, navigate };
 }
