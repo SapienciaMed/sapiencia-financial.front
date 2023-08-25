@@ -27,7 +27,7 @@ function FunctionalAreaPage(props: IAppProps): React.JSX.Element {
                     <div className="one-filter-container">
                         <Controller
                             control={control}
-                            name={"inputCodigoFuncional"}
+                            name={"number"}
                             defaultValue=""
                             render={({ field }) => {
                                 return (
