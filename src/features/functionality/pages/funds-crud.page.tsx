@@ -149,7 +149,7 @@ function FundsForm({ action }: IAppProps) {
               value="Guardar"
               type="submit"
               form="funds-form"
-              disabled={action === "new" ? (isValid ? false : true) : false}
+              disabled={false}
             />
           </div>
         </div>
