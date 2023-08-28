@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useForm } from 'react-hook-form';
-import { IAdditionsForm } from "../../managementCenter/interfaces/Additions";
+import { IAdditionsForm } from "../interfaces/Additions";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { fundsAdditionalValidation } from "../../../common/schemas";
 import { AppContext } from "../../../common/contexts/app.context";
 import { IArrayDataSelect, IMessage } from "../../../common/interfaces/global.interface";
-import { useAdditionsTransfersService } from "../../managementCenter/hook/additions-transfers-service.hook";
+import { useAdditionsTransfersService } from "./additions-transfers-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 
 

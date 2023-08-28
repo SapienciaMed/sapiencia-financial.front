@@ -3,12 +3,12 @@ import React, { useEffect, useState } from 'react'
 import { BiPlusCircle } from 'react-icons/bi'
 import { FaRegCopy } from 'react-icons/fa'
 import { UseFormGetValues, useFieldArray, useFormState, useWatch, Control, UseFormRegister } from 'react-hook-form';
-import { IAdditionsForm } from '../managementCenter/interfaces/Additions';
-import { IArrayDataSelect, IMessage } from '../../common/interfaces/global.interface';
-import { AddValidHeaders } from '../../common/constants/doc.enum';
-import ScreenAddIncomePage from '../functionality/pages/screen-add-income.page';
+import { IAdditionsForm } from '../interfaces/Additions';
+import { IArrayDataSelect, IMessage } from '../../../common/interfaces/global.interface';
+import { AddValidHeaders } from '../../../common/constants/doc.enum';
+import ScreenAddIncomePage from '../pages/screen-add-income.page';
 import { Paginator } from 'primereact/paginator';
-import { paginatorFooter } from '../../common/components/table.component';
+import { paginatorFooter } from '../../../common/components/table.component';
 
 interface IAppProps {
     titleAdd: string,

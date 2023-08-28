@@ -5,7 +5,7 @@ import {
   InputComponent,
 } from "../../../common/components/Form";
 import TabManagerAdditionPage from "./tab-manager-addition.page";
-import { useAdditionAreaCrud } from "../hooks/addition-area-crud.hook";
+import { useAdditionAreaCrud } from "../hook/addition-area-crud.hook";
 import { useNavigate } from "react-router-dom";
 import { EDirection } from "../../../common/constants/input.enum";
 

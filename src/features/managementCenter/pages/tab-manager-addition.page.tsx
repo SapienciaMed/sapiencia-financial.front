@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ITabsMenuTemplate } from "../../../common/interfaces/tabs-menu.interface";
-import AreaCreateAddition from "../../forms/area-create-addition";
-import AreaCreateExpense from "../../forms/area-create-expense";
+import AreaCreateAddition from "../forms/area-create-addition";
+import AreaCreateExpense from "../forms/area-create-expense";
 import { Control, useFormState, UseFormGetValues, UseFormWatch, UseFormRegister } from "react-hook-form";
-import { IAdditionsForm } from "../../managementCenter/interfaces/Additions";
+import { IAdditionsForm } from "../interfaces/Additions";
 import { IArrayDataSelect, IMessage } from "../../../common/interfaces/global.interface";
 
 interface IAppProps {
