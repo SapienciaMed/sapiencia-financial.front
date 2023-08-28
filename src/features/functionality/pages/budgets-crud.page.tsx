@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useVinculationMGAData } from "../hooks/vinculation-mga.hook";
 import {
   ButtonComponent,
@@ -10,6 +10,9 @@ import { EDirection } from "../../../common/constants/input.enum";
 import { useBudgetsCrudData } from "../hooks/budgets-crud.hook";
 import { useParams } from "react-router-dom";
 import TableComponent from "../../../common/components/table.component";
+import TabListComponent from "../../../common/components/tab-list.component";
+import { useLinkData } from "../hooks/link.hook";
+import { usePospreSapienciaData } from "../hooks/pospre-sapiencia.hook";
 
 interface IAppProps {
   action: "new" | "edit";
@@ -18,13 +21,20 @@ interface IAppProps {
 function BudgetsForm({ action }: IAppProps) {
   const { id: budgetsId } = useParams();
 
+  const [isMgaActive, setisMgaActive] = useState(true)
+
   const {
-    tableComponentRef,
-    tableColumns,
-    tableActions,
+    tableComponentRef: tableComponentRefMGA,
+    tableColumns: tableColumnsMGA,
+    tableActions: tableActionsMGA,
     vinculateActivities,
     loadTableData,
   } = useVinculationMGAData(budgetsId);
+
+  const { tableComponentRef, tableColumns, tableActions, control,
+    showTable, isBtnDisable, setShowTable, onSubmitSearch } = usePospreSapienciaData(budgetsId);
+
+
   const {
     register,
     errors,
@@ -36,6 +46,10 @@ function BudgetsForm({ action }: IAppProps) {
     onCancelEdit,
     controlRegister,
   } = useBudgetsCrudData(budgetsId, vinculateActivities, loadTableData);
+
+
+  const { tabs, start } = useLinkData('27', '"vinculacion-mga"');
+
   return (
     <div className="crud-page full-height">
       <div className="main-page full-height">
@@ -121,20 +135,37 @@ function BudgetsForm({ action }: IAppProps) {
               <div>
                 <div className={`tabs-component`}>
                   <div className="tabs-selection">
-                    <div className={`tab-option active`}>Vinculación MGA</div>
-                    <div className={`tab-option`}>ProspeSapiencia</div>
+                    <div className={isMgaActive ? `tab-option active` : `tab-option`} onClick={() => setisMgaActive(true)}>Vinculación MGA</div>
+                    <div className={!isMgaActive ? `tab-option active` : `tab-option`} onClick={() => setisMgaActive(false)}>ProspeSapiencia</div>
                   </div>
                 </div>
                 <br />
                 <div className="card-form">
-                  <TableComponent
-                    ref={tableComponentRef}
-                    url={`${process.env.urlApiFinancial}/api/v1/vinculation-mga/get-paginated`}
-                    columns={tableColumns}
-                    actions={tableActions}
-                    isShowModal={false}
-                    secondaryTitle="Vinculación MGA"
-                  />
+                  {
+                    isMgaActive && (
+                      <TableComponent
+                        ref={tableComponentRefMGA}
+                        url={`${process.env.urlApiFinancial}/api/v1/vinculation-mga/get-paginated`}
+                        columns={tableColumnsMGA}
+                        actions={tableActionsMGA}
+                        isShowModal={false}
+                        secondaryTitle="Vinculación MGA"
+                      />
+                    )
+                  }
+
+                  {
+                    !isMgaActive && (
+                      <TableComponent
+                        ref={tableComponentRef}
+                        url={`${process.env.urlApiFinancial}/api/v1/pospre-sapiencia/get-paginated`}
+                        columns={tableColumns}
+                        actions={tableActions}
+                        isShowModal={false}
+                        secondaryTitle="Pospre Sapiencia"
+                      />
+                    )
+                  }
                 </div>
               </div>
             )}
