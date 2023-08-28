@@ -1,7 +1,7 @@
 
 import useCrudService from '../../../common/hooks/crud-service.hook';
 import { ApiResponse } from '../../../common/utils/api-response';
-import { IAdditionsTransfersDistrictInterfaces, IAdditionsTransfersSapienciaInterfaces } from '../interfaces/AdditionsTransfersInterfaces';
+import { IAdditionsTransfersDistrictInterfaces, IAdditionsTransfersSapienciaInterfaces } from '../../functionality/interfaces/AdditionsTransfersInterfaces';
 
 export const useAdditionsTransfersService = () => {
     const baseURL: string = process.env.urlApiFinancial;
