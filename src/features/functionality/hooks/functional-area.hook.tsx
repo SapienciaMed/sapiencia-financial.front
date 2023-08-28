@@ -17,10 +17,17 @@ export function useFunctionalAreaData() {
         handleSubmit,
         register,
         formState: { errors },
+        control,
         reset,
+        watch
     } = useForm<IFunctionalAreaFilters>({ resolver });
-    const { GetAllProjectsVinculations } = useProjectsLinkService();
+    const { getAllProjectsVinculations } = useProjectsLinkService();
     const [projects, setProjects] = useState<IProjectsVinculation[]>(null);
+    const [showTable, setShowTable] = useState(false);
+    const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
+
+    const inputValue =  watch(['number'])
+
     const tableColumns: ITableElement<IFunctionalArea>[] = [
         {
             fieldName: "number",
@@ -72,7 +79,7 @@ export function useFunctionalAreaData() {
     }
 
     useEffect(() => {
-        GetAllProjectsVinculations().then(response => {
+        getAllProjectsVinculations().then(response => {
             if (response.operation.code === EResponseCodes.OK) {
                 setProjects(response.data);
             }
@@ -84,8 +91,14 @@ export function useFunctionalAreaData() {
     }, [projects]);
 
     const onSubmit = handleSubmit(async (data: IFunctionalAreaFilters) => {
+        setShowTable(true)
         loadTableData(data);
     });
 
-    return { tableActions, tableColumns, tableComponentRef, navigate, register, errors, reset, onSubmit }
+    useEffect(() => {
+        setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
+    },[inputValue])
+
+    return { tableActions, tableColumns, tableComponentRef, isBtnDisable, showTable, control, setIsBtnDisable,
+        setShowTable, navigate, register, errors, reset, onSubmit }
 }

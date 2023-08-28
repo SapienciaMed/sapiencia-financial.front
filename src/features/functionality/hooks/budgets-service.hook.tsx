@@ -26,10 +26,10 @@ export function useBudgetsService() {
         return put(`${roleUrl}${endpoint}`, data);
     }
 
-    async function GetAllBudgets(): Promise<ApiResponse<IBudgets[]>> {
+    async function getAllBudgets(): Promise<ApiResponse<IBudgets[]>> {
         const endpoint: string = `/get-all`;
         return get(`${roleUrl}${endpoint}`);
     }
 
-    return { GetBudgets, CreateBudgets, UpdateBudgets, GetAllBudgets }
+    return { GetBudgets, CreateBudgets, UpdateBudgets, getAllBudgets }
 }

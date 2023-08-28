@@ -19,7 +19,7 @@ export function useFunctionalAreaService() {
         return post(`${vinculationUrl}${endpoint}`, data);
     }
 
-    async function GetAllProjects():Promise<ApiResponse<IProject[]>> {
+    async function getAllProjects():Promise<ApiResponse<IProject[]>> {
         const endpoint: string = `/get-all`;
         return get(`${projectsUrl}${endpoint}`);
     }
@@ -34,5 +34,5 @@ export function useFunctionalAreaService() {
         return get(`${vinculationUrl}${endpoint}`);
     }
 
-    return { GetFunctionalArea, CreateFunctionalArea, GetAllProjects, UpdateFunctionalArea, GetAllFunctionalAreas };
+    return { GetFunctionalArea, CreateFunctionalArea, getAllProjects, UpdateFunctionalArea, GetAllFunctionalAreas };
 }

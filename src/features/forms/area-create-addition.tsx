@@ -7,7 +7,7 @@ import { paginatorFooter } from '../../common/components/table.component';
 import ScreenAddIncome from '../functionality/pages/screen-add-income.page';
 import { IArrayDataSelect, IMessage } from '../../common/interfaces/global.interface';
 import { AddValidHeaders } from '../../common/constants/doc.enum';
-import { IAdditionsForm, IIncome  } from '../functionality/interfaces/Additions';
+import { IAdditionsForm } from '../managementCenter/interfaces/Additions';
 
 interface IAppProps {
     titleAdd: string,

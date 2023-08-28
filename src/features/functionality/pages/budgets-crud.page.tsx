@@ -8,7 +8,7 @@ import {
 } from "../../../common/components/Form";
 import { EDirection } from "../../../common/constants/input.enum";
 import { useBudgetsCrudData } from "../hooks/budgets-crud.hook";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import TableComponent from "../../../common/components/table.component";
 
 interface IAppProps {
@@ -17,8 +17,14 @@ interface IAppProps {
 
 function BudgetsForm({ action }: IAppProps) {
   const { id: budgetsId } = useParams();
-  const { tableComponentRef, tableColumns, tableActions, vinculateActivities, loadTableData } =
-    useVinculationMGAData(budgetsId);
+
+  const {
+    tableComponentRef,
+    tableColumns,
+    tableActions,
+    vinculateActivities,
+    loadTableData,
+  } = useVinculationMGAData(budgetsId);
   const {
     register,
     errors,
@@ -28,8 +34,8 @@ function BudgetsForm({ action }: IAppProps) {
     confirmClose,
     onCancelNew,
     onCancelEdit,
-    controlRegister
-  } = useBudgetsCrudData(budgetsId,vinculateActivities,loadTableData);
+    controlRegister,
+  } = useBudgetsCrudData(budgetsId, vinculateActivities, loadTableData);
   return (
     <div className="crud-page full-height">
       <div className="main-page full-height">
@@ -37,8 +43,8 @@ function BudgetsForm({ action }: IAppProps) {
           <div className="title-area">
             <div className="text-black extra-large bold">
               {action === "new"
-                ? "Crear Posición Presupuestaria"
-                : "Editar Posición Presupuestaria "}
+                ? "Crear Posición Presupuestal"
+                : "Editar Posición Presupuestal "}
             </div>
           </div>
 
@@ -56,6 +62,7 @@ function BudgetsForm({ action }: IAppProps) {
                   errors={errors}
                   label="Posicion Presupuestaria"
                   classNameLabel="text-black biggest bold"
+                  min={0}
                 />
 
                 <InputComponent
@@ -67,6 +74,7 @@ function BudgetsForm({ action }: IAppProps) {
                   classNameLabel="text-black biggest bold"
                   direction={EDirection.row}
                   errors={errors}
+                  min={0}
                 />
 
                 <SelectComponent
@@ -95,6 +103,7 @@ function BudgetsForm({ action }: IAppProps) {
                   classNameLabel="text-black biggest bold"
                 />
               </div>
+
               <div className="fund-denomination-container">
                 <InputComponent
                   idInput="description"
@@ -106,19 +115,29 @@ function BudgetsForm({ action }: IAppProps) {
                 />
               </div>
             </div>
-                {action ==="new" ? <></> : 
-                    <div>
-                    <div className="card-form">
-                    <TableComponent
-                        ref={tableComponentRef}
-                        url={`${process.env.urlApiFinancial}/api/v1/vinculation-mga/get-paginated`}
-                        columns={tableColumns}
-                        actions={tableActions}
-                        isShowModal={false}
-                    />
-                    </div>
+            {action === "new" ? (
+              <></>
+            ) : (
+              <div>
+                <div className={`tabs-component`}>
+                  <div className="tabs-selection">
+                    <div className={`tab-option active`}>Vinculación MGA</div>
+                    <div className={`tab-option`}>ProspeSapiencia</div>
+                  </div>
                 </div>
-                }
+                <br />
+                <div className="card-form">
+                  <TableComponent
+                    ref={tableComponentRef}
+                    url={`${process.env.urlApiFinancial}/api/v1/vinculation-mga/get-paginated`}
+                    columns={tableColumns}
+                    actions={tableActions}
+                    isShowModal={false}
+                    secondaryTitle="Vinculación MGA"
+                  />
+                </div>
+              </div>
+            )}
             <div className="mobile-actions mobile">
               <span
                 className="bold text-center button"

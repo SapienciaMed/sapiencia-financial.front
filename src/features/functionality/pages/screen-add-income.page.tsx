@@ -1,7 +1,7 @@
 import React from "react";
 import { ButtonComponent,  InputComponent,  SelectComponent } from "../../../common/components/Form";
 import { Control, FieldErrors, UseFormRegister} from 'react-hook-form';
-import { IAdditionsForm } from "../interfaces/Additions";
+import { IAdditionsForm } from "../../managementCenter/interfaces/Additions";
 import { IArrayDataSelect } from "../../../common/interfaces/global.interface";
 import { EDirection } from "../../../common/constants/input.enum";
 import { projectIdName } from "../../../common/constants/nameProject";

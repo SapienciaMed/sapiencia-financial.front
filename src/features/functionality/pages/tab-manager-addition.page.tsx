@@ -4,7 +4,7 @@ import { ITabsMenuTemplate } from "../../../common/interfaces/tabs-menu.interfac
 import AreaCreateAddition from "../../forms/area-create-addition";
 import AreaCreateExpense from "../../forms/area-create-expense";
 import { Control, useFormState, UseFormGetValues, UseFormWatch, UseFormRegister } from "react-hook-form";
-import { IAdditionsForm } from "../interfaces/Additions";
+import { IAdditionsForm } from "../../managementCenter/interfaces/Additions";
 import { IArrayDataSelect, IMessage } from "../../../common/interfaces/global.interface";
 
 interface IAppProps {

@@ -23,6 +23,8 @@ interface IInputProps<T> {
   id?: string;
   fieldArray?: boolean;
   optionsRegister?: {};
+  max?: number;
+  min?:number;
 }
 
 function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
@@ -44,19 +46,27 @@ function InputElement({
   register,
   value,
   disabled,
-  onChange,
+  onChange: onChangeProp,
   defaultValue,
   id,
   optionsRegister,
+  max,
+  min
 }): React.JSX.Element {
   return (
     <input
       {...register(idInput)}
+      id={id}
       name={idInput}
       type={typeInput}
       className={className}
       placeholder={placeholder}
-      defaultValue={value}
+      defaultValue={defaultValue}
+      disabled={disabled}
+      onChange={onChangeProp}
+      value={value}
+      max={max}
+      min={min}
     />
   );
 }
@@ -79,12 +89,32 @@ export function InputComponent({
   id,
   fieldArray,
   optionsRegister = {},
+  max,
+  min
 }: IInputProps<any>): React.JSX.Element {
+  const messageError = () => {
+
+    const keysError = idInput.split(".");
+    let errs = errors;
+
+    if (fieldArray) {
+      const errorKey = `${keysError[0]}[${keysError[1]}].${keysError[2]}`;
+      return errors[errorKey]?.message;
+    } else {
+      for (let key of keysError) {
+        errs = errs?.[key];
+        if (!errs) {
+          break;
+        }
+      }
+      return errs?.message ?? null;
+    }
+  };
 
   return (
     <div
       className={
-        errors[idInput]?.message  ? `${direction} container-icon_error` : direction
+        messageError() ? `${direction} container-icon_error` : direction
       }
     >
       <LabelElement
@@ -96,7 +126,7 @@ export function InputComponent({
         <InputElement
           typeInput={typeInput}
           idInput={idInput}
-          className={errors[idInput]?.message  ? `${className} error` : className}
+          className={messageError() ? `${className} error` : className}
           placeholder={placeholder}
           register={register}
           value={value}
@@ -105,8 +135,10 @@ export function InputComponent({
           defaultValue={defaultValue}
           id={id}
           optionsRegister={optionsRegister}
+          max={max}
+          min={min}
         />
-        {errors[idInput]?.message && (
+        {messageError() && (
           <MdOutlineError
             className="icon-error"
             fontSize={"22px"}
@@ -114,9 +146,9 @@ export function InputComponent({
           />
         )}
       </div>
-      {errors[idInput]?.message  && (
+      {messageError() && (
         <p className="error-message bold not-margin-padding">
-          {errors[idInput]?.message }
+          {messageError()}
         </p>
       )}
       {children}

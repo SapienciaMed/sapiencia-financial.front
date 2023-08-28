@@ -15,7 +15,7 @@ export function useProjectsLinkData(functionalArea: string) {
     const navigate = useNavigate();
     const resolver = useYupValidationResolver(projects);
     const { setMessage } = useContext(AppContext);
-    const { CreateVinculation, GetAllProjectsVinculations } = useProjectsLinkService();
+    const { CreateVinculation, getAllProjectsVinculations } = useProjectsLinkService();
     const {
         handleSubmit,
         register,
@@ -37,8 +37,12 @@ export function useProjectsLinkData(functionalArea: string) {
             header: "Nombre proyecto"
         },
         {
+            fieldName: 'assignmentValue',
+            header: "Valor asignado"
+        },
+        {
             fieldName: "plannedValue",
-            header: "Valor programado"
+            header: "Valor planeado"
         },
         {
             fieldName: "id",
@@ -95,7 +99,7 @@ export function useProjectsLinkData(functionalArea: string) {
     }
 
     useEffect(() => {
-        if(Number(functionalArea)) GetAllProjectsVinculations().then((response => {
+        if(Number(functionalArea)) getAllProjectsVinculations().then((response => {
             if(response.operation.code === EResponseCodes.OK) {
                 const data = response.data;
                 const projectsLinked = data.map(linked => linked.projectId);
@@ -158,10 +162,10 @@ export function useProjectsLinkData(functionalArea: string) {
     const confirmClose = (callback) => {
         setMessage({
             title: "Cancelar proyecto",
-            description: "¿Seguro que desea cancelar la operación?",
+            description: "¿Segur@ que desea cancelar la operación?",
             show: true,
-            OkTitle: "Si, cancelar",
-            cancelTitle: "Continuar",
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
             onOk: () => {
                 callback();
                 setMessage({});

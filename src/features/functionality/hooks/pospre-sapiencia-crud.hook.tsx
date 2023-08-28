@@ -11,7 +11,7 @@ import { IPosPreSapiencia } from "../interfaces/PosPreSapiencia";
 
 interface IPosPreSapienciaCrudForm {
     number: string;
-    ejercise: number;
+    ejercise: string;
     description: string;
     consecutive: number;
     assignedTo: string;
@@ -26,6 +26,7 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
         register,
         formState: { errors },
         setValue: setValueRegister,
+        control
     } = useForm<IPosPreSapienciaCrudForm>({ resolver });
     const navigate = useNavigate();
     const { setMessage, authorization } = useContext(AppContext);
@@ -45,7 +46,7 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
         GetPosPreSapiencia(Number(pospreSapiencia)).then(response => {
             if(response.operation.code === EResponseCodes.OK) {
                 setValueRegister("number", response.data.number);
-                setValueRegister("ejercise", response.data.ejercise);
+                setValueRegister("ejercise", String(response.data.ejercise));
                 setValueRegister("description", response.data.description);
                 setValueRegister("consecutive", response.data.consecutive);
             } else {
@@ -58,76 +59,104 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
         const insertData: IPosPreSapiencia = {
             number: data.number,
             budgetId: Number(pospre),
-            ejercise: data.ejercise,
+            ejercise: parseInt(data.ejercise),
             description: data.description,
             consecutive: data.consecutive,
             assignedTo: data.assignedTo,
             userCreate: authorization.user.numberDocument,
         };
-        CreatePosPreSapiencia(insertData).then(response => {
-            if (response.operation.code === EResponseCodes.OK) {
-                setMessage({
-                    title: "Crear pospre sapiencia",
-                    description: "Se ha creado el pospre sapiencia exitosamente",
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        onCancelNew();
-                        setMessage({});
-                    },
-                    background: true
-                });
-            } else {
-                setMessage({
-                    title: "Hubo un problema...",
-                    description: response.operation.message,
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        setMessage({});
-                    },
-                    background: true
-                });
-            }
-        })
+        setMessage({
+            title: "Guardar",
+            description: "¿Estas segur@ de guardar la información en el sistema?",
+            show: true,
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
+            onOk: () => {
+                CreatePosPreSapiencia(insertData).then(response => {
+                    if (response.operation.code === EResponseCodes.OK) {
+                        setMessage({
+                            title: "Crear pospre sapiencia",
+                            description: "Se ha creado el pospre sapiencia exitosamente",
+                            show: true,
+                            OkTitle: "Aceptar",
+                            onOk: () => {
+                                onCancelNew();
+                                setMessage({});
+                            },
+                            background: true
+                        });
+                    } else {
+                        setMessage({
+                            title: "Validacion de datos",
+                            description: response.operation.message,
+                            show: true,
+                            OkTitle: "Aceptar",
+                            onOk: () => {
+                                setMessage({});
+                            },
+                            background: true
+                        });
+                    }
+                })
+            },
+            onCancel: () => {
+              setMessage({});
+            },
+            background: true,
+          });
+        
     });
     
     const onSubmitEditPosPreSapiencia = handleSubmit(async (data: IPosPreSapienciaCrudForm) => {
         const insertData: IPosPreSapiencia = {
             number: data.number,
             budgetId: Number(pospre),
-            ejercise: data.ejercise,
+            ejercise: parseInt(data.ejercise),
             description: data.description,
             consecutive: data.consecutive,
             assignedTo: data.assignedTo,
             userModify: authorization.user.numberDocument,
         };
-        UpdatePosPreSapiencia(Number(pospreSapiencia),insertData).then(response => {
-            if (response.operation.code === EResponseCodes.OK) {
-                setMessage({
-                    title: "Editar pospre sapiencia",
-                    description: "Se ha editado el pospre sapiencia exitosamente",
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        onCancelEdit();
-                        setMessage({});
-                    },
-                    background: true
-                });
-            } else {
-                setMessage({
-                    title: "Hubo un problema...",
-                    description: response.operation.message,
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        setMessage({});
-                    },
-                    background: true
-                });
-            }
-        })
+        setMessage({
+            title: "Guardar",
+            description: "¿Estas segur@ de guardar la información en el sistema?",
+            show: true,
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
+            onOk: () => {
+                UpdatePosPreSapiencia(Number(pospreSapiencia),insertData).then(response => {
+                    if (response.operation.code === EResponseCodes.OK) {
+                        setMessage({
+                            title: "Editar pospre sapiencia",
+                            description: "Se ha editado el pospre sapiencia exitosamente",
+                            show: true,
+                            OkTitle: "Aceptar",
+                            onOk: () => {
+                                onCancelEdit();
+                                setMessage({});
+                            },
+                            background: true
+                        });
+                    } else {
+                        setMessage({
+                            title: "Hubo un problema...",
+                            description: response.operation.message,
+                            show: true,
+                            OkTitle: "Aceptar",
+                            onOk: () => {
+                                setMessage({});
+                            },
+                            background: true
+                        });
+                    }
+                })
+            },
+            onCancel: () => {
+              setMessage({});
+            },
+            background: true,
+          });
+        
     });
 
     const onCancelNew = () => {
@@ -141,10 +170,10 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
     const confirmClose = (callback) =>{
         setMessage({
             title: "Cancelar pospre sapiencia",
-            description: "¿Seguro que desea cancelar la operación?",
+            description: "¿Segur@ que desea cancelar la operación?",
             show: true,
-            OkTitle: "Si, cancelar",
-            cancelTitle: "Continuar",
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
             onOk: () => {
                 callback();
                 setMessage({});
@@ -153,5 +182,13 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
         });
     }
 
-    return { register, errors, onSubmitNewPosPreSapiencia, onSubmitEditPosPreSapiencia, onCancelNew, onCancelEdit, confirmClose };
+    async function validatorNumber(e) {
+        if (parseInt(e.target.value) < 0) {
+            return e.target.value == '';
+        }
+        
+    }
+
+    return { register, errors, control, onSubmitNewPosPreSapiencia, onSubmitEditPosPreSapiencia, onCancelNew, onCancelEdit, 
+        confirmClose, validatorNumber };
 }

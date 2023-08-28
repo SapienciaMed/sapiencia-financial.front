@@ -5,6 +5,7 @@ import { EDirection } from "../../../common/constants/input.enum";
 import { useFunctionalAreaCrudData } from "../hooks/functional-area-crud.hook";
 import TableComponent from "../../../common/components/table.component";
 import { AiOutlinePlusCircle } from "react-icons/ai";
+import { Controller } from 'react-hook-form';
 
 interface IAppProps {
     action: "new" | "edit" | "view";
@@ -17,7 +18,8 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
         edit: "Editar Área funcional",
         view: "Detalle Área funcional",
     };
-    const { register, errors, confirmClose, onCancelNew, onCancelEdit, onSubmitNewFunctionalArea, onSubmitEditFunctionalArea, tableComponentRef, tableColumns, tableActions, tableColumnsView, navigate } = useFunctionalAreaCrudData(id);
+    const { register, errors, confirmClose, onCancelNew, onCancelEdit, onSubmitNewFunctionalArea, onSubmitEditFunctionalArea, control,
+        tableComponentRef, tableColumns, tableActions, tableColumnsView, navigate } = useFunctionalAreaCrudData(id);
     return (
         <div className="crud-page full-height">
             <div className="main-page full-height">
@@ -41,51 +43,75 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                             </div>
                             <div className="pospre-sapiencia-data">
                                 <div className="pospre-sapiencia-basic">
-                                    <InputComponent
-                                        idInput="number"
-                                        className="input-basic"
-                                        typeInput="text"
-                                        register={register}
-                                        label={
-                                            <>
-                                                Código <span>*</span>
-                                            </>
-                                        }
-                                        classNameLabel="text-black biggest bold"
-                                        direction={EDirection.row}
-                                        errors={errors}
-                                        disabled={action !== "new"}
+                                    <Controller
+                                        control={control}
+                                        name={"number"}
+                                        defaultValue=""
+                                        render={({ field }) => {
+                                            return (
+                                                <InputComponent
+                                                    id={field.name}
+                                                    idInput={field.name}
+                                                    value={`${field.value}`}
+                                                    className="input-basic"
+                                                    typeInput="text"
+                                                    register={register}
+                                                    label="Código"
+                                                    classNameLabel="text-black biggest bold text-required"
+                                                    direction={EDirection.row}
+                                                    errors={errors}
+                                                    onChange={field.onChange}
+                                                    disabled={action !== "new"}
+                                                /> 
+                                            )
+                                        }}
                                     />
-                                    <InputComponent
-                                        idInput="denomination"
-                                        className="input-basic"
-                                        typeInput="text"
-                                        register={register}
-                                        label={
-                                            <>
-                                                Denominación <span>*</span>
-                                            </>
-                                        }
-                                        classNameLabel="text-black biggest bold"
-                                        direction={EDirection.row}
-                                        errors={errors}
-                                        disabled={action !== "new"}
+                                     <Controller
+                                        control={control}
+                                        name={"denomination"}
+                                        defaultValue=""
+                                        render={({ field }) => {
+                                            return (
+                                                <InputComponent
+                                                    id={field.name}
+                                                    idInput={field.name}
+                                                    value={`${field.value}`}
+                                                    className="input-basic"
+                                                    typeInput="text"
+                                                    register={register}
+                                                    label="Código"
+                                                    classNameLabel="text-black biggest bold text-required"
+                                                    direction={EDirection.row}
+                                                    errors={errors}
+                                                    onChange={field.onChange}
+                                                    disabled={action !== "new"}
+                                                /> 
+                                            )
+                                        }}
                                     />
                                 </div>
                                 <div>
-                                    <TextAreaComponent
-                                        idInput="description"
-                                        register={register}
-                                        errors={errors}
-                                        label={
-                                            <>
-                                                Descripción <span>*</span>
-                                            </>
-                                        }
-                                        classNameLabel="text-black biggest bold"
-                                        className="text-area-basic"
-                                        rows={4}
-                                        disabled={action === "view"}
+                                <Controller
+                                        control={control}
+                                        name={"description"}
+                                        defaultValue=""
+                                        render={({ field }) => {
+                                            return (
+                                                <TextAreaComponent
+                                                    id={field.name}
+                                                    idInput={field.name}
+                                                    value={`${field.value}`}
+                                                    className="text-area-basic"
+                                                    register={register}
+                                                    label="Descripción"
+                                                    classNameLabel="text-black biggest bold text-required"
+                                                    direction={EDirection.row}
+                                                    errors={errors}
+                                                    onChange={field.onChange}
+                                                    disabled={action !== "new"}
+                                                /> 
+                                            )
+                                        }}
                                     />
                                 </div>
                             </div>

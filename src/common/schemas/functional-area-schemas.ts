@@ -1,6 +1,9 @@
 import * as yup from "yup";
 
-export const functionalArea = yup.object({});
+export const functionalArea = yup.object({
+    inputCodigoFuncional: yup
+        .string()
+});
 
 export const functionalAreaCrud = yup.object({
     number: yup
@@ -11,7 +14,7 @@ export const functionalAreaCrud = yup.object({
     denomination: yup
         .string()
         .required("El campo es obligatorio")
-        .max(250, "Solo se permiten 250 caracteres"),
+        .max(100, "Solo se permiten 250 caracteres"),
     description: yup
         .string()
         .required("El campo es obligatorio")

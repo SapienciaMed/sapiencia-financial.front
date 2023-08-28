@@ -20,13 +20,14 @@ export function useFundsData() {
     const { setMessage } = useContext(AppContext);
     const { GetEntities } = useEntitiesService();
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
+    const [isVisibleTable, setIsVisibleTable] = useState<Boolean>(false);
     const {
         handleSubmit,
         register,
-        formState: { errors },
+        formState: { errors, isValid },
         reset,
         control: controlRegister
-    } = useForm<IFundsFilters>({ resolver });
+    } = useForm<IFundsFilters>({ resolver, mode:'all' });
     const tableColumns: ITableElement<IFunds>[] = [
         {
             fieldName: "entity.name",
@@ -51,6 +52,13 @@ export function useFundsData() {
             }
         },
     ];
+
+    async function validatorNumber(e) {
+        if (parseInt(e.target.value) < 0) {
+        return (e.target.value = "");
+        }
+    }
+    
     const tableActions: ITableAction<IFunds>[] = [
         {
             icon: "Detail",
@@ -106,6 +114,7 @@ export function useFundsData() {
 
     const onSubmit = handleSubmit(async (data: IFundsFilters) => {
         loadTableData(data);
+        setIsVisibleTable(true);
     });
 
     useEffect(() => {
@@ -122,15 +131,19 @@ export function useFundsData() {
     }, [])
 
     return {
-        tableComponentRef,
-        tableColumns,
-        tableActions,
-        onSubmit,
-        navigate,
-        register,
-        errors,
-        reset,
-        controlRegister,
-        entitiesData
-    }
+      tableComponentRef,
+      tableColumns,
+      tableActions,
+      onSubmit,
+      navigate,
+      register,
+      errors,
+      reset,
+      controlRegister,
+      entitiesData,
+      isVisibleTable,
+      setIsVisibleTable,
+      validatorNumber,
+      isValid,
+    };
 } 

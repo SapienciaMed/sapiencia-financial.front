@@ -3,7 +3,7 @@ import { vinculationValidator } from "../../../common/schemas";
 import DetailsComponent from "../../../common/components/details.component";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { AppContext } from "../../../common/contexts/app.context";
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { useNavigate } from "react-router-dom";
 import { IActivityMGA } from "../interfaces/VinculationMGAInterfaces";
@@ -11,7 +11,7 @@ import { SwitchComponent } from "../../../common/components/Form";
 import {useVinculationService} from "../hooks/vinculation-mga-service.hook"
 import { EResponseCodes } from "../../../common/constants/api.enum";
 interface IVinculationMGAFilters {
-    number: string
+    inputCodigoMGA: string
 }
 
 export function useVinculationMGAData(pospre: string) {
@@ -23,12 +23,20 @@ export function useVinculationMGAData(pospre: string) {
     const { setMessage } = useContext(AppContext);
     const [activitiesLink, setActivitiesLink] = useState<number[]>([]);
     const [activitiesUnLink, setActivitiesUnLink] = useState<number[]>([]);
+    const [showTable, setShowTable] = useState(false);
+    const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
+
     const {
         handleSubmit,
         register,
         formState: { errors },
+        control,
         reset,
+        watch
     } = useForm<IVinculationMGAFilters>({ resolver });
+
+    const inputValue =  watch(['inputCodigoMGA'])
+
     const tableColumns: ITableElement<IActivityMGA>[] = [
         {
             fieldName: "id",
@@ -229,8 +237,14 @@ export function useVinculationMGAData(pospre: string) {
     }
 
     const onSubmit = handleSubmit(async (data: IVinculationMGAFilters) => {
-        loadTableData({mgaId: data.number, budgetId:pospre  });
+        setShowTable(true)
+        loadTableData({ budgetId: data.inputCodigoMGA, mgaId: pospre  });
     });
 
-    return { register, reset, errors, tableComponentRef, tableColumns ,onSubmit, tableActions,tableColumnsEdit, vinculateActivities,loadTableData }
+    useEffect(() => {
+        setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
+    },[inputValue])
+
+    return { register, reset, errors, tableComponentRef, tableColumns, showTable, control, onSubmit, isBtnDisable,
+        tableActions,tableColumnsEdit, setShowTable, vinculateActivities,loadTableData }
 } 

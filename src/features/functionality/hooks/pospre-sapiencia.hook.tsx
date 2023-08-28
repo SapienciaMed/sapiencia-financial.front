@@ -1,24 +1,34 @@
 import { useForm } from "react-hook-form";
 import { pospreSapienciaValidator } from "../../../common/schemas";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { useNavigate } from "react-router-dom";
 
 interface IPospreSapienciaFilters {
-    number: string
+    inputPospreSapiencia: string
 }
 
 export function usePospreSapienciaData(pospre: string) {
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
     const resolver = useYupValidationResolver(pospreSapienciaValidator);
+    const [showTable, setShowTable] = useState(false);
+    const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
+
     const {
         handleSubmit,
         register,
         formState: { errors },
+        control,
         reset,
-    } = useForm<IPospreSapienciaFilters>({ resolver });
+        watch,
+    } = useForm<IPospreSapienciaFilters>({ 
+        resolver,
+    });
+
+    const inputValue =  watch(['inputPospreSapiencia'])
+
     const tableColumns: ITableElement<any>[] = [
         {
             fieldName: "budget.number",
@@ -53,12 +63,20 @@ export function usePospreSapienciaData(pospre: string) {
     }
 
     const onSubmitSearch = handleSubmit(async (data: IPospreSapienciaFilters) => {
-        if(pospre) loadTableData({budgetId: pospre, number: data.number});
+        if(pospre){
+            setShowTable(true)
+            loadTableData({budgetId: pospre, number: data.inputPospreSapiencia});
+        } 
     });
-
+    
     useEffect(() => {
         if(pospre) loadTableData({budgetId: pospre});
     }, [pospre]);
 
-    return { register, reset, errors, tableComponentRef, tableColumns, tableActions, onSubmitSearch }
+    useEffect(() => {
+        setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
+    },[inputValue])
+
+
+    return { register, reset, showTable, control, errors, tableComponentRef, tableColumns, tableActions, isBtnDisable, setShowTable, onSubmitSearch }
 } 

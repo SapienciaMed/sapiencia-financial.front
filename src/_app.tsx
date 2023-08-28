@@ -7,10 +7,10 @@ import "primereact/resources/primereact.min.css";
 import ModalMessageComponent from "./common/components/modal-message.component";
 import ApplicationProvider from "./application-provider";
 import useAppCominicator from "./common/hooks/app-communicator.hook";
+import { ManagementCenterRoutes } from "./features/managementCenter/management-center-routes";
 
 const Home = lazy(() => import("./features/home/pages/home.page"));
 const Functionality = lazy(() => import("./features/functionality/pages/functionality.page"));
-const FunctionalityCenterManagerPage = lazy(() => import("./features/functionality/pages/funcionality-center-manager.page"));
 const FundsCrud = lazy(() => import("./features/functionality/pages/funds-crud.page"));
 const BudgetsCrud = lazy(()  => import("./features/functionality/pages/budgets-crud.page"));
 const Link = lazy(()  => import("./features/functionality/pages/link.page"));
@@ -64,8 +64,7 @@ function App() {
               <Route path={"/gestion-financiera/funcionalidad/area-funcional/link/:id"} element={<ProjectsLinkPage action="new"/>} />
               <Route path={"/gestion-financiera/funcionalidad/area-funcional/edit/:id/link/"} element={<ProjectsLinkPage action="edit"/>} />
               
-              <Route path={"/gestion-financiera/centro-gestor/"} element={<FunctionalityCenterManagerPage/>} />
-              <Route path={"/gestion-financiera/centro-gestor/:option"} element={<FunctionalityCenterManagerPage/>} />
+              <Route path={"/gestion-financiera/centro-gestor/*"} element={<ManagementCenterRoutes/>} />
 
               <Route path={"/gestion-financiera/centro-gestor/adicion/create"} element={<AdditionAreaCrudPage actionForm="new"/>} />
 
