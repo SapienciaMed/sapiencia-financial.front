@@ -178,7 +178,6 @@ export function useFundsCrudData(fundId: string) {
           },
           onCancel: () => {
             setMessage({});
-            onCancelNew();
           },
           background: true,
         });
@@ -195,7 +194,7 @@ export function useFundsCrudData(fundId: string) {
 
     const confirmClose = (callback) =>{
         setMessage({
-          title: "Cancelar",
+          title: "Cancelar fondo",
           description:
             "¿Estas segur@ de cancelar la información en el sistema?",
           show: true,
