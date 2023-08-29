@@ -5,7 +5,7 @@ export interface IBudgets {
   id?: number;
   entityId: number;
   ejercise: number;
-  number:number;
+  number: string;
   denomination:string;
   description:string;
   userModify?: DateTime;
