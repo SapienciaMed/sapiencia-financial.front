@@ -79,12 +79,11 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                                                     className="input-basic"
                                                     typeInput="text"
                                                     register={register}
-                                                    label="Código"
+                                                    label="Denominacion"
                                                     classNameLabel="text-black biggest bold text-required"
                                                     direction={EDirection.row}
                                                     errors={errors}
                                                     onChange={field.onChange}
-                                                    disabled={action !== "new"}
                                                 /> 
                                             )
                                         }}
@@ -108,7 +107,6 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                                                     direction={EDirection.row}
                                                     errors={errors}
                                                     onChange={field.onChange}
-                                                    disabled={action !== "new"}
                                                 /> 
                                             )
                                         }}
