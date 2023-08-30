@@ -70,7 +70,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
   const token = localStorage.getItem("token");
 
   // Declaraciones
-  const { post } = useCrudService(token, url);
+  const { post } = useCrudService( url);
   useImperativeHandle(ref, () => ({
     loadData: loadData,
   }));

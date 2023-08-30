@@ -6,7 +6,7 @@ import { IAdditionsTransfersDistrictInterfaces, IAdditionsTransfersSapienciaInte
 export const useAdditionsTransfersService = () => {
     const baseURL: string = process.env.urlApiFinancial;
     const roleUrl: string = "/api/v1/additions";
-    const { get } = useCrudService(null, baseURL);
+    const { get } = useCrudService( baseURL);
 
     async function GetAllAdditionsByDistrict(): Promise<ApiResponse<IAdditionsTransfersDistrictInterfaces[]>> {
         const endpoint: string = "/get-actadmin-district";

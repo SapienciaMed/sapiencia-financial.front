@@ -5,7 +5,7 @@ import { IPosPreSapiencia } from "../interfaces/PosPreSapiencia";
 export function usePosPreSapienciaService() {
     const baseURL: string = process.env.urlApiFinancial;
     const roleUrl: string = "/api/v1/pospre-sapiencia";
-    const { get, post, put } = useCrudService(null, baseURL);
+    const { get, post, put } = useCrudService( baseURL);
 
     async function GetPosPreSapiencia(id: number): Promise<ApiResponse<IPosPreSapiencia>> {
         const endpoint: string = `/get-by-id/${id}`;

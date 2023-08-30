@@ -9,7 +9,7 @@ import { IProjectsVinculation } from "../interfaces/Projects";
 export function useProjectsLinkService() {
     const baseURL: string = process.env.urlApiFinancial;
     const vinculationUrl: string = "/api/v1/functional-area";
-    const { post, get, deleted } = useCrudService(null, baseURL);
+    const { post, get, deleted } = useCrudService( baseURL);
     const { authorization } = useContext(AppContext);
 
 
