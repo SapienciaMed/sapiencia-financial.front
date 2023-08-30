@@ -75,6 +75,7 @@ function BudgetsForm({ action }: IAppProps) {
                         errors={errors}
                         onChange={field.onChange}
                         min={0}
+                        disabled={action !== "new"}
                       /> 
                     )
                   }}
@@ -98,6 +99,7 @@ function BudgetsForm({ action }: IAppProps) {
                         errors={errors}
                         onChange={field.onChange}
                         min={0}
+                        disabled={action !== "new"}
                       /> 
                     )
                   }}
@@ -112,6 +114,7 @@ function BudgetsForm({ action }: IAppProps) {
                   classNameLabel="text-black biggest bold text-required"
                   direction={EDirection.row}
                   data={entitiesData}
+                  disabled={action !== "new"}
                 />
               </div>
             </div>
