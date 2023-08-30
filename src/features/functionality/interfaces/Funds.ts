@@ -20,7 +20,7 @@ export interface IFundsFilters {
   page: number;
   perPage: number;
   entity?: number;
-  number?: number;
+  number?: string;
   dateFrom?: DateTime;
   dateTo?: DateTime;
 }

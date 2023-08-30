@@ -4,6 +4,7 @@ import TableComponent from "../../../common/components/table.component";
 import { EDirection } from "../../../common/constants/input.enum";
 import { useFundsData } from "../hooks/funds.hook";
 import React from "react";
+import { Controller } from "react-hook-form";
 
 interface IAppProps { }
 
@@ -21,10 +22,9 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
       entitiesData,
       isVisibleTable,
       setIsVisibleTable,
-      validatorNumber,
-      isValid,
+      isBtnDisable
   } = useFundsData();
-  console.log(isValid);
+
     return (
       <div>
         <FormComponent action={onSubmit}>
@@ -52,16 +52,28 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
                 data={entitiesData}
                 control={controlRegister}
               />
-              <InputComponent
-                idInput="number"
-                className="input-basic"
-                typeInput="number"
-                register={register}
-                label="Fondos"
-                classNameLabel="text-black biggest bold"
-                direction={EDirection.row}
-                errors={errors}
-                onChange={validatorNumber}
+              <Controller
+                control={controlRegister}
+                name={"number"}
+                defaultValue=''
+                render={({ field }) => {
+                  return (
+                    <InputComponent
+                      id={field.name}
+                      idInput={field.name}
+                      value={`${field.value}`}
+                      className="input-basic"
+                      typeInput="number"
+                      register={register}
+                      label="Fondos"
+                      classNameLabel="text-black biggest bold"
+                      direction={EDirection.row}
+                      errors={errors}
+                      onChange={field.onChange}
+                      min={0}
+                    /> 
+                  )
+                }}
               />
               <DatePickerComponent
                 idInput="dateFrom"
@@ -100,7 +112,7 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
               className="button-main huge hover-three"
               value="Buscar"
               type="submit"
-              disabled={false}
+              disabled={!isBtnDisable}
             />
           </div>
         </FormComponent>
@@ -115,7 +127,7 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
             columns={tableColumns}
             actions={tableActions}
             isShowModal={true}
-            titleMessageModalNoResult={"Buscar"}
+            titleMessageModalNoResult={"Fondos"}
           />
         </div>
       </div>
