@@ -21,13 +21,19 @@ export function useFundsData() {
     const { GetEntities } = useEntitiesService();
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
     const [isVisibleTable, setIsVisibleTable] = useState<Boolean>(false);
+    const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
+
     const {
         handleSubmit,
         register,
         formState: { errors, isValid },
         reset,
+        watch,
         control: controlRegister
     } = useForm<IFundsFilters>({ resolver, mode:'all' });
+    
+    const inputValue =  watch(['entity','number', 'dateFrom', 'dateTo'])
+    
     const tableColumns: ITableElement<IFunds>[] = [
         {
             fieldName: "entity.name",
@@ -36,6 +42,10 @@ export function useFundsData() {
         {
             fieldName: "number",
             header: "Fondo"
+        },
+        {
+            fieldName: "denomination",
+            header: "Denominación"
         },
         {
             fieldName: "dateFrom",
@@ -130,6 +140,10 @@ export function useFundsData() {
         }).catch(() => { });
     }, [])
 
+    useEffect(() => {
+        setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
+    },[inputValue])
+
     return {
       tableComponentRef,
       tableColumns,
@@ -145,5 +159,6 @@ export function useFundsData() {
       setIsVisibleTable,
       validatorNumber,
       isValid,
+      isBtnDisable
     };
 } 

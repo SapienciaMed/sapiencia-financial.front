@@ -21,8 +21,6 @@ function FundsForm({ action }: IAppProps) {
       onCancelNew,
       onCancelEdit,
       confirmClose,
-      validatorNumber,
-      isValid,
     } = useFundsCrudData(fundId);
     return (
       <div className="crud-page full-height">
@@ -47,22 +45,34 @@ function FundsForm({ action }: IAppProps) {
                     control={controlRegister}
                     errors={errors}
                     label="Entidad CP"
-                    classNameLabel="text-black biggest bold"
+                    classNameLabel="text-black biggest bold text-required"
                     direction={EDirection.row}
                     data={entitiesData}
                     disabled={action === "new" ? false : true}
                   />
-                  <InputComponent
-                    idInput="number"
-                    className="input-basic"
-                    typeInput="number"
-                    register={register}
-                    label="Fondos"
-                    classNameLabel="text-black biggest bold"
-                    direction={EDirection.row}
-                    errors={errors}
-                    onChange={validatorNumber}
-                    disabled={action === "new" ? false : true}
+                  <Controller
+                    control={controlRegister}
+                    name={"number"}
+                    defaultValue=''
+                    render={({ field }) => {
+                      return (
+                        <InputComponent
+                          id={field.name}
+                          idInput={field.name}
+                          value={`${field.value}`}
+                          className="input-basic"
+                          typeInput="number"
+                          register={register}
+                          label="Fondos"
+                          classNameLabel="text-black biggest bold text-required"
+                          direction={EDirection.row}
+                          errors={errors}
+                          onChange={field.onChange}
+                          min={0}
+                          disabled={action === "new" ? false : true}
+                        /> 
+                      )
+                    }}
                   />
                 </div>
               </div>
@@ -71,21 +81,49 @@ function FundsForm({ action }: IAppProps) {
                   <div className="text-black biggest bold">Denominaciones</div>
                 </div>
                 <div className="fund-denomination-container">
-                  <InputComponent
-                    idInput="denomination"
-                    register={register}
-                    typeInput="text"
-                    errors={errors}
-                    label="Denominación"
-                    classNameLabel="text-black biggest bold"
+                <Controller
+                    control={controlRegister}
+                    name={"denomination"}
+                    defaultValue=''
+                    render={({ field }) => {
+                      return (
+                        <InputComponent
+                          id={field.name}
+                          idInput={field.name}
+                          value={`${field.value}`}
+                          className="input-basic"
+                          typeInput="text"
+                          register={register}
+                          label="Denominación"
+                          classNameLabel="text-black biggest bold text-required"
+                          direction={EDirection.row}
+                          errors={errors}
+                          onChange={field.onChange}
+                        /> 
+                      )
+                    }}
                   />
-                  <InputComponent
-                    idInput="description"
-                    register={register}
-                    typeInput="text"
-                    errors={errors}
-                    label="Descripción"
-                    classNameLabel="text-black biggest bold"
+                  <Controller
+                    control={controlRegister}
+                    name={"description"}
+                    defaultValue=''
+                    render={({ field }) => {
+                      return (
+                        <InputComponent
+                          id={field.name}
+                          idInput={field.name}
+                          value={`${field.value}`}
+                          className="input-basic"
+                          typeInput="text"
+                          register={register}
+                          label="Descripción"
+                          classNameLabel="text-black biggest bold text-required"
+                          direction={EDirection.row}
+                          errors={errors}
+                          onChange={field.onChange}
+                        /> 
+                      )
+                    }}
                   />
                 </div>
               </div>
@@ -99,7 +137,7 @@ function FundsForm({ action }: IAppProps) {
                     control={controlRegister}
                     label={"Validez de"}
                     errors={errors}
-                    classNameLabel="text-black biggest bold"
+                    classNameLabel="text-black biggest bold text-required"
                     className="dataPicker-basic"
                     placeholder="DD/MM/YYYY"
                     dateFormat="dd/mm/yy"
@@ -109,7 +147,7 @@ function FundsForm({ action }: IAppProps) {
                     control={controlRegister}
                     label={"Validez a"}
                     errors={errors}
-                    classNameLabel="text-black biggest bold"
+                    classNameLabel="text-black biggest bold text-required"
                     className="dataPicker-basic"
                     placeholder="DD/MM/YYYY"
                     dateFormat="dd/mm/yy"

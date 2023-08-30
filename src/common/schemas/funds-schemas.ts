@@ -1,6 +1,10 @@
 import * as yup from "yup";
 
-export const fundsValidator = yup.object({});
+export const fundsValidator = yup.object({
+    number: yup
+    .string()
+    .max(30, 'Solo se permiten 30 caracteres' )
+});
 
 export const fundsCrudValidator = yup.object({
     entity: yup.string().required("El campo es obligatorio"),

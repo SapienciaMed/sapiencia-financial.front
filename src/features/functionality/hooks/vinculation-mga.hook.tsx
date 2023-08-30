@@ -52,13 +52,13 @@ export function useVinculationMGAData(pospre: string) {
         },
         {
             fieldName: "cost",
-            header: "Costo"
+            header: "Costo total"
         },
         {   
             fieldName: "id",
             header: "Vincular",
             renderCell:(row) => {
-                return <SwitchComponent idInput={`checkRow${row.id}`} value={row.vinculation ? true : false } onChange={(e) => {
+                return <SwitchComponent idInput={`checkRow${row.id}`} value={row.vinculation != null} onChange={(e) => {
                     if(e.value === true) {
                         setLastMove([...lastMove,{id:row}])
                         const activityLink = activitiesLink.find(activity => activity == row.id)
