@@ -29,7 +29,7 @@ function BudgetsPage(props: IAppProps): React.JSX.Element {
                 <div className="card-form">
                     <div className="title-area">
                         <label className="text-black biggest bold">
-                            Consultar Posición Presupuestaria
+                            Consultar Posición Pesupuestal
                         </label>
                         <div className="title-button text-three biggest">
                             <span style={{ marginRight: '0.5em' }} onClick={() => { navigate('./create') }}> Crear Pospre</span>
@@ -43,7 +43,7 @@ function BudgetsPage(props: IAppProps): React.JSX.Element {
                             className="input-basic"
                             typeInput="number"
                             register={register}
-                            label="Posición presupuestaria"
+                            label="Posición presupuestal"
                             classNameLabel="text-black biggest bold"
                             direction={EDirection.row}
                             errors={errors}

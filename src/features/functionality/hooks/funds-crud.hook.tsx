@@ -14,7 +14,7 @@ import { AppContext } from "../../../common/contexts/app.context";
 
 interface IFundsCrudForm {
     entity: number;
-    number: number;
+    number: string;
     denomination: string;
     description: string;
     dateFrom: Date;

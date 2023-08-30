@@ -4,7 +4,7 @@ import { IEntities } from "./Entities";
 export interface IFunds {
   id?: number;
   entityId: number;
-  number: number;
+  number: string;
   denomination: string;
   description: string;
   dateFrom: Date;
@@ -20,7 +20,7 @@ export interface IFundsFilters {
   page: number;
   perPage: number;
   entity?: number;
-  number?: number;
+  number?: string;
   dateFrom?: DateTime;
   dateTo?: DateTime;
 }
