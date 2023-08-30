@@ -51,14 +51,14 @@ export function useFundsData() {
             fieldName: "dateFrom",
             header: "Validez de",
             renderCell: (row) => {
-                return <>{DateTime.fromISO(row.dateFrom).toLocaleString()}</>;
+                return <>{DateTime.fromJSDate(row.dateFrom).toLocaleString()}</>;
             }
         },
         {
             fieldName: "dateTo",
             header: "Validez a",
             renderCell: (row) => {
-                return <>{DateTime.fromISO(row.dateTo).toLocaleString()}</>;
+                return <>{DateTime.fromJSDate(row.dateTo).toLocaleString()}</>;
             }
         },
     ];
@@ -84,11 +84,11 @@ export function useFundsData() {
                     },
                     {
                         title: "Validez de",
-                        value: `${DateTime.fromISO(row.dateTo).toLocaleString()}`
+                        value: `${DateTime.fromJSDate(row.dateTo).toLocaleString()}`
                     },
                     {
                         title: "Validez a",
-                        value: `${DateTime.fromISO(row.dateTo).toLocaleString()}`
+                        value: `${DateTime.fromJSDate(row.dateTo).toLocaleString()}`
                     },
                     {
                         title: "Denominación",
