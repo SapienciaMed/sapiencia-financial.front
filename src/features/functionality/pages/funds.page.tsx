@@ -48,7 +48,7 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
                 errors={errors}
                 label="Entidad CP"
                 classNameLabel="text-black biggest bold"
-                direction={EDirection.row}
+                direction={EDirection.column}
                 data={entitiesData}
                 control={controlRegister}
               />
@@ -67,7 +67,7 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
                       register={register}
                       label="Fondos"
                       classNameLabel="text-black biggest bold"
-                      direction={EDirection.row}
+                      direction={EDirection.column}
                       errors={errors}
                       onChange={field.onChange}
                       min={0}

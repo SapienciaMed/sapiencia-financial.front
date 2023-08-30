@@ -71,10 +71,11 @@ function BudgetsForm({ action }: IAppProps) {
                         register={register}
                         label="Código"
                         classNameLabel="text-black biggest bold text-required"
-                        direction={EDirection.row}
+                        direction={EDirection.column}
                         errors={errors}
                         onChange={field.onChange}
                         min={0}
+                        disabled={action !== "new"}
                       /> 
                     )
                   }}
@@ -94,10 +95,11 @@ function BudgetsForm({ action }: IAppProps) {
                         register={register}
                         label="Ejercicio"
                         classNameLabel="text-black biggest bold text-required"
-                        direction={EDirection.row}
+                        direction={EDirection.column}
                         errors={errors}
                         onChange={field.onChange}
                         min={0}
+                        disabled={action !== "new"}
                       /> 
                     )
                   }}
@@ -110,8 +112,9 @@ function BudgetsForm({ action }: IAppProps) {
                   errors={errors}
                   label="Entidad CP"
                   classNameLabel="text-black biggest bold text-required"
-                  direction={EDirection.row}
+                  direction={EDirection.column}
                   data={entitiesData}
+                  disabled={action !== "new"}
                 />
               </div>
             </div>
@@ -135,7 +138,7 @@ function BudgetsForm({ action }: IAppProps) {
                         register={register}
                         label="Denominación"
                         classNameLabel="text-black biggest bold text-required"
-                        direction={EDirection.row}
+                        direction={EDirection.column}
                         errors={errors}
                         onChange={field.onChange}
                       /> 
@@ -160,7 +163,7 @@ function BudgetsForm({ action }: IAppProps) {
                         register={register}
                         label="Descripción"
                         classNameLabel="text-black biggest bold text-required"
-                        direction={EDirection.row}
+                        direction={EDirection.column}
                         errors={errors}
                         onChange={field.onChange}
                       /> 
@@ -201,7 +204,7 @@ function BudgetsForm({ action }: IAppProps) {
               >
                 Cancelar
               </span>
-              <ButtonComponent value="Guardar" type="submit" />
+              <ButtonComponent value="Guardar" type="submit" className="button-main huge" />
             </div>
           </FormComponent>
         </div>

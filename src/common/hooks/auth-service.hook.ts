@@ -7,7 +7,7 @@ export function useAuthService() {
   const baseURL: string = process.env.urlApiAuth;
   const authUrl: string = "/api/v1/auth";
 
-  const { get, post } = useCrudService(null, baseURL);
+  const { get, post } = useCrudService( baseURL);
 
   async function getAuthorization(
     token: string

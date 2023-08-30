@@ -58,7 +58,7 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                                                     register={register}
                                                     label="Código"
                                                     classNameLabel="text-black biggest bold text-required"
-                                                    direction={EDirection.row}
+                                                    direction={EDirection.column}
                                                     errors={errors}
                                                     onChange={field.onChange}
                                                     disabled={action !== "new"}
@@ -81,7 +81,7 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                                                     register={register}
                                                     label="Denominacion"
                                                     classNameLabel="text-black biggest bold text-required"
-                                                    direction={EDirection.row}
+                                                    direction={EDirection.column}
                                                     errors={errors}
                                                     onChange={field.onChange}
                                                 /> 
@@ -91,26 +91,26 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                                 </div>
                                 <div>
                                 <Controller
-                                        control={control}
-                                        name={"description"}
-                                        defaultValue=""
-                                        render={({ field }) => {
-                                            return (
-                                                <TextAreaComponent
-                                                    id={field.name}
-                                                    idInput={field.name}
-                                                    value={`${field.value}`}
-                                                    className="text-area-basic"
-                                                    register={register}
-                                                    label="Descripción"
-                                                    classNameLabel="text-black biggest bold text-required"
-                                                    direction={EDirection.row}
-                                                    errors={errors}
-                                                    onChange={field.onChange}
-                                                /> 
-                                            )
-                                        }}
-                                    />
+                                    control={control}
+                                    name={"description"}
+                                    defaultValue=""
+                                    render={({ field }) => {
+                                        return (
+                                            <TextAreaComponent
+                                                id={field.name}
+                                                idInput={field.name}
+                                                value={`${field.value}`}
+                                                className="text-area-basic"
+                                                register={register}
+                                                label="Descripción"
+                                                classNameLabel="text-black biggest bold text-required"
+                                                direction={EDirection.column}
+                                                errors={errors}
+                                                onChange={field.onChange}
+                                            /> 
+                                        )
+                                    }}
+                                />
                                 </div>
                             </div>
                         </div>

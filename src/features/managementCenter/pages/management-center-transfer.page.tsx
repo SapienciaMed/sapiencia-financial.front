@@ -31,7 +31,7 @@ const { tableActions, tableColumns, tableComponentRef, navigate, onSubmit, regis
                                 errors={errors}
                                 label="Entidad CP"
                                 classNameLabel="text-black biggest bold"
-                                direction={EDirection.row}
+                                direction={EDirection.column}
                                 data={typesTransfersData}
                             />
                             <InputComponent
@@ -41,7 +41,7 @@ const { tableActions, tableColumns, tableComponentRef, navigate, onSubmit, regis
                                 register={register}
                                 label="Ejercicio"
                                 classNameLabel="text-black biggest bold"
-                                direction={EDirection.row}
+                                direction={EDirection.column}
                                 errors={errors}
                             />
                             <InputComponent
@@ -51,7 +51,7 @@ const { tableActions, tableColumns, tableComponentRef, navigate, onSubmit, regis
                                 register={register}
                                 label="Posición presupuestaria"
                                 classNameLabel="text-black biggest bold"
-                                direction={EDirection.row}
+                                direction={EDirection.column}
                                 errors={errors}
                             />
                             <InputComponent
@@ -61,7 +61,7 @@ const { tableActions, tableColumns, tableComponentRef, navigate, onSubmit, regis
                                 register={register}
                                 label="Denominación"
                                 classNameLabel="text-black biggest bold"
-                                direction={EDirection.row}
+                                direction={EDirection.column}
                                 errors={errors}
                             />
                         </div>

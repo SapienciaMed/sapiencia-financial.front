@@ -8,7 +8,7 @@ import { IVinculationMGA } from "../interfaces/VinculationMGAInterfaces";
 export function useVinculationService() {
     const baseURL: string = process.env.urlApiFinancial;
     const vinculationUrl: string = "/api/v1/vinculation-mga";
-    const { post, deleted } = useCrudService(null, baseURL);
+    const { post, deleted } = useCrudService( baseURL);
     const { authorization } = useContext(AppContext);
 
 
