@@ -45,7 +45,7 @@ function BudgetsPage(props: IAppProps): React.JSX.Element {
                             register={register}
                             label="Posición presupuestal"
                             classNameLabel="text-black biggest bold"
-                            direction={EDirection.row}
+                            direction={EDirection.column}
                             errors={errors}
                             min={0}
                             onChange={handleChange}

@@ -44,7 +44,7 @@ function VinculationMGA(): React.JSX.Element {
                                         register={register}
                                         label="Código MGA"
                                         classNameLabel="text-black biggest bold"
-                                        direction={EDirection.row}
+                                        direction={EDirection.column}
                                         errors={errors}
                                         onChange={field.onChange}
                                     /> 

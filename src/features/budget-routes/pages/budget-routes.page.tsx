@@ -35,7 +35,7 @@ function BudgetRoutesPage(props: IAppProps): React.JSX.Element {
                                 register={register}
                                 label="ID Proyecto"
                                 classNameLabel="text-black biggest bold"
-                                direction={EDirection.row}
+                                direction={EDirection.column}
                                 errors={errors}
                             />
                         </div>
