@@ -52,7 +52,7 @@ function BudgetsForm() {
                   register={register}
                   label="Ejercicio"
                   classNameLabel="text-black biggest bold"
-                  direction={EDirection.row}
+                  direction={EDirection.column}
                   disabled={true}
                   errors={errors}
                 />
@@ -64,7 +64,7 @@ function BudgetsForm() {
                   errors={errors}
                   label="Entidad CP"
                   classNameLabel="text-black biggest bold"
-                  direction={EDirection.row}
+                  direction={EDirection.column}
                   data={entitiesData}
                   disabled={true}
                 />

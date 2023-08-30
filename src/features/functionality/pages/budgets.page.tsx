@@ -45,7 +45,7 @@ function BudgetsPage(props: IAppProps): React.JSX.Element {
                             register={register}
                             label="Posición presupuestal"
                             classNameLabel="text-black biggest bold"
-                            direction={EDirection.row}
+                            direction={EDirection.column}
                             errors={errors}
                             min={0}
                             onChange={handleChange}
@@ -68,7 +68,6 @@ function BudgetsPage(props: IAppProps): React.JSX.Element {
                         value="Buscar"
                         type="submit"
                         disabled={!isBtnDisable}
-                        //disabled={false}
                     />
                 </div>
             </FormComponent>
@@ -80,7 +79,8 @@ function BudgetsPage(props: IAppProps): React.JSX.Element {
                             url={`${process.env.urlApiFinancial}/api/v1/budgets/get-paginated`}
                             columns={tableColumns}
                             actions={tableActions}
-                            isShowModal={false}
+                            isShowModal={true}
+                            titleMessageModalNoResult={"Posición Pesupuestal"}
                         />
                     </div>
                 )

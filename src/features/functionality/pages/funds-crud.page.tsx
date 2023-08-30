@@ -46,7 +46,7 @@ function FundsForm({ action }: IAppProps) {
                     errors={errors}
                     label="Entidad CP"
                     classNameLabel="text-black biggest bold text-required"
-                    direction={EDirection.row}
+                    direction={EDirection.column}
                     data={entitiesData}
                     disabled={action === "new" ? false : true}
                   />
@@ -65,7 +65,7 @@ function FundsForm({ action }: IAppProps) {
                           register={register}
                           label="Fondos"
                           classNameLabel="text-black biggest bold text-required"
-                          direction={EDirection.row}
+                          direction={EDirection.column}
                           errors={errors}
                           onChange={field.onChange}
                           min={0}
@@ -96,7 +96,7 @@ function FundsForm({ action }: IAppProps) {
                           register={register}
                           label="Denominación"
                           classNameLabel="text-black biggest bold text-required"
-                          direction={EDirection.row}
+                          direction={EDirection.column}
                           errors={errors}
                           onChange={field.onChange}
                         /> 
@@ -118,7 +118,7 @@ function FundsForm({ action }: IAppProps) {
                           register={register}
                           label="Descripción"
                           classNameLabel="text-black biggest bold text-required"
-                          direction={EDirection.row}
+                          direction={EDirection.column}
                           errors={errors}
                           onChange={field.onChange}
                         /> 

@@ -167,7 +167,7 @@ export function useFunctionalAreaCrudData(id: string) {
                                 });
                             } else {
                                 setMessage({
-                                    title: "Hubo un problema...",
+                                    title: "Validacion de datos",
                                     description: response.operation.message,
                                     show: true,
                                     OkTitle: "Aceptar",
@@ -240,7 +240,7 @@ export function useFunctionalAreaCrudData(id: string) {
                         });
                     } else {
                         setMessage({
-                            title: "Hubo un problema...",
+                            title: "Validacion de datos",
                             description: response.operation.message,
                             show: true,
                             OkTitle: "Aceptar",
@@ -277,7 +277,7 @@ export function useFunctionalAreaCrudData(id: string) {
                     if (response.operation.code === EResponseCodes.OK) {
                         if(projectsUnLink.length !== 0) UnLinkVinculation(Number(id), projectsUnLink).then(res2 => {
                             if (res2.operation.code !== EResponseCodes.OK) return setMessage({
-                                title: "Hubo un problema...",
+                                title: "Validacion de datos",
                                 description: res2.operation.message,
                                 show: true,
                                 OkTitle: "Aceptar",
@@ -290,7 +290,7 @@ export function useFunctionalAreaCrudData(id: string) {
                         })
                         if(projectsLink.length !== 0) LinkVinculation(Number(id), projectsLink).then(res2 => {
                             if (res2.operation.code !== EResponseCodes.OK) return setMessage({
-                                title: "Hubo un problema...",
+                                title: "Validacion de datos",
                                 description: res2.operation.message,
                                 show: true,
                                 OkTitle: "Aceptar",
@@ -314,7 +314,7 @@ export function useFunctionalAreaCrudData(id: string) {
                         });
                     } else {
                         setMessage({
-                            title: "Hubo un problema...",
+                            title: "Validacion de datos.",
                             description: response.operation.message,
                             show: true,
                             OkTitle: "Aceptar",

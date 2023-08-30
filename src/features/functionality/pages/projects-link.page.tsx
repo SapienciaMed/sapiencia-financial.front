@@ -34,7 +34,7 @@ function ProjectsLinkPage({ action }: IAppProps): React.JSX.Element {
                                     register={register}
                                     label="Id proyecto"
                                     classNameLabel="text-black biggest bold"
-                                    direction={EDirection.row}
+                                    direction={EDirection.column}
                                     errors={errors}
                                 />
                             </div>

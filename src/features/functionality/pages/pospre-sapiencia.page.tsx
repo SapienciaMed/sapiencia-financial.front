@@ -46,7 +46,7 @@ function PosPreSapienca(): React.JSX.Element {
                                         register={register}
                                         label="Pospre sapiencia"
                                         classNameLabel="text-black biggest bold"
-                                        direction={EDirection.row}
+                                        direction={EDirection.column}
                                         errors={errors}
                                         onChange={field.onChange}
                                     /> 

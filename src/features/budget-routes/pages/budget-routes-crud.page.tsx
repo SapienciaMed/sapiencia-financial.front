@@ -33,7 +33,7 @@ function BudgetRoutesCrudPage({ action }: IAppProps) {
                                         </>
                                     }
                                     classNameLabel="text-black biggest bold"
-                                    direction={EDirection.row}
+                                    direction={EDirection.column}
                                     data={projectsData}
                                     filter={true}
                                 />
@@ -48,7 +48,7 @@ function BudgetRoutesCrudPage({ action }: IAppProps) {
                                         </>
                                     }
                                     classNameLabel="text-black biggest bold"
-                                    direction={EDirection.row}
+                                    direction={EDirection.column}
                                     data={[{name: "91500000",value: "91500000"}]}
                                     filter={true}
                                 />
@@ -63,7 +63,7 @@ function BudgetRoutesCrudPage({ action }: IAppProps) {
                                         </>
                                     }
                                     classNameLabel="text-black biggest bold"
-                                    direction={EDirection.row}
+                                    direction={EDirection.column}
                                     data={[{name: "SAPI",value: "SAPI"}]}
                                     filter={true}
                                 />
@@ -78,7 +78,7 @@ function BudgetRoutesCrudPage({ action }: IAppProps) {
                                         </>
                                     }
                                     classNameLabel="text-black biggest bold"
-                                    direction={EDirection.row}
+                                    direction={EDirection.column}
                                     errors={errors}
                                     disabled={true}
                                 />
@@ -93,7 +93,7 @@ function BudgetRoutesCrudPage({ action }: IAppProps) {
                                         </>
                                     }
                                     classNameLabel="text-black biggest bold"
-                                    direction={EDirection.row}
+                                    direction={EDirection.column}
                                     data={budgetData}
                                     filter={true}
                                 />
@@ -108,7 +108,7 @@ function BudgetRoutesCrudPage({ action }: IAppProps) {
                                         </>
                                     }
                                     classNameLabel="text-black biggest bold"
-                                    direction={EDirection.row}
+                                    direction={EDirection.column}
                                     data={pospreSapienciaData}
                                     filter={true}
                                 />
@@ -123,7 +123,7 @@ function BudgetRoutesCrudPage({ action }: IAppProps) {
                                         </>
                                     }
                                     classNameLabel="text-black biggest bold"
-                                    direction={EDirection.row}
+                                    direction={EDirection.column}
                                     data={fundsData}
                                     filter={true}
                                 />
