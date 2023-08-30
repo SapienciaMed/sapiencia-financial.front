@@ -4,7 +4,7 @@ import { IEntities } from "./Entities";
 export interface IFunds {
   id?: number;
   entityId: number;
-  number: number;
+  number: string;
   denomination: string;
   description: string;
   dateFrom: Date;
