@@ -6,7 +6,7 @@ import { IBudgets } from "../interfaces/Budgets";
 export function useBudgetsService() {
     const baseURL: string = process.env.urlApiFinancial;
     const roleUrl: string = "/api/v1/budgets";
-    const { get, post, put } = useCrudService(null, baseURL);
+    const { get, post, put } = useCrudService( baseURL);
 
     async function GetBudgets(id: number): Promise<ApiResponse<IBudgets>> {
         const endpoint: string = `/get-by-id/${id}`;
