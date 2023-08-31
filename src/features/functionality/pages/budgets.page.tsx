@@ -29,7 +29,7 @@ function BudgetsPage(props: IAppProps): React.JSX.Element {
                 <div className="card-form">
                     <div className="title-area">
                         <label className="text-black biggest bold">
-                            Consultar Posición Pesupuestal
+                            Consultar Posición Presupuestal
                         </label>
                         <div className="title-button text-three biggest">
                             <span style={{ marginRight: '0.5em' }} onClick={() => { navigate('./create') }}> Crear Pospre</span>
