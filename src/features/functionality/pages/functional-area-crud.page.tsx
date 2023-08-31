@@ -32,7 +32,7 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                         <div className="card-form">
                             <div className="title-area">
                                 <label className="text-black biggest bold">
-                                    Consultar Área funcional
+                                    {action == "new" ? '' : 'Área funcional'}
                                 </label>
 
                                 {action !== "edit" ? <></> :

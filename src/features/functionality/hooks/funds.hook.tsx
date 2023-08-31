@@ -51,14 +51,14 @@ export function useFundsData() {
             fieldName: "dateFrom",
             header: "Validez de",
             renderCell: (row) => {
-                return <>{DateTime.fromJSDate(row.dateFrom).toLocaleString()}</>;
+                return <>{DateTime.fromISO(row.dateFrom).toLocaleString()}</>;
             }
         },
         {
             fieldName: "dateTo",
             header: "Validez a",
             renderCell: (row) => {
-                return <>{DateTime.fromJSDate(row.dateTo).toLocaleString()}</>;
+                return <>{DateTime.fromISO(row.dateTo).toLocaleString()}</>;
             }
         },
     ];
