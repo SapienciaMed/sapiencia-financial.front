@@ -181,7 +181,7 @@ export function useVinculationMGAData(pospre: string) {
             const res = await DeleteVinculation(Number(pospre),activitiesUnLink);
             if(res.operation.code != EResponseCodes.OK){
                     message && setMessage({
-                    title: "Hubo un problema...",
+                    title: "Validacion de datos",
                     description: res.operation.message,
                     show: true,
                     OkTitle: "Aceptar",
@@ -197,7 +197,7 @@ export function useVinculationMGAData(pospre: string) {
             const res = await CreateVinculation(Number(pospre), activitiesLink);
             if(res.operation.code != EResponseCodes.OK){
                 message && setMessage({
-                    title: "Hubo un problema...",
+                    title: "Validacion de datos",
                     description: res.operation.message,
                     show: true,
                     OkTitle: "Aceptar",
