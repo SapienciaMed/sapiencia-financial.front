@@ -95,7 +95,7 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
                 });
             } else {
                 setMessage({
-                    title: "Hubo un problema...",
+                    title: "Validacion de datos",
                     description: response.operation.message,
                     show: true,
                     OkTitle: "Aceptar",
@@ -141,7 +141,7 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
                         });
                     } else {
                         setMessage({
-                            title: "Hubo un problema...",
+                            title: "Validacion de datos",
                             description: response.operation.message,
                             show: true,
                             OkTitle: "Aceptar",
@@ -171,7 +171,7 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
 
     const confirmClose = (callback) =>{
         setMessage({
-            title: "Cancelar Pospre",
+            title: "Cancelar Pospre Sapiencia",
             description: "¿Segur@ que desea cancelar la operación?",
             show: true,
             OkTitle: "Aceptar",
