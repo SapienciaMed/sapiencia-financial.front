@@ -69,7 +69,7 @@ function BudgetsForm({ action }: IAppProps) {
                         className="input-basic"
                         typeInput="text"
                         register={register}
-                        label="Código"
+                        label="Posición Presupuestaria"
                         classNameLabel="text-black biggest bold text-required"
                         direction={EDirection.column}
                         errors={errors}
