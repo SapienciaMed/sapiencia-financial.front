@@ -15,7 +15,7 @@ function ManagementCenterAdditionalPage(): React.JSX.Element{
         <div className='main-page'>
             <div className='card-table'>
                 <div className="title-area">
-                    <div className="text-black extra-large bold">Ádicion</div>
+                    <div className="text-black extra-large bold">Adición</div>
                 </div>
                 <FormComponent action={onSubmit} >
                     <div className="card-form">
