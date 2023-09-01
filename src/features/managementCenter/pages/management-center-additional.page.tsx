@@ -1,19 +1,21 @@
 import React from 'react'
-import { ButtonComponent, FormComponent, SelectComponent } from '../../../common/components/Form';
+import { ButtonComponent, FormComponent, InputComponent, SelectComponent } from '../../../common/components/Form';
 import { BiPlusCircle } from 'react-icons/bi';
 import TableComponent from '../../../common/components/table.component';
 import { useManagementCenterAdditional } from '../hook/management-center-additional.hook';
+import { EDirection } from '../../../common/constants/input.enum';
+import { Controller } from 'react-hook-form';
 
 function ManagementCenterAdditionalPage(): React.JSX.Element{
 
-    const { errors, controlRegister, AdditionsByDistrictData, isBtnDisable, tableComponentRef, showTable, tableActions, tableColumns, 
-        AdditionsBySapienciaData, reset, onSubmit, navigate, setShowTable } = useManagementCenterAdditional()
+    const { errors, controlRegister, isBtnDisable, tableComponentRef, showTable, tableActions, tableColumns, 
+        reset, onSubmit, navigate, setShowTable, register } = useManagementCenterAdditional()
 
     return (
         <div className='main-page'>
             <div className='card-table'>
                 <div className="title-area">
-                    <div className="text-black extra-large bold">Adicion</div>
+                    <div className="text-black extra-large bold">Ádicion</div>
                 </div>
                 <FormComponent action={onSubmit} >
                     <div className="card-form">
@@ -23,30 +25,53 @@ function ManagementCenterAdditionalPage(): React.JSX.Element{
                         </div>
                         
                         <div className="funcionality-filters-container">
-                            <SelectComponent
-                                idInput="adminDistrict"
-                                className="select-basic"
-                                label="Acto administrativo distrito"
-                                classNameLabel="text-black biggest bold"
-                                errors={errors}
+                           <Controller
                                 control={controlRegister}
-                                data={AdditionsByDistrictData}
-                                filter={true}
+                                name={"adminDistrict"}
+                                defaultValue=""
+                                render={({ field }) => {
+                                    return (
+                                        <InputComponent
+                                            id={field.name}
+                                            idInput={field.name}
+                                            value={`${field.value}`}
+                                            className="input-basic"
+                                            typeInput="text"
+                                            register={register}
+                                            label="Acto administrativo distrito"
+                                            classNameLabel="text-black biggest bold text-required"
+                                            direction={EDirection.column}
+                                            errors={errors}
+                                            onChange={field.onChange}
+                                        /> 
+                                    )
+                                }}
                             />
-                            <SelectComponent
-                                idInput="adminSapiencia"
-                                className="select-basic"
-                                label="Acto administrativo sapiencia"
-                                classNameLabel="text-black biggest bold"
-                                errors={errors}
+                            <Controller
                                 control={controlRegister}
-                                data={AdditionsBySapienciaData}
-                                filter={true}
+                                name={"adminSapiencia"}
+                                defaultValue=""
+                                render={({ field }) => {
+                                    return (
+                                        <InputComponent
+                                            id={field.name}
+                                            idInput={field.name}
+                                            value={`${field.value}`}
+                                            className="input-basic"
+                                            typeInput="text"
+                                            register={register}
+                                            label="Acto administrativo sapiencia"
+                                            classNameLabel="text-black biggest bold text-required"
+                                            direction={EDirection.column}
+                                            errors={errors}
+                                            onChange={field.onChange}
+                                        /> 
+                                    )
+                                }}
                             />
                         </div>
                     </div>
-                    <div className="container-button-core mt-24px">
-                        <div className="display-justify-space-between">
+                    <div className="funcionality-buttons-container mt-24px">
                             <ButtonComponent
                                 form='useQueryForm'
                                 value="Limpiar campos"
@@ -61,12 +86,12 @@ function ManagementCenterAdditionalPage(): React.JSX.Element{
                                 }}
                             />
                             <ButtonComponent
-                                className="button-search"
+                                className="button-main huge hover-three"
                                 value="Buscar"
                                 type="submit"
                                 disabled={!isBtnDisable}
                             />
-                        </div>                
+               
                     </div>
                 </FormComponent>
                 {
