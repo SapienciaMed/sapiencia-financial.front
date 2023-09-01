@@ -3,6 +3,7 @@ import { IFunds } from "../../functionality/interfaces/Funds";
 import { IBudgets } from "../../functionality/interfaces/Budgets";
 import { IProjectsVinculate } from "../../functionality/interfaces/Projects";
 import { IPosPreSapiencia } from "../../functionality/interfaces/PosPreSapiencia";
+import { IFunctionalArea } from "../../functionality/interfaces/Functional-Area";
 
 export interface IBudgetsRoutes {
   id?: number;
@@ -18,6 +19,7 @@ export interface IBudgetsRoutes {
   dateCreate?: DateTime;
   projectVinculation?:IProjectsVinculate;
   pospreSapiencia?:IPosPreSapiencia;
+  functionalArea?: IFunctionalArea,
   budget?:IBudgets;
   fund?:IFunds;
 }
@@ -25,7 +27,7 @@ export interface IBudgetsRoutes {
 export interface IBudgetsRoutesFilters {
   page: number;
   perPage: number;
-  idProjectVinculation?:number;
+  idProjectVinculation?: string;
 }
 
 export interface IBudgetsRoutesCrudForm {
