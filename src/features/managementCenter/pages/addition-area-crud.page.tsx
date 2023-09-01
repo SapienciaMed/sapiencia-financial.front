@@ -17,8 +17,7 @@ interface IAppProps {
 function AdditionAreaCrud({ actionForm }: IAppProps) {
   const navigate = useNavigate();
 
-  const { control, arrayDataSelect, errors, onSubmitTab, showModal, setMessage, getValues, watch, register} = useAdditionAreaCrud();
-
+  const { control, arrayDataSelect, errors, onSubmitTab, showModal, setMessage, getValues, watch, register, invalidCardsAdditionSt, setValue} = useAdditionAreaCrud();
   // const { errors, register, onSubmit } = useManagementCenterAdditional(); //utilizar otro hook
 
   return (
@@ -53,7 +52,6 @@ function AdditionAreaCrud({ actionForm }: IAppProps) {
                 />
               </div>
             </div>
-
             <TabManagerAdditionPage        
               controlRegister={control}
               watch={watch}
@@ -62,6 +60,8 @@ function AdditionAreaCrud({ actionForm }: IAppProps) {
               getValues={getValues}
               arrayDataSelect={arrayDataSelect}
               register={register}
+              invalidCardsAdditionSt={invalidCardsAdditionSt}
+              setValue={setValue}
             />
           </FormComponent>
 

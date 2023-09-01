@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { EDirection } from "../../constants/input.enum";
 import { LabelComponent } from "./label.component";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
@@ -53,6 +53,8 @@ function InputElement({
   max,
   min
 }): React.JSX.Element {
+  
+  
   return (
     <input
       {...register(idInput)}

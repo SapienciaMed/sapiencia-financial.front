@@ -21,6 +21,7 @@ interface ISelectProps<T> {
   fieldArray?: boolean;
   filter?: boolean;
   emptyMessage?: string;
+  optionSelected?:Function;
 }
 
 function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
@@ -49,6 +50,7 @@ export function SelectComponent({
   fieldArray,
   filter,
   emptyMessage = "Sin resultados.",
+  optionSelected
 }: ISelectProps<any>): React.JSX.Element {
   if (data) {
     const seleccione: IDropdownProps = { name: "Seleccione", value: null };
@@ -94,7 +96,7 @@ export function SelectComponent({
             <Dropdown
               id={field.name}
               value={data ? data.find((row) => row.value === field.value)?.value : null}
-              onChange={(e) => field.onChange(e.value)}
+              onChange={(e) => {field.onChange(e.value);/* optionSelected && optionSelected(e.value) */}}
               options={data}
               optionLabel="name"
               placeholder={placeholder}

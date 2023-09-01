@@ -1,6 +1,6 @@
 import React, { lazy } from "react";
 import { Route, Routes } from "react-router-dom";
-import PrivateRoute from '../../../../sapiencia-core.front/src/common/components/Guard/auth-private-guard';
+/* import PrivateRoute from '../../../../sapiencia-core.front/src/common/components/Guard/auth-private-guard'; */
 
 
 export const ManagementCenterRoutes = () => {

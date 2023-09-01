@@ -16,6 +16,7 @@ export interface IProjectAdditionList {
     budgetValue : number;
     linked : boolean;
     areaFuntional?: IFunctionalAreaAddition
+    conceptProject:string;
 }
 
 export interface IFunctionalAreaAddition {

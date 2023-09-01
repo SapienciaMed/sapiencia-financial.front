@@ -47,10 +47,12 @@ export interface IAdditionsForm{
 }
 
 export interface IIncome{
-  managerCenter: string,
-  projectId: string,
-  functionalArea: string,
-  funds: string,
-  posPre: string,
-  value: string
+  managerCenter: string;
+  projectId: string;
+  projectName:string;
+  functionalArea: string;
+  funds: string;
+  posPre: string;
+  value: string;
+  cardId:string;
 }

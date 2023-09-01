@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { BiPlusCircle } from 'react-icons/bi'
 import { FaRegCopy } from 'react-icons/fa'
-import { useFieldArray, useFormState, useWatch, Control, UseFormGetValues, UseFormRegister} from 'react-hook-form';
+import { useFieldArray, useFormState, useWatch, Control, UseFormGetValues, UseFormRegister } from 'react-hook-form';
 import { Paginator } from 'primereact/paginator';
 import { paginatorFooter } from '../../../common/components/table.component';
 import ScreenAddIncome from '../pages/screen-add-income.page';
@@ -16,19 +16,21 @@ interface IAppProps {
     showModal: (values: IMessage) => void,
     getValues: UseFormGetValues<IAdditionsForm>,
     register: UseFormRegister<IAdditionsForm>,
+    invalidCardsAdditionSt: any;
+    setValue:any
 }
 
-function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getValues, showModal, register }: IAppProps ){
+function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getValues, showModal, register, invalidCardsAdditionSt, setValue}: IAppProps) {
 
     const { fields, append, remove } = useFieldArray({
         control: controlRegister,
         name: 'ingreso'
     });
-
+    
     const { errors, isValid, dirtyFields } = useFormState({
-        control: controlRegister 
+        control: controlRegister,
     })
-
+    
     const watchIncome = useWatch({
         control: controlRegister,
         name: 'ingreso'
@@ -39,6 +41,9 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
     const itemsPerPage = 5;
     const startIndex = (currentPage - 1) * itemsPerPage;
     const visibleFields = fields.slice(startIndex, startIndex + itemsPerPage);
+
+    
+    
 
     const onPaste = async () => {
         try {
@@ -51,9 +56,9 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
 
     const constructJSONFromPastedInput = (pastedInput) => {
         let rawRows = pastedInput.split("\n");
-        let headersArray = rawRows[0].split("\t");  
+        let headersArray = rawRows[0].split("\t");
         let output = [];
-        
+
         (headersArray.every(value => AddValidHeaders.includes(value)) && headersArray.length == AddValidHeaders.length) ?
             rawRows.forEach((rawRow, idx) => {
                 if (rawRow != '') {
@@ -65,36 +70,36 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
                         });
                         output.push(rowObject);
                     }
-                } 
+                }
             })
-        : 
-        showModal({
-            title: "Validación de datos",
-            description: "Se ha encontrado un error en los datos,revisa las rutas presupuestales",
-            show: true,
-            OkTitle: "Aceptar",
-        })
-        
+            :
+            showModal({
+                title: "Validación de datos",
+                description: "Se ha encontrado un error en los datos,revisa las rutas presupuestales",
+                show: true,
+                OkTitle: "Aceptar",
+            })
+
 
         output.length > 0 && setDataPaste(output.map(item => ({
             managerCenter: item.CENTROGESTOR,
-            projectId: `${item.PROYECTO} - ${item.NOMBREPROYECTO}` ,
+            projectId: `${item.PROYECTO} - ${item.NOMBREPROYECTO}`,
             functionalArea: item.ÁREAFUNCIONAL,
             funds: item.FONDO,
             posPre: item.POSPRE,
-            value: item.VALOR
-        })))  
+            value: item.VALOR,
+        })))
     }
- 
+
     const onPageChange = event => {
-      setCurrentPage(event.page + 1);
+        setCurrentPage(event.page + 1);
     };
 
     const calculateTotal = () => {
         const values = getValues('ingreso');
         const total = values?.reduce((acc, curr) => {
-          const value = parseFloat(curr.value.replace(/\./g, '').replace(/,/g, '.'));
-          return acc + (isNaN(value) ? 0 : value);
+            const value = parseFloat(curr.value?.replace(/\./g, '')?.replace(/,/g, '.'));
+            return acc + (isNaN(value) ? 0 : value);
         }, 0);
         return total;
     };
@@ -102,65 +107,70 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
     const formatMoney = (amount) => {
         return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     };
-  
+
     useEffect(() => {
         dataPaste.length > 0 && append(dataPaste)
-    },[dataPaste])
+    }, [dataPaste])
 
     useEffect(() => {
 
-        errors?.ingreso?.message == 'datos duplicados en el sistema' &&  showModal({
+        errors?.ingreso?.message == 'datos duplicados en el sistema' && showModal({
             title: 'Validación de datos',
             description: errors?.ingreso?.message,
             show: true,
             OkTitle: 'Aceptar',
         });
-    },[errors?.ingreso?.message, isValid, dirtyFields])
+    }, [errors?.ingreso?.message, isValid, dirtyFields])
 
     return (
         <div className="card-user mt-14px">
-            <div className="title-area"> 
-                <label className="text-black biggest"> Lista de { titleAdd } </label>
+            <div className="title-area">
+                <label className="text-black biggest"> Lista de {titleAdd} </label>
                 <div className='display-justify-flex-center p-rating'>
-                    <div className="title-button text-three large" id='pages' onClick={onPaste}> Pegar <FaRegCopy/> </div>
-                    <div className="title-button text-three large" 
-                        onClick={() =>{ append({
-                            managerCenter: '',
-                            projectId: '',
-                            functionalArea: '',
-                            funds: '',
-                            posPre: '',
-                            value: ''
-                        })
-                    }}
-                    > Añadir { titleAdd } <BiPlusCircle/> </div>
+                    <div className="title-button text-three large" id='pages' onClick={onPaste}> Pegar <FaRegCopy /> </div>
+                    <div className="title-button text-three large"
+                        onClick={() => {
+                            append({
+                                managerCenter: '',
+                                projectId: '',
+                                projectName:'',
+                                functionalArea: '',
+                                funds: '',
+                                posPre: '',
+                                value: '',
+                                cardId: ''
+                            })
+                        }}
+                    > Añadir {titleAdd} <BiPlusCircle /> </div>
                 </div>
             </div>
 
             {
-                visibleFields.map((field, index) => (
-                    <div key={field.id}>
-                        <ScreenAddIncome controlRegister={controlRegister} titleAdd={titleAdd} fields={fields} arrayDataSelect={arrayDataSelect}
-                            remove={remove} count={startIndex + index} errors={errors} register={register}/>
-                    </div>
-                ))
+                visibleFields.map((field, index) => {
+                    return (
+                        <div key={field.id}>
+                            <ScreenAddIncome controlRegister={controlRegister} titleAdd={titleAdd} fields={fields} arrayDataSelect={arrayDataSelect}
+                                remove={remove} count={startIndex + index} errors={errors} register={register} cardId={field.id} invalidCardsAdditionSt={invalidCardsAdditionSt} setValue={setValue}/>
+                        </div>
+                    )
+                })
             }
             {
-                fields.length >= 6  && 
-                    <div className="spc-common-table">
-                        <Paginator
-                            className="spc-table-paginator"
-                            template={paginatorFooter}
-                            first={startIndex}
-                            rows={itemsPerPage}
-                            totalRecords={fields.length}
-                            onPageChange={onPageChange}
-                        />
-                    </div>
+                fields.length >= 6 &&
+                <div className="spc-common-table">
+                    <Paginator
+                        className="spc-table-paginator"
+                        template={paginatorFooter}
+                        first={startIndex}
+                        rows={itemsPerPage}
+                        totalRecords={fields.length}
+                        onPageChange={onPageChange}
+                    />
+                </div>
             }
             {
-                watchIncome.some(use => use.value != '') && 
-                    <label className="text-black biggest ml-16px mt-14px"> Total ${titleAdd.toLowerCase()}: $  {formatMoney(calculateTotal())} </label> 
+                watchIncome.some(use => use.value != '') &&
+                <label className="text-black biggest ml-16px mt-14px"> Total ${titleAdd.toLowerCase()}: $  {formatMoney(calculateTotal())} </label>
 
             }
         </div>

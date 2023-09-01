@@ -40,6 +40,7 @@ export interface IGenericList {
 
 export interface IArrayDataSelect{
   functionalArea: IDropdownProps[],
+  areas: IDropdownProps[],
   funds: IDropdownProps[],
   posPre: IDropdownProps[]
 }

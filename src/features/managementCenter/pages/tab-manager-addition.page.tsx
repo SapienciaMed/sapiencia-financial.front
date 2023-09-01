@@ -15,6 +15,8 @@ interface IAppProps {
   watch:  UseFormWatch<IAdditionsForm>,
   onSubmitTab: (e?: React.BaseSyntheticEvent<object, any, any>) => Promise<void>;
   getValues: UseFormGetValues<IAdditionsForm>;
+  invalidCardsAdditionSt:any;
+  setValue:any;
 }
 
 function TabManagerAdditionPage({
@@ -25,6 +27,8 @@ function TabManagerAdditionPage({
   getValues,
   onSubmitTab,
   watch,
+  invalidCardsAdditionSt,
+  setValue
 }: IAppProps) {
   const { option } = useParams();
   const navigate = useNavigate();
@@ -45,6 +49,8 @@ function TabManagerAdditionPage({
           getValues={getValues}
           arrayDataSelect={arrayDataSelect}
           register={register}
+          invalidCardsAdditionSt={invalidCardsAdditionSt}
+          setValue={setValue}
         />
       ),
       action: () => {},
@@ -60,6 +66,8 @@ function TabManagerAdditionPage({
           getValues={getValues}
           arrayDataSelect={arrayDataSelect}
           register={register}
+          invalidCardsAdditionSt={invalidCardsAdditionSt}
+          setValue={setValue}
         />
       ),
       action: () => {},

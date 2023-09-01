@@ -37,6 +37,16 @@ export const useAdditionsTransfersService = () => {
         const endpoint: string = "/get-pospre-sapiencia";
         return post(`${roleUrl}${endpoint}`);
     }
+    
+    async function validateCreateAdition(data: Object): Promise<ApiResponse<IPagingData<IPosPreSapienciaAdditionList>>> {
+        const endpoint: string = "/create";
+        return post(`${roleUrl}${endpoint}`,data);
+    }
+    
+    async function createAdition(data: Object): Promise<ApiResponse<IPagingData<IPosPreSapienciaAdditionList>>> {
+        const endpoint: string = "/save-data";
+        return post(`${roleUrl}${endpoint}`,data);
+    }
 
-    return { GetAllAdditionsByDistrict, GetAllAdditionsBySapiencia, GetProjectsList, GetFundsList, GetPosPreList, GetPosPreSapienciaList }
+    return { GetAllAdditionsByDistrict, GetAllAdditionsBySapiencia, GetProjectsList, GetFundsList, GetPosPreList, GetPosPreSapienciaList, validateCreateAdition, createAdition }
 }

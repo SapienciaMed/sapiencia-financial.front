@@ -17,9 +17,11 @@ interface IAppProps {
     showModal: (values: IMessage) => void,
     getValues: UseFormGetValues<IAdditionsForm>,
     register: UseFormRegister<IAdditionsForm>,
+    invalidCardsAdditionSt: any;
+    setValue:any;
 }
 
-function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSelect, showModal, register }: IAppProps ){
+function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSelect, showModal, register, invalidCardsAdditionSt, setValue }: IAppProps ){
 
     const { fields, append, remove } = useFieldArray({
         control: controlRegister,
@@ -83,7 +85,7 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
             functionalArea: item.ÁREAFUNCIONAL,
             funds: item.FONDO,
             posPre: item.POSPRE,
-            value: item.VALOR
+            value: item.VALOR,
         })))  
     }
  
@@ -132,21 +134,22 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
                         onClick={() =>{ append({
                             managerCenter: '',
                             projectId: '',
+                            projectName:'',
                             functionalArea: '',
                             funds: '',
                             posPre: '',
-                            value: ''
+                            value: '',
+                            cardId:''
                         })
                     }}
                     > Añadir { titleAdd } <BiPlusCircle/> </div>
                 </div>
             </div>
-
             {
                 visibleFields.map((field, index) => (
                     <div key={field.id}>
                         <ScreenAddIncomePage controlRegister={controlRegister} titleAdd={titleAdd} fields={fields} arrayDataSelect={arrayDataSelect}
-                            remove={remove} count={startIndex + index} errors={errors} register={register}/>
+                            remove={remove} count={startIndex + index} errors={errors} register={register} cardId={field.id} invalidCardsAdditionSt={invalidCardsAdditionSt} setValue={setValue}/>
                     </div>
                 ))
             }
