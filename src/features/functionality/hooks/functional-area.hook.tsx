@@ -7,7 +7,7 @@ import { IFunctionalAreaFilters, IFunctionalArea } from "../interfaces/Functiona
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { IProjectsVinculation } from "../interfaces/Projects";
 import { EResponseCodes } from "../../../common/constants/api.enum";
-import { useProjectsLinkService } from "./projects-link-service.hook";
+import { useAdditionsTransfersService } from "../../managementCenter/hook/additions-transfers-service.hook";
 
 export function useFunctionalAreaData() {
     const tableComponentRef = useRef(null);
@@ -21,8 +21,8 @@ export function useFunctionalAreaData() {
         reset,
         watch
     } = useForm<IFunctionalAreaFilters>({ resolver });
-    const { getAllProjectsVinculations } = useProjectsLinkService();
-    const [projects, setProjects] = useState<IProjectsVinculation[]>(null);
+    const { GetProjectsList } = useAdditionsTransfersService()
+    const [projects, setProjects] = useState<any[]>(null);
     const [showTable, setShowTable] = useState(false);
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
 
@@ -38,7 +38,7 @@ export function useFunctionalAreaData() {
             header: "Proyectos",
             renderCell: (row) => {
                 let projectsFunctionalArea:IProjectsVinculation[] = []
-                if(projects) projectsFunctionalArea = projects.filter(project => project.functionalAreaId === row.id);
+                if(projects) projectsFunctionalArea = projects.filter(project => project.functionalAreaId === row.id && project.linked == true);
                 return <>{projectsFunctionalArea.length}</>
             }
         },
@@ -79,12 +79,12 @@ export function useFunctionalAreaData() {
     }
 
     useEffect(() => {
-        getAllProjectsVinculations().then(response => {
-            if (response.operation.code === EResponseCodes.OK) {
-                setProjects(response.data);
+        GetProjectsList({ page: "1", perPage: "1" }).then(responseProjectList => {
+            if (responseProjectList.operation.code === EResponseCodes.OK) {
+                setProjects(responseProjectList.data.array);
             }
-        });
-    }, []);
+        })
+    }, []); 
 
     useEffect(() => {
         if(projects) loadTableData();

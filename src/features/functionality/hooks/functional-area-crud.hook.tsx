@@ -8,14 +8,17 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { useFunctionalAreaService } from "./functional-area-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
-import { IProject, IProjectsVinculation, IProjectsVinculationTable } from "../interfaces/Projects";
+import {  IProjectsVinculation, IProjectsVinculationTable } from "../interfaces/Projects";
 import { SwitchComponent } from "../../../common/components/Form";
 import { useProjectsLinkService } from "./projects-link-service.hook";
+import { useAdditionsTransfersService } from "../../managementCenter/hook/additions-transfers-service.hook";
+import { IProjectAdditionList } from "../interfaces/AdditionsTransfersInterfaces";
 
 export function useFunctionalAreaCrudData(id: string) {
     const tableComponentRef = useRef(null);
-    const { GetFunctionalArea, CreateFunctionalArea, getAllProjects, UpdateFunctionalArea } = useFunctionalAreaService();
+    const { GetFunctionalArea, CreateFunctionalArea, UpdateFunctionalArea } = useFunctionalAreaService();
     const { UnLinkVinculation, LinkVinculation, DeleteLinkVinculation } = useProjectsLinkService();
+    const { GetProjectsList } = useAdditionsTransfersService()
     const resolver = useYupValidationResolver(functionalAreaCrud);
     const {
         handleSubmit,
@@ -26,7 +29,7 @@ export function useFunctionalAreaCrudData(id: string) {
     } = useForm<IFunctionalAreaCrud>({ resolver });
     const navigate = useNavigate();
     const { authorization, setMessage } = useContext(AppContext);
-    const [projects, setProjects] = useState<IProject[]>(null);
+    const [projects, setProjects] = useState<IProjectAdditionList[]>(null);
     const [lastMove, setLastMove] = useState([]);
     const [projectsLink, setProjectsLink] = useState<number[]>([]);
     const [projectsUnLink, setProjectsUnLink] = useState<number[]>([]);
@@ -40,24 +43,24 @@ export function useFunctionalAreaCrudData(id: string) {
             fieldName: "projectId",
             header: "Nombre proyecto",
             renderCell: (row) => {
-                const projectSelect = projects.find(project => project.id === row.projectId)
-                return <>{projectSelect ? projectSelect.name : '-' }</>
+                const projectSelect = projects.find(project => String(project.projectId) == row.projectId)
+                return <>{projectSelect ? projectSelect.conceptProject  : '-' }</>
             }
         },
         {
             fieldName: "projectId",
             header: "Valor asignado",
             renderCell: (row) => {
-                const projectSelect = projects.find(project => project.id === row.projectId)
-                return <>{ projectSelect ? projectSelect.assignmentValue : '-' }</>
+                const projectSelect = projects.find(project => String(project.projectId) == row.projectId )
+                return <>{ projectSelect ? projectSelect.assignmentValue  : '-' }</>
             }
         },
         {
             fieldName: "projectId",
             header: "Valor planeado",
             renderCell: (row) => {
-                const projectSelect = projects.find(project => project.id === row.projectId)
-                return <>{projectSelect ? projectSelect.plannedValue : '-' }</>
+                const projectSelect = projects.find(project => String(project.projectId) == row.projectId )
+                return <>{projectSelect ? projectSelect.budgetValue  : '-' }</>
             }
         },
         {
@@ -67,44 +70,45 @@ export function useFunctionalAreaCrudData(id: string) {
                 let checked = row.linked === 1;
                 if(projectsLink.find(project => project === row.id)) checked = true;
                 if(projectsUnLink.find(project => project === row.id)) checked = false;
+
                 return <div>
                     <SwitchComponent idInput={`checkRow${row.id}`} value={checked} onChange={(e) => {
-                    if (e.value === true) {
-                        setLastMove([...lastMove, { id: row }])
-                        const projectLink = projectsLink.find(project => project == row.id)
-                        if (!projectLink) {
-                            const array = projectsLink;
-                            array.push(row.id)
-                            setProjectsLink(array);
-                        }
-                        const projectUnLink = projectsUnLink.find(project => project == row.id)
-                        if (projectUnLink) {
-                            const array = projectsUnLink.filter(item => item != row.id);
-                            setProjectsUnLink(array);
-                        }
-                    } else {
-                        const auxLast = lastMove;
-                        if (auxLast.findIndex((value) => {
-                            value.id == row.id;
-                        })) {
-                            auxLast.splice(auxLast.findIndex((value) => {
+                        if (e.value === true) {
+                            setLastMove([...lastMove, { id: row }])
+                            const projectLink = projectsLink.find(project => project == row.id)
+                            if (!projectLink) {
+                                const array = projectsLink;
+                                array.push(row.id)
+                                setProjectsLink(array);
+                            }
+                            const projectUnLink = projectsUnLink.find(project => project == row.id)
+                            if (projectUnLink) {
+                                const array = projectsUnLink.filter(item => item != row.id);
+                                setProjectsUnLink(array);
+                            }
+                        } else {
+                            const auxLast = lastMove;
+                            if (auxLast.findIndex((value) => {
                                 value.id == row.id;
-                            }), 1)
-                            setLastMove(auxLast);
+                            })) {
+                                auxLast.splice(auxLast.findIndex((value) => {
+                                    value.id == row.id;
+                                }), 1)
+                                setLastMove(auxLast);
+                            }
+                            const projectUnLink = projectsUnLink.find(project => project == row.id)
+                            if (!projectUnLink) {
+                                const array = projectsUnLink;
+                                array.push(row.id)
+                                setProjectsUnLink(array);
+                            }
+                            const activityLink = projectsLink.find(activity => activity == row.id)
+                            if (activityLink) {
+                                const array = projectsLink.filter(item => item != row.id);
+                                setProjectsLink(array);
+                            }
                         }
-                        const projectUnLink = projectsUnLink.find(project => project == row.id)
-                        if (!projectUnLink) {
-                            const array = projectsUnLink;
-                            array.push(row.id)
-                            setProjectsUnLink(array);
-                        }
-                        const activityLink = projectsLink.find(activity => activity == row.id)
-                        if (activityLink) {
-                            const array = projectsLink.filter(item => item != row.id);
-                            setProjectsLink(array);
-                        }
-                    }
-                }} />
+                    }} />
                 </div>
             }
         },
@@ -119,24 +123,24 @@ export function useFunctionalAreaCrudData(id: string) {
             fieldName: "projectId",
             header: "Nombre proyecto",
             renderCell: (row) => {
-                const projectSelect = projects.find(project => project.id === row.projectId)
-                return <>{ projectSelect ? projectSelect.name : '-' }</>
+                const projectSelect = projects.find(project => String(project.projectId) == row.projectId)
+                return <>{projectSelect ? projectSelect.conceptProject  : '-' }</>
             }
         },
         {
             fieldName: "projectId",
             header: "Valor asignado",
             renderCell: (row) => {
-                const projectSelect = projects.find(project => project.id === row.projectId)
-                return <>{ projectSelect ? projectSelect.assignmentValue : '-' }</>
+                const projectSelect = projects.find(project => String(project.projectId) == row.projectId )
+                return <>{ projectSelect ? projectSelect.assignmentValue  : '-' }</>
             }
         },
         {
             fieldName: "projectId",
             header: "Valor planeado",
             renderCell: (row) => {
-                const projectSelect = projects.find(project => project.id === row.projectId)
-                return <>{ projectSelect ? projectSelect.plannedValue : '-' }</>
+                const projectSelect = projects.find(project => String(project.projectId) == row.projectId )
+                return <>{projectSelect ? projectSelect.budgetValue  : '-' }</>
             }
         },
     ];
@@ -200,11 +204,11 @@ export function useFunctionalAreaCrudData(id: string) {
                 setValueRegister("description", response.data.description);
             }
         });
-        getAllProjects().then(response => {
-            if (response.operation.code === EResponseCodes.OK) {
-                setProjects(response.data);
+        GetProjectsList({ page: "1", perPage: "1" }).then(responseProjectList => {
+            if (responseProjectList.operation.code === EResponseCodes.OK) {
+                setProjects(responseProjectList.data.array);
             }
-        });
+        })
     }, [id]);
 
     useEffect(() => {

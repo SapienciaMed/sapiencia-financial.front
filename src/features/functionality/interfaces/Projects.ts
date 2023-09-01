@@ -5,7 +5,8 @@ export interface IProject {
   id: string,
   name: string,
   plannedValue: number,
-  assignmentValue: number
+  assignmentValue: number,
+  linked?: number
 }
 
 export interface IProjectFilters {
