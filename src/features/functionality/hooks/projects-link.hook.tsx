@@ -9,13 +9,15 @@ import { IProject, IProjectFilters } from "../interfaces/Projects";
 import { SwitchComponent } from "../../../common/components/Form";
 import { useProjectsLinkService } from "./projects-link-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
+import { useAdditionsTransfersService } from "../../managementCenter/hook/additions-transfers-service.hook";
 
 export function useProjectsLinkData(functionalArea: string) {
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
     const resolver = useYupValidationResolver(projects);
     const { setMessage } = useContext(AppContext);
-    const { CreateVinculation, getAllProjectsVinculations } = useProjectsLinkService();
+    const { CreateVinculation } = useProjectsLinkService();
+    const { GetProjectsList } = useAdditionsTransfersService()
     const {
         handleSubmit,
         register,
@@ -29,11 +31,11 @@ export function useProjectsLinkData(functionalArea: string) {
 
     const tableColumns: ITableElement<IProject>[] = [
         {
-            fieldName: "id",
+            fieldName: "projectId",
             header: "Id proyecto",
         },
         {
-            fieldName: "name",
+            fieldName: "conceptProject",
             header: "Nombre proyecto"
         },
         {
@@ -41,7 +43,7 @@ export function useProjectsLinkData(functionalArea: string) {
             header: "Valor asignado"
         },
         {
-            fieldName: "plannedValue",
+            fieldName: "budgetValue",
             header: "Valor planeado"
         },
         {
@@ -99,21 +101,21 @@ export function useProjectsLinkData(functionalArea: string) {
     }
 
     useEffect(() => {
-        if(Number(functionalArea)) getAllProjectsVinculations().then((response => {
-            if(response.operation.code === EResponseCodes.OK) {
-                const data = response.data;
+        if(Number(functionalArea)) GetProjectsList({ page: "1", perPage: "1" }).then(responseProjectList => {
+            if (responseProjectList.operation.code === EResponseCodes.OK) {
+                const data = responseProjectList.data.array;
                 const projectsLinked = data.map(linked => linked.projectId);
                 setFilterTable({id: projectsLinked})
             }
-        }))
-    }, [functionalArea]);
+        })
+    }, []);
 
     useEffect(() => {
-        if(filterTable) loadTableData(undefined, undefined, filterTable);
+        if(filterTable) loadTableData();
     }, [filterTable]);
 
     const onSubmit = handleSubmit(async (data: IProjectFilters) => {
-        loadTableData({ id: data.id }, undefined, filterTable);
+        loadTableData(data);
     });
 
     async function vinculateProjects(action: "new" | "edit"): Promise<void> {

@@ -8,8 +8,13 @@ export const functionalArea = yup.object({
 export const functionalAreaCrud = yup.object({
     number: yup
         .string()
-        .matches(/^(?:\d{8}\.\d{4}\.\d{2})$/, "Solo se permiten numeros")
+        .test('no-all-zeros', 'No se permiten valores completamente en cero', value => {
+            const digitsOnly = value ? value.replace(/\./g, '') : null;
+            return digitsOnly !== null && digitsOnly !== '0'.repeat(digitsOnly.length);
+          })
+        .matches(/^(?:\d{5}\.\d{5}\.\d{4}|\d{8}\.\d{4}\.\d{2})$/, "Validar estructura")
         .required("El campo es obligatorio")
+        .nullable()
         .max(16, "Solo se permiten 16 caracteres"),
     denomination: yup
         .string()

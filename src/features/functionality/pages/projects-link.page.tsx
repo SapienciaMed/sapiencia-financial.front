@@ -55,7 +55,7 @@ function ProjectsLinkPage({ action }: IAppProps): React.JSX.Element {
                     <div className="card-form">
                         <TableComponent
                             ref={tableComponentRef}
-                            url={`${process.env.urlApiFinancial}/api/v1/projects/get-paginated`}
+                            url={`${process.env.urlApiFinancial}/api/v1/additions/get-projects`}
                             columns={tableColumns}
                             isShowModal={false} />
                     </div>
