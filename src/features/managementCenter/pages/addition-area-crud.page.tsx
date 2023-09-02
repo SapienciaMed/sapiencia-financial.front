@@ -8,6 +8,7 @@ import TabManagerAdditionPage from "./tab-manager-addition.page";
 import { useAdditionAreaCrud } from "../hook/addition-area-crud.hook";
 import { useNavigate } from "react-router-dom";
 import { EDirection } from "../../../common/constants/input.enum";
+import { FormProvider } from "react-hook-form";
 
 
 interface IAppProps {
@@ -17,7 +18,7 @@ interface IAppProps {
 function AdditionAreaCrud({ actionForm }: IAppProps) {
   const navigate = useNavigate();
 
-  const { control, arrayDataSelect, errors, onSubmitTab, showModal, setMessage, getValues, watch, register, invalidCardsAdditionSt, setValue} = useAdditionAreaCrud();
+  const { control, arrayDataSelect, errors, onSubmitTab, showModal, setMessage, getValues, watch, register, invalidCardsAdditionSt, setValue } = useAdditionAreaCrud();
   // const { errors, register, onSubmit } = useManagementCenterAdditional(); //utilizar otro hook
 
   return (
@@ -64,7 +65,6 @@ function AdditionAreaCrud({ actionForm }: IAppProps) {
               setValue={setValue}
             />
           </FormComponent>
-
           <section className="container-button-core mt-24px">
             <div className="display-justify-space-between">
               <ButtonComponent

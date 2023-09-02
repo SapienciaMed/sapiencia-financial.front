@@ -51,6 +51,7 @@ function TabManagerAdditionPage({
           register={register}
           invalidCardsAdditionSt={invalidCardsAdditionSt}
           setValue={setValue}
+          watch={watch}
         />
       ),
       action: () => {},
@@ -68,6 +69,7 @@ function TabManagerAdditionPage({
           register={register}
           invalidCardsAdditionSt={invalidCardsAdditionSt}
           setValue={setValue}
+          watch={watch}
         />
       ),
       action: () => {},

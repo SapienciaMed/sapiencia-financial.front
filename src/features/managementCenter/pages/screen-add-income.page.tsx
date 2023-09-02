@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ButtonComponent, InputComponent, SelectComponent } from "../../../common/components/Form";
 import { Control, FieldErrors, UseFormRegister, useFieldArray, useForm } from 'react-hook-form';
 import { IAdditionsForm } from "../interfaces/Additions";
@@ -17,40 +17,66 @@ interface IAppProps {
     register: UseFormRegister<IAdditionsForm>,
     cardId: string;
     invalidCardsAdditionSt: any;
-    setValue:any;
+    setValue: any;
+    watch: any;
 }
 
-function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSelect, remove, titleAdd, register, cardId, invalidCardsAdditionSt, setValue }: IAppProps) {
-    const { functionalArea, areas, funds, posPre,} = arrayDataSelect
-    
-    //const [cardIdSt, setCardIdSt] = useState(cardId)
+function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSelect, remove, titleAdd, register, cardId, invalidCardsAdditionSt, setValue, watch }: IAppProps) {
+    const { functionalArea, areas, funds, posPre, } = arrayDataSelect
+
     const [areasByProjectSt, setAreasByProjectSt] = useState<any>()
-    const [projectName, setProjectName] = useState()
-    const [valueMoneySt, setValueMoneySt] = useState('')
-
+    const [projectName, setProjectName] = useState('')
+    const [projectIdSelectedSt, setProjectIdSelectedSt] = useState()
+    const [areaIdSelectedSt, setAreaIdSelectedSt] = useState()
+    const [cardIdSt, setcardIdSt] = useState("")
     
-
-    /* const [idOptionSelectedProject, setIdOptionSelectedProject] = useState(0)
-    const optionSelected = (value: number) => {
-        const functionalAreaFilter = functionalArea.filter(e => e.value != null)
-        const areaProject = functionalAreaFilter.find(project => project.value == value)
-        if(value!=idOptionSelectedProject){
-            setIdOptionSelectedProject(value)
+    useEffect(() => {
+        if (projectName != "") {
+            setValue(`${titleAdd.toLowerCase()}[${count}].cardId`, cardId)
+            setValue(`${titleAdd.toLowerCase()}[${count}].projectId`, projectIdSelectedSt)
+            setValue(`${titleAdd.toLowerCase()}[${count}].functionalArea`, (areasByProjectSt.filter(e=>e.value!=null)).id)
+            setValue(`${titleAdd.toLowerCase()}[${count}].projectName`, projectName)
+            setcardIdSt(cardId)
         }
-        setProjectName(Object(areaProject).name)
-        setAreasByProjectSt(Object(areaProject).area)
-        //setCardIdSt(cardId)
-    } */
+    }, [projectIdSelectedSt])
+
 
     useEffect(() => {
-        let d = areas.filter(e=>e[0].cardId==cardId);
-        setValue(`${titleAdd.toLowerCase()}[${count}].cardId`,cardId)
-        setAreasByProjectSt(d[0])
-    })
+        let d = watch(`${titleAdd.toLowerCase()}[${count}].projectId`)
+        const areaList = functionalArea.filter(e => e.value != null).map(e => {
+            Object(e).area[0]['projectId'] = e?.id
+            return Object(e).area
+        });
+        const areaListFlat = areaList.flat()
+        let area = areaListFlat.filter(e => e.projectId == d)
+        console.log({area1111:area})
+        area = area.filter(e=>e.value!=null)
+        console.log({area22:area})
+        setProjectIdSelectedSt(d)
+        setAreaIdSelectedSt(area[0]?.id)
+        setAreasByProjectSt(area)
+    }, [projectName])
+
+
+    const optionSelected = (option: any) => {
+        if (option) {
+            setProjectName(functionalArea.find(e => e.value == option).name)
+            const areaList = functionalArea.filter(e => e.value != null).map(e => {
+                Object(e).area[0]['projectId'] = e.id
+                return Object(e).area
+            });
+            const areaListFlat = areaList.flat()
+            let area = areaListFlat.filter(e => e.projectId == option)
+            area = area.filter(e=>e.value!=null)
+            setProjectIdSelectedSt(option)
+            setAreaIdSelectedSt(area[0].id)
+            setAreasByProjectSt(area)
+        }
+    }
 
     let invalidStyleCard = {
-        background: invalidCardsAdditionSt.idCard == cardId ? 'rgba(255, 0, 0, 0.30)' : 'none',
-        border: invalidCardsAdditionSt.idCard == cardId ? '1px solid #F00' : ''
+        background: invalidCardsAdditionSt.find( e=>e.idCard == watch(`${titleAdd.toLowerCase()}[${count}].cardId`)) ? 'rgba(255, 0, 0, 0.30)' : 'none',
+        border: invalidCardsAdditionSt.find(e=>e.idCard == watch(`${titleAdd.toLowerCase()}[${count}].cardId`)) ? '1px solid #F00' : ''
     }
 
     return (
@@ -92,8 +118,8 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             filter={true}
                             fieldArray={true}
                             errors={errors}
-                            /* optionSelected={optionSelected} */
-                         />
+                            optionSelected={optionSelected}
+                        />
                         <SelectComponent
                             idInput={`${titleAdd.toLowerCase()}[${count}].functionalArea`}
                             control={controlRegister}
@@ -133,7 +159,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             data={posPre}
                             errors={errors}
                         />
-                        
+
                         <InputComponent
                             idInput={`${titleAdd.toLowerCase()}[${count}].value`}
                             /* idInput="actAdministrativeSapiencia" */
@@ -163,7 +189,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
 
 
                     </section>
-                    
+
                 </div>
             </div>
         </>

@@ -18,9 +18,10 @@ interface IAppProps {
     register: UseFormRegister<IAdditionsForm>,
     invalidCardsAdditionSt: any;
     setValue:any
+    watch:any
 }
 
-function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getValues, showModal, register, invalidCardsAdditionSt, setValue}: IAppProps) {
+function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getValues, showModal, register, invalidCardsAdditionSt, setValue, watch}: IAppProps) {
 
     const { fields, append, remove } = useFieldArray({
         control: controlRegister,
@@ -150,7 +151,7 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
                     return (
                         <div key={field.id}>
                             <ScreenAddIncome controlRegister={controlRegister} titleAdd={titleAdd} fields={fields} arrayDataSelect={arrayDataSelect}
-                                remove={remove} count={startIndex + index} errors={errors} register={register} cardId={field.id} invalidCardsAdditionSt={invalidCardsAdditionSt} setValue={setValue}/>
+                                remove={remove} count={startIndex + index} errors={errors} register={register} cardId={field.id} invalidCardsAdditionSt={invalidCardsAdditionSt} setValue={setValue} watch={watch}/>
                         </div>
                     )
                 })

@@ -43,22 +43,21 @@ export function useAdditionAreaCrud() {
     resolver,
   });
 
-//const { ingreso, gasto } = getValues()
-//console.log({ ingreso, gasto })
-let watchForm = watch()
 
-useEffect(() => {
-  let incomeRes = getAreasByProject(arrayDataSelect.functionalArea, watchForm.ingreso)
-  let outcomeRes = getAreasByProject(arrayDataSelect.functionalArea, watchForm.gasto)
-  
-  setArrayDataSelect(prevState => ({
-    ...prevState,
-    areas: incomeRes.concat(outcomeRes)
-  }));
-}, [watchForm])
+const { ingreso, gasto } = getValues()
+console.log({ ingreso, gasto })
+//useEffect(() => {
+//  let incomeRes = getAreasByProject(arrayDataSelect.functionalArea, watchForm.ingreso)
+//  let outcomeRes = getAreasByProject(arrayDataSelect.functionalArea, watchForm.gasto)
+//  
+//  setArrayDataSelect(prevState => ({
+//    ...prevState,
+//    areas: incomeRes.concat(outcomeRes)
+//  }));
+//}, [watchForm])
 
 
-const getAreasByProject = (functionalArea:any, ingreso:any)=>{
+/* const getAreasByProject = (functionalArea:any, ingreso:any)=>{
   const areasListByProject = [];
   ingreso.forEach(e=>{
     let project = functionalArea.find(el=>el.id==e.projectId)
@@ -69,7 +68,7 @@ const getAreasByProject = (functionalArea:any, ingreso:any)=>{
     project && areasListByProject.push(project.area)
   })
   return areasListByProject;
-}
+} */
 
 
 const validateButton = (values) => { return Object.values(values).every(campo => campo !== null && campo !== undefined && campo !== '') }
@@ -170,11 +169,13 @@ const identifyInvalidcard = (additionMove:any,message:string)=>{
   let messageSplit = message.split('@@@')
 
   if(messageSplit[1] && JSON.parse(messageSplit[1])?.length>0){
+    let cardValidation = [];
     JSON.parse(messageSplit[1]).forEach(code=>{
       let invalidCard = additionMove.find(addition=>addition.idCard.includes(code))
-      setInvalidCardsAdditionSt(invalidCard)
+      cardValidation.push(invalidCard)
       console.log({invalidCard})
     })
+    setInvalidCardsAdditionSt(cardValidation)
   }
 
 }
