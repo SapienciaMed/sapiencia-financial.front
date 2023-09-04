@@ -17,12 +17,13 @@ function FundsForm({ action }: IAppProps) {
       controlRegister,
       entitiesData,
       startDate,
+      isBtnDisable,
       onSubmitNewFund,
       onSubmitEditFund,
       onCancelNew,
       onCancelEdit,
       confirmClose,
-    } = useFundsCrudData(fundId);
+    } = useFundsCrudData(fundId, action);
     return (
       <div className="crud-page full-height">
         <div className="main-page full-height">
@@ -134,7 +135,7 @@ function FundsForm({ action }: IAppProps) {
                 </div>
                 <div className="fund-data-container">
                   <DatePickerComponent
-                    idInput="dateInitial"
+                    idInput="dateFrom"
                     control={controlRegister}
                     label={"Validez de"}
                     errors={errors}
@@ -152,11 +153,11 @@ function FundsForm({ action }: IAppProps) {
                     className="dataPicker-basic"
                     placeholder="DD/MM/YYYY"
                     dateFormat="dd/mm/yy"
-                    // minDate={new Date(startDate)}
+                    minDate={new Date(startDate)}
                   />
                 </div>
               </div>
-              {/* <div className="mobile-actions mobile">
+              <div className="mobile-actions mobile">
                 <span
                   className="bold text-center button"
                   onClick={() => {
@@ -169,8 +170,9 @@ function FundsForm({ action }: IAppProps) {
                   value="Guardar"
                   type="submit"
                   className="button-main huge"
+                  disabled={isBtnDisable}
                 />
-              </div> */}
+              </div>
             </FormComponent>
           </div>
         </div>
@@ -189,7 +191,7 @@ function FundsForm({ action }: IAppProps) {
               value="Guardar"
               type="submit"
               form="funds-form"
-              
+              disabled={isBtnDisable}
             />
           </div>
         </div>

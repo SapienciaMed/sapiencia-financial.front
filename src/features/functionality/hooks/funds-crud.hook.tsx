@@ -16,30 +16,31 @@ interface IFundsCrudForm {
     number: string;
     denomination: string;
     description: string;
-    dateInitial: Date;
+    dateFrom: Date;
     dateTo: Date;
 }
 
-export function useFundsCrudData(fundId: string) {
+export function useFundsCrudData(fundId: string, action: "new" | "edit") {
     const [fundData, setFundData] = useState<IFunds>(null);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
-
+    
     const resolver = useYupValidationResolver(fundsCrudValidator);
     const { GetEntities } = useEntitiesService();
     const { CreateFund, GetFund, UpdateFund } = useFundsService();
     const { authorization, setMessage } = useContext(AppContext);
+    const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
     const {
-        handleSubmit,
-        register,
-        formState: { errors, isValid },
-        setValue: setValueRegister,
-        reset,
-        control: controlRegister,
-        watch
+      handleSubmit,
+      register,
+      formState: { errors, isValid },
+      setValue: setValueRegister,
+      reset,
+      control: controlRegister,
+      watch
     } = useForm<IFundsCrudForm>({ resolver });
     const navigate = useNavigate();
-
-    const [startDate, endDate] = watch(["dateInitial", 'dateTo']);
+    
+    const [startDate, endDate, denomination, description ] = watch(["dateFrom", 'dateTo', 'denomination', 'description']);
     
     useEffect(() => {
       if (startDate && endDate) {
@@ -49,10 +50,13 @@ export function useFundsCrudData(fundId: string) {
           reset({ ...watch(), dateTo: null });
         } 
       }
-      console.log("valida fecha");
-      
     },[startDate])
-
+    
+    useEffect(() => {
+      (fundData && action == 'edit') && setIsBtnDisable(validateFieldEqualsEdition(fundData))
+    },[fundData, startDate, endDate, startDate, denomination, description])
+    
+    
     async function loadInitList(): Promise<void> {
         const response = await GetEntities();
         if (response.operation.code === EResponseCodes.OK) {
@@ -82,13 +86,14 @@ export function useFundsCrudData(fundId: string) {
         })
     }, [fundId]);
 
+
     useEffect(() => {
         if (!fundData) return;
         setValueRegister("number", fundData.number);
         setValueRegister("entity", fundData.entityId);
         setValueRegister("denomination", fundData.denomination);
         setValueRegister("description", fundData.description);
-        setValueRegister("dateInitial", new Date(fundData.dateFrom));
+        setValueRegister("dateFrom", new Date(fundData.dateFrom));
         setValueRegister("dateTo", new Date(fundData.dateTo));
     }, [fundData])
 
@@ -99,7 +104,7 @@ export function useFundsCrudData(fundId: string) {
             denomination: data.denomination,
             description: data.description,
             userCreate: authorization.user.numberDocument,
-            dateFrom: data.dateInitial,
+            dateFrom: data.dateFrom,
             dateTo: data.dateTo
         }
         setMessage({
@@ -147,15 +152,13 @@ export function useFundsCrudData(fundId: string) {
     });
 
     const onSubmitEditFund = handleSubmit(async (data: IFundsCrudForm) => {
-      console.log("entro al editar");
-      
         const insertData: IFunds = {
             entityId: data.entity,
             number: data.number,
             denomination: data.denomination,
             description: data.description,
             userCreate: authorization.user.numberDocument,
-            dateFrom: data.dateInitial,
+            dateFrom: data.dateFrom,
             dateTo: data.dateTo
         }
         setMessage({
@@ -169,7 +172,7 @@ export function useFundsCrudData(fundId: string) {
               if (response.operation.code === EResponseCodes.OK) {
                 setMessage({
                   title: "Editar fondos",
-                  description: "Se ha editado el fondo exitosamente",
+                  description: "Se han guardado los cambios exitosamente",
                   show: true,
                   OkTitle: "Aceptar",
                   onOk: () => {
@@ -180,7 +183,7 @@ export function useFundsCrudData(fundId: string) {
                 });
               } else {
                 setMessage({
-                  title: "Hubo un problema...",
+                  title: "Validacion de datos",
                   description: response.operation.message,
                   show: true,
                   OkTitle: "Aceptar",
@@ -194,7 +197,6 @@ export function useFundsCrudData(fundId: string) {
           },
           onCancel: () => {
             setMessage({});
-            onCancelNew();
           },
           background: true,
         });
@@ -225,19 +227,34 @@ export function useFundsCrudData(fundId: string) {
         });
     }
 
-    return {
-      register,
-      errors,
-      reset,
-      controlRegister,
-      entitiesData,
-      startDate,
-      onSubmitNewFund,
-      onSubmitEditFund,
-      onCancelNew,
-      onCancelEdit,
-      confirmClose,
-      validatorNumber,
-      isValid,
-    };
+  function validateFieldEqualsEdition(objeto: IFunds): boolean {
+    const validityOf = new Date(objeto.dateFrom)
+    const validityTo = new Date(objeto.dateTo)
+
+    const isItTheSame = (
+      objeto.denomination == denomination && 
+      objeto.description == description &&
+      JSON.stringify(validityOf) == JSON.stringify(startDate) &&
+      JSON.stringify(validityTo) == JSON.stringify(endDate)
+    );
+
+    return isItTheSame;
+  }
+
+  return {
+    register,
+    errors,
+    reset,
+    controlRegister,
+    entitiesData,
+    startDate,
+    onSubmitNewFund,
+    onSubmitEditFund,
+    onCancelNew,
+    onCancelEdit,
+    confirmClose,
+    validatorNumber,
+    isValid,
+    isBtnDisable
+  };
 }
