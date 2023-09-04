@@ -118,8 +118,8 @@ export function useFundsCrudData(fundId: string, action: "new" | "edit") {
                     CreateFund(insertData).then((response) => {
                       if (response.operation.code === EResponseCodes.OK) {
                         setMessage({
-                          title: "Crear fondos",
-                          description: "Se ha creado el fondo exitosamente",
+                          title: "Guardado",
+                          description: "¡Se ha guardado la información correctamente en el sistema!",
                           show: true,
                           OkTitle: "Aceptar",
                           onOk: () => {
@@ -130,7 +130,7 @@ export function useFundsCrudData(fundId: string, action: "new" | "edit") {
                         });
                       } else {
                         setMessage({
-                          title: "Hubo un problema...",
+                          title: "Validación de datos",
                           description: response.operation.message,
                           show: true,
                           OkTitle: "Aceptar",
@@ -143,8 +143,7 @@ export function useFundsCrudData(fundId: string, action: "new" | "edit") {
                     });
             },
             onCancel: () => {
-                setMessage({});
-                onCancelNew();
+              setMessage({});
             },
           background: true,
         });

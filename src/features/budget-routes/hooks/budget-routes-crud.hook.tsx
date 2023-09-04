@@ -158,7 +158,7 @@ export function useBudgetRoutesCrudData(id: string) {
                 });
             } else {
                 setMessage({
-                    title: "Hubo un problema...",
+                    title: "Validación de datos",
                     description: response.operation.message,
                     show: true,
                     OkTitle: "Aceptar",
@@ -196,7 +196,7 @@ export function useBudgetRoutesCrudData(id: string) {
                 });
             } else {
                 setMessage({
-                    title: "Hubo un problema...",
+                    title: "Validación de datos",
                     description: response.operation.message,
                     show: true,
                     OkTitle: "Aceptar",

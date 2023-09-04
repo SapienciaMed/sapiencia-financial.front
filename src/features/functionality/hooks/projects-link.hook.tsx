@@ -123,7 +123,7 @@ export function useProjectsLinkData(functionalArea: string) {
             const res = await CreateVinculation(Number(functionalArea), projectsLink);
             if (res.operation.code != EResponseCodes.OK) {
                 setMessage({
-                    title: "Hubo un problema...",
+                    title: "Validación de datos",
                     description: res.operation.message,
                     show: true,
                     OkTitle: "Aceptar",
