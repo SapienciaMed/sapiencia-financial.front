@@ -114,7 +114,7 @@ export function useBudgetRoutesData() {
                     }
                 ]
                 setMessage({
-                    title: "Detalle de Fondos",
+                    title: "Detalle Ruta presupuestal",
                     show: true,
                     OkTitle: "Aceptar",
                     description: <DetailsComponent rows={rows} />,
