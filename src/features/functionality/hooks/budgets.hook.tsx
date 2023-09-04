@@ -10,7 +10,9 @@ import { useEntitiesService } from "./entities-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import { IEntities } from "../interfaces/Entities";
 
-interface IFilterBudgets {}
+interface IFilterBudgets {
+    number: string
+}
 
 export function useBudgetsData() {
     const tableComponentRef = useRef(null);
@@ -20,10 +22,9 @@ export function useBudgetsData() {
     const [dateFrom, setDateFrom] = useState(null);
     const [dateTo, setDateTo] = useState(null);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
-    const [showTable, setShowTable] = useState(false);
+    const [isVisibleTable, setIsVisibleTable] = useState<Boolean>(false);
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
     
-
     const {
     handleSubmit,
     register,
@@ -33,7 +34,7 @@ export function useBudgetsData() {
     watch
   } = useForm<IFilterBudgets>({ resolver });
 
-  //const inputValue =  watch(['inputBuggetPosition'])
+    const inputValue =  watch(['number'])
 
     const tableColumns: ITableElement<IBudgets>[] = [
         {
@@ -83,7 +84,7 @@ export function useBudgetsData() {
     }
 
     const onSubmit = handleSubmit(async (data: IFilterBudgets) => {
-        setShowTable(true)
+        setIsVisibleTable(true);
         loadTableData(data);
     });
 
@@ -100,11 +101,17 @@ export function useBudgetsData() {
         }).catch(() => { });
     }, [])
 
+    useEffect(() => {
+        setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
+    },[inputValue])
+
     
     return {
         tableComponentRef,
         tableColumns,
         tableActions,
+        isBtnDisable,
+        isVisibleTable,
         onSubmit,
         register,
         navigate,
@@ -116,9 +123,6 @@ export function useBudgetsData() {
         setDateTo,
         entitiesData,
         controlRegister,
-        setShowTable,
-        isBtnDisable,
-        showTable
-
+        setIsVisibleTable
     }
 } 
