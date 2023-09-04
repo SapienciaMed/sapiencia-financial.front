@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { DateTime } from "luxon";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { fundsCrudValidator } from "../../../common/schemas";
 import { useContext, useEffect, useState } from "react";
@@ -17,7 +16,7 @@ interface IFundsCrudForm {
     number: string;
     denomination: string;
     description: string;
-    dateFrom: Date;
+    dateInitial: Date;
     dateTo: Date;
 }
 
@@ -36,8 +35,23 @@ export function useFundsCrudData(fundId: string) {
         setValue: setValueRegister,
         reset,
         control: controlRegister,
+        watch
     } = useForm<IFundsCrudForm>({ resolver });
     const navigate = useNavigate();
+
+    const [startDate, endDate] = watch(["dateInitial", 'dateTo']);
+    
+    useEffect(() => {
+      if (startDate && endDate) {
+        const startDateObj = new Date(startDate);
+        const endDateObj = new Date(endDate);
+        if (startDateObj > endDateObj) {
+          reset({ ...watch(), dateTo: null });
+        } 
+      }
+      console.log("valida fecha");
+      
+    },[startDate])
 
     async function loadInitList(): Promise<void> {
         const response = await GetEntities();
@@ -74,7 +88,7 @@ export function useFundsCrudData(fundId: string) {
         setValueRegister("entity", fundData.entityId);
         setValueRegister("denomination", fundData.denomination);
         setValueRegister("description", fundData.description);
-        setValueRegister("dateFrom", new Date(fundData.dateFrom));
+        setValueRegister("dateInitial", new Date(fundData.dateFrom));
         setValueRegister("dateTo", new Date(fundData.dateTo));
     }, [fundData])
 
@@ -85,7 +99,7 @@ export function useFundsCrudData(fundId: string) {
             denomination: data.denomination,
             description: data.description,
             userCreate: authorization.user.numberDocument,
-            dateFrom: data.dateFrom,
+            dateFrom: data.dateInitial,
             dateTo: data.dateTo
         }
         setMessage({
@@ -133,13 +147,15 @@ export function useFundsCrudData(fundId: string) {
     });
 
     const onSubmitEditFund = handleSubmit(async (data: IFundsCrudForm) => {
+      console.log("entro al editar");
+      
         const insertData: IFunds = {
             entityId: data.entity,
             number: data.number,
             denomination: data.denomination,
             description: data.description,
             userCreate: authorization.user.numberDocument,
-            dateFrom: data.dateFrom,
+            dateFrom: data.dateInitial,
             dateTo: data.dateTo
         }
         setMessage({
@@ -215,6 +231,7 @@ export function useFundsCrudData(fundId: string) {
       reset,
       controlRegister,
       entitiesData,
+      startDate,
       onSubmitNewFund,
       onSubmitEditFund,
       onCancelNew,

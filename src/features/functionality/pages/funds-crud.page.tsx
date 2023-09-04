@@ -16,6 +16,7 @@ function FundsForm({ action }: IAppProps) {
       errors,
       controlRegister,
       entitiesData,
+      startDate,
       onSubmitNewFund,
       onSubmitEditFund,
       onCancelNew,
@@ -133,7 +134,7 @@ function FundsForm({ action }: IAppProps) {
                 </div>
                 <div className="fund-data-container">
                   <DatePickerComponent
-                    idInput="dateFrom"
+                    idInput="dateInitial"
                     control={controlRegister}
                     label={"Validez de"}
                     errors={errors}
@@ -151,10 +152,11 @@ function FundsForm({ action }: IAppProps) {
                     className="dataPicker-basic"
                     placeholder="DD/MM/YYYY"
                     dateFormat="dd/mm/yy"
+                    // minDate={new Date(startDate)}
                   />
                 </div>
               </div>
-              <div className="mobile-actions mobile">
+              {/* <div className="mobile-actions mobile">
                 <span
                   className="bold text-center button"
                   onClick={() => {
@@ -168,7 +170,7 @@ function FundsForm({ action }: IAppProps) {
                   type="submit"
                   className="button-main huge"
                 />
-              </div>
+              </div> */}
             </FormComponent>
           </div>
         </div>
@@ -187,7 +189,7 @@ function FundsForm({ action }: IAppProps) {
               value="Guardar"
               type="submit"
               form="funds-form"
-              disabled={false}
+              
             />
           </div>
         </div>
