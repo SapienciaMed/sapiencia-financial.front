@@ -7,7 +7,7 @@ export function useFunctionalAreaService() {
     const baseURL: string = process.env.urlApiFinancial;
     const vinculationUrl: string = "/api/v1/functional-area";
     const projectsUrl: string = "/api/v1/projects";
-    const { get, post, put } = useCrudService(null, baseURL);
+    const { get, post, put } = useCrudService( baseURL);
 
     async function GetFunctionalArea(id: number): Promise<ApiResponse<IFunctionalArea>> {
         const endpoint: string = `/get-by-id/${id}`;

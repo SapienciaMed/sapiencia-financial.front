@@ -5,7 +5,7 @@ import { IEntities } from "../interfaces/Entities";
 export function useEntitiesService() {
     const baseURL: string = process.env.urlApiFinancial;
     const roleUrl: string = "/api/v1/entities";
-    const { get } = useCrudService(null, baseURL);
+    const { get } = useCrudService( baseURL);
 
     async function GetEntities(): Promise<ApiResponse<IEntities[]>> {
         const endpoint: string = "/get-all";

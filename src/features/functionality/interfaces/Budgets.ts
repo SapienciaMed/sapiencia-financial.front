@@ -5,7 +5,7 @@ export interface IBudgets {
   id?: number;
   entityId: number;
   ejercise: number;
-  number:number;
+  number: string;
   denomination:string;
   description:string;
   userModify?: DateTime;
@@ -15,11 +15,3 @@ export interface IBudgets {
   entity?: IEntities
 }
 
-export interface IFilterBudgets {
-  page: number;
-  perPage: number;
-  entity?: number;
-  ejercise?: number;
-  number:number;
-  denomination:string;
-}

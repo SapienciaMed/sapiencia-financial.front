@@ -70,7 +70,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
   const token = localStorage.getItem("token");
 
   // Declaraciones
-  const { post } = useCrudService(token, url);
+  const { post } = useCrudService( url);
   useImperativeHandle(ref, () => ({
     loadData: loadData,
   }));
@@ -266,18 +266,22 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
                 : item[properties[0]];
             return (
               <div key={item} className="item-value-container">
-                <p className="text-black bold">{column.header}</p>
+                <p className="text-black bold text-center">{column.header}</p>
                 <p> {column.renderCell ? column.renderCell(item) : field} </p>
               </div>
             );
           })}
         </div>
         <div className="card-footer">
-          {actions?.map((action) => (
-            <div key={action.icon} onClick={() => action.onClick(item)}>
-              {getIconElement(action.icon, "src")}
-            </div>
-          ))}
+          <section className="position-absolute top text-black bold text-center"> Acciones </section>
+          <section className="section-action">
+            {actions?.map((action) => (
+              <div key={action.icon} onClick={() => action.onClick(item)}>
+                {getIconElement(action.icon, "src")}
+              </div>
+            ))}
+
+          </section>
         </div>
       </div>
     );

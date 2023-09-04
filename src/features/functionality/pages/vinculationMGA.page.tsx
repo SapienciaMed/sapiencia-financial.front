@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { ButtonComponent, FormComponent, InputComponent } from "../../../common/components/Form";
-import { AiOutlinePlusCircle } from "react-icons/ai";
 import { EDirection } from "../../../common/constants/input.enum";
 import { useVinculationMGAData } from "../hooks/vinculation-mga.hook";
 import TableComponent from "../../../common/components/table.component";
@@ -11,8 +10,8 @@ import { Controller } from "react-hook-form";
 function VinculationMGA(): React.JSX.Element {
     const { pospre } = useParams();
     const navigate = useNavigate();
-    const { register, reset, errors, tableComponentRef, tableColumns, showTable, control, isBtnDisable, loadTableData, onSubmit, 
-        tableActions, vinculateActivities, setShowTable } = useVinculationMGAData(pospre);
+    const { register, reset, errors, tableComponentRef, tableColumns, control, loadTableData, onSubmit, 
+        tableActions, vinculateActivities} = useVinculationMGAData(pospre);
     
      useEffect(() => {
          if(Number(pospre)) loadTableData({budgetId: Number(pospre)});
@@ -45,7 +44,7 @@ function VinculationMGA(): React.JSX.Element {
                                         register={register}
                                         label="Código MGA"
                                         classNameLabel="text-black biggest bold"
-                                        direction={EDirection.row}
+                                        direction={EDirection.column}
                                         errors={errors}
                                         onChange={field.onChange}
                                     /> 

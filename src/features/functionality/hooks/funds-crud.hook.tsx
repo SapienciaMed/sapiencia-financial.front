@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { DateTime } from "luxon";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { fundsCrudValidator } from "../../../common/schemas";
 import { useContext, useEffect, useState } from "react";
@@ -14,31 +13,50 @@ import { AppContext } from "../../../common/contexts/app.context";
 
 interface IFundsCrudForm {
     entity: number;
-    number: number;
+    number: string;
     denomination: string;
     description: string;
     dateFrom: Date;
     dateTo: Date;
 }
 
-export function useFundsCrudData(fundId: string) {
+export function useFundsCrudData(fundId: string, action: "new" | "edit") {
     const [fundData, setFundData] = useState<IFunds>(null);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
-
+    
     const resolver = useYupValidationResolver(fundsCrudValidator);
     const { GetEntities } = useEntitiesService();
     const { CreateFund, GetFund, UpdateFund } = useFundsService();
     const { authorization, setMessage } = useContext(AppContext);
+    const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
     const {
-        handleSubmit,
-        register,
-        formState: { errors, isValid },
-        setValue: setValueRegister,
-        reset,
-        control: controlRegister,
+      handleSubmit,
+      register,
+      formState: { errors, isValid },
+      setValue: setValueRegister,
+      reset,
+      control: controlRegister,
+      watch
     } = useForm<IFundsCrudForm>({ resolver });
     const navigate = useNavigate();
-
+    
+    const [startDate, endDate, denomination, description ] = watch(["dateFrom", 'dateTo', 'denomination', 'description']);
+    
+    useEffect(() => {
+      if (startDate && endDate) {
+        const startDateObj = new Date(startDate);
+        const endDateObj = new Date(endDate);
+        if (startDateObj > endDateObj) {
+          reset({ ...watch(), dateTo: null });
+        } 
+      }
+    },[startDate])
+    
+    useEffect(() => {
+      (fundData && action == 'edit') && setIsBtnDisable(validateFieldEqualsEdition(fundData))
+    },[fundData, startDate, endDate, startDate, denomination, description])
+    
+    
     async function loadInitList(): Promise<void> {
         const response = await GetEntities();
         if (response.operation.code === EResponseCodes.OK) {
@@ -67,6 +85,7 @@ export function useFundsCrudData(fundId: string) {
             }
         })
     }, [fundId]);
+
 
     useEffect(() => {
         if (!fundData) return;
@@ -153,7 +172,7 @@ export function useFundsCrudData(fundId: string) {
               if (response.operation.code === EResponseCodes.OK) {
                 setMessage({
                   title: "Editar fondos",
-                  description: "Se ha editado el fondo exitosamente",
+                  description: "Se han guardado los cambios exitosamente",
                   show: true,
                   OkTitle: "Aceptar",
                   onOk: () => {
@@ -164,7 +183,7 @@ export function useFundsCrudData(fundId: string) {
                 });
               } else {
                 setMessage({
-                  title: "Hubo un problema...",
+                  title: "Validacion de datos",
                   description: response.operation.message,
                   show: true,
                   OkTitle: "Aceptar",
@@ -208,18 +227,34 @@ export function useFundsCrudData(fundId: string) {
         });
     }
 
-    return {
-      register,
-      errors,
-      reset,
-      controlRegister,
-      entitiesData,
-      onSubmitNewFund,
-      onSubmitEditFund,
-      onCancelNew,
-      onCancelEdit,
-      confirmClose,
-      validatorNumber,
-      isValid,
-    };
+  function validateFieldEqualsEdition(objeto: IFunds): boolean {
+    const validityOf = new Date(objeto.dateFrom)
+    const validityTo = new Date(objeto.dateTo)
+
+    const isItTheSame = (
+      objeto.denomination == denomination && 
+      objeto.description == description &&
+      JSON.stringify(validityOf) == JSON.stringify(startDate) &&
+      JSON.stringify(validityTo) == JSON.stringify(endDate)
+    );
+
+    return isItTheSame;
+  }
+
+  return {
+    register,
+    errors,
+    reset,
+    controlRegister,
+    entitiesData,
+    startDate,
+    onSubmitNewFund,
+    onSubmitEditFund,
+    onCancelNew,
+    onCancelEdit,
+    confirmClose,
+    validatorNumber,
+    isValid,
+    isBtnDisable
+  };
 }

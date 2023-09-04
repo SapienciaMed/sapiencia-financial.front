@@ -16,14 +16,14 @@ function FundsForm({ action }: IAppProps) {
       errors,
       controlRegister,
       entitiesData,
+      startDate,
+      isBtnDisable,
       onSubmitNewFund,
       onSubmitEditFund,
       onCancelNew,
       onCancelEdit,
       confirmClose,
-      validatorNumber,
-      isValid,
-    } = useFundsCrudData(fundId);
+    } = useFundsCrudData(fundId, action);
     return (
       <div className="crud-page full-height">
         <div className="main-page full-height">
@@ -48,13 +48,14 @@ function FundsForm({ action }: IAppProps) {
                     errors={errors}
                     label="Entidad CP"
                     classNameLabel="text-black biggest bold text-required"
-                    direction={EDirection.row}
+                    direction={EDirection.column}
                     data={entitiesData}
                     disabled={action === "new" ? false : true}
                   />
                   <Controller
                     control={controlRegister}
                     name={"number"}
+                    defaultValue=''
                     render={({ field }) => {
                       return (
                         <InputComponent
@@ -64,11 +65,12 @@ function FundsForm({ action }: IAppProps) {
                           className="input-basic"
                           typeInput="number"
                           register={register}
-                          label="Descripción"
+                          label="Fondos"
                           classNameLabel="text-black biggest bold text-required"
-                          direction={EDirection.row}
+                          direction={EDirection.column}
                           errors={errors}
                           onChange={field.onChange}
+                          min={0}
                           disabled={action === "new" ? false : true}
                         /> 
                       )
@@ -82,49 +84,49 @@ function FundsForm({ action }: IAppProps) {
                 </div>
                 <div className="fund-denomination-container">
                 <Controller
-                  control={controlRegister}
-                  name={"denomination"}
-                  defaultValue=""
-                  render={({ field }) => {
-                    return (
-                      <InputComponent
-                        id={field.name}
-                        idInput={field.name}
-                        value={`${field.value}`}
-                        className="input-basic"
-                        typeInput="text"
-                        register={register}
-                        label="Denominación"
-                        classNameLabel="text-black biggest bold text-required"
-                        direction={EDirection.row}
-                        errors={errors}
-                        onChange={field.onChange}                     
-                      /> 
-                    )
-                  }}
-                />
-                <Controller
-                  control={controlRegister}
-                  name={"description"}
-                  defaultValue=""
-                  render={({ field }) => {
-                    return (
-                      <InputComponent
-                        id={field.name}
-                        idInput={field.name}
-                        value={`${field.value}`}
-                        className="input-basic"
-                        typeInput="text"
-                        register={register}
-                        label="Descripción"
-                        classNameLabel="text-black biggest bold text-required"
-                        direction={EDirection.row}
-                        errors={errors}
-                        onChange={field.onChange}                     
-                      /> 
-                    )
-                  }}
-                />
+                    control={controlRegister}
+                    name={"denomination"}
+                    defaultValue=''
+                    render={({ field }) => {
+                      return (
+                        <InputComponent
+                          id={field.name}
+                          idInput={field.name}
+                          value={`${field.value}`}
+                          className="input-basic"
+                          typeInput="text"
+                          register={register}
+                          label="Denominación"
+                          classNameLabel="text-black biggest bold text-required"
+                          direction={EDirection.column}
+                          errors={errors}
+                          onChange={field.onChange}
+                        /> 
+                      )
+                    }}
+                  />
+                  <Controller
+                    control={controlRegister}
+                    name={"description"}
+                    defaultValue=''
+                    render={({ field }) => {
+                      return (
+                        <InputComponent
+                          id={field.name}
+                          idInput={field.name}
+                          value={`${field.value}`}
+                          className="input-basic"
+                          typeInput="text"
+                          register={register}
+                          label="Descripción"
+                          classNameLabel="text-black biggest bold text-required"
+                          direction={EDirection.column}
+                          errors={errors}
+                          onChange={field.onChange}
+                        /> 
+                      )
+                    }}
+                  />
                 </div>
               </div>
               <div className="card-form">
@@ -151,6 +153,7 @@ function FundsForm({ action }: IAppProps) {
                     className="dataPicker-basic"
                     placeholder="DD/MM/YYYY"
                     dateFormat="dd/mm/yy"
+                    minDate={new Date(startDate)}
                   />
                 </div>
               </div>
@@ -167,6 +170,7 @@ function FundsForm({ action }: IAppProps) {
                   value="Guardar"
                   type="submit"
                   className="button-main huge"
+                  disabled={isBtnDisable}
                 />
               </div>
             </FormComponent>
@@ -187,7 +191,7 @@ function FundsForm({ action }: IAppProps) {
               value="Guardar"
               type="submit"
               form="funds-form"
-              disabled={false}
+              disabled={isBtnDisable}
             />
           </div>
         </div>

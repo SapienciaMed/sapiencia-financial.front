@@ -32,7 +32,7 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                         <div className="card-form">
                             <div className="title-area">
                                 <label className="text-black biggest bold">
-                                    Consultar Área funcional
+                                    {action == "new" ? '' : 'Área funcional'}
                                 </label>
 
                                 {action !== "edit" ? <></> :
@@ -58,7 +58,7 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                                                     register={register}
                                                     label="Código"
                                                     classNameLabel="text-black biggest bold text-required"
-                                                    direction={EDirection.row}
+                                                    direction={EDirection.column}
                                                     errors={errors}
                                                     onChange={field.onChange}
                                                     disabled={action !== "new"}
@@ -79,12 +79,11 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                                                     className="input-basic"
                                                     typeInput="text"
                                                     register={register}
-                                                    label="Código"
+                                                    label="Denominacion"
                                                     classNameLabel="text-black biggest bold text-required"
-                                                    direction={EDirection.row}
+                                                    direction={EDirection.column}
                                                     errors={errors}
                                                     onChange={field.onChange}
-                                                    disabled={action !== "new"}
                                                 /> 
                                             )
                                         }}
@@ -92,27 +91,26 @@ function FunctionalAreaCrudPage({ action }: IAppProps): React.JSX.Element {
                                 </div>
                                 <div>
                                 <Controller
-                                        control={control}
-                                        name={"description"}
-                                        defaultValue=""
-                                        render={({ field }) => {
-                                            return (
-                                                <TextAreaComponent
-                                                    id={field.name}
-                                                    idInput={field.name}
-                                                    value={`${field.value}`}
-                                                    className="text-area-basic"
-                                                    register={register}
-                                                    label="Descripción"
-                                                    classNameLabel="text-black biggest bold text-required"
-                                                    direction={EDirection.row}
-                                                    errors={errors}
-                                                    onChange={field.onChange}
-                                                    disabled={action !== "new"}
-                                                /> 
-                                            )
-                                        }}
-                                    />
+                                    control={control}
+                                    name={"description"}
+                                    defaultValue=""
+                                    render={({ field }) => {
+                                        return (
+                                            <TextAreaComponent
+                                                id={field.name}
+                                                idInput={field.name}
+                                                value={`${field.value}`}
+                                                className="text-area-basic"
+                                                register={register}
+                                                label="Descripción"
+                                                classNameLabel="text-black biggest bold text-required"
+                                                direction={EDirection.column}
+                                                errors={errors}
+                                                onChange={field.onChange}
+                                            /> 
+                                        )
+                                    }}
+                                />
                                 </div>
                             </div>
                         </div>
