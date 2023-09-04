@@ -16,12 +16,14 @@ function FundsForm({ action }: IAppProps) {
       errors,
       controlRegister,
       entitiesData,
+      startDate,
+      isBtnDisable,
       onSubmitNewFund,
       onSubmitEditFund,
       onCancelNew,
       onCancelEdit,
       confirmClose,
-    } = useFundsCrudData(fundId);
+    } = useFundsCrudData(fundId, action);
     return (
       <div className="crud-page full-height">
         <div className="main-page full-height">
@@ -151,6 +153,7 @@ function FundsForm({ action }: IAppProps) {
                     className="dataPicker-basic"
                     placeholder="DD/MM/YYYY"
                     dateFormat="dd/mm/yy"
+                    minDate={new Date(startDate)}
                   />
                 </div>
               </div>
@@ -167,6 +170,7 @@ function FundsForm({ action }: IAppProps) {
                   value="Guardar"
                   type="submit"
                   className="button-main huge"
+                  disabled={isBtnDisable}
                 />
               </div>
             </FormComponent>
@@ -187,7 +191,7 @@ function FundsForm({ action }: IAppProps) {
               value="Guardar"
               type="submit"
               form="funds-form"
-              disabled={false}
+              disabled={isBtnDisable}
             />
           </div>
         </div>
