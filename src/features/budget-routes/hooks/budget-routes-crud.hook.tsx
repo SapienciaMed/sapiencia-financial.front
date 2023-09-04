@@ -56,7 +56,7 @@ export function useBudgetRoutesCrudData(id: string) {
         if (response2.operation.code === EResponseCodes.OK) {
             const arrayProjects: IDropdownProps[] = projectsVinculate.map((projectVinculate) => {
                 const project = response2.data.array.find((data) => data.projectId === projectVinculate.projectId );
-                return { name: `${project?.id} - ${project?.conceptProject ? project.conceptProject : ''}`, value: projectVinculate.id }
+                return { name: `${projectVinculate.projectId} - ${project?.conceptProject ? project.conceptProject : ''}`, value: projectVinculate.id }
             });
 
             setProjectsData(arrayProjects);
@@ -158,7 +158,7 @@ export function useBudgetRoutesCrudData(id: string) {
                 });
             } else {
                 setMessage({
-                    title: "Hubo un problema...",
+                    title: "Validación de datos",
                     description: response.operation.message,
                     show: true,
                     OkTitle: "Aceptar",
@@ -196,7 +196,7 @@ export function useBudgetRoutesCrudData(id: string) {
                 });
             } else {
                 setMessage({
-                    title: "Hubo un problema...",
+                    title: "Validación de datos",
                     description: response.operation.message,
                     show: true,
                     OkTitle: "Aceptar",
