@@ -24,7 +24,7 @@ function BudgetRoutesCrudPage({ action }: IAppProps) {
                             <div className="fund-data-container">
                                 <SelectComponent
                                     idInput="idProjectVinculation"
-                                    className="select-basic"
+                                    className="select-basic span-width"
                                     control={controlRegister}
                                     errors={errors}
                                     label='ID Proyecto' 
