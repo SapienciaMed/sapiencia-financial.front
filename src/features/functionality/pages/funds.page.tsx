@@ -9,24 +9,28 @@ import { Controller } from "react-hook-form";
 interface IAppProps { }
 
 function FoundsPage(props: IAppProps): React.JSX.Element {
-    const {
-      tableActions,
-      tableColumns,
-      tableComponentRef,
-      onSubmit,
-      navigate,
-      register,
-      errors,
-      reset,
-      controlRegister,
-      entitiesData,
-      isVisibleTable,
-      setIsVisibleTable,
-      isBtnDisable
+  const {
+    tableActions,
+    tableColumns,
+    tableComponentRef,
+    onSubmit,
+    navigate,
+    register,
+    errors,
+    reset,
+    controlRegister,
+    entitiesData,
+    isVisibleTable,
+    setIsVisibleTable,
+    isBtnDisable
   } = useFundsData();
 
-    return (
-      <div>
+  return (
+    <div className='main-page'>
+      <div className='card-table'>
+        <div className="title-area">
+            <div className="text-black extra-large bold">Fondos</div>
+        </div>
         <FormComponent action={onSubmit}>
           <div className="card-form">
             <div className="title-area">
@@ -121,17 +125,18 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
             isVisibleTable ? "card-form isVisible" : "card-form isNotVisible"
           }
         >
-          <TableComponent
-            ref={tableComponentRef}
-            url={`${process.env.urlApiFinancial}/api/v1/funds/get-paginated`}
-            columns={tableColumns}
-            actions={tableActions}
-            isShowModal={true}
-            titleMessageModalNoResult={"Fondos"}
-          />
+        <TableComponent
+          ref={tableComponentRef}
+          url={`${process.env.urlApiFinancial}/api/v1/funds/get-paginated`}
+          columns={tableColumns}
+          actions={tableActions}
+          isShowModal={true}
+          titleMessageModalNoResult={"Fondos"}
+        />
         </div>
-      </div>
-    );
+      </div>          
+    </div>
+  );
 }
 
 export default React.memo(FoundsPage);
