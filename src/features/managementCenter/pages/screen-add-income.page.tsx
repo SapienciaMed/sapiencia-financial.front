@@ -32,7 +32,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
     const [cardIdSt, setcardIdSt] = useState("")
 
     useEffect(() => {
-        if (cardId != ""  && projectIdSelectedSt && areasByProjectSt && areasByProjectSt.length>0) {
+        if (projectName!="" /* cardId != ""  && projectIdSelectedSt && areasByProjectSt && areasByProjectSt.length>0 */) {
             console.log({areasByProjectSt })
             setValue(`${titleAdd.toLowerCase()}[${count}].cardId`, cardId)
             setValue(`${titleAdd.toLowerCase()}[${count}].projectId`, projectIdSelectedSt)
@@ -40,7 +40,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
             setValue(`${titleAdd.toLowerCase()}[${count}].projectName`, projectName)
             setcardIdSt(cardId)
         }
-    }, [projectIdSelectedSt, cardId,projectIdSelectedSt, areasByProjectSt])
+    }, [projectIdSelectedSt/* , cardId,projectIdSelectedSt, areasByProjectSt */])
 
 
     useEffect(() => {
@@ -82,7 +82,6 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
     return (
         <>
             <div className='card-user mt-14px' style={invalidStyleCard}>
-                <>{cardId}</>
                 <div className="title-area">
                     <label className="text-black biggest"> {count + 1}. {titleAdd.charAt(0).toUpperCase() + titleAdd.slice(1)}</label>
                     <ButtonComponent
