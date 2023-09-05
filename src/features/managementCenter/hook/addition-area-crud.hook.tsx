@@ -122,7 +122,6 @@ const validateButton = (values) => { return Object.values(values).every(campo =>
     },
     additionMove: ingresoFixed.concat(gastoFixed)
   }
-  console.log({addition})
   let resValidate = await validateCreateAdition(addition)
   if(resValidate.operation.code == 'FAIL'){
 
@@ -182,7 +181,6 @@ const identifyInvalidcard = (additionMove:any,message:string)=>{
     JSON.parse(messageSplit[1]).forEach(code=>{
       let invalidCard = additionMove.find(addition=>addition.idCard.includes(code))
       cardValidation.push(invalidCard)
-      console.log({invalidCard})
     })
     setInvalidCardsAdditionSt(cardValidation)
   }
@@ -200,10 +198,6 @@ const showModal = (values: IMessage) => {
     show: true,
     OkTitle: values.OkTitle,
     onOk: values.onOk || (() => setMessage({})),
-    //onOk: () => {
-      //onCancelNew();
-      //setMessage({});
-      //},
   });
 };
 

@@ -9,6 +9,7 @@ import { AddValidHeaders } from '../../../common/constants/doc.enum';
 import ScreenAddIncomePage from '../pages/screen-add-income.page';
 import { Paginator } from 'primereact/paginator';
 import { paginatorFooter } from '../../../common/components/table.component';
+import { generarIdAleatorio } from '../../../common/utils/randomGenerate';
 
 interface IAppProps {
     titleAdd: string,
@@ -85,7 +86,7 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
 
         output.length > 0 && setDataPaste(output.map((item:any,index:number) => ({
             isPaste:true,
-            cardId:item.POSPRE,
+            cardId:generarIdAleatorio(10),
             managerCenter: item.CENTROGESTOR,
             //projectId: `${item.PROYECTO} - ${item.NOMBREPROYECTO}` ,
             projectId: `${item.PROYECTO}` ,
@@ -93,6 +94,7 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
             funds: item.FONDO,
             posPre: item.POSPRE,
             value: item.VALOR.replaceAll('.',''),
+            projectName:item.NOMBREPROYECTO
         })))  
     }
  
