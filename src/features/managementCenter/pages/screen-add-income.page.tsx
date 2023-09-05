@@ -165,7 +165,18 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             isSearchByName={isSearchByName}
                         />
 
-                        <InputNumberComponent
+                        <InputComponent
+                            idInput={`${titleAdd.toLowerCase()}[${count}].value`}
+                            label="valor"
+                            typeInput="text"
+                            className="input-basic"
+                            placeholder={'Seleccionar'}
+                            classNameLabel="text-black biggest bold text-required"
+                            errors={errors}
+                            register={register}
+                        />
+
+                        {/* <InputNumberComponent
                             control={controlRegister}
                             idInput={`${titleAdd.toLowerCase()}[${count}].value`}
                             label="valor"
@@ -178,8 +189,8 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             locale="es-CO"
                             minFractionDigits={0}
                             maxFractionDigits={0}
-                            
-                        />
+
+                        /> */}
 
                     </section>
                     <section className='grid-form-1-container-area mt-5px'>
