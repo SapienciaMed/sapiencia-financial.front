@@ -4,7 +4,13 @@ export const budgetsValidator = yup.object({
     number: yup
     .string()
     .max(30, 'Solo se permiten 30 caracteres' )
-    .matches(/^[0-9]+$/, "Solo se permiten numeros")
+    .test('is-positive', 'El número no puede ser negativo', function (value) {
+        if (!value) {
+            return true; 
+          }
+          const numberValue = parseFloat(value);
+          return !isNaN(numberValue) && numberValue >= 0;
+    })
 });
 
 export const budgetsCrudValidator = yup.object({
@@ -12,12 +18,12 @@ export const budgetsCrudValidator = yup.object({
     number: yup
         .string()
         .required("El campo es obligatorio")
-        .matches(/^[0-9]+$/, "Solo se permiten numeros")
+        .matches(/^[0-9]+$/, "Solo se permiten números")
         .max(30, "Solo se permiten 30 caracteres"),   
     ejercise:yup
         .string()
         .required("El campo es obligatorio")
-        .matches(/^[0-9]+$/, "Solo se permiten numeros")
+        .matches(/^[0-9]+$/, "Solo se permiten números")
         .max(4, "Solo se permiten 4 caracteres")
         .min(4, "Ingrese al menos 4 caracteres"),
     denomination: yup

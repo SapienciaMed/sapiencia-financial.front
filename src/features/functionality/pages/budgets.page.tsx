@@ -42,13 +42,14 @@ function BudgetsPage(props: IAppProps): React.JSX.Element {
                                         idInput={field.name}
                                         value={`${field.value}`}
                                         className="input-basic"
-                                        typeInput="text"
+                                        typeInput="number"
                                         register={register}
                                         label="Posición presupuestal"
                                         classNameLabel="text-black biggest bold"
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={field.onChange}
+                                        min={0}
                                     /> 
                                 )
                                 }}

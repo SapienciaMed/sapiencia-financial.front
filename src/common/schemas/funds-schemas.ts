@@ -5,6 +5,13 @@ export const fundsValidator = yup.object({
     number: yup
     .string()
     .max(30, 'Solo se permiten 30 caracteres' )
+    .test('is-positive', 'El número no puede ser negativo', function (value) {
+        if (!value) {
+            return true; 
+          }
+          const numberValue = parseFloat(value);
+          return !isNaN(numberValue) && numberValue >= 0;
+    })
 });
 
 export const fundsCrudValidator = yup.object({

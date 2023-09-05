@@ -38,7 +38,7 @@ function AdditionAreaCrud({ actionForm }: IAppProps) {
                     register={register}
                     label="Acto administrativo distrito"
                     classNameLabel="text-black biggest bold text-required"
-                    direction={EDirection.row}
+                    direction={EDirection.column}
                     errors={errors}
                 />
                  <InputComponent
@@ -48,7 +48,7 @@ function AdditionAreaCrud({ actionForm }: IAppProps) {
                     register={register}
                     label="Acto administrativo sapiencia"
                     classNameLabel="text-black biggest bold text-required"
-                    direction={EDirection.row}
+                    direction={EDirection.column}
                     errors={errors}
                 />
               </div>
