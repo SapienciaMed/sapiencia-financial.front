@@ -8,7 +8,6 @@ import TabManagerAdditionPage from "./tab-manager-addition.page";
 import { useAdditionAreaCrud } from "../hook/addition-area-crud.hook";
 import { useNavigate } from "react-router-dom";
 import { EDirection } from "../../../common/constants/input.enum";
-import { FormProvider } from "react-hook-form";
 
 
 interface IAppProps {
@@ -19,8 +18,7 @@ function AdditionAreaCrud({ actionForm }: IAppProps) {
   const navigate = useNavigate();
 
   const { control, arrayDataSelect, errors, onSubmitTab, showModal, setMessage, getValues, watch, register, invalidCardsAdditionSt, setValue } = useAdditionAreaCrud();
-  // const { errors, register, onSubmit } = useManagementCenterAdditional(); //utilizar otro hook
-
+  
   return (
     <div className="crud-page">
       <div className="main-page full-height">
@@ -38,7 +36,7 @@ function AdditionAreaCrud({ actionForm }: IAppProps) {
                     register={register}
                     label="Acto administrativo distrito"
                     classNameLabel="text-black biggest bold text-required"
-                    direction={EDirection.row}
+                    direction={EDirection.column}
                     errors={errors}
                 />
                  <InputComponent
@@ -48,7 +46,7 @@ function AdditionAreaCrud({ actionForm }: IAppProps) {
                     register={register}
                     label="Acto administrativo sapiencia"
                     classNameLabel="text-black biggest bold text-required"
-                    direction={EDirection.row}
+                    direction={EDirection.column}
                     errors={errors}
                 />
               </div>
@@ -66,7 +64,7 @@ function AdditionAreaCrud({ actionForm }: IAppProps) {
             />
           </FormComponent>
           <section className="container-button-core mt-24px">
-            <div className="display-justify-space-between">
+            <div className="display-align-flex-center">
               <ButtonComponent
                 form="useQueryForm"
                 value="Cancelar"
@@ -90,7 +88,6 @@ function AdditionAreaCrud({ actionForm }: IAppProps) {
                 value="Guardar"
                 type="submit"
                 form='form-acts'
-                
               />
             </div>
           </section>

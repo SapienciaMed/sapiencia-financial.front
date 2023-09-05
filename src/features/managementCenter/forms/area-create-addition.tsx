@@ -86,12 +86,12 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
             isPaste: true,
             cardId: generarIdAleatorio(20),
             managerCenter: item.CENTROGESTOR,
-            projectId: `${item.PROYECTO}`,
+            projectId: (arrayDataSelect.functionalArea.find(e=>e.name==item.PROYECTO)).id,
             //projectId: `${item.PROYECTO} - ${item.NOMBREPROYECTO}`,
-            functionalArea: item.ÁREAFUNCIONAL,
-            funds: item.FONDO,
-            posPre: item.POSPRE,
-            value: item.VALOR.replaceAll('.', ''),
+            functionalArea: Object(arrayDataSelect.functionalArea.find((e:any)=>e.area[0].name==item.ÁREAFUNCIONAL)).area[0].id,
+            funds: (arrayDataSelect.funds.find(e=>e.name==item.FONDO)).id,
+            posPre: (arrayDataSelect.posPre.find(e=>e.name==item.POSPRE)).id,
+            value: formatMoney(item.VALOR.replaceAll('.', '')),
             projectName:item.NOMBREPROYECTO
         })))
     }
@@ -105,7 +105,7 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
     const calculateTotal = () => {
         const values = getValues('ingreso');
         const total = values?.reduce((acc, curr) => {
-            const value = parseFloat(curr.value?.replace(/\./g, '')?.replace(/,/g, '.'));
+            const value = parseFloat(curr.value);
             return acc + (isNaN(value) ? 0 : value);
         }, 0);
         return total;
@@ -116,9 +116,8 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
     };
 
     useEffect(() => {
-        //if (isDatePasteFixed) {
-            dataPaste.length > 0 && append(dataPaste)
-        //}
+
+        dataPaste.length > 0 && append(dataPaste)
     }, [dataPaste])
 
     useEffect(() => {
@@ -178,8 +177,9 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
                 </div>
             }
             {
+                
                 watchIncome.some(use => use.value != '') &&
-                <label className="text-black biggest ml-16px mt-14px"> Total ${titleAdd.toLowerCase()}: $  {formatMoney(calculateTotal())} </label>
+                <label className="text-black biggest ml-16px mt-14px"> Total {titleAdd.toLowerCase()}: $  {formatMoney(calculateTotal())} </label>
 
             }
         </div>

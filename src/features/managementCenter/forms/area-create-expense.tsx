@@ -83,17 +83,18 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
             OkTitle: "Aceptar",
         })
         
-
+        console.log("xxxxxxxxxxxxxxxxxxxxxx ", arrayDataSelect.functionalArea.filter(e=>e.value!=null))
+        console.log("yyyyyyyyyyyyyyyyyyyyyy ", output)
         output.length > 0 && setDataPaste(output.map((item:any,index:number) => ({
             isPaste:true,
             cardId:generarIdAleatorio(10),
             managerCenter: item.CENTROGESTOR,
             //projectId: `${item.PROYECTO} - ${item.NOMBREPROYECTO}` ,
-            projectId: `${item.PROYECTO}` ,
-            functionalArea: item.ÁREAFUNCIONAL,
-            funds: item.FONDO,
-            posPre: item.POSPRE,
-            value: item.VALOR.replaceAll('.',''),
+            projectId: (arrayDataSelect.functionalArea.find(e=>e.name==item.PROYECTO)).id,
+            functionalArea: Object(arrayDataSelect.functionalArea.filter(e=>e.value!=null).find((e:any)=>e.area[0].name==item.ÁREAFUNCIONAL)).area[0].id,
+            funds: (arrayDataSelect.funds.find(e=>e.name==item.FONDO)).id,
+            posPre: (arrayDataSelect.posPre.find(e=>e.name==item.POSPRE)).id,
+            value: formatMoney(item.VALOR.replaceAll('.','')),
             projectName:item.NOMBREPROYECTO
         })))  
     }
@@ -105,7 +106,8 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
     const calculateTotal = () => {
         const values = getValues('gasto');
         const total = values?.reduce((acc, curr) => {
-          const value = parseFloat(curr.value.replace(/\./g, '').replace(/,/g, '.'));
+          //const value = parseFloat(curr.value.replace(/\./g, '').replace(/,/g, '.'));
+          const value = parseFloat(curr.value)
           return acc + (isNaN(value) ? 0 : value);
         }, 0);
         return total;
