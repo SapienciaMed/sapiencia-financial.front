@@ -12,6 +12,7 @@ export interface IBudgets {
   dateModify?: Date;
   userCreate: string;
   dateCreate?: DateTime;
-  entity?: IEntities
+  entity?: IEntities,
+  pospresap?: any[]
 }
 
