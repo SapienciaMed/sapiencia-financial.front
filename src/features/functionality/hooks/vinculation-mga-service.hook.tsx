@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { AppContext } from "../../../common/contexts/app.context";
 import useCrudService from "../../../common/hooks/crud-service.hook";
 import { ApiResponse } from "../../../common/utils/api-response";
-import { IVinculationMGA } from "../interfaces/VinculationMGAInterfaces";
+import { IActivityMGA, IVinculationMGA } from "../interfaces/VinculationMGAInterfaces";
 
 
 export function useVinculationService() {
@@ -32,8 +32,18 @@ export function useVinculationService() {
         return post(`${vinculationUrl}${endpoint}`, data);
     }
 
+    async function GetMgaLinkage (budgetId: string, page: string, perPage: string ): Promise<ApiResponse<IActivityMGA>> {
+        const endpoint: string = "/get-paginated";
+        const data = {
+            budgetId,
+            page,
+            perPage
+        } 
+        return post(`${vinculationUrl}${endpoint}`, data);
+    }
 
 
 
-    return {  CreateVinculation ,DeleteVinculation }
+
+    return {  CreateVinculation, DeleteVinculation, GetMgaLinkage }
 }

@@ -161,8 +161,8 @@ export function useFundsCrudData(fundId: string, action: "new" | "edit") {
             dateTo: data.dateTo
         }
         setMessage({
-          title: "Editar fondos",
-          description: "¿Estas segur@ de guardar la información en el sistema?",
+          title: "Guardar Edicion",
+          description: "¿Esta segur@ que desea guardar la edición?",
           show: true,
           OkTitle: "Aceptar",
           cancelTitle: "Cancelar",
@@ -170,7 +170,7 @@ export function useFundsCrudData(fundId: string, action: "new" | "edit") {
             UpdateFund(parseInt(fundId), insertData).then((response) => {
               if (response.operation.code === EResponseCodes.OK) {
                 setMessage({
-                  title: "Editar fondos",
+                  title: "Editar fondo",
                   description: "Se han guardado los cambios exitosamente",
                   show: true,
                   OkTitle: "Aceptar",
@@ -210,11 +210,11 @@ export function useFundsCrudData(fundId: string, action: "new" | "edit") {
         navigate("./../../");
     };
 
-    const confirmClose = (callback) =>{
+    const confirmClose = (callback, action: "new" | "edit") =>{
         setMessage({
-          title: "Cancelar fondo",
+          title: `${action == "new" ? 'Cancelar Fondo': 'Cancelar Edición'}`,
           description:
-            "¿Estas segur@ de cancelar la información en el sistema?",
+          `${action == "new" ? '¿Segur@ que desea cancelar la operación?': '¿Esta segur@ que desea cancelar la edición?'}`,
           show: true,
           OkTitle: "Aceptar",
           cancelTitle: "Cancelar",

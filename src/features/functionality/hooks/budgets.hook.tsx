@@ -5,10 +5,6 @@ import { useForm } from "react-hook-form";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { fundsValidator } from "../../../common/schemas";
 import { IBudgets } from "../interfaces/Budgets";
-import { IDropdownProps } from "../../../common/interfaces/select.interface";
-import { useEntitiesService } from "./entities-service.hook";
-import { EResponseCodes } from "../../../common/constants/api.enum";
-import { IEntities } from "../interfaces/Entities";
 
 interface IFilterBudgets {
     number: string
@@ -17,11 +13,9 @@ interface IFilterBudgets {
 export function useBudgetsData() {
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
-    const { GetEntities } = useEntitiesService();
     const resolver = useYupValidationResolver(fundsValidator);
     const [dateFrom, setDateFrom] = useState(null);
     const [dateTo, setDateTo] = useState(null);
-    const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
     const [isVisibleTable, setIsVisibleTable] = useState<Boolean>(false);
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
     
@@ -43,19 +37,27 @@ export function useBudgetsData() {
         },
         {
             fieldName: "denomination",
-            header: "Denominacion"
+            header: "Denominación"
         },
         {
             fieldName: "",
             header: "Vinculación MGA",
+            renderCell: (row) => {
+                return (<>-</>)
+            }
+
         },
         {
             fieldName: "",
-            header: "Pospre Sapiencia"
+            header: "Pospre Sapiencia",
+            renderCell: (row) => {
+                return (<>{row.pospresap.length > 0 ? row.pospresap.length : '-'}</>)
+            }
         },
         
         
     ];
+
     const tableActions: ITableAction<IBudgets>[] = [
         {
             icon: "Detail",
@@ -90,15 +92,6 @@ export function useBudgetsData() {
 
     useEffect(() => {
         loadTableData();
-        GetEntities().then(response => {
-            if (response.operation.code === EResponseCodes.OK) {
-                const entities: IEntities[] = response.data;
-                const arrayEntities: IDropdownProps[] = entities.map((entity) => {
-                    return { name: entity.name, value: entity.id };
-                });
-                setEntitiesData(arrayEntities);
-            }
-        }).catch(() => { });
     }, [])
 
     useEffect(() => {
@@ -121,7 +114,6 @@ export function useBudgetsData() {
         setDateFrom,
         dateTo,
         setDateTo,
-        entitiesData,
         controlRegister,
         setIsVisibleTable
     }

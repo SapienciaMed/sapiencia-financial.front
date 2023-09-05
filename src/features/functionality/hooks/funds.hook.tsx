@@ -84,11 +84,11 @@ export function useFundsData() {
                     },
                     {
                         title: "Validez de",
-                        value: `${DateTime.fromJSDate(row.dateTo).toLocaleString()}`
+                        value: `${DateTime.fromISO(row.dateFrom).toLocaleString()}`
                     },
                     {
                         title: "Validez a",
-                        value: `${DateTime.fromJSDate(row.dateTo).toLocaleString()}`
+                        value: `${DateTime.fromISO(row.dateTo).toLocaleString()}`
                     },
                     {
                         title: "Denominación",
