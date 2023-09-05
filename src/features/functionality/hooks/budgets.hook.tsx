@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { useForm } from "react-hook-form";
@@ -9,6 +9,9 @@ import { IDropdownProps } from "../../../common/interfaces/select.interface";
 import { useEntitiesService } from "./entities-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import { IEntities } from "../interfaces/Entities";
+import { useVinculationService } from "./vinculation-mga-service.hook";
+import { IActivityMGA } from "../interfaces/VinculationMGAInterfaces";
+import { AppContext } from "../../../common/contexts/app.context";
 
 interface IFilterBudgets {
     number: string
@@ -24,6 +27,9 @@ export function useBudgetsData() {
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
     const [isVisibleTable, setIsVisibleTable] = useState<Boolean>(false);
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
+    const {GetMgaLinkage} = useVinculationService()
+    const [ mgaLinkageData,setMgaLinkageData] = useState<IActivityMGA[]>(null)
+    const { setMessage } = useContext(AppContext);
     
     const {
     handleSubmit,
@@ -48,6 +54,21 @@ export function useBudgetsData() {
         {
             fieldName: "",
             header: "Vinculación MGA",
+            renderCell: (row) => {
+                console.log("🚀 row:", row)
+                  
+                let algo: IActivityMGA[] = []
+                // if(setMgaLinkageData) algo = mgaLinkageData.filter(object => object.id === )
+                console.log("🚀  mgaLinkageData:", mgaLinkageData)
+                return (
+                    <>
+                        {
+                        mgaLinkageData ? <> </> : <> </>
+                        }
+                    </>
+                )
+            }
+
         },
         {
             fieldName: "",
@@ -56,6 +77,7 @@ export function useBudgetsData() {
         
         
     ];
+
     const tableActions: ITableAction<IBudgets>[] = [
         {
             icon: "Detail",
@@ -77,6 +99,27 @@ export function useBudgetsData() {
         }
     ];
 
+    function mgaLinkage (id: number) {
+        GetMgaLinkage(String(id), '1', '10').then(response => {
+            if (response.operation.code === EResponseCodes.OK) {
+                const data: IActivityMGA = response.data;
+                setMgaLinkageData([data])
+            }else{
+                setMessage({
+                    title: "Validacion de datos",
+                    description: response.operation.message,
+                    show: true,
+                    OkTitle: "Aceptar",
+                    onOk: () => {
+                        setMessage({});
+                    },
+                    background: true
+                })
+            }
+        }).catch(err => console.log(err))
+
+    }
+
     function loadTableData(searchCriteria?: object): void {
         if (tableComponentRef.current) {
             tableComponentRef.current.loadData(searchCriteria);
@@ -90,15 +133,15 @@ export function useBudgetsData() {
 
     useEffect(() => {
         loadTableData();
-        GetEntities().then(response => {
-            if (response.operation.code === EResponseCodes.OK) {
-                const entities: IEntities[] = response.data;
-                const arrayEntities: IDropdownProps[] = entities.map((entity) => {
-                    return { name: entity.name, value: entity.id };
-                });
-                setEntitiesData(arrayEntities);
-            }
-        }).catch(() => { });
+        // GetEntities().then(response => {
+        //     if (response.operation.code === EResponseCodes.OK) {
+        //         const entities: IEntities[] = response.data;
+        //         const arrayEntities: IDropdownProps[] = entities.map((entity) => {
+        //             return { name: entity.name, value: entity.id };
+        //         });
+        //         setEntitiesData(arrayEntities);
+        //     }
+        // }).catch(() => { });
     }, [])
 
     useEffect(() => {
@@ -121,7 +164,6 @@ export function useBudgetsData() {
         setDateFrom,
         dateTo,
         setDateTo,
-        entitiesData,
         controlRegister,
         setIsVisibleTable
     }
