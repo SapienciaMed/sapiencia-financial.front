@@ -10,6 +10,7 @@ import { EDirection } from "../../../common/constants/input.enum";
 import { useBudgetsCrudData } from "../hooks/budgets-crud.hook";
 import { useParams } from "react-router-dom";
 import TableComponent from "../../../common/components/table.component";
+import { Controller } from "react-hook-form";
 
 interface IAppProps {
   action: "new" | "edit";
@@ -55,26 +56,53 @@ function BudgetsForm({ action }: IAppProps) {
           >
             <div className="card-form">
               <div className="fund-data-container">
-                <InputComponent
-                  idInput="number"
-                  register={register}
-                  typeInput="number"
-                  errors={errors}
-                  label="Posicion Presupuestaria"
-                  classNameLabel="text-black biggest bold"
-                  min={0}
+                <Controller
+                  control={controlRegister}
+                  name={"number"}
+                  defaultValue=""
+                  render={({ field }) => {
+                    return (
+                      <InputComponent
+                        id={field.name}
+                        idInput={field.name}
+                        value={`${field.value}`}
+                        className="input-basic"
+                        typeInput="text"
+                        register={register}
+                        label="Posición Presupuestaria"
+                        classNameLabel="text-black biggest bold text-required"
+                        direction={EDirection.column}
+                        errors={errors}
+                        onChange={field.onChange}
+                        min={0}
+                        disabled={action !== "new"}
+                      /> 
+                    )
+                  }}
                 />
-
-                <InputComponent
-                  idInput="ejercise"
-                  className="input-basic"
-                  typeInput="number"
-                  register={register}
-                  label="Ejercicio"
-                  classNameLabel="text-black biggest bold"
-                  direction={EDirection.row}
-                  errors={errors}
-                  min={0}
+                 <Controller
+                  control={controlRegister}
+                  name={"ejercise"}
+                  defaultValue=""
+                  render={({ field }) => {
+                    return (
+                      <InputComponent
+                        id={field.name}
+                        idInput={field.name}
+                        value={`${field.value}`}
+                        className="input-basic"
+                        typeInput="text"
+                        register={register}
+                        label="Ejercicio"
+                        classNameLabel="text-black biggest bold text-required"
+                        direction={EDirection.column}
+                        errors={errors}
+                        onChange={field.onChange}
+                        min={0}
+                        disabled={action !== "new"}
+                      /> 
+                    )
+                  }}
                 />
 
                 <SelectComponent
@@ -83,9 +111,10 @@ function BudgetsForm({ action }: IAppProps) {
                   control={controlRegister}
                   errors={errors}
                   label="Entidad CP"
-                  classNameLabel="text-black biggest bold"
-                  direction={EDirection.row}
+                  classNameLabel="text-black biggest bold text-required"
+                  direction={EDirection.column}
                   data={entitiesData}
+                  disabled={action !== "new"}
                 />
               </div>
             </div>
@@ -94,24 +123,52 @@ function BudgetsForm({ action }: IAppProps) {
                 <div className="text-black biggest bold">Datos básicos</div>
               </div>
               <div className="fund-denomination-container">
-                <InputComponent
-                  idInput="denomination"
-                  register={register}
-                  typeInput="text"
-                  errors={errors}
-                  label="Denominación"
-                  classNameLabel="text-black biggest bold"
+                <Controller
+                  control={controlRegister}
+                  name={"denomination"}
+                  defaultValue=""
+                  render={({ field }) => {
+                    return (
+                      <InputComponent
+                        id={field.name}
+                        idInput={field.name}
+                        value={`${field.value}`}
+                        className="input-basic"
+                        typeInput="text"
+                        register={register}
+                        label="Denominación"
+                        classNameLabel="text-black biggest bold text-required"
+                        direction={EDirection.column}
+                        errors={errors}
+                        onChange={field.onChange}
+                      /> 
+                    )
+                  }}
                 />
               </div>
 
               <div className="fund-denomination-container">
-                <InputComponent
-                  idInput="description"
-                  register={register}
-                  typeInput="text"
-                  errors={errors}
-                  label="Descripción"
-                  classNameLabel="text-black biggest bold"
+                <Controller
+                  control={controlRegister}
+                  name={"description"}
+                  defaultValue=""
+                  render={({ field }) => {
+                    return (
+                      <InputComponent
+                        id={field.name}
+                        idInput={field.name}
+                        value={`${field.value}`}
+                        className="input-basic"
+                        typeInput="text"
+                        register={register}
+                        label="Descripción"
+                        classNameLabel="text-black biggest bold text-required"
+                        direction={EDirection.column}
+                        errors={errors}
+                        onChange={field.onChange}
+                      /> 
+                    )
+                  }}
                 />
               </div>
             </div>
@@ -147,7 +204,7 @@ function BudgetsForm({ action }: IAppProps) {
               >
                 Cancelar
               </span>
-              <ButtonComponent value="Guardar" type="submit" />
+              <ButtonComponent value="Guardar" type="submit" className="button-main huge" />
             </div>
           </FormComponent>
         </div>

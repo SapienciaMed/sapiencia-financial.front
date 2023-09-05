@@ -107,6 +107,7 @@ export function SelectComponent({
               filter={filter}
               emptyMessage={emptyMessage}
               emptyFilterMessage={emptyMessage}
+              virtualScrollerOptions={{ itemSize: 38}}
             />
           )}
         />

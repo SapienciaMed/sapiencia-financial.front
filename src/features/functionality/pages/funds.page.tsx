@@ -4,29 +4,33 @@ import TableComponent from "../../../common/components/table.component";
 import { EDirection } from "../../../common/constants/input.enum";
 import { useFundsData } from "../hooks/funds.hook";
 import React from "react";
+import { Controller } from "react-hook-form";
 
 interface IAppProps { }
 
 function FoundsPage(props: IAppProps): React.JSX.Element {
-    const {
-      tableActions,
-      tableColumns,
-      tableComponentRef,
-      onSubmit,
-      navigate,
-      register,
-      errors,
-      reset,
-      controlRegister,
-      entitiesData,
-      isVisibleTable,
-      setIsVisibleTable,
-      validatorNumber,
-      isValid,
+  const {
+    tableActions,
+    tableColumns,
+    tableComponentRef,
+    onSubmit,
+    navigate,
+    register,
+    errors,
+    reset,
+    controlRegister,
+    entitiesData,
+    isVisibleTable,
+    setIsVisibleTable,
+    isBtnDisable
   } = useFundsData();
-  console.log(isValid);
-    return (
-      <div>
+
+  return (
+    <div className='main-page'>
+      <div className='card-table'>
+        <div className="title-area">
+            <div className="text-black extra-large bold">Fondos</div>
+        </div>
         <FormComponent action={onSubmit}>
           <div className="card-form">
             <div className="title-area">
@@ -48,20 +52,32 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
                 errors={errors}
                 label="Entidad CP"
                 classNameLabel="text-black biggest bold"
-                direction={EDirection.row}
+                direction={EDirection.column}
                 data={entitiesData}
                 control={controlRegister}
               />
-              <InputComponent
-                idInput="number"
-                className="input-basic"
-                typeInput="number"
-                register={register}
-                label="Fondos"
-                classNameLabel="text-black biggest bold"
-                direction={EDirection.row}
-                errors={errors}
-                onChange={validatorNumber}
+              <Controller
+                control={controlRegister}
+                name={"number"}
+                defaultValue=''
+                render={({ field }) => {
+                  return (
+                    <InputComponent
+                      id={field.name}
+                      idInput={field.name}
+                      value={`${field.value}`}
+                      className="input-basic"
+                      typeInput="number"
+                      register={register}
+                      label="Fondos"
+                      classNameLabel="text-black biggest bold"
+                      direction={EDirection.column}
+                      errors={errors}
+                      onChange={field.onChange}
+                      min={0}
+                    /> 
+                  )
+                }}
               />
               <DatePickerComponent
                 idInput="dateFrom"
@@ -100,7 +116,7 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
               className="button-main huge hover-three"
               value="Buscar"
               type="submit"
-              disabled={false}
+              disabled={!isBtnDisable}
             />
           </div>
         </FormComponent>
@@ -109,17 +125,18 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
             isVisibleTable ? "card-form isVisible" : "card-form isNotVisible"
           }
         >
-          <TableComponent
-            ref={tableComponentRef}
-            url={`${process.env.urlApiFinancial}/api/v1/funds/get-paginated`}
-            columns={tableColumns}
-            actions={tableActions}
-            isShowModal={true}
-            titleMessageModalNoResult={"Buscar"}
-          />
+        <TableComponent
+          ref={tableComponentRef}
+          url={`${process.env.urlApiFinancial}/api/v1/funds/get-paginated`}
+          columns={tableColumns}
+          actions={tableActions}
+          isShowModal={true}
+          titleMessageModalNoResult={"Fondos"}
+        />
         </div>
-      </div>
-    );
+      </div>          
+    </div>
+  );
 }
 
 export default React.memo(FoundsPage);

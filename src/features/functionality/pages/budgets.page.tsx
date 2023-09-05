@@ -4,87 +4,89 @@ import { EDirection } from "../../../common/constants/input.enum";
 import { useBudgetsData } from "../hooks/budgets.hook";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { useEffect, useState } from "react";
+import { Controller } from "react-hook-form";
 interface IAppProps { }
 
 
 function BudgetsPage(props: IAppProps): React.JSX.Element {
-    const [inputBuggetPosition, setInputBuggetPosition] = useState('')
-    const [isBtnDisable, setIsBtnDisable] = useState(false)
-    const { tableActions, tableColumns, tableComponentRef, navigate, onSubmit, register, errors, reset, showTable, setShowTable, controlRegister } = useBudgetsData();
+    const { tableActions, tableColumns, tableComponentRef, navigate, onSubmit, 
+        register, errors, reset, isBtnDisable, setIsVisibleTable, controlRegister, isVisibleTable } = useBudgetsData();
 
-   
-    const handleChange = (e:any)=>{
-        setInputBuggetPosition(e.target.value)
-    }
-
-    useEffect(() => {
-        inputBuggetPosition.length>0 
-            ? setIsBtnDisable(true)
-            : setIsBtnDisable(false)
-    }, [inputBuggetPosition])
 
     return (
-        <div>
-            <FormComponent action={onSubmit}>
-                <div className="card-form">
-                    <div className="title-area">
-                        <label className="text-black biggest bold">
-                            Consultar Posición Presupuestaria
-                        </label>
-                        <div className="title-button text-three biggest">
-                            <span style={{ marginRight: '0.5em' }} onClick={() => { navigate('./create') }}> Crear Pospre</span>
-                            {<AiOutlinePlusCircle size={20} color="533893" />}
+        <div className='main-page'>
+            <div className='card-table'>
+            <div className="title-area">
+                <div className="text-black extra-large bold">Posición Presupuestal</div>
+            </div>
+                <FormComponent action={onSubmit}>
+                    <div className="card-form">
+                        <div className="title-area">
+                            <label className="text-black biggest bold">
+                                Consultar Posición Presupuestal
+                            </label>
+                            <div className="title-button text-three biggest">
+                                <span style={{ marginRight: '0.5em' }} onClick={() => { navigate('./create') }}> Crear Pospre</span>
+                                {<AiOutlinePlusCircle size={20} color="533893" />}
+                            </div>
+                        </div>
+
+                        <div className="one-filter-container">
+                            <Controller
+                                control={controlRegister}
+                                name={"number"}
+                                defaultValue=''
+                                render={({ field }) => {
+                                return (
+                                    <InputComponent
+                                        id={field.name}
+                                        idInput={field.name}
+                                        value={`${field.value}`}
+                                        className="input-basic"
+                                        typeInput="text"
+                                        register={register}
+                                        label="Posición presupuestal"
+                                        classNameLabel="text-black biggest bold"
+                                        direction={EDirection.column}
+                                        errors={errors}
+                                        onChange={field.onChange}
+                                    /> 
+                                )
+                                }}
+                            />
                         </div>
                     </div>
-
-                    <div className="one-filter-container">
-                        <InputComponent
-                            idInput="number"
-                            className="input-basic"
-                            typeInput="number"
-                            register={register}
-                            label="Posición presupuestaria"
-                            classNameLabel="text-black biggest bold"
-                            direction={EDirection.row}
-                            errors={errors}
-                            min={0}
-                            onChange={handleChange}
+                    <div className="funcionality-buttons-container">
+                        <span className="bold text-center button" onClick={() => {
+                           reset();
+                           tableComponentRef.current.emptyData();
+                           setIsVisibleTable(false);
+                        }}>
+                            Limpiar campos
+                        </span>
+                        <ButtonComponent
+                            className="button-main huge hover-three"
+                            value="Buscar"
+                            type="submit"
+                            disabled={!isBtnDisable}
                         />
                     </div>
-                </div>
-                <div className="funcionality-buttons-container">
-                    <span className="bold text-center button" onClick={() => {
-                        reset();
-                        setIsBtnDisable(false)
-                        if(showTable)  {
-                            tableComponentRef.current.emptyData();
-                            setShowTable(false)
-                        }
-                    }}>
-                        Limpiar campos
-                    </span>
-                    <ButtonComponent
-                        className="button-main huge hover-three"
-                        value="Buscar"
-                        type="submit"
-                        disabled={!isBtnDisable}
-                        //disabled={false}
-                    />
-                </div>
-            </FormComponent>
-            {
-            showTable && (
-                    <div className="card-form">
-                        <TableComponent
-                            ref={tableComponentRef}
-                            url={`${process.env.urlApiFinancial}/api/v1/budgets/get-paginated`}
-                            columns={tableColumns}
-                            actions={tableActions}
-                            isShowModal={false}
-                        />
-                    </div>
-                )
-            }
+                </FormComponent>
+                {
+                    isVisibleTable && (
+                            <div className="card-form">
+                                <TableComponent
+                                    ref={tableComponentRef}
+                                    url={`${process.env.urlApiFinancial}/api/v1/budgets/get-paginated`}
+                                    columns={tableColumns}
+                                    actions={tableActions}
+                                    isShowModal={true}
+                                    titleMessageModalNoResult={"Posición Pesupuestal"}
+                                />
+                            </div>
+                    )
+                }
+            </div>
         </div>
     )
 }

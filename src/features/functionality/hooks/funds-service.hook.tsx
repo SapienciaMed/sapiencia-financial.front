@@ -5,7 +5,7 @@ import { IFunds } from "../interfaces/Funds";
 export function useFundsService() {
     const baseURL: string = process.env.urlApiFinancial;
     const roleUrl: string = "/api/v1/funds";
-    const { get, post, put } = useCrudService(null, baseURL);
+    const { get, post, put } = useCrudService( baseURL);
 
     async function GetFund(id: number): Promise<ApiResponse<IFunds>> {
         const endpoint: string = `/get-by-id/${id}`;

@@ -15,11 +15,13 @@ import { useBudgetsService } from "../../functionality/hooks/budgets-service.hoo
 import { usePosPreSapienciaService } from "../../functionality/hooks/pospre-sapiencia-service.hook";
 import { useFundsService } from "../../functionality/hooks/funds-service.hook";
 import { useBudgetRoutesService } from "./budget-routes-service.hook";
+import { useAdditionsTransfersService } from "../../managementCenter/hook/additions-transfers-service.hook";
 
 export function useBudgetRoutesCrudData(id: string) {
     const resolver = useYupValidationResolver(budgetRoutesCrudValidator);
     const { getAllProjectsVinculations } = useProjectsLinkService();
-    const { getAllProjects, GetAllFunctionalAreas } = useFunctionalAreaService();
+    const { GetProjectsList } = useAdditionsTransfersService()
+    const { GetAllFunctionalAreas } = useFunctionalAreaService();
     const { getAllBudgets } = useBudgetsService();
     const { GetAllPosPreSapiencia } = usePosPreSapienciaService();
     const { getAllFunds } = useFundsService();
@@ -50,12 +52,13 @@ export function useBudgetRoutesCrudData(id: string) {
         if (response.operation.code === EResponseCodes.OK) {
             projectsVinculate = response.data;
         }
-        const response2 = await getAllProjects();
+        const response2 = await GetProjectsList({ page: "1", perPage: "1" });
         if (response2.operation.code === EResponseCodes.OK) {
             const arrayProjects: IDropdownProps[] = projectsVinculate.map((projectVinculate) => {
-                const project = response2.data.find((data) => data.id === projectVinculate.projectId);
-                return { name: `${project?.id} - ${project?.name}`, value: projectVinculate.id };
+                const project = response2.data.array.find((data) => data.projectId === projectVinculate.projectId );
+                return { name: `${projectVinculate.projectId} - ${project?.conceptProject ? project.conceptProject : ''}`, value: projectVinculate.id }
             });
+
             setProjectsData(arrayProjects);
         }
         const response3 = await getAllBudgets();
@@ -155,7 +158,7 @@ export function useBudgetRoutesCrudData(id: string) {
                 });
             } else {
                 setMessage({
-                    title: "Hubo un problema...",
+                    title: "Validación de datos",
                     description: response.operation.message,
                     show: true,
                     OkTitle: "Aceptar",
@@ -193,7 +196,7 @@ export function useBudgetRoutesCrudData(id: string) {
                 });
             } else {
                 setMessage({
-                    title: "Hubo un problema...",
+                    title: "Validación de datos",
                     description: response.operation.message,
                     show: true,
                     OkTitle: "Aceptar",

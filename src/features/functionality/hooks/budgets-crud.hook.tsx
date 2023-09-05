@@ -12,8 +12,8 @@ import { AppContext } from "../../../common/contexts/app.context";
 import { budgetsCrudValidator } from "../../../common/schemas/budgets-schemas";
 
 interface IBudgetsCrudForm {
-    number:number;
-    ejercise:number;
+    number: string;
+    ejercise: string;
     entity: number;
     denomination: string;
     description: string;
@@ -64,11 +64,11 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
 
     useEffect(() => {
         if (!budgetsData) return;
-        setValueRegister("number", budgetsData.number);
+        setValueRegister("number", String(budgetsData.number));
         setValueRegister("entity", budgetsData.entityId);
         setValueRegister("denomination", budgetsData.denomination);
         setValueRegister("description", budgetsData.description);
-        setValueRegister("ejercise",budgetsData.ejercise);
+        setValueRegister("ejercise", String(budgetsData.ejercise));
     }, [budgetsData])
 
     const onSubmitNewBudgets = handleSubmit(async (data: IBudgetsCrudForm) => {
@@ -78,7 +78,7 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
             denomination: data.denomination,
             description: data.description,
             userCreate: authorization.user.numberDocument,
-            ejercise: data.ejercise,
+            ejercise: parseInt(data.ejercise),
         }
         CreateBudgets(insertData).then(response => {
             if (response.operation.code === EResponseCodes.OK) {
@@ -95,7 +95,7 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
                 });
             } else {
                 setMessage({
-                    title: "Hubo un problema...",
+                    title: "Validacion de datos",
                     description: response.operation.message,
                     show: true,
                     OkTitle: "Aceptar",
@@ -115,9 +115,9 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
             denomination: data.denomination,
             description: data.description,
             userCreate: authorization.user.numberDocument,
-            ejercise: data.ejercise,
+            ejercise: parseInt(data.ejercise),
         }
-        vinculateActivities && await vinculateActivities();
+        
         setMessage({
             title: "Guardar",
             description: "¿Estas segur@ de guardar la información en el sistema?",
@@ -125,6 +125,7 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
             OkTitle: "Aceptar",
             cancelTitle: "Cancelar",
             onOk: () => {
+                vinculateActivities &&  vinculateActivities();
                 UpdateBudgets(parseInt(budgetsId), insertData).then(response => {
                     if (response.operation.code === EResponseCodes.OK) {
                         setMessage({
@@ -140,7 +141,7 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
                         });
                     } else {
                         setMessage({
-                            title: "Hubo un problema...",
+                            title: "Validacion de datos",
                             description: response.operation.message,
                             show: true,
                             OkTitle: "Aceptar",
@@ -170,7 +171,7 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
 
     const confirmClose = (callback) =>{
         setMessage({
-            title: "Cancelar Pospre",
+            title: "Cancelar Pospre Sapiencia",
             description: "¿Segur@ que desea cancelar la operación?",
             show: true,
             OkTitle: "Aceptar",

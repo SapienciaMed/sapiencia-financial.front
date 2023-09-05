@@ -2,11 +2,10 @@
 import useCrudService from '../../../common/hooks/crud-service.hook';
 import { ApiResponse, IPagingData } from '../../../common/utils/api-response';
 import { IAdditionsTransfersDistrictInterfaces, IAdditionsTransfersSapienciaInterfaces, IFundsAdditionList, IPosPreAddition, IPosPreSapienciaAdditionList, IProjectAdditionList } from '../../functionality/interfaces/AdditionsTransfersInterfaces';
-
 export const useAdditionsTransfersService = () => {
     const baseURL: string = process.env.urlApiFinancial;
     const roleUrl: string = "/api/v1/additions";
-    const { get, post } = useCrudService(null, baseURL);
+    const { get, post } = useCrudService( baseURL);
 
     async function GetAllAdditionsByDistrict(): Promise<ApiResponse<IAdditionsTransfersDistrictInterfaces[]>> {
         const endpoint: string = "/get-actadmin-district";

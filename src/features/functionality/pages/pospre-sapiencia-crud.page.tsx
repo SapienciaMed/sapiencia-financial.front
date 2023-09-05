@@ -40,7 +40,7 @@ function PosPreSapienciaForm({ action }: IAppProps) {
                                                     register={register}
                                                     label="Código pospre"
                                                     classNameLabel="text-black biggest bold"
-                                                    direction={EDirection.row}
+                                                    direction={EDirection.column}
                                                     errors={errors}
                                                     onChange={field.onChange}
                                                     disabled={action === "new" ? false : true}
@@ -63,7 +63,7 @@ function PosPreSapienciaForm({ action }: IAppProps) {
                                                     register={register}
                                                     label="Ejercicio"
                                                     classNameLabel="text-black biggest bold"
-                                                    direction={EDirection.row}
+                                                    direction={EDirection.column}
                                                     errors={errors}
                                                     onChange={field.onChange}
                                                     disabled={action === "new" ? false : true}
@@ -117,7 +117,7 @@ function PosPreSapienciaForm({ action }: IAppProps) {
                                                 register={register}
                                                 label="Pospre sapiencia"
                                                 classNameLabel="text-black biggest bold"
-                                                direction={EDirection.row}
+                                                direction={EDirection.column}
                                                 errors={errors}
                                                 onChange={field.onChange}
                                                 min={0}
