@@ -8,6 +8,7 @@ import ScreenAddIncome from '../pages/screen-add-income.page';
 import { IArrayDataSelect, IMessage } from '../../../common/interfaces/global.interface';
 import { AddValidHeaders } from '../../../common/constants/doc.enum';
 import { IAdditionsForm } from '../interfaces/Additions';
+import { generarIdAleatorio } from '../../../common/utils/randomGenerate';
 
 interface IAppProps {
     titleAdd: string,
@@ -17,11 +18,11 @@ interface IAppProps {
     getValues: UseFormGetValues<IAdditionsForm>,
     register: UseFormRegister<IAdditionsForm>,
     invalidCardsAdditionSt: any;
-    setValue:any;
-    watch:any;
+    setValue: any;
+    watch: any;
 }
 
-function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getValues, showModal, register, invalidCardsAdditionSt, setValue, watch}: IAppProps) {
+function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getValues, showModal, register, invalidCardsAdditionSt, setValue, watch }: IAppProps) {
 
     const [isSearchByName, setIsSearchByName] = useState(false)
 
@@ -29,11 +30,11 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
         control: controlRegister,
         name: 'ingreso'
     });
-    
+
     const { errors, isValid, dirtyFields } = useFormState({
         control: controlRegister,
     })
-    
+
     const watchIncome = useWatch({
         control: controlRegister,
         name: 'ingreso'
@@ -44,9 +45,6 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
     const itemsPerPage = 5;
     const startIndex = (currentPage - 1) * itemsPerPage;
     const visibleFields = fields.slice(startIndex, startIndex + itemsPerPage);
-
-    
-    
 
     const onPaste = async () => {
         try {
@@ -84,19 +82,22 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
                 OkTitle: "Aceptar",
             })
 
-        output.length > 0 && setDataPaste(output.map((item:any, index:number) => ({
-            isPaste:true,
-            cardId:item.POSPRE,
+        output.length > 0 && setDataPaste(output.map((item: any, index: number) => ({
+            isPaste: true,
+            cardId: generarIdAleatorio(20),
             managerCenter: item.CENTROGESTOR,
             projectId: `${item.PROYECTO}`,
             //projectId: `${item.PROYECTO} - ${item.NOMBREPROYECTO}`,
             functionalArea: item.ÁREAFUNCIONAL,
             funds: item.FONDO,
             posPre: item.POSPRE,
-            value: item.VALOR.replaceAll('.',''),
+            value: item.VALOR.replaceAll('.', ''),
+            projectName:item.NOMBREPROYECTO
         })))
     }
 
+    
+    
     const onPageChange = event => {
         setCurrentPage(event.page + 1);
     };
@@ -115,7 +116,9 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
     };
 
     useEffect(() => {
-        dataPaste.length > 0 && append(dataPaste)
+        //if (isDatePasteFixed) {
+            dataPaste.length > 0 && append(dataPaste)
+        //}
     }, [dataPaste])
 
     useEffect(() => {
@@ -139,7 +142,7 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
                             append({
                                 managerCenter: '',
                                 projectId: '',
-                                projectName:'',
+                                projectName: '',
                                 functionalArea: '',
                                 funds: '',
                                 posPre: '',
@@ -156,7 +159,7 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
                     return (
                         <div key={field.id}>
                             <ScreenAddIncome controlRegister={controlRegister} titleAdd={titleAdd} fields={fields} arrayDataSelect={arrayDataSelect}
-                                remove={remove} count={startIndex + index} errors={errors} register={register} cardId={field.id} invalidCardsAdditionSt={invalidCardsAdditionSt} setValue={setValue} watch={watch} isSearchByName={isSearchByName}/>
+                                remove={remove} count={startIndex + index} errors={errors} register={register} cardId={field.id} invalidCardsAdditionSt={invalidCardsAdditionSt} setValue={setValue} watch={watch} isSearchByName={isSearchByName} />
                         </div>
                     )
                 })
