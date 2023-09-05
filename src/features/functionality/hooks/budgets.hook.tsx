@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { fundsValidator } from "../../../common/schemas";
 import { IBudgets } from "../interfaces/Budgets";
+import { budgetsValidator } from "../../../common/schemas/budgets-schemas";
 
 interface IFilterBudgets {
     number: string
@@ -13,7 +14,7 @@ interface IFilterBudgets {
 export function useBudgetsData() {
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
-    const resolver = useYupValidationResolver(fundsValidator);
+    const resolver = useYupValidationResolver(budgetsValidator);
     const [dateFrom, setDateFrom] = useState(null);
     const [dateTo, setDateTo] = useState(null);
     const [isVisibleTable, setIsVisibleTable] = useState<Boolean>(false);
