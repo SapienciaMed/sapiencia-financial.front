@@ -24,6 +24,8 @@ interface IAppProps {
 
 function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSelect, showModal, register, invalidCardsAdditionSt, setValue, watch }: IAppProps ){
 
+    const [isSearchByName, setIsSearchByName] = useState(false)
+
     const { fields, append, remove } = useFieldArray({
         control: controlRegister,
         name: 'gasto'
@@ -48,6 +50,7 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
         try {
             const text = await navigator.clipboard.readText()
             constructJSONFromPastedInput(text);
+            setIsSearchByName(true)
         } catch (error) {
             console.log(error);
         }
@@ -80,13 +83,16 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
         })
         
 
-        output.length > 0 && setDataPaste(output.map(item => ({
+        output.length > 0 && setDataPaste(output.map((item:any,index:number) => ({
+            isPaste:true,
+            cardId:item.POSPRE,
             managerCenter: item.CENTROGESTOR,
-            projectId: `${item.PROYECTO} - ${item.NOMBREPROYECTO}` ,
+            //projectId: `${item.PROYECTO} - ${item.NOMBREPROYECTO}` ,
+            projectId: `${item.PROYECTO}` ,
             functionalArea: item.ÁREAFUNCIONAL,
             funds: item.FONDO,
             posPre: item.POSPRE,
-            value: item.VALOR,
+            value: item.VALOR.replaceAll('.',''),
         })))  
     }
  
@@ -141,7 +147,7 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
                             posPre: '',
                             value: '',
                             cardId:''
-                        })
+                        });setIsSearchByName(false)
                     }}
                     > Añadir { titleAdd } <BiPlusCircle/> </div>
                 </div>
@@ -150,7 +156,7 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
                 visibleFields.map((field, index) => (
                     <div key={field.id}>
                         <ScreenAddIncomePage controlRegister={controlRegister} titleAdd={titleAdd} fields={fields} arrayDataSelect={arrayDataSelect}
-                            remove={remove} count={startIndex + index} errors={errors} register={register} cardId={field.id} invalidCardsAdditionSt={invalidCardsAdditionSt} setValue={setValue} watch={watch}/>
+                            remove={remove} count={startIndex + index} errors={errors} register={register} cardId={field.id} invalidCardsAdditionSt={invalidCardsAdditionSt} setValue={setValue} watch={watch} isSearchByName={isSearchByName}/>
                     </div>
                 ))
             }

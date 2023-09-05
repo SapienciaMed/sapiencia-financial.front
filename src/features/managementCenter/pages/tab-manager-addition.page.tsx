@@ -28,7 +28,7 @@ function TabManagerAdditionPage({
   onSubmitTab,
   watch,
   invalidCardsAdditionSt,
-  setValue
+  setValue,
 }: IAppProps) {
   const { option } = useParams();
   const navigate = useNavigate();

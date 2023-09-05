@@ -7,6 +7,7 @@ import { AppContext } from "../../../common/contexts/app.context";
 import { IArrayDataSelect, IMessage } from "../../../common/interfaces/global.interface";
 import { useAdditionsTransfersService } from "./additions-transfers-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
+import { useNavigate } from "react-router-dom";
 
 
 export function useAdditionAreaCrud() {
@@ -20,9 +21,9 @@ export function useAdditionAreaCrud() {
     funds: [],
     posPre: []
   })
-
+  const navigate = useNavigate();
   const [invalidCardsAdditionSt, setInvalidCardsAdditionSt] = useState([])
-
+  
   const {
     handleSubmit,
     register,
@@ -46,6 +47,7 @@ export function useAdditionAreaCrud() {
 
 const { ingreso, gasto } = getValues()
 console.log({ ingreso, gasto })
+//console.log({ arrayDataSelect:arrayDataSelect.functionalArea.find(e=>e.name==) })
 //useEffect(() => {
 //  let incomeRes = getAreasByProject(arrayDataSelect.functionalArea, watchForm.ingreso)
 //  let outcomeRes = getAreasByProject(arrayDataSelect.functionalArea, watchForm.gasto)
@@ -81,14 +83,17 @@ const validateButton = (values) => { return Object.values(values).every(campo =>
   }, [watch]);
 
   const onSubmitTab = handleSubmit(async (data: IAdditionsForm) => {
+    
+    let isPaste = (Object(data).ingreso[0].isPaste || Object(data).gasto[0].isPaste) ?? false;
+    
     const ingresoFixed = data.ingreso.map(outcome => ({
         idCard: outcome.cardId,
         type: 'Ingreso',
         managerCenter: outcome.managerCenter,
-        projectId: outcome.projectId,
-        fundId: outcome.funds,
-        budgetPosition: outcome.posPre,
-        value: outcome.value
+        projectId: isPaste ? (arrayDataSelect.functionalArea.find(e=>e.name==outcome.projectId)).id : outcome.projectId,
+        fundId: isPaste ? (arrayDataSelect.funds.find(e=>e.name==outcome.funds)).id  : outcome.funds,
+        budgetPosition: isPaste ? (arrayDataSelect.posPre.find(e=>e.name==outcome.posPre)).id : outcome.posPre,
+        value: parseFloat(outcome.value)
       })
   )
     
@@ -96,10 +101,10 @@ const validateButton = (values) => { return Object.values(values).every(campo =>
         idCard: outcome.cardId,
         type: 'Gasto',
         managerCenter: outcome.managerCenter,
-        projectId: outcome.projectId,
-        fundId: outcome.funds,
-        budgetPosition: outcome.posPre,
-        value: outcome.value
+        projectId: isPaste ? (arrayDataSelect.functionalArea.find(e=>e.name==outcome.projectId)).id : outcome.projectId,
+        fundId: isPaste ? (arrayDataSelect.funds.find(e=>e.name==outcome.funds)).id  : outcome.funds,
+        budgetPosition: isPaste ? (arrayDataSelect.posPre.find(e=>e.name==outcome.posPre)).id : outcome.posPre,
+        value: parseFloat(outcome.value)
       })
   )
 
@@ -117,6 +122,7 @@ const validateButton = (values) => { return Object.values(values).every(campo =>
     },
     additionMove: ingresoFixed.concat(gastoFixed)
   }
+  console.log({addition})
   let resValidate = await validateCreateAdition(addition)
   if(resValidate.operation.code == 'FAIL'){
 
@@ -150,7 +156,10 @@ const validateButton = (values) => { return Object.values(values).every(campo =>
       show: true,
       OkTitle: "Aceptar",
       cancelTitle: "Cancerlar",
-     // onOk?: () => void;
+      onOk: () => {
+        setMessage({})
+        onCancelNew()
+      }
      // onCancel?: () => void;
      // onClickOutClose?: boolean;
      // onClose?: () => void;
@@ -180,6 +189,9 @@ const identifyInvalidcard = (additionMove:any,message:string)=>{
 
 }
 
+const onCancelNew = () => {
+  navigate("./../");
+};
 
 const showModal = (values: IMessage) => {
   setMessage({
@@ -188,6 +200,10 @@ const showModal = (values: IMessage) => {
     show: true,
     OkTitle: values.OkTitle,
     onOk: values.onOk || (() => setMessage({})),
+    //onOk: () => {
+      //onCancelNew();
+      //setMessage({});
+      //},
   });
 };
 
@@ -199,18 +215,19 @@ useEffect(() => {
 
         const seenNames = new Set();
         const arrayEntitiesProject = projectArray.reduce((acc, item) => {
-          const name = item.conceptProject;
+          const description = item.conceptProject;
+          const name = item.projectId;
           const value = item.id;
           const id = item.id;
           const area = [{
-            name:item.areaFuntional.denomination,
+            name:item.areaFuntional.number,
             value:item.areaFuntional.id,
             id:item.areaFuntional.id
           }]
           
           if (!seenNames.has(name)) {
             seenNames.add(name);
-            acc.push({ name, value, id, area });
+            acc.push({ name, value, id, area, description });
           }
 
           return acc;
@@ -282,6 +299,6 @@ return {
   setMessage,
   getValues,
   invalidCardsAdditionSt,
-  setValue
+  setValue,
 };
 }
