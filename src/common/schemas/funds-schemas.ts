@@ -5,6 +5,7 @@ export const fundsValidator = yup.object({
     number: yup
     .string()
     .max(30, 'Solo se permiten 30 caracteres' )
+    .matches(/^[0-9]+$/, "Solo se permiten numeros")
 });
 
 export const fundsCrudValidator = yup.object({
