@@ -1,4 +1,5 @@
 import { EResponseCodes } from "../constants/api.enum";
+import { IDropdownProps } from "./select.interface";
 
 export interface IMessage {
   type?: EResponseCodes;
@@ -35,4 +36,11 @@ export interface IGenericList {
   itemDescription: string;
   parentGrouper?: string;
   parentItemCode?: string;
+}
+
+export interface IArrayDataSelect{
+  functionalArea: IDropdownProps[],
+  areas: IDropdownProps[],
+  funds: IDropdownProps[],
+  posPre: IDropdownProps[]
 }

@@ -13,6 +13,7 @@ import { FunctionalityRoutes } from "./features/functionality/functionality-rout
 const Home = lazy(() => import("./features/home/pages/home.page"));
 const BudgetRoutes = lazy(()  => import("./features/budget-routes/pages/budget-routes.page"));
 const BudgetRoutesCrudPage = lazy(()  => import("./features/budget-routes/pages/budget-routes-crud.page"));
+const AdditionAreaCrudPage = lazy(() => import("./features/managementCenter/pages/addition-area-crud.page"))
 
 function App() {
   const { publish } = useAppCominicator();
@@ -38,6 +39,7 @@ function App() {
               <Route path={"/gestion-financiera/presupuesto/*"} element={<FunctionalityRoutes/>} />
 
               <Route path={"/gestion-financiera/centro-gestor/*"} element={<ManagementCenterRoutes/>} />
+              <Route path={"/gestion-financiera/centro-gestor/adicion/create"} element={<AdditionAreaCrudPage actionForm="new"/>} />
 
               <Route path={"/gestion-financiera/ruta-presupuestal"} element={<BudgetRoutes/>} />
               <Route path={"/gestion-financiera/ruta-presupuestal/create"} element={<BudgetRoutesCrudPage action="new"/>} />

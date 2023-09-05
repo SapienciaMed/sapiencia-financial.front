@@ -21,6 +21,8 @@ interface ISelectProps<T> {
   fieldArray?: boolean;
   filter?: boolean;
   emptyMessage?: string;
+  optionSelected?:Function;
+  isSearchByName?:boolean;
 }
 
 function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
@@ -49,6 +51,8 @@ export function SelectComponent({
   fieldArray,
   filter,
   emptyMessage = "Sin resultados.",
+  optionSelected,
+  isSearchByName
 }: ISelectProps<any>): React.JSX.Element {
   if (data) {
     const seleccione: IDropdownProps = { name: "Seleccione", value: null };
@@ -62,7 +66,7 @@ export function SelectComponent({
     const keysError = idInput.split(".");
     let errs = errors;
     if (fieldArray) {
-      const errorKey = `${keysError[0]}[${keysError[1]}].${keysError[2]}`;
+      const errorKey = `${keysError[0]}.${keysError[1]}`;
       return errors[errorKey]?.message;
     } else {
       for (let key of keysError) {
@@ -93,8 +97,8 @@ export function SelectComponent({
           render={({ field }) => (
             <Dropdown
               id={field.name}
-              value={data ? data.find((row) => row.value === field.value)?.value : null}
-              onChange={(e) => field.onChange(e.value)}
+              value={data ? data.find((row) => (isSearchByName==true ? row.name : row.value) === field.value)?.id : null}
+              onChange={(e) => {field.onChange(e.value);optionSelected && optionSelected(e.value)}}
               options={data}
               optionLabel="name"
               placeholder={placeholder}

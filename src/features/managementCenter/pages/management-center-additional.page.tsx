@@ -21,7 +21,7 @@ function ManagementCenterAdditionalPage(): React.JSX.Element{
                     <div className="card-form">
                         <div className="title-area"> 
                             <label className="text-black biggest bold"> Consultar adición </label>
-                            <div className="title-button text-three large" onClick={() => { navigate('') }}> Crear adición <BiPlusCircle/> </div>
+                            <div className="title-button text-three large" onClick={() => { navigate('./create') }}> Crear adición <BiPlusCircle/> </div>
                         </div>
                         
                         <div className="funcionality-filters-container">
