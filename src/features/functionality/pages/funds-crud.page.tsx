@@ -65,7 +65,7 @@ function FundsForm({ action }: IAppProps) {
                           className="input-basic"
                           typeInput="number"
                           register={register}
-                          label="Fondos"
+                          label="Fondo"
                           classNameLabel="text-black biggest bold text-required"
                           direction={EDirection.column}
                           errors={errors}
@@ -161,7 +161,7 @@ function FundsForm({ action }: IAppProps) {
                 <span
                   className="bold text-center button"
                   onClick={() => {
-                    confirmClose(action === "new" ? onCancelNew : onCancelEdit);
+                    confirmClose(action === "new" ? onCancelNew : onCancelEdit, action);
                   }}
                 >
                   Cancelar
@@ -181,7 +181,7 @@ function FundsForm({ action }: IAppProps) {
             <span
               className="bold text-center button"
               onClick={() => {
-                confirmClose(action === "new" ? onCancelNew : onCancelEdit);
+                confirmClose(action === "new" ? onCancelNew : onCancelEdit, action);
               }}
             >
               Cancelar
