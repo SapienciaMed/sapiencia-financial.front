@@ -37,7 +37,7 @@ export function useBudgetsData() {
         },
         {
             fieldName: "denomination",
-            header: "Denominacion"
+            header: "Denominación"
         },
         {
             fieldName: "",
