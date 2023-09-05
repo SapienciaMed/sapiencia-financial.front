@@ -1,6 +1,11 @@
 import * as yup from "yup";
 
-export const budgetsValidator = yup.object({});
+export const budgetsValidator = yup.object({
+    number: yup
+    .string()
+    .max(30, 'Solo se permiten 30 caracteres' )
+    .matches(/^[0-9]+$/, "Solo se permiten numeros")
+});
 
 export const budgetsCrudValidator = yup.object({
     entity: yup.string().required("El campo es obligatorio"),
