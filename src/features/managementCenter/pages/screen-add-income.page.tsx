@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ButtonComponent, InputComponent, SelectComponent } from "../../../common/components/Form";
-import { Control, FieldErrors, UseFormRegister, useFieldArray, useForm } from 'react-hook-form';
+import { Control, Controller, FieldErrors, UseFormRegister, useFieldArray, useForm } from 'react-hook-form';
 import { IAdditionsForm } from "../interfaces/Additions";
 import { IArrayDataSelect } from "../../../common/interfaces/global.interface";
 import { EDirection } from "../../../common/constants/input.enum";
@@ -32,8 +32,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
     const [cardIdSt, setcardIdSt] = useState("")
 
     useEffect(() => {
-        if (projectName!="" /* cardId != ""  && projectIdSelectedSt && areasByProjectSt && areasByProjectSt.length>0 */) {
-            console.log({areasByProjectSt })
+        if (projectName != "" /* cardId != ""  && projectIdSelectedSt && areasByProjectSt && areasByProjectSt.length>0 */) {
             setValue(`${titleAdd.toLowerCase()}[${count}].cardId`, cardId)
             setValue(`${titleAdd.toLowerCase()}[${count}].projectId`, projectIdSelectedSt)
             setValue(`${titleAdd.toLowerCase()}[${count}].functionalArea`, (areasByProjectSt.filter(e => e.value != null)).id)
@@ -131,7 +130,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             placeholder={'Seleccionar'}
                             filter={true}
                             fieldArray={true}
-                            data={isSearchByName ? ((functionalArea.filter(e=>e.value!=null)).map((e:any)=>e.area)).flat() : areasByProjectSt}
+                            data={isSearchByName ? ((functionalArea.filter(e => e.value != null)).map((e: any) => e.area)).flat() : areasByProjectSt}
                             errors={errors}
                             isSearchByName={isSearchByName}
                         />
@@ -164,10 +163,8 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             errors={errors}
                             isSearchByName={isSearchByName}
                         />
-
                         <InputComponent
                             idInput={`${titleAdd.toLowerCase()}[${count}].value`}
-                            /* idInput="actAdministrativeSapiencia" */
                             label="valor"
                             typeInput="text"
                             className="input-basic"
@@ -176,6 +173,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             errors={errors}
                             register={register}
                         />
+
                     </section>
                     <section className='grid-form-1-container-area mt-5px'>
                         <InputComponent
@@ -188,12 +186,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             errors={errors}
                             register={register}
                         />
-
-
-
-
                     </section>
-
                 </div>
             </div>
         </>
