@@ -98,7 +98,7 @@ export function SelectComponent({
             <Dropdown
               id={field.name}
               value={(data && isSearchByName) 
-                  ? data.find((row) => row.name === field.value)?.id
+                  ? data.find((row) => row.value === field.value)?.id
                   : data ? data.find((row) => row.value === field.value)?.value : null
               }
               onChange={(e) => {field.onChange(e.value); optionSelected && optionSelected(e.value)}}

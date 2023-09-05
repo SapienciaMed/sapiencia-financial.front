@@ -90,9 +90,9 @@ const validateButton = (values) => { return Object.values(values).every(campo =>
         idCard: outcome.cardId,
         type: 'Ingreso',
         managerCenter: outcome.managerCenter,
-        projectId: isPaste ? (arrayDataSelect.functionalArea.find(e=>e.name==outcome.projectId)).id : outcome.projectId,
-        fundId: isPaste ? (arrayDataSelect.funds.find(e=>e.name==outcome.funds)).id  : outcome.funds,
-        budgetPosition: isPaste ? (arrayDataSelect.posPre.find(e=>e.name==outcome.posPre)).id : outcome.posPre,
+        projectId: outcome.projectId,//isPaste ? (arrayDataSelect.functionalArea.find(e=>e.name==outcome.projectId)).id : outcome.projectId,
+        fundId: outcome.funds, //isPaste ? (arrayDataSelect.funds.find(e=>e.name==outcome.funds)).id  : outcome.funds,
+        budgetPosition: outcome.posPre,//isPaste ? (arrayDataSelect.posPre.find(e=>e.name==outcome.posPre)).id : outcome.posPre,
         value: parseFloat(outcome.value)
       })
   )
@@ -101,9 +101,9 @@ const validateButton = (values) => { return Object.values(values).every(campo =>
         idCard: outcome.cardId,
         type: 'Gasto',
         managerCenter: outcome.managerCenter,
-        projectId: isPaste ? (arrayDataSelect.functionalArea.find(e=>e.name==outcome.projectId)).id : outcome.projectId,
-        fundId: isPaste ? (arrayDataSelect.funds.find(e=>e.name==outcome.funds)).id  : outcome.funds,
-        budgetPosition: isPaste ? (arrayDataSelect.posPre.find(e=>e.name==outcome.posPre)).id : outcome.posPre,
+        projectId: outcome.projectId,//isPaste ? (arrayDataSelect.functionalArea.find(e=>e.name==outcome.projectId)).id : outcome.projectId,
+        fundId: outcome.funds,//isPaste ? (arrayDataSelect.funds.find(e=>e.name==outcome.funds)).id  : outcome.funds,
+        budgetPosition: outcome.posPre, //isPaste ? (arrayDataSelect.posPre.find(e=>e.name==outcome.posPre)).id : outcome.posPre,
         value: parseFloat(outcome.value)
       })
   )

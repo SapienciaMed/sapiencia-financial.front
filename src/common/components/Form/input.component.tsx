@@ -95,10 +95,9 @@ export function InputComponent({
   min
 }: IInputProps<any>): React.JSX.Element {
   const messageError = () => {
-
+    console.log({errors})
     const keysError = idInput.split(".");
     let errs = errors;
-
     if (fieldArray) {
       const errorKey = `${keysError[0]}[${keysError[1]}].${keysError[2]}`;
       return errors[errorKey]?.message;
@@ -113,6 +112,7 @@ export function InputComponent({
     }
   };
 
+  
   return (
     <div
       className={
