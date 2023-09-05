@@ -26,7 +26,9 @@ interface IInputnumber<T> {
   locale?: string;
   min?: number;
   max?: number;
+  useGrouping?: boolean;
   optionsRegister?: {};
+  shouldUnregister?: boolean;
 }
 
 function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
@@ -44,7 +46,7 @@ export function InputNumberComponent({
   idInput,
   control,
   className = "select-basic",
-  placeholder = "00",
+  placeholder = "0",
   label,
   classNameLabel = "text-main",
   direction = EDirection.column,
@@ -61,7 +63,9 @@ export function InputNumberComponent({
   locale,
   min,
   max,
+  useGrouping = true,
   optionsRegister,
+  shouldUnregister,
 }: IInputnumber<any>): React.JSX.Element {
   const messageError = () => {
     const keysError = idInput.split(".");
@@ -96,10 +100,12 @@ export function InputNumberComponent({
           name={idInput}
           control={control}
           rules={optionsRegister}
+          shouldUnregister={shouldUnregister}
           render={({ field }) => (
             <InputNumber
               id={field.name}
               onChange={(e) => field.onChange(e.value)}
+              onBlur={(e) => field.onBlur()}
               placeholder={placeholder}
               value={field.value}
               className={`${className} ${messageError() ? "p-invalid" : ""}`}
@@ -113,6 +119,7 @@ export function InputNumberComponent({
               locale={locale}
               min={min}
               max={max}
+              useGrouping={useGrouping}
             />
           )}
         />

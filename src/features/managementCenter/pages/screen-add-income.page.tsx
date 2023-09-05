@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { ButtonComponent, InputComponent, SelectComponent } from "../../../common/components/Form";
-import { Control, FieldErrors, UseFormRegister, useFieldArray, useForm } from 'react-hook-form';
+import { Control, FieldErrors, UseFormRegister, useFieldArray, useForm, Controller } from 'react-hook-form';
 import { IAdditionsForm } from "../interfaces/Additions";
 import { IArrayDataSelect } from "../../../common/interfaces/global.interface";
 import { EDirection } from "../../../common/constants/input.enum";
 import { projectIdName } from "../../../common/constants/nameProject";
+import { InputNumberComponent } from "../../../common/components/Form/input-number.component";
 
 interface IAppProps {
     controlRegister: Control<IAdditionsForm, any>,
@@ -165,16 +166,20 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             isSearchByName={isSearchByName}
                         />
 
-                        <InputComponent
+                        <InputNumberComponent
+                            control={controlRegister}
                             idInput={`${titleAdd.toLowerCase()}[${count}].value`}
-                            /* idInput="actAdministrativeSapiencia" */
                             label="valor"
-                            typeInput="text"
-                            className="input-basic"
+                            className="inputNumber-basic medium"
                             placeholder={'Seleccionar'}
                             classNameLabel="text-black biggest bold text-required"
                             errors={errors}
-                            register={register}
+                            mode="currency"
+                            currency="COP"
+                            locale="es-CO"
+                            minFractionDigits={0}
+                            maxFractionDigits={0}
+                            
                         />
                     </section>
                     <section className='grid-form-1-container-area mt-5px'>
