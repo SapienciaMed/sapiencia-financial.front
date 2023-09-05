@@ -5,6 +5,7 @@ import { IAdditionsForm } from "../interfaces/Additions";
 import { IArrayDataSelect } from "../../../common/interfaces/global.interface";
 import { EDirection } from "../../../common/constants/input.enum";
 import { projectIdName } from "../../../common/constants/nameProject";
+import { InputNumberComponent } from "../../../common/components/Form/input-number.component";
 
 interface IAppProps {
     controlRegister: Control<IAdditionsForm, any>,
@@ -163,15 +164,21 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             errors={errors}
                             isSearchByName={isSearchByName}
                         />
-                        <InputComponent
+
+                        <InputNumberComponent
+                            control={controlRegister}
                             idInput={`${titleAdd.toLowerCase()}[${count}].value`}
                             label="valor"
-                            typeInput="text"
-                            className="input-basic"
+                            className="inputNumber-basic medium"
                             placeholder={'Seleccionar'}
                             classNameLabel="text-black biggest bold text-required"
                             errors={errors}
-                            register={register}
+                            mode="currency"
+                            currency="COP"
+                            locale="es-CO"
+                            minFractionDigits={0}
+                            maxFractionDigits={0}
+                            
                         />
 
                     </section>
