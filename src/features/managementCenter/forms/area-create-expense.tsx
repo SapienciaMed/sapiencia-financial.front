@@ -83,20 +83,30 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
             OkTitle: "Aceptar",
         })
         
-        console.log("xxxxxxxxxxxxxxxxxxxxxx ", arrayDataSelect.functionalArea.filter(e=>e.value!=null))
-        console.log("yyyyyyyyyyyyyyyyyyyyyy ", output)
-        output.length > 0 && setDataPaste(output.map((item:any,index:number) => ({
-            isPaste:true,
-            cardId:generarIdAleatorio(10),
-            managerCenter: item.CENTROGESTOR,
-            //projectId: `${item.PROYECTO} - ${item.NOMBREPROYECTO}` ,
-            projectId: (arrayDataSelect.functionalArea.find(e=>e.name==item.PROYECTO)).id,
-            functionalArea: Object(arrayDataSelect.functionalArea.filter(e=>e.value!=null).find((e:any)=>e.area[0].name==item.ÁREAFUNCIONAL)).area[0].id,
-            funds: (arrayDataSelect.funds.find(e=>e.name==item.FONDO)).id,
-            posPre: (arrayDataSelect.posPre.find(e=>e.name==item.POSPRE)).id,
-            value: item.VALOR.replaceAll('.',''),
-            projectName:item.NOMBREPROYECTO
-        })))  
+        try {
+            output.length > 0 && setDataPaste(output.map((item:any,index:number) => ({
+                isPaste:true,
+                cardId:generarIdAleatorio(10),
+                managerCenter: item.CENTROGESTOR,
+                projectId: (arrayDataSelect.functionalArea.find(e=>e.name==item.PROYECTO)).id,
+                functionalArea: Object(arrayDataSelect.functionalArea.filter(e=>e.value!=null).find((e:any)=>e.area[0].name==item.ÁREAFUNCIONAL)).area[0].id,
+                funds: (arrayDataSelect.funds.find(e=>e.name==item.FONDO)).id,
+                posPre: (arrayDataSelect.posPre.find(e=>e.name==item.POSPRE)).id,
+                value: item.VALOR.replaceAll('.',''),
+                projectName:item.NOMBREPROYECTO
+            })))  
+            
+
+        } catch (error) {
+            showModal({
+                title: "Validación de datos",
+                description: "Se ha encontrado un error en los datos, verifiqué que no tenga campos vacios o valores invalidos",
+                show: true,
+                OkTitle: "Aceptar",
+            })
+        }
+
+        
     }
  
     const onPageChange = event => {
@@ -120,8 +130,6 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
     useEffect(() => {
         if(dataPaste.length > 0){
             append(dataPaste);
-            console.log(dataPaste);
-            
         }  
     },[dataPaste])
 
@@ -160,7 +168,7 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
                 visibleFields.map((field, index) => (
                     <div key={field.id}>
                         <ScreenAddIncomePage controlRegister={controlRegister} titleAdd={titleAdd} fields={fields} arrayDataSelect={arrayDataSelect}
-                            remove={remove} count={startIndex + index} errors={errors} register={register} cardId={field.id} invalidCardsAdditionSt={invalidCardsAdditionSt} setValue={setValue} watch={watch} isSearchByName={isSearchByName}/>
+                            remove={remove} count={startIndex + index} errors={errors} register={register} cardId={field.id} invalidCardsAdditionSt={invalidCardsAdditionSt} setValue={setValue} watch={watch}/>
                     </div>
                 ))
             }

@@ -60,7 +60,6 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
         let rawRows = pastedInput.split("\n");
         let headersArray = rawRows[0].split("\t");
         let output = [];
-
         (headersArray.every(value => AddValidHeaders.includes(value)) && headersArray.length == AddValidHeaders.length) ?
             rawRows.forEach((rawRow, idx) => {
                 if (rawRow != '') {
@@ -77,27 +76,37 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
             :
             showModal({
                 title: "Validación de datos",
-                description: "Se ha encontrado un error en los datos,revisa las rutas presupuestales",
+                //description: "Se ha encontrado un error en los datos,revisa las rutas presupuestales",
+                description: "Se ha encontrado un error en los datos valida: incluir titulos o sin datos vacios",
                 show: true,
                 OkTitle: "Aceptar",
             })
 
-        output.length > 0 && setDataPaste(output.map((item: any, index: number) => ({
-            isPaste: true,
-            cardId: generarIdAleatorio(20),
-            managerCenter: item.CENTROGESTOR,
-            projectId: (arrayDataSelect.functionalArea.find(e=>e.name==item.PROYECTO)).id,
-            //projectId: `${item.PROYECTO} - ${item.NOMBREPROYECTO}`,
-            functionalArea: Object(arrayDataSelect.functionalArea.find((e:any)=>e.area[0].name==item.ÁREAFUNCIONAL)).area[0].id,
-            funds: (arrayDataSelect.funds.find(e=>e.name==item.FONDO)).id,
-            posPre: (arrayDataSelect.posPre.find(e=>e.name==item.POSPRE)).id,
-            value: item.VALOR.replaceAll('.', ''),
-            projectName:item.NOMBREPROYECTO
-        })))
+        try {
+            output.length > 0 && setDataPaste(output.map((item: any, index: number) => ({
+                isPaste: true,
+                cardId: generarIdAleatorio(20),
+                managerCenter: item.CENTROGESTOR,
+                projectId: (arrayDataSelect.functionalArea.find(e => e.name == item.PROYECTO)).id,
+                functionalArea: Object(arrayDataSelect.functionalArea.filter(e=>e.value!=null).find((e: any) => e.area[0]?.name == item.ÁREAFUNCIONAL)).area[0]?.id,
+                funds: (arrayDataSelect.funds.filter(e=>e.value!=null).find(e => e.name == item.FONDO)).id,
+                posPre: (arrayDataSelect.posPre.filter(e=>e.value!=null).find(e => e.name == item.POSPRE))?.id,
+                value: item.VALOR.replaceAll('.', ''),
+                projectName: item.NOMBREPROYECTO
+            })))
+        } catch (error) {
+            showModal({
+                title: "Validación de datos",
+                description: "Se ha encontrado un error en los datos, verifiqué que no tenga campos vacios o valores invalidos",
+                show: true,
+                OkTitle: "Aceptar",
+            })
+        }
+
     }
 
-    
-    
+
+
     const onPageChange = event => {
         setCurrentPage(event.page + 1);
     };
@@ -158,7 +167,7 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
                     return (
                         <div key={field.id}>
                             <ScreenAddIncome controlRegister={controlRegister} titleAdd={titleAdd} fields={fields} arrayDataSelect={arrayDataSelect}
-                                remove={remove} count={startIndex + index} errors={errors} register={register} cardId={field.id} invalidCardsAdditionSt={invalidCardsAdditionSt} setValue={setValue} watch={watch} isSearchByName={isSearchByName} />
+                                remove={remove} count={startIndex + index} errors={errors} register={register} cardId={field.id} invalidCardsAdditionSt={invalidCardsAdditionSt} setValue={setValue} watch={watch} />
                         </div>
                     )
                 })
@@ -177,7 +186,7 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
                 </div>
             }
             {
-                
+
                 watchIncome.some(use => use.value != '') &&
                 <label className="text-black biggest ml-16px mt-14px"> Total {titleAdd.toLowerCase()}: $  {formatMoney(calculateTotal())} </label>
 
