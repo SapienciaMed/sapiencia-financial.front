@@ -18,10 +18,9 @@ interface IAppProps {
     invalidCardsAdditionSt: any;
     setValue: any;
     watch: any;
-    isSearchByName: boolean;
 }
 
-function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSelect, remove, titleAdd, register, cardId, invalidCardsAdditionSt, setValue, watch, isSearchByName }: IAppProps) {
+function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSelect, remove, titleAdd, register, cardId, invalidCardsAdditionSt, setValue, watch}: IAppProps) {
     const { functionalArea, areas, funds, posPre, } = arrayDataSelect
 
     const [areasByProjectSt, setAreasByProjectSt] = useState<any>()
@@ -31,14 +30,14 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
     const [cardIdSt, setcardIdSt] = useState("")
 
     useEffect(() => {
-        if (projectName != "" /* cardId != ""  && projectIdSelectedSt && areasByProjectSt && areasByProjectSt.length>0 */) {
+        if (projectName != "") {
             setValue(`${titleAdd.toLowerCase()}[${count}].cardId`, cardId)
             setValue(`${titleAdd.toLowerCase()}[${count}].projectId`, projectIdSelectedSt)
-            setValue(`${titleAdd.toLowerCase()}[${count}].functionalArea`, (areasByProjectSt.filter(e => e.value != null)).id)
+            setValue(`${titleAdd.toLowerCase()}[${count}].functionalArea`, (areasByProjectSt.filter(e => e.value != null)).id ?? areaIdSelectedSt)
             setValue(`${titleAdd.toLowerCase()}[${count}].projectName`, projectName)
             setcardIdSt(cardId)
         }
-    }, [projectIdSelectedSt/* , cardId,projectIdSelectedSt, areasByProjectSt */])
+    }, [projectIdSelectedSt])
 
 
     useEffect(() => {
@@ -103,7 +102,6 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             filter={true}
                             fieldArray={true}
                             errors={errors}
-                            isSearchByName={isSearchByName}
                         />
                         <SelectComponent
                             idInput={`${titleAdd.toLowerCase()}[${count}].projectId`}
@@ -118,7 +116,6 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             fieldArray={true}
                             errors={errors}
                             optionSelected={optionSelected}
-                            isSearchByName={isSearchByName}
                         />
                         <SelectComponent
                             idInput={`${titleAdd.toLowerCase()}[${count}].functionalArea`}
@@ -129,9 +126,8 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             placeholder={'Seleccionar'}
                             filter={true}
                             fieldArray={true}
-                            data={isSearchByName ? ((functionalArea.filter(e => e.value != null)).map((e: any) => e.area)).flat() : areasByProjectSt}
+                            data={areasByProjectSt}
                             errors={errors}
-                            isSearchByName={isSearchByName}
                         />
                     </section>
                     <section className='grid-form-3-container-area mt-5px'>
@@ -147,7 +143,6 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             fieldArray={true}
                             data={funds}
                             errors={errors}
-                            isSearchByName={isSearchByName}
                         />
                         <SelectComponent
                             idInput={`${titleAdd.toLowerCase()}[${count}].posPre`}
@@ -160,19 +155,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             fieldArray={true}
                             data={posPre}
                             errors={errors}
-                            isSearchByName={isSearchByName}
                         />
-
-                        {/* <InputComponent
-                            idInput={`${titleAdd.toLowerCase()}[${count}].value`}
-                            label="valor"
-                            typeInput="text"
-                            className="input-basic"
-                            placeholder={'Seleccionar'}
-                            classNameLabel="text-black biggest bold text-required"
-                            errors={errors}
-                            register={register}
-                        /> */}
 
                         <InputNumberComponent
                             control={controlRegister}
@@ -188,7 +171,6 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             fieldArray={true}
                             minFractionDigits={0}
                             maxFractionDigits={0}
-
                         />
 
                     </section>
