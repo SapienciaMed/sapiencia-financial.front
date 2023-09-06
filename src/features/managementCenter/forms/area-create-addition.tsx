@@ -91,7 +91,7 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
             functionalArea: Object(arrayDataSelect.functionalArea.find((e:any)=>e.area[0].name==item.ÁREAFUNCIONAL)).area[0].id,
             funds: (arrayDataSelect.funds.find(e=>e.name==item.FONDO)).id,
             posPre: (arrayDataSelect.posPre.find(e=>e.name==item.POSPRE)).id,
-            value: formatMoney(item.VALOR.replaceAll('.', '')),
+            value: item.VALOR.replaceAll('.', ''),
             projectName:item.NOMBREPROYECTO
         })))
     }

@@ -3,8 +3,6 @@ import { ButtonComponent, InputComponent, SelectComponent } from "../../../commo
 import { Control, Controller, FieldErrors, UseFormRegister, useFieldArray, useForm } from 'react-hook-form';
 import { IAdditionsForm } from "../interfaces/Additions";
 import { IArrayDataSelect } from "../../../common/interfaces/global.interface";
-import { EDirection } from "../../../common/constants/input.enum";
-import { projectIdName } from "../../../common/constants/nameProject";
 import { InputNumberComponent } from "../../../common/components/Form/input-number.component";
 
 interface IAppProps {
@@ -165,7 +163,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             isSearchByName={isSearchByName}
                         />
 
-                        <InputComponent
+                        {/* <InputComponent
                             idInput={`${titleAdd.toLowerCase()}[${count}].value`}
                             label="valor"
                             typeInput="text"
@@ -174,9 +172,9 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             classNameLabel="text-black biggest bold text-required"
                             errors={errors}
                             register={register}
-                        />
+                        /> */}
 
-                        {/* <InputNumberComponent
+                        <InputNumberComponent
                             control={controlRegister}
                             idInput={`${titleAdd.toLowerCase()}[${count}].value`}
                             label="valor"
@@ -187,10 +185,11 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             mode="currency"
                             currency="COP"
                             locale="es-CO"
+                            fieldArray={true}
                             minFractionDigits={0}
                             maxFractionDigits={0}
 
-                        /> */}
+                        />
 
                     </section>
                     <section className='grid-form-1-container-area mt-5px'>
@@ -203,6 +202,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             classNameLabel="text-black biggest bold text-required"
                             errors={errors}
                             register={register}
+                            fieldArray={true}
                         />
                     </section>
                 </div>
