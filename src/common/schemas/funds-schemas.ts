@@ -60,6 +60,9 @@ export const fundsAdditionalValidation =  yup.object({
             value: yup 
                 .string()
                 .required("Completar información del campo"),
+            projectName: yup
+                .string()
+                .required("Completar información del campo"),
         }))
         .test('uniqueValues', 'datos duplicados en el sistema', function (value) {
             const nonEmptyValues = value.filter((item) => {
@@ -91,6 +94,9 @@ export const fundsAdditionalValidation =  yup.object({
                     .string()
                     .required("Completar información del campo"),
                 value: yup 
+                    .string()
+                    .required("Completar información del campo"),
+                projectName: yup
                     .string()
                     .required("Completar información del campo"),
             }))
