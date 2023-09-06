@@ -3,8 +3,6 @@ import { ButtonComponent, InputComponent, SelectComponent } from "../../../commo
 import { Control, FieldErrors, UseFormRegister, useFieldArray, useForm, Controller } from 'react-hook-form';
 import { IAdditionsForm } from "../interfaces/Additions";
 import { IArrayDataSelect } from "../../../common/interfaces/global.interface";
-import { EDirection } from "../../../common/constants/input.enum";
-import { projectIdName } from "../../../common/constants/nameProject";
 import { InputNumberComponent } from "../../../common/components/Form/input-number.component";
 
 interface IAppProps {
@@ -34,7 +32,6 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
 
     useEffect(() => {
         if (projectName!="" /* cardId != ""  && projectIdSelectedSt && areasByProjectSt && areasByProjectSt.length>0 */) {
-            console.log({areasByProjectSt })
             setValue(`${titleAdd.toLowerCase()}[${count}].cardId`, cardId)
             setValue(`${titleAdd.toLowerCase()}[${count}].projectId`, projectIdSelectedSt)
             setValue(`${titleAdd.toLowerCase()}[${count}].functionalArea`, (areasByProjectSt.filter(e => e.value != null)).id)
@@ -177,6 +174,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             mode="currency"
                             currency="COP"
                             locale="es-CO"
+                            fieldArray={true}
                             minFractionDigits={0}
                             maxFractionDigits={0}
                             
@@ -192,11 +190,8 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             classNameLabel="text-black biggest bold text-required"
                             errors={errors}
                             register={register}
+                            fieldArray={true}
                         />
-
-
-
-
                     </section>
 
                 </div>
