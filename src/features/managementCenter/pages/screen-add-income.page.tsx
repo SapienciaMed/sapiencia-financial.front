@@ -165,7 +165,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             isSearchByName={isSearchByName}
                         />
 
-                        <InputComponent
+                        {/* <InputComponent
                             idInput={`${titleAdd.toLowerCase()}[${count}].value`}
                             label="valor"
                             typeInput="text"
@@ -174,9 +174,9 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             classNameLabel="text-black biggest bold text-required"
                             errors={errors}
                             register={register}
-                        />
+                        /> */}
 
-                        {/* <InputNumberComponent
+                        <InputNumberComponent
                             control={controlRegister}
                             idInput={`${titleAdd.toLowerCase()}[${count}].value`}
                             label="valor"
@@ -190,7 +190,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             minFractionDigits={0}
                             maxFractionDigits={0}
 
-                        /> */}
+                        />
 
                     </section>
                     <section className='grid-form-1-container-area mt-5px'>
