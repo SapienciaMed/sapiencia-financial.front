@@ -3,8 +3,6 @@ import { ButtonComponent, InputComponent, SelectComponent } from "../../../commo
 import { Control, Controller, FieldErrors, UseFormRegister, useFieldArray, useForm } from 'react-hook-form';
 import { IAdditionsForm } from "../interfaces/Additions";
 import { IArrayDataSelect } from "../../../common/interfaces/global.interface";
-import { EDirection } from "../../../common/constants/input.enum";
-import { projectIdName } from "../../../common/constants/nameProject";
 import { InputNumberComponent } from "../../../common/components/Form/input-number.component";
 
 interface IAppProps {
@@ -187,6 +185,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             mode="currency"
                             currency="COP"
                             locale="es-CO"
+                            fieldArray={true}
                             minFractionDigits={0}
                             maxFractionDigits={0}
 
@@ -203,6 +202,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             classNameLabel="text-black biggest bold text-required"
                             errors={errors}
                             register={register}
+                            fieldArray={true}
                         />
                     </section>
                 </div>
