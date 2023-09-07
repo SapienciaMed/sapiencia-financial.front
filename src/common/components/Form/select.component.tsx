@@ -52,7 +52,6 @@ export function SelectComponent({
   filter,
   emptyMessage = "Sin resultados.",
   optionSelected,
-  isSearchByName = false
 }: ISelectProps<any>): React.JSX.Element {
   if (data) {
     const seleccione: IDropdownProps = { name: "Seleccione", value: null };
@@ -97,10 +96,11 @@ export function SelectComponent({
           render={({ field }) => (
             <Dropdown
               id={field.name}
-              value={(data && isSearchByName) 
+              value={data.find((row) => row.value === field.value)?.value}
+              /* value={(data && isSearchByName) 
                   ? data.find((row) => row.value === field.value)?.id
                   : data ? data.find((row) => row.value === field.value)?.value : null
-              }
+              } */
               onChange={(e) => {field.onChange(e.value); optionSelected && optionSelected(e.value)}}
               options={data}
               optionLabel="name"

@@ -95,7 +95,6 @@ export function InputComponent({
   min
 }: IInputProps<any>): React.JSX.Element {
   const messageError = () => {
-
     const keysError = idInput.split(".");
     let errs = errors;
     if (fieldArray) {
