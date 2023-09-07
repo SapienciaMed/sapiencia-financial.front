@@ -3,3 +3,10 @@ export interface ITypeTransfers {
     name: string;
 }
 
+export interface IBasicTransfers {
+    // page: number;
+    // perPage: number;
+    adminDistrict: string;
+    adminSapiencia: string;
+    remarks: string
+  }
