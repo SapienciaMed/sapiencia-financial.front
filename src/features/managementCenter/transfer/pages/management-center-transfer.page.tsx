@@ -1,7 +1,7 @@
 import { BiPlusCircle } from "react-icons/bi";
-import { FormComponent, InputComponent, SelectComponent, ButtonComponent} from "../../../common/components/Form";
-import TableComponent from "../../../common/components/table.component";
-import { EDirection } from "../../../common/constants/input.enum";
+import { FormComponent, InputComponent, SelectComponent, ButtonComponent} from "../../../../common/components/Form";
+import TableComponent from "../../../../common/components/table.component";
+import { EDirection } from "../../../../common/constants/input.enum";
 import { useManagementCenterTransfer } from "../hook/management-center-transfer.hook";
 
 interface IAppProps { }
