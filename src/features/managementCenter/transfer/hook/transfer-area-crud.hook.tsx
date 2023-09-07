@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { IBasicTransfers } from '../interfaces/TypesTranfersInterfaces';
 import { useNavigate } from 'react-router-dom';
-import useYupValidationResolver from '../../../common/hooks/form-validator.hook';
-import { transferAreaCrudValidator } from '../../../common/schemas/transfer-schema';
+import useYupValidationResolver from '../../../../common/hooks/form-validator.hook';
+import { transferAreaCrudValidator } from '../../../../common/schemas/transfer-schema';
 
 export function useTransferAreaCrudPage() {
 

@@ -1,9 +1,9 @@
 import React from 'react'
-import { ButtonComponent, FormComponent, InputComponent, TextAreaComponent } from '../../../common/components/Form';
+import { ButtonComponent, FormComponent, InputComponent, TextAreaComponent } from '../../../../common/components/Form';
 import { BiPlusCircle } from 'react-icons/bi';
 import { useTransferAreaCrudPage } from '../hook/transfer-area-crud.hook';
 import { Controller } from 'react-hook-form';
-import { EDirection } from '../../../common/constants/input.enum';
+import { EDirection } from '../../../../common/constants/input.enum';
 
 interface IAppProps {
     actionForm: "new" | "edit";

@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
+import { ITableAction, ITableElement } from "../../../../common/interfaces/table.interfaces";
 import { useForm } from "react-hook-form";
-import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
-import { IBudgets } from "../../functionality/interfaces/Budgets";
-import { IDropdownProps } from "../../../common/interfaces/select.interface";
+import useYupValidationResolver from "../../../../common/hooks/form-validator.hook";
+import { IBudgets } from "../../../functionality/interfaces/Budgets";
+import { IDropdownProps } from "../../../../common/interfaces/select.interface";
 import { useTypesTranfersService } from "./types-transfers-service.hook";
-import { EResponseCodes } from "../../../common/constants/api.enum";
+import { EResponseCodes } from "../../../../common/constants/api.enum";
 import { ITypeTransfers } from "../interfaces/TypesTranfersInterfaces";
-import { IFilterBudgets } from "../interfaces/FilterBudgets";
-import { transferValidator } from "../../../common/schemas/transfer-schema";
+import { IFilterBudgets } from "../../interfaces/FilterBudgets";
+import { transferValidator } from "../../../../common/schemas/transfer-schema";
 
 export function useManagementCenterTransfer() {
     const tableComponentRef = useRef(null);

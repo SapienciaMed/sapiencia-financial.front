@@ -1,5 +1,5 @@
-import useCrudService from "../../../common/hooks/crud-service.hook";
-import { ApiResponse } from "../../../common/utils/api-response";
+import useCrudService from "../../../../common/hooks/crud-service.hook";
+import { ApiResponse } from "../../../../common/utils/api-response";
 import { ITypeTransfers } from "../interfaces/TypesTranfersInterfaces";
 
 export function useTypesTranfersService() {

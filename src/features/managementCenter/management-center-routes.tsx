@@ -7,9 +7,9 @@ export const ManagementCenterRoutes = () => {
   const ManagementCenterAdditionalPage =  lazy(() => import("./pages/management-center-additional.page"));
   const AdditionAreaCrudPage = lazy(() => import("./pages/addition-area-crud.page"))
 
-  const ManagementCenterTransferPage = lazy(() => import("./pages/management-center-transfer.page"));
-  const TransferAreaCrudPage = lazy(() => import("./pages/transfer-area-crud.page"))
-  const AddFundsCrudPage = lazy(() => import("./pages/add-funds-crud.page"))
+  const ManagementCenterTransferPage = lazy(() => import("./transfer/pages/management-center-transfer.page"));
+  const TransferAreaCrudPage = lazy(() => import("./transfer/pages/transfer-area-crud.page"))
+  const AddFundsCrudPage = lazy(() => import("./transfer/pages/add-funds-crud.page"))
 
   return (
     <Routes>

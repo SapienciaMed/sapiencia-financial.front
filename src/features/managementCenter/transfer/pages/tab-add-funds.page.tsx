@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { ITabsMenuTemplate } from "../../../common/interfaces/tabs-menu.interface";
+import { ITabsMenuTemplate } from "../../../../common/interfaces/tabs-menu.interface";
 import { useParams } from "react-router-dom";
-import CreateSourceFound  from "./../forms/create-source-fund"
+import CreateSourceFound  from "../forms/create-source-fund"
 
         
 
