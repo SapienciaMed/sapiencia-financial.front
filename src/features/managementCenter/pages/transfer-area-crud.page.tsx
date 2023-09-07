@@ -27,7 +27,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                                 <label className="text-black biggest bold">
                                     Datos básicos
                                 </label>
-                                <div className="title-button text-three large" onClick={() => { }}> Añadir valores <BiPlusCircle/> </div>
+                                <div className="title-button text-three large" onClick={() => navigate('./anadir-fondos')}> Añadir valores <BiPlusCircle/> </div>
                             </div>
                             <div className="funcionality-filters-container">
                                 <Controller
