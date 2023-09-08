@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   ButtonComponent,
   FormComponent,
@@ -17,7 +17,7 @@ interface IAppProps {
 function AdditionAreaCrud({ actionForm }: IAppProps) {
   const navigate = useNavigate();
 
-  const { control, arrayDataSelect, errors, onSubmitTab, showModal, setMessage, getValues, watch, register, invalidCardsAdditionSt, setValue } = useAdditionAreaCrud();
+  const { control, arrayDataSelect, errors, onSubmitTab, showModal, setMessage, getValues, watch, register, invalidCardsAdditionSt, setValue, isAllowSave } = useAdditionAreaCrud();
   
   return (
     <div className="crud-page">
@@ -88,6 +88,7 @@ function AdditionAreaCrud({ actionForm }: IAppProps) {
                 value="Guardar"
                 type="submit"
                 form='form-acts'
+                disabled={!isAllowSave}
               />
             </div>
           </section>

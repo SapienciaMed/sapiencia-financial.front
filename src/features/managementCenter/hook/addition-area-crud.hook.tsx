@@ -286,6 +286,58 @@ export function useAdditionAreaCrud() {
 
   }, [arrayDataSelect])
 
+
+  let formData = watch()
+  
+  const [isAllowSave, setIsAllowSave] = useState(false)
+  useEffect(() => {
+    if(
+      formData.actAdministrativeDistrict!="" &&
+      formData.actAdministrativeSapiencia!=""
+      ){
+        //TODO: QUE HABILITE EL BOTON DE GUARDAR, SI ALMENOS TIENE UN DATO EL FORMULARIO
+        let formDataEmpty=[]
+        formData.ingreso.forEach((element:any)=>{
+          let isEmptyPropResult = isEmptyProp(element)
+          if(!isEmptyPropResult){
+            formDataEmpty.push(true)
+            if(formDataEmpty.includes(true)){
+              setIsAllowSave(true)
+            }
+          }
+        })
+        /* formData.gasto.forEach((element:any)=>{
+          let isEmptyPropResult = isEmptyProp(element)
+          if(!isEmptyPropResult){
+            formDataEmpty.push(true)
+          }
+        }) */
+        
+        /* if(formDataEmpty.includes(true)){
+          setIsAllowSave(true)
+        }else{
+          setIsAllowSave(false)
+        } */
+
+        
+    }
+  }, [formData])
+  
+
+  function isEmptyProp(obj) {
+    for (let key in obj) {
+      console.log("===>>>> ",obj[key])
+      if (obj.hasOwnProperty(key) && obj[key] === '' || obj[key] ==null) {
+        return true; // Devuelve true si encuentra una propiedad vacía
+      }
+    }
+    return false; // Devuelve false si no encuentra ninguna propiedad vacía
+  }
+
+
+
+
+
   return {
     control,
     arrayDataSelect,
@@ -298,5 +350,6 @@ export function useAdditionAreaCrud() {
     getValues,
     invalidCardsAdditionSt,
     setValue,
+    isAllowSave
   };
 }

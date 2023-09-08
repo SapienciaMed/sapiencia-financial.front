@@ -185,6 +185,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             errors={errors}
                             register={register}
                             fieldArray={true}
+                            disabled={true}
                         />
                     </section>
                 </div>
