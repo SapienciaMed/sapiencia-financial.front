@@ -68,6 +68,9 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
             setProjectIdSelectedSt(option)
             setAreaIdSelectedSt(area[0]?.id)
             setAreasByProjectSt(area)
+        }else if(!option){
+            setProjectName(undefined)
+            //setValue(`${titleAdd.toLowerCase()}[${count}].projectName`, undefined)
         }
     }
 

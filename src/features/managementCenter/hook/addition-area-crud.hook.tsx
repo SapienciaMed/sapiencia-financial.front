@@ -10,7 +10,9 @@ import { EResponseCodes } from "../../../common/constants/api.enum";
 import { useNavigate } from "react-router-dom";
 
 
-export function useAdditionAreaCrud() {
+export function useAdditionAreaCrud(tabId: string) {
+
+  console.log({ tabId })
 
   const resolver = useYupValidationResolver(fundsAdditionalValidation);
   const { setMessage } = useContext(AppContext);
@@ -43,7 +45,7 @@ export function useAdditionAreaCrud() {
     mode: 'onSubmit',
     resolver,
   });
-  
+
   const validateButton = (values) => { return Object.values(values).every(campo => campo !== null && campo !== undefined && campo !== '') }
   const fullFields = validateButton(defaultValues);
 
@@ -89,18 +91,18 @@ export function useAdditionAreaCrud() {
       additionMove: ingresoFixed.concat(gastoFixed)
     }
     let resValidate = await validateCreateAdition(addition)
-  
+
     if (resValidate.operation.code == 'FAIL') {
       showModal({
         //type?: EResponseCodes;
         title: "Validación de datos",
-        description: resValidate.operation.message.split('@@@').length==1
-        ? resValidate.operation.message
-        :(JSON.parse((resValidate.operation.message.split('@@@'))[3]).length>0 
-          ? (resValidate.operation.message.split('@@@'))[1]
-          : JSON.parse((resValidate.operation.message.split('@@@'))[6]).length>0
-            ? (resValidate.operation.message.split('@@@'))[4]
-            : (resValidate.operation.message.split('@@@'))[7]),
+        description: resValidate.operation.message.split('@@@').length == 1
+          ? resValidate.operation.message
+          : (JSON.parse((resValidate.operation.message.split('@@@'))[3]).length > 0
+            ? (resValidate.operation.message.split('@@@'))[1]
+            : JSON.parse((resValidate.operation.message.split('@@@'))[6]).length > 0
+              ? (resValidate.operation.message.split('@@@'))[4]
+              : (resValidate.operation.message.split('@@@'))[7]),
         show: true,
         OkTitle: "Aceptar",
         //cancelTitle: "Cancerlar",
@@ -135,11 +137,11 @@ export function useAdditionAreaCrud() {
           onCancelNew()
         },
         // onClickOutClose?: boolean;
-         onClose: () => {
+        onClose: () => {
           setMessage({})
           onCancelNew()
-         },
-         background: true
+        },
+        background: true
       })
 
     }
@@ -159,7 +161,7 @@ export function useAdditionAreaCrud() {
         setMessage({})
         onCancelNew()
       }
-      })
+    })
   }
 
 
@@ -201,7 +203,7 @@ export function useAdditionAreaCrud() {
       OkTitle: values.OkTitle,
       onOk: values.onOk || (() => setMessage({})),
       cancelTitle: values.cancelTitle
-    
+
     });
   };
 
@@ -288,54 +290,85 @@ export function useAdditionAreaCrud() {
 
 
   let formData = watch()
-  
+  let formDataIncome = watch('ingreso')
+  let formDataExprense = watch('gasto')
+
   const [isAllowSave, setIsAllowSave] = useState(false)
+  const [tabIdSt, setTabIdSt] = useState(tabId)
   useEffect(() => {
-    if(
-      formData.actAdministrativeDistrict!="" &&
-      formData.actAdministrativeSapiencia!=""
-      ){
-        //TODO: QUE HABILITE EL BOTON DE GUARDAR, SI ALMENOS TIENE UN DATO EL FORMULARIO
-        let formDataEmpty=[]
-        formData.ingreso.forEach((element:any)=>{
-          let isEmptyPropResult = isEmptyProp(element)
-          if(!isEmptyPropResult){
-            formDataEmpty.push(true)
-            if(formDataEmpty.includes(true)){
-              setIsAllowSave(true)
-            }
-          }
-        })
-        /* formData.gasto.forEach((element:any)=>{
-          let isEmptyPropResult = isEmptyProp(element)
-          if(!isEmptyPropResult){
-            formDataEmpty.push(true)
-          }
-        }) */
-        
-        /* if(formDataEmpty.includes(true)){
-          setIsAllowSave(true)
-        }else{
+    setIsAllowSave(false)
+  }, [tabIdSt])
+
+  useEffect(() => {
+    let formDataEmptyAddition = []
+    let formDataEmptyExpense = []
+    /* if (tabIdSt == 'ingreso') { */
+      formData.ingreso.forEach((element: any) => {
+        let objectWithValue = validateObjesWithValue(element)
+        if (!objectWithValue && !element.projectName) {
+          formDataEmptyAddition.push(true)
+
+        }
+      })
+    /* } else if (tabId == 'gasto') { */
+      formData.gasto.forEach((element: any) => {
+        let objectWithValue = validateObjesWithValue(element)
+        if (!objectWithValue && !element.projectName) {
+          formDataEmptyExpense.push(true)
+
+        }
+      })
+      if(tabId=='ingreso'){
+        if(formData.ingreso.length==0){
           setIsAllowSave(false)
-        } */
+          return;
+        }
+      }else if(tabId=='gasto'){
+        if(formData.gasto.length==0){
+          setIsAllowSave(false)
+          return;
+        }
+         
+      }
 
-        
+    /* }else{ */
+      /* formData.ingreso.forEach((element: any) => {
+        let objectWithValue = validateObjesWithValue(element)
+        if (!objectWithValue && !element.projectName) {
+          formDataEmptyAddition.push(true)
+
+        }
+      }) */
+   /*  } */
+
+
+
+    if (!formDataEmptyAddition.includes(true) && formData.ingreso.length > 0) {
+      setIsAllowSave(true)
+    } else if (formData.ingreso.length > 0) {
+      setIsAllowSave(false)
     }
-  }, [formData])
-  
 
-  function isEmptyProp(obj) {
-    for (let key in obj) {
-      console.log("===>>>> ",obj[key])
-      if (obj.hasOwnProperty(key) && obj[key] === '' || obj[key] ==null) {
-        return true; // Devuelve true si encuentra una propiedad vacía
+    if (!formDataEmptyExpense.includes(true) && formData.gasto.length > 0) {
+      setIsAllowSave(true)
+    } else if (formData.gasto.length > 0) {
+      setIsAllowSave(false)
+    }
+
+  }, [formData])
+
+
+  function validateObjesWithValue(objeto) {
+    for (const propiedad in objeto) {
+      if (objeto.hasOwnProperty(propiedad)) {
+        const valor = objeto[propiedad];
+        if (propiedad != "projectName" && propiedad != "cardId" && valor !== null && valor !== undefined && valor !== "") {
+          return true; // El objeto tiene al menos un campo con valor
+        }
       }
     }
-    return false; // Devuelve false si no encuentra ninguna propiedad vacía
+    return false; // El objeto no tiene ningún campo con valor
   }
-
-
-
 
 
   return {
