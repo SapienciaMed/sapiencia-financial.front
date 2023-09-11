@@ -290,29 +290,25 @@ export function useAdditionAreaCrud(tabId: string) {
 
 
   let formData = watch()
-  let formDataIncome = watch('ingreso')
-  let formDataExprense = watch('gasto')
-
+  
   const [isAllowSave, setIsAllowSave] = useState(false)
-  const [tabIdSt, setTabIdSt] = useState(tabId)
+  /* const [tabIdSt, setTabIdSt] = useState(tabId)
   useEffect(() => {
     setIsAllowSave(false)
-  }, [tabIdSt])
+  }, [tabIdSt]) */
 
   useEffect(() => {
     let formDataEmptyAddition = []
     let formDataEmptyExpense = []
-    /* if (tabIdSt == 'ingreso') { */
       formData.ingreso.forEach((element: any) => {
-        let objectWithValue = validateObjesWithValue(element)
+        let objectWithValue = validateObjectsWithValue(element)
         if (!objectWithValue && !element.projectName) {
           formDataEmptyAddition.push(true)
 
         }
       })
-    /* } else if (tabId == 'gasto') { */
       formData.gasto.forEach((element: any) => {
-        let objectWithValue = validateObjesWithValue(element)
+        let objectWithValue = validateObjectsWithValue(element)
         if (!objectWithValue && !element.projectName) {
           formDataEmptyExpense.push(true)
 
@@ -331,18 +327,6 @@ export function useAdditionAreaCrud(tabId: string) {
          
       }
 
-    /* }else{ */
-      /* formData.ingreso.forEach((element: any) => {
-        let objectWithValue = validateObjesWithValue(element)
-        if (!objectWithValue && !element.projectName) {
-          formDataEmptyAddition.push(true)
-
-        }
-      }) */
-   /*  } */
-
-
-
     if (!formDataEmptyAddition.includes(true) && formData.ingreso.length > 0) {
       setIsAllowSave(true)
     } else if (formData.ingreso.length > 0) {
@@ -358,7 +342,7 @@ export function useAdditionAreaCrud(tabId: string) {
   }, [formData])
 
 
-  function validateObjesWithValue(objeto) {
+  function validateObjectsWithValue(objeto) {
     for (const propiedad in objeto) {
       if (objeto.hasOwnProperty(propiedad)) {
         const valor = objeto[propiedad];
