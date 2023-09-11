@@ -10,39 +10,42 @@ import { EResponseCodes } from "../../../../common/constants/api.enum";
 import { ITypeTransfers } from "../interfaces/TypesTranfersInterfaces";
 import { IFilterBudgets } from "../../interfaces/FilterBudgets";
 import { transferValidator } from "../../../../common/schemas/transfer-schema";
+import { ITransfers } from "../interfaces/TranfersInterfaces";
+import { IFilterTransferInterface } from "../interfaces/FilterTransferInterface";
 
 export function useManagementCenterTransfer() {
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
-    const { GetTypesTransfers } = useTypesTranfersService();
+    const { GetTypesTransfers, GetTransfers } = useTypesTranfersService();
     const resolver = useYupValidationResolver(transferValidator);
     const [dateFrom, setDateFrom] = useState(null);
     const [dateTo, setDateTo] = useState(null);
     const [typesTransfersData, setTypesTransfersData] = useState<IDropdownProps[]>(null);
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-    control: controlRegister,
-    reset
-  } = useForm<IFilterBudgets>({ resolver });
-    const tableColumns: ITableElement<IBudgets>[] = [
+    const {
+        handleSubmit,
+        register,
+        formState: { errors },
+        control: controlRegister,
+        reset,
+        watch,
+    } = useForm<IFilterTransferInterface>({ resolver });
+
+    const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
+    const [showTable, setShowTable] = useState(false);
+
+    const tableColumns: ITableElement<ITransfers>[] = [
         {
-            fieldName: "entity.name",
-            header: "Entidad CP",
+            fieldName: "actAdminDistrict",
+            header: "Acto administrativo",
         },
         {
-            fieldName: "ejercise",
-            header: "Ejercicio"
+            fieldName: "observations",
+            header: "Observaciones"
         },
         {
             fieldName: "number",
-            header: "Posición presupuestaria"
-        },
-        {
-            fieldName: "denomination",
-            header: "Denominacion"
-        },
+            header: "Total traslados"
+        }
     ];
     const tableActions: ITableAction<IBudgets>[] = [
         {
@@ -56,14 +59,10 @@ export function useManagementCenterTransfer() {
             onClick: (row) => {
                 navigate(`./edit/${row.id}`);
             },
-        },
-        {
-            icon: "Link",
-            onClick: (row) => {
-                navigate(`./vinculacion/${row.id}`);
-            }
         }
     ];
+
+    const inputValue =  watch(['adminDistrict', 'adminSapiencia'])
 
     function loadTableData(searchCriteria?: object): void {
         if (tableComponentRef.current) {
@@ -71,7 +70,12 @@ export function useManagementCenterTransfer() {
         }
     }
 
-    const onSubmit = handleSubmit(async (data: IFilterBudgets) => {
+    useEffect(() => {
+        setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
+    },[inputValue])
+
+    const onSubmit = handleSubmit(async (data: IFilterTransferInterface) => {
+        setShowTable(true)
         loadTableData(data);
     });
 
@@ -87,11 +91,28 @@ export function useManagementCenterTransfer() {
             }
         }).catch(() => { });
     }, [])
+
+    useEffect(() => {
+        loadTableData();
+        GetTransfers().then(response => {
+            if (response.operation.code === EResponseCodes.OK) {
+                console.log({ response })
+                /* const typeTransfers: ITypeTransfers[] = response.data;
+                const arrayEntities: IDropdownProps[] = typeTransfers.map((entity) => {
+                    return { name: entity.name, value: entity.id };
+                });
+                setTypesTransfersData(arrayEntities); */
+            }
+        }).catch(() => { });
+    }, [])
+
     
+
     return {
         tableComponentRef,
         tableColumns,
         tableActions,
+        isBtnDisable,
         onSubmit,
         register,
         navigate,
@@ -102,6 +123,8 @@ export function useManagementCenterTransfer() {
         dateTo,
         setDateTo,
         typesTransfersData,
-        controlRegister
+        controlRegister,
+        showTable,
+        setShowTable
     }
 } 
