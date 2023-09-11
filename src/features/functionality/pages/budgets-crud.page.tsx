@@ -69,7 +69,7 @@ function BudgetsForm({ action }: IAppProps) {
                         className="input-basic"
                         typeInput="text"
                         register={register}
-                        label="Posición Presupuestaria"
+                        label="Posición Presupuestal"
                         classNameLabel="text-black biggest bold text-required"
                         direction={EDirection.column}
                         errors={errors}
@@ -89,16 +89,14 @@ function BudgetsForm({ action }: IAppProps) {
                       <InputComponent
                         id={field.name}
                         idInput={field.name}
-                        value={`${field.value}`}
                         className="input-basic"
-                        typeInput="text"
+                        typeInput="number"
                         register={register}
                         label="Ejercicio"
                         classNameLabel="text-black biggest bold text-required"
                         direction={EDirection.column}
                         errors={errors}
                         onChange={field.onChange}
-                        min={0}
                         disabled={action !== "new"}
                       /> 
                     )

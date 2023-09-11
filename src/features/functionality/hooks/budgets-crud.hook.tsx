@@ -172,7 +172,7 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
     const confirmClose = (callback) =>{
         setMessage({
             title: "Cancelar Pospre Sapiencia",
-            description: "¿Segur@ que desea cancelar la operación?",
+            description: "¿Estás segur@ que desea cancelar la posición presupuestal?",
             show: true,
             OkTitle: "Aceptar",
             cancelTitle: "Cancelar",

@@ -85,7 +85,12 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
             })
 
         try {
-            output.length > 0 && setDataPaste(output.map((item: any, index: number) => ({
+            output.length > 0 && setDataPaste(output.map((item: any, index: number) => {
+                if (item.VALOR == "" && item.VALOR!=undefined) {
+                    throw new Error('Todos los campos deben estar diligenciados');
+                  }
+
+                return ({
                 isPaste: true,
                 cardId: generarIdAleatorio(10),
                 managerCenter: item.CENTROGESTOR,
@@ -93,11 +98,9 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
                 functionalArea: Object(arrayDataSelect.functionalArea.filter(e => e.value != null).find((e: any) => e.area[0].name == item.ÁREAFUNCIONAL)).area[0].id,
                 funds: (arrayDataSelect.funds.find(e => e.name == item.FONDO)).id,
                 posPre: (arrayDataSelect.posPre.find(e => e.name == item.POSPRE)).id,
-                value: item.VALOR != ""
-                    ? item.VALOR.replaceAll('.', '')
-                    : new Error('Todos los campos deben estar diligenciados'),
+                value: item.VALOR.replaceAll('.', ''),
                 projectName: item.NOMBREPROYECTO
-            })))
+            })}))
 
 
         } catch (error) {
