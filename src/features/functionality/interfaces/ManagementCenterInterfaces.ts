@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { ITypeTransfers } from "../../managementCenter/interfaces/TypesTranfersInterfaces";
+import { ITypeTransfers } from "../../managementCenter/transfer/interfaces/TypesTranfersInterfaces";
 
 export interface IManagementCenter {
   id?: number;

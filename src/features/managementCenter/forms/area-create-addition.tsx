@@ -77,7 +77,7 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
             showModal({
                 title: "Validación de datos",
                 //description: "Se ha encontrado un error en los datos,revisa las rutas presupuestales",
-                description: "Se ha encontrado un error en los datos valida: incluir titulos o sin datos vacios",
+                description: "Se ha encontrado un error en los datos valida inclusion de titulos o datos completos",
                 show: true,
                 OkTitle: "Aceptar",
             })
@@ -91,7 +91,9 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
                 functionalArea: Object(arrayDataSelect.functionalArea.filter(e=>e.value!=null).find((e: any) => e.area[0]?.name == item.ÁREAFUNCIONAL)).area[0]?.id,
                 funds: (arrayDataSelect.funds.filter(e=>e.value!=null).find(e => e.name == item.FONDO)).id,
                 posPre: (arrayDataSelect.posPre.filter(e=>e.value!=null).find(e => e.name == item.POSPRE))?.id,
-                value: item.VALOR.replaceAll('.', ''),
+                value: item.VALOR !=""
+                    ? item.VALOR.replaceAll('.', '')
+                    : new Error('Todos los campos deben estar diligenciados'),
                 projectName: item.NOMBREPROYECTO
             })))
         } catch (error) {

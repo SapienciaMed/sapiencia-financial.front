@@ -17,6 +17,7 @@ interface IAppProps {
   getValues: UseFormGetValues<IAdditionsForm>;
   invalidCardsAdditionSt:any;
   setValue:any;
+  tabSelected?:any;
 }
 
 function TabManagerAdditionPage({
@@ -29,6 +30,7 @@ function TabManagerAdditionPage({
   watch,
   invalidCardsAdditionSt,
   setValue,
+  tabSelected
 }: IAppProps) {
   const { option } = useParams();
   const navigate = useNavigate();
@@ -93,7 +95,7 @@ function TabManagerAdditionPage({
   const handleTabClick = (tab: ITabsMenuTemplate) => {
     setSelectedTab(tab);
     // watch();
-    // onSubmitTab();
+     tabSelected(tab)
     // errors?.ingreso?.message == "datos duplicados en el sistema" &&
     //   showModal({
     //     title: "Validación de datos",
