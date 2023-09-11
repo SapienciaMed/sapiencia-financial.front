@@ -120,7 +120,7 @@ export function InputComponent({
     >
       <LabelElement
         label={label}
-        idInput={idInput}
+        idInput={id}
         classNameLabel={classNameLabel}
       />
       <div className="flex-container-input">

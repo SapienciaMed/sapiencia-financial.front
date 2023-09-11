@@ -50,3 +50,11 @@ export interface IArrayDataSelect{
   funds: IDropdownProps[],
   posPre: IDropdownProps[]
 }
+
+export interface IDropdownPropsFuctionalArea{
+  description?:string;
+  name: string,
+  value: string | number;
+  projectId?: string | number,
+  id?: string | number,
+}
