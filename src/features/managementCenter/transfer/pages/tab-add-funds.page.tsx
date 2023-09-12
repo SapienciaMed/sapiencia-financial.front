@@ -5,16 +5,15 @@ import CreateFundsSource from "../forms/create-funds-source";
 import CreateFundsDestination from "../forms/create-fund-destination"
 import {  IAddFunds } from "../interfaces/TransferAreaCrudInterface";
 import { useFormState, useWatch } from "react-hook-form";
+import { validateArray } from "../../../../common/utils/validate-object";
 
-
-function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValues}: IAddFunds) {
+function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValues, validarTabs}: IAddFunds) {
 
     const { option } = useParams();
     const [isDisabled, setIsDisabled] = useState(false)
     const formOrigen = useWatch({ control, name: 'origen' })
     const { isValid } = useFormState({ control})
-    
-    
+       
     const tabs: ITabsMenuTemplate[] = [
         { 
             id: "origen", title: "Origen", content: ( 
@@ -36,7 +35,8 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
                     register={register} 
                     arrayDataSelect={arrayDataSelect} 
                     setValue={setValue} 
-                    getValues={getValues}/>
+                    getValues={getValues}
+                />
             ) 
         },
     ]
@@ -57,38 +57,34 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
 
     useEffect(() => {
         if (!selectedTab && tabs.length > 0) setSelectedTab(tabs[0]);
+        validarTabs(selectedTab?.id == 'destino')
     }, [tabs]);
 
     useEffect(() => {
         setIsDisabled(formOrigen?.length > 0 && validateArray(formOrigen))
     },[ isValid, formOrigen ])
-   
-    function validateArray(arr) {
-        return arr.every(validateObject);
-    }
-    function validateObject(obj) {
-        return Object.values(obj).every(value => value != "" && value != null);
-    }
     
     return (
         <div>
             <div className="tabs-component">
                 <div className="tabs-selection">
-                    {tabs.map((tab) => {
-                        let active = "";
-                        if (selectedTab && selectedTab.id === tab.id) active = "active";
-                        return (
-                            <div
-                                className={`tab-option ${active} ${(tab.id == 'destino' && !isDisabled) ? 'tab-option2-disabled disabled' : ''}`}
-                                key={tab.id}
-                                onClick={() => {
-                                    handleTabClick(tab);
-                                }}
-                            >
-                                {tab.title}
-                            </div>
-                        );
-                    })}
+                    {
+                        tabs.map((tab) => {
+                            let active = "";
+                            if (selectedTab && selectedTab.id === tab.id) active = "active";
+                            return (
+                                <div
+                                    className={`tab-option ${active} ${(tab.id == 'destino' && !isDisabled) ? 'tab-option2-disabled disabled' : ''}`}
+                                    key={tab.id}
+                                    onClick={() => {
+                                        handleTabClick(tab);
+                                    }}
+                                >
+                                    {tab.title}
+                                </div>
+                            );
+                        })
+                    }
                 </div>
                 <div className="tabs-content">
                     {selectedTab ? tabList[`${selectedTab?.title}`].content : "no data"}

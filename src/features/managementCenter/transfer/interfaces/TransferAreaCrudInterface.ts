@@ -25,6 +25,7 @@ export interface IAddFunds {
     arrayDataSelect: IArrayDataSelect,
     setValue: UseFormSetValue<any>;
     getValues: UseFormGetValues<ICreateSourceForm>,
+    validarTabs?: (tab: boolean) => void
 }
 
 export interface IAddFormCard {
@@ -34,9 +35,8 @@ export interface IAddFormCard {
     errors: FieldErrors<ICreateSourceForm>,
     count: number,
     cardId: string;
-    // invalidCardsAdditionSt: any;
     setValue: UseFormSetValue<any>;
-    // watch: any;
     remove: (index?: number | number[]) => void,
     register: UseFormRegister<ICreateSourceForm>,
+    titleLabelValue: string,
 }

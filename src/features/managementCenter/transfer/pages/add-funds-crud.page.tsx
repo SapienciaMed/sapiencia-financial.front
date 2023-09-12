@@ -5,7 +5,8 @@ import { useAddFundsCrud } from '../hook/add-funds-crud.hook';
 
 function AddFundsCrudPage() {
 
-    const {control, arrayDataSelect, onSubmitTab, setValue, register, getValues } = useAddFundsCrud()
+    const {control, arrayDataSelect, isBtnDisable, totalTransfer,  
+        isBtnVisible, onSubmitTab, formatMoney, onCancel, setValue, register, getValues, validarTabs } = useAddFundsCrud()
     
     return (
         <div className="crud-page full-height">
@@ -15,28 +16,36 @@ function AddFundsCrudPage() {
                         Añadir valores
                     </p>
                     <FormComponent action={onSubmitTab} id="add-fund-form">
-                        <TabAddFundsPage control={control} register={register} arrayDataSelect={arrayDataSelect} setValue={setValue} getValues={getValues}/>
+                        <TabAddFundsPage 
+                            control={control} 
+                            register={register} 
+                            arrayDataSelect={arrayDataSelect} 
+                            setValue={setValue} 
+                            getValues={getValues}
+                            validarTabs={validarTabs}
+                        />
                     </FormComponent>
                 </div>
             </section>
             <section className="container-button-bot-2">
-                <label className="text-black biggest"> Total Traslado: $   </label>
-                <div className="buttons-bot">
-                    <ButtonComponent
-                        form="useQueryForm"
-                        value="Cancelar"
-                        type="button"
-                        className="button-cancel-field bold"
+                <div className='content-label'>
+                    <label className="text-black biggest"> Total Traslado:</label>
+                    <label className="text-black biggest" style={{color: '#533893'}}> $ {formatMoney(totalTransfer)} </label>
+                </div>
+                <div className='buttons-bot'>
+                    <span
+                        className="bold text-center button"
+                        onClick={onCancel}
+                    >
+                        Cancelar
+                    </span>
+                     <ButtonComponent
+                        className="button-main huge hover-three"
+                        value="Guardar"
+                        type="submit"
+                        form="add-fund-form"
+                        disabled={!isBtnDisable}
                     />
-                    {
-                        true && 
-                            <ButtonComponent
-                                className="button-main huge hover-three"
-                                value="Guardar"
-                                type="submit"
-                                form="add-fund-form"
-                            />
-                    }
                 </div>
             </section>
         </div>

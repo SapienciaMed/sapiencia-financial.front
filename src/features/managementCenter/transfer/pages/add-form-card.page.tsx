@@ -7,7 +7,7 @@ import { IAddFormCard } from '../interfaces/TransferAreaCrudInterface'
 import { useWatch } from 'react-hook-form';
 import { IDropdownPropsFuctionalArea } from '../../../../common/interfaces/global.interface';
 
-export const AddFormCardPage = ({arrayDataSelect, control, titleAdd, errors, count, cardId, register, remove, setValue}: IAddFormCard) => {
+export const AddFormCardPage = ({arrayDataSelect, control, titleAdd, errors, count, cardId, titleLabelValue, register, remove, setValue}: IAddFormCard) => {
 
     const { functionalArea, funds, posPre, } = arrayDataSelect
     const formOrigen = useWatch({ control, name: titleAdd })
@@ -131,7 +131,7 @@ export const AddFormCardPage = ({arrayDataSelect, control, titleAdd, errors, cou
             <InputNumberComponent
                 control={control}
                 idInput={`${titleAdd}[${count}].value`}
-                label="Valor contracrédito"
+                label={`${titleLabelValue}`}
                 className="inputNumber-basic medium"
                 placeholder={'Seleccionar'}
                 classNameLabel="text-black biggest bold text-required"

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useFieldArray, useFormState, useWatch } from 'react-hook-form';
 import { IAddFunds } from '../interfaces/TransferAreaCrudInterface';
 import { FaRegCopy } from 'react-icons/fa';
@@ -7,6 +7,8 @@ import { BiPlusCircle } from 'react-icons/bi';
 import { AddFormCardPage } from '../pages/add-form-card.page';
 import { Paginator } from 'primereact/paginator';
 import { paginatorFooter } from '../../../../common/components/table.component';
+import { PasteDataFinanceArea } from '../../../../common/utils/paste-data-finance-area';
+import { AppContext } from '../../../../common/contexts/app.context';
 
 
 function CreateFundsDestination({ control, titleAdd, register, arrayDataSelect, setValue, getValues}: IAddFunds) {
@@ -23,10 +25,12 @@ function CreateFundsDestination({ control, titleAdd, register, arrayDataSelect, 
         name: titleAdd
     })
 
+    const [dataPaste, setDataPaste] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
     const startIndex = (currentPage - 1) * itemsPerPage;
     const visibleFields = fields.slice(startIndex, startIndex + itemsPerPage);
+    const { setMessage } = useContext(AppContext);
 
     const onPageChange = event => setCurrentPage(event.page + 1);
 
@@ -40,13 +44,22 @@ function CreateFundsDestination({ control, titleAdd, register, arrayDataSelect, 
         }, 0);
         return total;
     };
+
+    const onPaste = async () => {
+        const validationIn = 'traslado'
+        PasteDataFinanceArea({arrayDataSelect, setDataPaste, setMessage, validationIn })
+    }
+
+    useEffect(() => {
+        dataPaste.length > 0 && append(dataPaste)
+    }, [dataPaste])
     
     return (
         <div className="card-user mt-14px">
             <div className="title-area">
                 <label className="text-black biggest"> Traslado {titleAdd} </label>
                 <div className='display-justify-flex-center p-rating'>
-                    <div className="title-button text-three large" id='pages' onClick={() => {}}> Pegar <FaRegCopy /> </div>
+                    <div className="title-button text-three large" id='pages' onClick={onPaste}> Pegar <FaRegCopy /> </div>
                     <div className="title-button text-three large"
                         onClick={() => {
                             append({
@@ -77,6 +90,7 @@ function CreateFundsDestination({ control, titleAdd, register, arrayDataSelect, 
                                 register={register} 
                                 cardId={field.id}
                                 setValue={setValue}
+                                titleLabelValue='Valor crédito'
                             />
                         </div>
                     )

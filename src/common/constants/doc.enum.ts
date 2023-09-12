@@ -7,3 +7,13 @@ export const AddValidHeaders= [
     " VALOR  ",
     " NOMBRE PROYECTO  \r"
 ];
+
+export const AddValidHeadersTransfer = [
+    " CENTRO GESTOR  ",
+    " POSICIÓN PRESUPUESTAL  ",
+    " FONDO  ",
+    " ÁREA FUNCIONAL ",
+    " PROYECTO ",
+    " VALOR CONTRACRÉDITO ",
+    " NOMBRE PROYECTO  \r"
+]
