@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   ButtonComponent,
   FormComponent,
@@ -17,7 +17,11 @@ interface IAppProps {
 function AdditionAreaCrud({ actionForm }: IAppProps) {
   const navigate = useNavigate();
 
-  const { control, arrayDataSelect, errors, onSubmitTab, showModal, setMessage, getValues, watch, register, invalidCardsAdditionSt, setValue } = useAdditionAreaCrud();
+  const [tabId, setTabId] = useState<string>()
+  const tabSelected = (e)=>{
+    setTabId(e.id)
+  }
+  const { control, arrayDataSelect, errors, onSubmitTab, showModal, setMessage, getValues, watch, register, invalidCardsAdditionSt, setValue, isAllowSave } = useAdditionAreaCrud(tabId);
   
   return (
     <div className="crud-page">
@@ -61,6 +65,7 @@ function AdditionAreaCrud({ actionForm }: IAppProps) {
               register={register}
               invalidCardsAdditionSt={invalidCardsAdditionSt}
               setValue={setValue}
+              tabSelected={tabSelected}
             />
           </FormComponent>
           <section className="container-button-core mt-24px">
@@ -88,6 +93,7 @@ function AdditionAreaCrud({ actionForm }: IAppProps) {
                 value="Guardar"
                 type="submit"
                 form='form-acts'
+                disabled={!isAllowSave}
               />
             </div>
           </section>

@@ -77,13 +77,19 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
             showModal({
                 title: "Validación de datos",
                 //description: "Se ha encontrado un error en los datos,revisa las rutas presupuestales",
-                description: "Se ha encontrado un error en los datos valida: incluir titulos o sin datos vacios",
+                description: "Se ha encontrado un error en los datos valida inclusion de titulos o datos completos",
                 show: true,
                 OkTitle: "Aceptar",
             })
 
         try {
-            output.length > 0 && setDataPaste(output.map((item: any, index: number) => ({
+            output.length > 0 && setDataPaste(output.map((item: any, index: number) => {
+                
+                if (item.VALOR == "" && item.VALOR!=undefined) {
+                    throw new Error('Todos los campos deben estar diligenciados');
+                  }
+
+                return ({
                 isPaste: true,
                 cardId: generarIdAleatorio(20),
                 managerCenter: item.CENTROGESTOR,
@@ -93,7 +99,7 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
                 posPre: (arrayDataSelect.posPre.filter(e=>e.value!=null).find(e => e.name == item.POSPRE))?.id,
                 value: item.VALOR.replaceAll('.', ''),
                 projectName: item.NOMBREPROYECTO
-            })))
+            })}))
         } catch (error) {
             showModal({
                 title: "Validación de datos",
