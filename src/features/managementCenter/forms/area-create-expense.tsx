@@ -86,7 +86,8 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
 
         try {
             output.length > 0 && setDataPaste(output.map((item: any, index: number) => {
-                if (item.VALOR == "" && item.VALOR!=undefined) {
+                if (item.VALOR == "" && item.VALOR!=undefined && item.NOMBREPROYECTO!="" && item.NOMBREPROYECTO!=undefined && item.CENTROGESTOR!=""
+                ) {
                     throw new Error('Todos los campos deben estar diligenciados');
                   }
 

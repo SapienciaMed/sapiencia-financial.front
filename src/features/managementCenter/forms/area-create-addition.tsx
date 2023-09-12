@@ -84,8 +84,8 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
 
         try {
             output.length > 0 && setDataPaste(output.map((item: any, index: number) => {
-                
-                if (item.VALOR == "" && item.VALOR!=undefined) {
+                // TODO: mirar validación para que los campos de nobre de  proyecto y CENTROGESTOR no vengan vacios.
+                if (item.VALOR == "" && item.VALOR!=undefined && item.NOMBREPROYECTO!="" && item.NOMBREPROYECTO!=undefined && item.CENTROGESTOR!="") {
                     throw new Error('Todos los campos deben estar diligenciados');
                   }
 

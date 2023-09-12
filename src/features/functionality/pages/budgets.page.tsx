@@ -80,7 +80,7 @@ function BudgetsPage(props: IAppProps): React.JSX.Element {
                                     columns={tableColumns}
                                     actions={tableActions}
                                     isShowModal={true}
-                                    titleMessageModalNoResult={"Posición Pesupuestal"}
+                                    titleMessageModalNoResult={"Posición Presupuestal"}
                                 />
                             </div>
                     )
