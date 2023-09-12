@@ -84,22 +84,22 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
 
         try {
             output.length > 0 && setDataPaste(output.map((item: any, index: number) => {
-                
-                if (item.VALOR == "" && item.VALOR!=undefined) {
+                if (item.VALOR == "" || item.NOMBREPROYECTO == "" || item.CENTROGESTOR == "" || item.POSPRE == "") {
                     throw new Error('Todos los campos deben estar diligenciados');
-                  }
+                }
 
                 return ({
-                isPaste: true,
-                cardId: generarIdAleatorio(20),
-                managerCenter: item.CENTROGESTOR,
-                projectId: (arrayDataSelect.functionalArea.find(e => e.name == item.PROYECTO)).id,
-                functionalArea: Object(arrayDataSelect.functionalArea.filter(e=>e.value!=null).find((e: any) => e.area[0]?.name == item.ÁREAFUNCIONAL)).area[0]?.id,
-                funds: (arrayDataSelect.funds.filter(e=>e.value!=null).find(e => e.name == item.FONDO)).id,
-                posPre: (arrayDataSelect.posPre.filter(e=>e.value!=null).find(e => e.name == item.POSPRE))?.id,
-                value: item.VALOR.replaceAll('.', ''),
-                projectName: item.NOMBREPROYECTO
-            })}))
+                    isPaste: true,
+                    cardId: generarIdAleatorio(20),
+                    managerCenter: item.CENTROGESTOR,
+                    projectId: (arrayDataSelect.functionalArea.find(e => e.name == item.PROYECTO)).id,
+                    functionalArea: Object(arrayDataSelect.functionalArea.filter(e => e.value != null).find((e: any) => e.area[0]?.name == item.ÁREAFUNCIONAL)).area[0]?.id,
+                    funds: (arrayDataSelect.funds.filter(e => e.value != null).find(e => e.name == item.FONDO)).id,
+                    posPre: (arrayDataSelect.posPre.filter(e => e.value != null).find(e => e.name == item.POSPRE))?.id,
+                    value: item.VALOR.replaceAll('.', ''),
+                    projectName: item.NOMBREPROYECTO
+                })
+            }))
         } catch (error) {
             showModal({
                 title: "Validación de datos",
