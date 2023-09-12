@@ -62,7 +62,7 @@ export function useManagementCenterTransfer() {
         }
     ];
 
-    const inputValue =  watch(['adminDistrict', 'adminSapiencia'])
+    const inputValue =  watch(['adminDistrict', 'observations'])
 
     function loadTableData(searchCriteria?: object): void {
         if (tableComponentRef.current) {
