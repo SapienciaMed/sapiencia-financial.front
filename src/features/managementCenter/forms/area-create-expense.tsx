@@ -86,22 +86,22 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
 
         try {
             output.length > 0 && setDataPaste(output.map((item: any, index: number) => {
-                if (item.VALOR == "" && item.VALOR!=undefined && item.NOMBREPROYECTO!="" && item.NOMBREPROYECTO!=undefined && item.CENTROGESTOR!=""
-                ) {
+                if (item.VALOR == "" || item.NOMBREPROYECTO == "" || item.CENTROGESTOR == "" || item.POSPRE == "") {
                     throw new Error('Todos los campos deben estar diligenciados');
-                  }
+                }
 
                 return ({
-                isPaste: true,
-                cardId: generarIdAleatorio(10),
-                managerCenter: item.CENTROGESTOR,
-                projectId: (arrayDataSelect.functionalArea.find(e => e.name == item.PROYECTO)).id,
-                functionalArea: Object(arrayDataSelect.functionalArea.filter(e => e.value != null).find((e: any) => e.area[0].name == item.ÁREAFUNCIONAL)).area[0].id,
-                funds: (arrayDataSelect.funds.find(e => e.name == item.FONDO)).id,
-                posPre: (arrayDataSelect.posPre.find(e => e.name == item.POSPRE)).id,
-                value: item.VALOR.replaceAll('.', ''),
-                projectName: item.NOMBREPROYECTO
-            })}))
+                    isPaste: true,
+                    cardId: generarIdAleatorio(10),
+                    managerCenter: item.CENTROGESTOR,
+                    projectId: (arrayDataSelect.functionalArea.find(e => e.name == item.PROYECTO)).id,
+                    functionalArea: Object(arrayDataSelect.functionalArea.filter(e => e.value != null).find((e: any) => e.area[0].name == item.ÁREAFUNCIONAL)).area[0].id,
+                    funds: (arrayDataSelect.funds.find(e => e.name == item.FONDO)).id,
+                    posPre: (arrayDataSelect.posPre.find(e => e.name == item.POSPRE)).id,
+                    value: item.VALOR.replaceAll('.', ''),
+                    projectName: item.NOMBREPROYECTO
+                })
+            }))
 
 
         } catch (error) {
