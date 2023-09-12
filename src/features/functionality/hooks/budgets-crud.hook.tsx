@@ -10,6 +10,7 @@ import { useBudgetsService } from "./budgets-service.hook";
 import { IBudgets } from "../interfaces/Budgets";
 import { AppContext } from "../../../common/contexts/app.context";
 import { budgetsCrudValidator } from "../../../common/schemas/budgets-schemas";
+import { IMessage } from "../../../common/interfaces/global.interface";
 
 interface IBudgetsCrudForm {
     number: string;
@@ -80,11 +81,55 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
             userCreate: authorization.user.numberDocument,
             ejercise: parseInt(data.ejercise),
         }
+
+
+
+        showModal({
+            //type?: EResponseCodes;
+            title: "Guardar",
+            description: "¿Está segur@ de guardar la información en el sistema?",
+            show: true,
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
+            onOk: () => {
+              setMessage({})
+              messageConfirmSave(insertData)
+            },
+            onCancel: () => {
+              setMessage({})
+              onCancelNew()
+            },
+            // onClickOutClose?: boolean;
+            onClose: () => {
+              setMessage({})
+              onCancelNew()
+            },
+            background: true
+          })
+
+        
+    });
+
+    
+    const showModal = (values: IMessage) => {
+        setMessage({
+          title: values.title,
+          description: values.description,
+          show: true,
+          OkTitle: values.OkTitle,
+          onOk: values.onOk || (() => setMessage({})),
+          cancelTitle: values.cancelTitle
+    
+        });
+      };
+    
+
+    const messageConfirmSave = async (insertData:any) => {
         CreateBudgets(insertData).then(response => {
             if (response.operation.code === EResponseCodes.OK) {
                 setMessage({
-                    title: "Crear Pospre",
-                    description: "Se ha creado el Pospre exitosamente",
+                    title: "Pospre creado",
+                    description: "¡Se creó Posición presupuestal exitosamente!",
                     show: true,
                     OkTitle: "Aceptar",
                     onOk: () => {
@@ -106,7 +151,20 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
                 });
             }
         })
-    });
+        
+        /* showModal({
+          title: "Guardado",
+          description: res.operation.message,
+          show: true,
+          OkTitle: "Aceptar",
+          onOk: () => {
+            setMessage({})
+            onCancelNew()
+          }
+        }) */
+      }
+
+
 
     const onSubmitEditBudgets = handleSubmit(async (data: IBudgetsCrudForm) => {
         const insertData: IBudgets = {

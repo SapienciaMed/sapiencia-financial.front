@@ -105,7 +105,8 @@ function ManagementCenterTransferPage(props: IAppProps): React.JSX.Element {
                                 url={`${process.env.urlApiFinancial}/api/v1/transfers/get-paginated`}
                                 columns={tableColumns}
                                 actions={tableActions}
-                                isShowModal={false}
+                                isShowModal={true}
+                                titleMessageModalNoResult="Traslado"
                             />
                         </div>
                     )
