@@ -1,10 +1,9 @@
 import React from 'react'
 import { ButtonComponent, FormComponent, InputComponent, TextAreaComponent } from '../../../../common/components/Form';
 import { BiPlusCircle } from 'react-icons/bi';
-import { useTransferAreaCrudPage } from '../hook/transfer-area-crud.hook';
+import { mockData, useTransferAreaCrudPage } from '../hook/transfer-area-crud.hook';
 import { Controller } from 'react-hook-form';
 import { EDirection } from '../../../../common/constants/input.enum';
-import TableComponent from '../../../../common/components/table.component';
 import TableDetailComponent from '../../components/table-detail.component';
 
 interface IAppProps {
@@ -12,7 +11,7 @@ interface IAppProps {
   }
 
 function TransferAreaCrudPage({ actionForm }: IAppProps) {
-    const {control, errors, navigate, onSubmit, register, tableColumns, tableActions, isBtnDisable, tableComponentRef, mockData} = useTransferAreaCrudPage()
+    const {control, errors, tableColumns, tableActions, isBtnDisable, tableComponentRef, navigate, onSubmit, register, onCancel, } = useTransferAreaCrudPage()
 
     return (
         <div className="crud-page full-height">
@@ -101,17 +100,20 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                         </FormComponent>
                     </section>
 
-                    <section className="card-user mt-24px">
-                        <TableDetailComponent
-                            ref={tableComponentRef}
-                            columns={tableColumns}
-                            actions={tableActions}
-                            isShowModal={true}
-                            titleMessageModalNoResult={"Fondos"}
-                            ownData={mockData}
-                            secondaryTitle='Detalles de la ruta'
-                        />
-                    </section>
+                    {
+                        mockData.array.length > 0 && 
+                            <section className="card-user mt-24px">
+                                <TableDetailComponent
+                                    ref={tableComponentRef}
+                                    columns={tableColumns}
+                                    actions={tableActions}
+                                    isShowModal={true}
+                                    titleMessageModalNoResult={"Fondos"}
+                                    ownData={mockData}
+                                    secondaryTitle='Detalles de la ruta'
+                                />
+                            </section>
+                    }
 
                 </div>
             </section>
@@ -124,7 +126,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                 <div className="buttons-bot">
                     <span
                         className="bold text-center button"
-                        onClick={() => {}}
+                        onClick={onCancel}
                     >
                         Cancelar
                     </span>

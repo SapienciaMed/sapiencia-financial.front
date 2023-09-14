@@ -3,8 +3,9 @@ import icono from '../../../public/images/icons/icon-arrow.png'
 import { ButtonComponent } from '../../../common/components/Form';
 
 interface IRowTableProps {
-    title: string;
-    value: string;
+    title: string,
+    value: string,
+    idListNameProject: string,
     id: string
 }
 
@@ -12,14 +13,14 @@ interface IDetailsProps {
     rows: IRowTableProps[]
     total: number,
     onOk: () => void,
-    onShowModalDetail: (title: string) => void
+    onShowModalDetail: (title: string, idListNameProject: string, id: string) => void
 }
 
 function DetailsRouteValuesComponent({ rows, total, onOk, onShowModalDetail }: IDetailsProps): React.JSX.Element {
 
-    const onTableRow = (title: string) => {
+    const onTableRow = (title: string, idListNameProject: string, id: string) => {
         onOk()
-        onShowModalDetail(title)
+        onShowModalDetail(title, idListNameProject, id)
     }
 
     return (
@@ -28,9 +29,9 @@ function DetailsRouteValuesComponent({ rows, total, onOk, onShowModalDetail }: I
 
             <table className="details-table-2 card-grid-item">
                 {
-                    rows.map((row, index) => {
+                    rows?.map((row, index) => {
                         return (
-                            <tr key={row.title} onClick={() => onTableRow(row?.title)}>
+                            <tr key={row.title} onClick={() => onTableRow(row?.title, row.idListNameProject, row.id)}>
                                 <th className="th-title">{row?.title}</th>
                                 <th className="th-content">
                                     {row?.value}

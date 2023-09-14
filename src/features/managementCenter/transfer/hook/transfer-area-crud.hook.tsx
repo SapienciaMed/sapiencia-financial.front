@@ -9,12 +9,27 @@ import { AppContext } from '../../../../common/contexts/app.context';
 import DetailsRouteValuesComponent from '../../components/details-route-values.component';
 import { ITableAction } from '../../../../common/interfaces/table.interfaces';
 import { IPagingData } from '../../../../common/utils/api-response';
+import DetailsSelectedProjectComponent from '../../components/details-selected-project.component';
+import { IAddFund } from '../interfaces/TransferAreaCrudInterface';
 
 export function useTransferAreaCrudPage() {
 
     const tableComponentRef = useRef(null);
     const resolver = useYupValidationResolver(transferAreaCrudValidator);
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
+    const [ showModalDetail, setShowModalDetail ] =useState({
+        show: false,
+        row: [
+            {
+                id: '',
+                title: '',
+                value: '',
+                idListNameProject: '',
+            }
+        ],
+        total: 0
+    })
+
     const navigate = useNavigate();
     const { setMessage } = useContext(AppContext);
 
@@ -31,6 +46,24 @@ export function useTransferAreaCrudPage() {
     useEffect(() => {
         setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
     },[inputValue])
+
+    useEffect(() => {
+        showModalDetail?.show && (
+            setMessage({
+                title: "Detalle",
+                show: true,
+                description: <DetailsRouteValuesComponent 
+                    rows={showModalDetail.row} 
+                    total={showModalDetail.total} 
+                    onOk={onCloseModal} 
+                    onShowModalDetail={onShowModalDetail} 
+                    />,
+                background: true
+            })
+        )
+    },[showModalDetail])
+
+    const onCloseModal = () => setMessage({});
 
     const onSubmit = handleSubmit(async (data: {actAdministrativeDistrict: string, actAdministrativeSapiencia: string}) => {});
 
@@ -49,10 +82,12 @@ export function useTransferAreaCrudPage() {
         {
             icon: "Detail",
             onClick: (row) => {
+                
                 const rows = row.listNameProject.map(item => ({
+                    id: row.id,
                     title: item.nameProject,
                     value: item.totalProject,
-                    id: item.id
+                    idListNameProject: item.id,
                 }));
 
                 const total = row.listNameProject.reduce((accumulator, project) => {
@@ -60,12 +95,7 @@ export function useTransferAreaCrudPage() {
                     return accumulator + total;
                 }, 0);
 
-                setMessage({
-                    title: "Detalle",
-                    show: true,
-                    description: <DetailsRouteValuesComponent rows={rows} total={total} onOk={onCloseModal} onShowModalDetail={onShowModalDetail}/>,
-                    background: true
-                })
+                setShowModalDetail({ show: true, row: rows, total })
              },
         },
         {
@@ -86,84 +116,54 @@ export function useTransferAreaCrudPage() {
         }
     ];
 
-    const onCloseModal = () => setMessage({});
-
-    const onShowModalDetail = (title: string) => {
+    const onShowModalDetail = (title: string, idListNameProject: string, id: string) => {
         setMessage({
             title,
             show: true,
+            titleBack: 'Atrás',
             onOk: () => {
                 setMessage({})
             },
-            description: <>hola</>,
+            onBack: () => {
+                setMessage({})
+                setShowModalDetail({ show: true, row: showModalDetail.row, total: showModalDetail.total })
+            },
+            description: <DetailsSelectedProjectComponent option='' idListNameProject={idListNameProject} onOk={onCloseModal} id={id}/>,
             background: true
         })
     }
 
-    const mockData: IPagingData<mockProp> = {
-        array: [
-            {
-                id: "1",
-                project: "Proyecto 1",
-                totalTransfer: "100.000.000",
-                userCreate: "797940",
-                listNameProject: [
-                    {
-                        id: '1',
-                        nameProject: 'Aprovechamiento de las ciudades universitarias',
-                        totalProject: '20.500.000.00'
-                    },
-                    {
-                        id: '2',
-                        nameProject: 'Aplicación del acceso y la permanencia en la educación postsecundaria',
-                        totalProject: '94.500.000.00'
-                    },
-                ]
+    const onCancel = () => {
+        setMessage({
+            title: "Cancelar",
+            show: true,
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
+            description: '¿Estás segur@ que desea cancelar la operación?',
+            onOk: () => {
+                setMessage({})
+                navigate(-1);
             },
-            {
-                id: "2",
-                project: "Proyecto 2",
-                totalTransfer: "200.000.000",
-                userCreate: "797940",
-                listNameProject: [
-                    {
-                        id: '1',
-                        nameProject: 'Aprovechamiento de las ciudades universitarias',
-                        totalProject: '20.500.000.00'
-                    },
-                    {
-                        id: '2',
-                        nameProject: 'Aplicación del acceso y la permanencia en la educación postsecundaria',
-                        totalProject: '94.500.000.00'
-                    }
-                ]
-                
-            },       
-        ],
-        meta: {
-            total: 2,
-            perPage: 10,
-            currentPage: 1,
-            lastPage: 1,
-            firstPage: 1,
-        }
-    }
-    
+            background: true
+        })
+    };
 
     return{
         errors,
-        mockData,
         control,
         isBtnDisable,
         tableColumns,
         tableActions,
         tableComponentRef,
+        onCancel,
         onSubmit,
         navigate,
         register,
     }
     
 }
+
+//TODO: eliminar
 interface mockProp {
     id: string,
     project: string,
@@ -176,4 +176,85 @@ interface IListNameProject {
     id: string,
     nameProject: string,
     totalProject: string
+    origen: IAddFund[],
+    destino: IAddFund[],
+}
+
+export const mockData: IPagingData<mockProp> = {
+    array: [
+        {
+            id: "1",
+            project: "2",
+            totalTransfer: "11.500.000.00",
+            userCreate: "797940",
+            listNameProject: [
+                {
+                    id: '1-list',
+                    nameProject: 'Aprovechamiento de las ciudades universitarias',
+                    totalProject: '20.500.000.00',
+                    origen: [
+                        {
+                            managerCenter: '91500000',
+                            projectId: '9200115',
+                            functionalArea: '22020700.3618.99',
+                            funds: '911070123',
+                            posPre: '91102060060602',
+                            value: '10.250.000.00',
+                        },
+                        {
+                            managerCenter: '2',
+                            projectId: '2',
+                            functionalArea: '2.3618.99',
+                            funds: '2',
+                            posPre: '2',
+                            value: '10.250.000.00',
+                        }
+                    ],
+                    destino: [
+                        {
+                            managerCenter: '91500055',
+                            projectId: '9200854',
+                            functionalArea: '22020700.3618.99',
+                            funds: '911070123',
+                            posPre: '91102060060602',
+                            value: '51.500.000.00',
+                        }
+                    ]
+                    
+                },
+                {
+                    id: '2-list',
+                    nameProject: 'Aplicación del acceso y la permanencia en la educación postsecundaria',
+                    totalProject: '94.500.000.00',
+                    origen: [
+                        {
+                            managerCenter: '91',
+                            projectId: '92',
+                            functionalArea: '2',
+                            funds: '9',
+                            posPre: '911',
+                            value: '80.500.000.00',
+                        }
+                    ],
+                    destino: [
+                        {
+                            managerCenter: '91500000',
+                            projectId: '9200115',
+                            functionalArea: '22020700.3618.99',
+                            funds: '911070123',
+                            posPre: '91102060060602',
+                            value: '20.500.000.00',
+                        }
+                    ]
+                },
+            ]
+        },         
+    ],
+    meta: {
+        total: 2,
+        perPage: 10,
+        currentPage: 1,
+        lastPage: 1,
+        firstPage: 1,
+    }
 }
