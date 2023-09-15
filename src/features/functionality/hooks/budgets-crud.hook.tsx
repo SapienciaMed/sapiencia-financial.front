@@ -86,8 +86,8 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
 
         showModal({
             //type?: EResponseCodes;
-            title: "Guardar",
-            description: "¿Está segur@ de guardar la información en el sistema?",
+            title: "Crear posición presupuestal",
+            description: "¿Estás segur@ de crear la posición presupuestal?",
             show: true,
             OkTitle: "Aceptar",
             cancelTitle: "Cancelar",
@@ -177,8 +177,8 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
         }
         
         setMessage({
-            title: "Guardar",
-            description: "¿Estas segur@ de guardar la información en el sistema?",
+            title: "Editar posición presupuestal",
+            description: "¿Estás segur@ de editar la posición presupuestal?",
             show: true,
             OkTitle: "Aceptar",
             cancelTitle: "Cancelar",
@@ -229,7 +229,7 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
 
     const confirmClose = (callback) =>{
         setMessage({
-            title: "Cancelar Pospre Sapiencia",
+            title: "Cancelar posición presupuestal",
             description: "¿Estás segur@ que desea cancelar la posición presupuestal?",
             show: true,
             OkTitle: "Aceptar",

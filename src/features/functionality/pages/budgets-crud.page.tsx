@@ -67,7 +67,7 @@ function BudgetsForm({ action }: IAppProps) {
                         idInput={field.name}
                         value={`${field.value}`}
                         className="input-basic"
-                        typeInput="text"
+                        typeInput="number"
                         register={register}
                         label="Posición Presupuestal"
                         classNameLabel="text-black biggest bold text-required"
