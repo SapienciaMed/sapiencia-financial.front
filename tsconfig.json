@@ -3,6 +3,7 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "declarationDir": "dist",
+    "downlevelIteration": true
   },
   "files": ["src/sapiencia-financial.tsx"],
   "include": ["src/**/*"],

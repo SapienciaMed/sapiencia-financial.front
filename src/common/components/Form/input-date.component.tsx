@@ -1,31 +1,25 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React from "react";
 import { EDirection } from "../../constants/input.enum";
 import { LabelComponent } from "./label.component";
-import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
+import { Controller, Control } from "react-hook-form";
 import { Calendar } from "primereact/calendar";
 import { IoCalendarOutline } from "react-icons/io5";
-import { DateTime } from "luxon";
 
 interface IDateProps<T> {
-  id?: string;
   idInput: string;
-  register?: UseFormRegister<T>;
+  control: Control<any>;
+  dateFormat: string;
   className?: string;
   placeholder?: string;
-  value?: string | Date | Date[];
   label?: string | React.JSX.Element;
   classNameLabel?: string;
   direction?: EDirection;
   children?: React.JSX.Element | React.JSX.Element[];
-  errors?: FieldErrors<any>;
-  setValueRegister?: UseFormSetValue<T>;
-  setValue?: React.Dispatch<any>;
-  stateProps?: {
-    state: any;
-    setState: React.Dispatch<any>;
-  };
+  errors?: any;
   disabled?: boolean;
-  onchange?: (e: string | Date | Date[]) => void;
+  maxDate?: Date;
+  minDate?: Date;
+  fieldArray?: boolean;
 }
 
 function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
@@ -39,84 +33,43 @@ function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
   );
 }
 
-function CalendarElement({
-  idInput,
-  id,
-  className,
-  placeholder,
-  value,
-  register,
-  setValueRegister,
-  setValue,
-  stateProps,
-  disabled,
-  onchange,
-}: IDateProps<any>): React.JSX.Element {
-  const [date, setDate] = useState<DateTime>(value);
-  const registerProp = register ? register : () => {};
-
-  useEffect(() => {
-    const setValueRegisterProp = setValueRegister ? setValueRegister : () => {};
-    setValueRegisterProp(idInput, date);
-  }, [date]);
-  return (
-    <div {...registerProp(idInput)}>
-      <Calendar
-        id={id}
-        mask="99/99/9999"
-        dateFormat="dd/mm/yy"
-        name={idInput}
-        value={value}
-        onChange={(e) => {
-          if (setValue) {
-            setValue(e.value);
-          }
-          if (onchange) {
-            onchange(e.value);
-          } else {
-            setDate(e.value);
-          }
-        }}
-        placeholder={placeholder}
-        className={className}
-        showIcon
-        icon={
-          <span>
-            <IoCalendarOutline />
-          </span>
-        }
-        showButtonBar
-        disabled={disabled}
-        inputStyle={{ borderRight: "none" }}
-      />
-    </div>
-  );
-}
-
 export function DatePickerComponent({
-  id,
   idInput,
-  register,
-  setValueRegister,
   className = "dataPicker-basic",
   placeholder = "DD/MM/AAAA",
-  value,
   label,
   classNameLabel = "text-main",
   direction = EDirection.column,
   children,
   errors = {},
-  stateProps,
-  setValue,
+  maxDate,
+  minDate,
+  fieldArray,
+  control,
+  dateFormat,
   disabled,
-  onchange,
 }: IDateProps<any>): React.JSX.Element {
+  const messageError = () => {
+    const keysError = idInput.split(".");
+    let errs = errors;
+    if (fieldArray) {
+      const errorKey = `${keysError[0]}[${keysError[1]}].${keysError[2]}`;
+      return errors[errorKey]?.message;
+    } else {
+      for (let key of keysError) {
+        errs = errs?.[key];
+        if (!errs) {
+          break;
+        }
+      }
+      return errs?.message ?? null;
+    }
+  };
+
   return (
     <div
       className={
-        errors[idInput]?.message
-          ? `${direction} container-icon_error`
-          : direction
+        messageError() ? `${direction} container-icon_error` : direction
       }
     >
       <LabelElement
@@ -125,24 +78,38 @@ export function DatePickerComponent({
         classNameLabel={classNameLabel}
       />
       <div>
-        <CalendarElement
-          id={id}
-          idInput={idInput}
-          className={className}
-          setValue={setValue}
-          placeholder={placeholder}
-          value={value}
-          register={register}
-          setValueRegister={setValueRegister}
-          stateProps={stateProps}
-          disabled={disabled}
-          onchange={onchange}
+        <Controller
+          name={idInput}
+          control={control}
+          render={({ field }) => (
+            <Calendar
+              id={field.name}
+              mask="99/99/9999"
+              dateFormat={dateFormat}
+              placeholder={placeholder}
+              className={`${className} ${messageError() ? "p-invalid" : ""}`}
+              showIcon
+              icon={
+                <span>
+                  <IoCalendarOutline />
+                </span>
+              }
+              showButtonBar
+              value={field.value && new Date(field.value)}
+              onChange={(e) => field.onChange(e.value)}
+              inputStyle={{ borderRight: "none" }}
+              minDate={minDate}
+              maxDate={maxDate}
+              disabled={disabled}
+            />
+          )}
         />
-        {errors[idInput]?.message && <span className="icon-error"></span>}
+
+        {messageError() && <span className="icon-error"></span>}
       </div>
-      {errors[idInput]?.message && (
+      {messageError() && (
         <p className="error-message bold not-margin-padding">
-          {errors[idInput]?.message}
+          {messageError()}
         </p>
       )}
       {children}

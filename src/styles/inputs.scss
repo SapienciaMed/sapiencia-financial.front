@@ -1,5 +1,9 @@
 @import "./mixins.scss";
 
+.flex-container-input {
+  display: flex;
+}
+
 .form-group {
   @include generate-flex-container(column, null, null, null, null, 8px);
 
@@ -92,7 +96,7 @@
     15px
   );
   border-width: 1px 1px 1px 0;
-  padding: 10px 20px 10px 0;
+  padding: 10px 10px;
 
   &:focus {
     outline: none;
@@ -110,7 +114,7 @@
   }
 
   &.medium {
-    height: 2.15em;
+    height: 2.1em;
   }
 
   &.big {
@@ -120,7 +124,6 @@
   &.large {
     height: 3em;
   }
-
 }
 
 .input-group-addon {
@@ -159,7 +162,7 @@
   }
 
   &.big {
-    height: 2.5em;
+    height: 2.4em;
   }
 
   &.large {
@@ -173,7 +176,8 @@
   .icon-error {
     position: absolute;
     right: 0;
-    margin: 8px 8px;
+    margin: 0px 8px;
+    align-self: center;
   }
 }
 
@@ -192,6 +196,7 @@
     null,
     15px
   );
+  place-items: center;
 
   &:focus {
     outline: none;
@@ -261,17 +266,71 @@
   }
 }
 
+.dataPicker-basic {
+  @include generate-input(
+    100%,
+    41px,
+    6px !important,
+    null,
+    $secondary-color,
+    null,
+    15px
+  );
+
+  &:focus {
+    outline: none;
+  }
+
+  &.error {
+    border: 1px solid $alert-failed-color !important;
+  }
+  &.tiny {
+    height: 1em;
+  }
+
+  &.small {
+    height: 1.5em;
+  }
+
+  &.medium {
+    height: 2em;
+  }
+
+  &.big {
+    height: 2.5em;
+  }
+
+  &.large {
+    height: 3em;
+  }
+}
+.dataPicker-basic > .p-button {
+  color: #fff !important;
+  background: $fourth-color !important;
+  // border-left: none !important;
+  // border-top: $input-color-border solid 1px;
+  // border-right: $input-color-border solid 1px;
+  // border-bottom: $input-color-border solid 1px;
+  padding: 0.5rem 1rem !important;
+  font-size: 1rem !important;
+  &:hover {
+    border: $fourth-color solid 1px !important;
+    color: #fff !important;
+    background: $fourth-color !important;
+  }
+}
+
 .transferbox-container {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 2fr 1fr 2fr;
-  
+
   .p-tree {
     padding: 0;
     border: 0px;
 
     .p-tree-container {
-      height: 12em
+      height: 12em;
     }
 
     .p-treenode-content.p-treenode-selectable.p-highlight {
@@ -279,10 +338,10 @@
       color: initial !important;
     }
 
-    .p-tree-toggler.p-link{
+    .p-tree-toggler.p-link {
       color: initial !important;
     }
-    
+
     .p-treenode-content.p-treenode-selectable.p-highlight:hover {
       background: #e9ecef !important;
     }
@@ -304,14 +363,45 @@
   @include card-component($width, $height, $padding);
 }
 
+.text-area-basic {
+  @include generate-text-area(
+    100%,
+    6px,
+    1px solid $input-color-border,
+    null,
+    null,
+    15px
+  );
+  overflow: scroll;
+  resize: none;
+  padding: 10px 20px;
+
+  &:focus {
+    outline: none;
+  }
+
+  &.error {
+    border: 1px solid $alert-failed-color;
+  }
+  &::-webkit-scrollbar {
+    width: 100%; /* Ancho de la barra de desplazamiento */
+    height: 0px;
+    background-color: transparent; /* Color de fondo transparente */
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent; /* Color transparente del pulgar */
+  }
+}
+
 @media (min-width: 1024px) {
-  .transferbox-container{
+  .transferbox-container {
     grid-template-columns: 6fr 3fr 6fr;
     grid-template-rows: 1fr;
-    
-    .p-tree{
+
+    .p-tree {
       .p-tree-container {
-        height: 22em
+        height: 22em;
       }
     }
   }
@@ -321,5 +411,44 @@
     $height: null;
     $padding: 20px;
     @include card-component($width, $height, $padding, false);
+  }
+}
+
+.inputNumber-basic {
+  @include generate-input(
+    100%,
+    41px,
+    6px !important,
+    null,
+    $secondary-color,
+    null,
+    15px
+  );
+
+  &:focus {
+    outline: none;
+  }
+
+  &.error {
+    border: 1px solid $alert-failed-color !important;
+  }
+  &.tiny {
+    height: 1em;
+  }
+
+  &.small {
+    height: 1.5em;
+  }
+
+  &.medium {
+    height: 2em;
+  }
+
+  &.big {
+    height: 2.5em;
+  }
+
+  &.large {
+    height: 3em;
   }
 }

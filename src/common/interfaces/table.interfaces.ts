@@ -5,6 +5,7 @@ export interface ITableElement<T> {
   dataList?: IListTableElement[];
   renderCell?: (row: T) => JSX.Element;
   width?: string | number;
+  sortable?: boolean;
 }
 
 export interface IListTableElement {
@@ -13,7 +14,7 @@ export interface IListTableElement {
 }
 
 export interface ITableAction<T> {
-  icon: "Detail" | "Edit" | "Delete";
+  icon: "Detail" | "Edit" | "Delete" | "Link";
   onClick: (row: T) => void;
   customName?: string;
 }
