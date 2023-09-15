@@ -101,7 +101,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                     </section>
 
                     {
-                        mockData.array.length > 0 && 
+                        mockData.array.length == 0 && 
                             <section className="card-user mt-24px">
                                 <TableDetailComponent
                                     ref={tableComponentRef}

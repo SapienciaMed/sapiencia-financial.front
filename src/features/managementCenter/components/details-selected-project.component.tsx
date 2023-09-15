@@ -35,7 +35,7 @@ function DetailsSelectedProjectComponent({ option, idListNameProject, id, onOk}:
                     })
                 }
             </div>
-            <div className="tabs-content" style={{maxHeight: '28vh', overflow: 'auto', marginTop: '1rem'}}>
+            <div className="tabs-content" style={{maxHeight: '30vh', overflow: 'auto', margin: '0.5rem 0'}}>
                 {selectedTab ? tabList[`${selectedTab?.title}`].content : "no data"}
             </div>
             <footer className='container-button-descripcion-modal'>
