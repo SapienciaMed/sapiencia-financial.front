@@ -30,6 +30,9 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                     headersArray.forEach((header, idx) => {
                         Reflect.set(rowObject, header.trim().replaceAll(" ", ""), values[idx].trim())
                     });
+
+                    //Realizar logica para pegar ya sea un origen o un destino
+
                     output.push(rowObject);
                 }
             }
