@@ -20,7 +20,12 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
     const validHeaders = validationIn === 'traslado' ? AddValidHeadersTransfer : AddValidHeaders;
     const isAllHeadersValid = headersArray.every(value => validHeaders.includes(value));
     const isLengthEqual = headersArray.length === validHeaders.length;
-
+    
+    let dataMovementByTransfer = [];
+    let dataMovementOrigin = [];
+    let dataMovementDestiny = [];
+    let countTransfer=1;
+    
     isAllHeadersValid && isLengthEqual ?
         rawRows.forEach((rawRow, idx) => {
             if (rawRow != '') {
@@ -32,8 +37,70 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                     });
 
                     //Realizar logica para pegar ya sea un origen o un destino
+                    const valorContracredito = parseFloat(Object(rowObject).VALORCONTRACRÉDITO) || 0;
+                    const valorCredito = parseFloat(Object(rowObject).VALORCRÉDITO) || 0;
+                    
+                    if(valorContracredito>0 && valorCredito==0){
+                        Object(rowObject).typeTransfer="Origen"
+                        
+                    }else if(valorContracredito==0 && valorCredito>0){
+                        Object(rowObject).typeTransfer="Destino"
+                    }
 
-                    output.push(rowObject);
+                    if(validationIn === 'traslado'){
+                        
+                            if(idx==1){
+                                Object(rowObject).transferId=countTransfer;
+                                dataMovementByTransfer.push({data:[rowObject]})
+                            }else{
+
+                                /* if(countTransfer==1){
+
+                                }else{
+                                
+                                } */
+
+                                    let lastObj = dataMovementByTransfer[countTransfer-1].data[dataMovementByTransfer[countTransfer-1].data.length-1]
+                                    if(lastObj.typeTransfer == 'Origen' && lastObj.typeTransfer == Object(rowObject).typeTransfer ){
+                                        dataMovementByTransfer[countTransfer-1].data.push(rowObject)
+                                    }else if(lastObj.typeTransfer == 'Destino' && Object(rowObject).typeTransfer=='Origen'){
+                                        // se crea un nuevo traslado
+                                        // validar que los totales del array coinciden
+                                        if(true){
+                                            countTransfer +=1;
+                                            dataMovementByTransfer.push({data:[rowObject]})
+                                        }else{
+                                            dataMovementByTransfer = []
+                                            return
+                                        }
+
+                                    }else{
+                                        // se guarda en el mismo traslado
+                                        dataMovementByTransfer[0].data.push(rowObject)
+                                    }
+
+                                    //console.log({lastObj})
+
+                                    //dataMovementByTransfer[0].data.push(rowObject)
+                                    
+                                    
+                                    
+
+                                
+                               
+
+
+
+                            }
+
+                            
+
+
+                        output.push(rowObject)
+                    }else{
+                        output.push(rowObject)
+                    } 
+                    
                 }
             }
         })
@@ -44,6 +111,8 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
             show: true,
             OkTitle: "Aceptar",
         })
+
+        console.log({dataMovementByTransfer})  
 
     const mapOutputItem = (item, arrayDataSelect, validationIn) => {
         const commonFields = {
@@ -89,3 +158,4 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
     }
 
 }
+

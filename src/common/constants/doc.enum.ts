@@ -15,5 +15,6 @@ export const AddValidHeadersTransfer = [
     " ÁREA FUNCIONAL ",
     " PROYECTO ",
     " VALOR CONTRACRÉDITO ",
+    " VALOR CRÉDITO ",
     " NOMBRE PROYECTO  \r"
 ]

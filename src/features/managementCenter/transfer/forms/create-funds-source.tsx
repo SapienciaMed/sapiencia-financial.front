@@ -42,10 +42,10 @@ function CreateFundsSource({ control, titleAdd, register, arrayDataSelect, setVa
         return total;
     };
 
-    const onPaste = async () => {
+    /* const onPaste = async () => {
         const validationIn = 'traslado'
         PasteDataFinanceArea({arrayDataSelect, setDataPaste, setMessage, validationIn })
-    }
+    } */
 
     useEffect(() => {
         dataPaste.length > 0 && append(dataPaste)
@@ -56,7 +56,7 @@ function CreateFundsSource({ control, titleAdd, register, arrayDataSelect, setVa
             <div className="title-area">
                 <label className="text-black biggest"> Traslado {titleAdd} </label>
                 <div className='display-justify-flex-center gap-0 gap-08'>
-                    <div className="title-button text-three large" id='pages' onClick={onPaste}> Pegar <FaRegCopy /> </div>
+                    {/* <div className="title-button text-three large" id='pages' onClick={onPaste}> Pegar <FaRegCopy /> </div> */}
                     <div className="title-button text-three large"
                         onClick={() => {
                             append({

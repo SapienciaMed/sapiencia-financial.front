@@ -2,6 +2,7 @@ import React from 'react'
 import TabAddFundsPage from './tab-add-funds.page';
 import { ButtonComponent, FormComponent } from '../../../../common/components/Form';
 import { useAddFundsCrud } from '../hook/add-funds-crud.hook';
+import { FaRegCopy } from 'react-icons/fa';
 
 function AddFundsCrudPage() {
 

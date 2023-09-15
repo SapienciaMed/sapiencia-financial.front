@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ITabsMenuTemplate } from "../../../../common/interfaces/tabs-menu.interface";
 import { useParams } from "react-router-dom";
 import CreateFundsSource from "../forms/create-funds-source";
@@ -6,9 +6,14 @@ import CreateFundsDestination from "../forms/create-fund-destination"
 import {  IAddFunds } from "../interfaces/TransferAreaCrudInterface";
 import { useFormState, useWatch } from "react-hook-form";
 import { validateArray } from "../../../../common/utils/validate-object";
+import { FaRegCopy } from "react-icons/fa";
+import { PasteDataFinanceArea } from "../../../../common/utils/paste-data-finance-area";
+import { AppContext } from "../../../../common/contexts/app.context";
 
 function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValues, validarTabs}: IAddFunds) {
 
+    const { setMessage } = useContext(AppContext);
+    const [dataPaste, setDataPaste] = useState([]);
     const { option } = useParams();
     const [isDisabled, setIsDisabled] = useState(false)
     const formOrigen = useWatch({ control, name: 'origen' })
@@ -64,6 +69,12 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
         setIsDisabled(formOrigen?.length > 0 && validateArray(formOrigen))
     },[ isValid, formOrigen ])
     
+
+    const onPaste = async () => {
+        const validationIn = 'traslado'
+        PasteDataFinanceArea({arrayDataSelect, setDataPaste, setMessage, validationIn })
+    }
+
     return (
         <div>
             <div className="tabs-component">
@@ -82,9 +93,11 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
                                 >
                                     {tab.title}
                                 </div>
+
                             );
                         })
                     }
+                    <div className="title-button text-three large" id='pages' onClick={onPaste}> Pegar <FaRegCopy /> </div>
                 </div>
                 <div className="tabs-content">
                     {selectedTab ? tabList[`${selectedTab?.title}`].content : "no data"}
