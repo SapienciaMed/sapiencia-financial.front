@@ -43,7 +43,7 @@ export function useManagementCenterTransfer() {
             header: "Observaciones"
         },
         {
-            fieldName: "number",
+            fieldName: "value",
             header: "Total traslados"
         }
     ];
