@@ -22,6 +22,7 @@ import { useWidth } from "../../../common/hooks/use-width";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { Dropdown } from "primereact/dropdown";
 import { IPagingData } from "../../../common/utils/api-response";
+import { IobjectAddTransfer } from "../../../common/interfaces/global.interface";
 
 
 interface IProps<T> {
@@ -32,7 +33,7 @@ interface IProps<T> {
   searchItems?: object;
   isShowModal: boolean;
   titleMessageModalNoResult?: string;
-  ownData: IPagingData<any>
+  ownData: IPagingData<IobjectAddTransfer>
 }
 
 interface IRef {
@@ -113,7 +114,7 @@ const TableDetailComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
       {width > 830 ? (
         <DataTable
           className="spc-table full-height"
-          value={ownData?.array || []}
+          value={ownData?.array|| []}
           scrollable={true}
         >
           {columns.map((col) => (

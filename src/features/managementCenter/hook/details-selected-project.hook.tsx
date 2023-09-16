@@ -1,39 +1,41 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ITabsMenuTemplate } from "../../../common/interfaces/tabs-menu.interface";
-import { mockData } from "../transfer/hook/transfer-area-crud.hook";
 import DetailProjectTabComponent from "../../../common/components/detail-project-tab.component";
+import { AppContext } from "../../../common/contexts/app.context";
 
-export function useDetailsSelectedProject(idListNameProject: string, option: string, id: string ) {
+export function useDetailsSelectedProject(option: string, id: string ) {
+    
+    const { addTransferData } = useContext(AppContext);
 
-    const getFoundProject = (id, idListNameProject) => {
-        const foundProject = mockData.array.find((option) => option.id == id && option.listNameProject.some(project => project.id == idListNameProject));
-        return foundProject.listNameProject.filter(u => u.id == idListNameProject)[0];
-    };
+    const getFoundProject = (type: string) => {
+        const foundProject = addTransferData.array[0].transferMovesGroups?.find((value) => value.id == id && value.data?.some(data => data.type == type))
+        return foundProject?.data.filter(u => u.type == type)
+    }
     
-    const originValue = getFoundProject(id, idListNameProject).origen;
-    const destinationValue = getFoundProject(id, idListNameProject).destino;
-    
-    const rowsOrigin = originValue.map((item, index) => ({
+    const originValue = getFoundProject('Origen')
+    const destinationValue  = getFoundProject('Destino')
+
+    const rowsOrigin = originValue?.map((item, index) => ({
         id: index + 1,
         project: [
             { title: "Centro gestor", value: item.managerCenter },
-            { title: "Proyecto", value: item.projectId },
+            { title: "Proyecto", value: String(item.projectId) },
             { title: "Área funcional", value: item.functionalArea },
-            { title: "Fondo", value: item.funds },
+            { title: "Fondo", value: String(item.fundId) },
             { title: "PosPre", value: item.posPre },
-            { title: "Valor contra crédito", value: item.value }
+            { title: "Valor contra crédito", value: `$ ${item.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}` }
         ]
     }));
 
-    const rowsDestination = destinationValue.map((item, index) => ({
+    const rowsDestination = destinationValue?.map((item, index) => ({
         id: index + 1,
         project: [
             { title: "Centro gestor", value: item.managerCenter },
-            { title: "Proyecto", value: item.projectId },
+            { title: "Proyecto", value: String(item.projectId) },
             { title: "Área funcional", value: item.functionalArea },
-            { title: "Fondo", value: item.funds },
+            { title: "Fondo", value: String(item.fundId) },
             { title: "PosPre", value: item.posPre },
-            { title: "Valor crédito", value: item.value }
+            { title: "Valor crédito", value: `$ ${item.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}` }
         ]
     }))
 

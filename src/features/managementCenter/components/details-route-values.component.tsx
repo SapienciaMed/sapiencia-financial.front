@@ -1,11 +1,13 @@
 import { IoIosArrowForward } from 'react-icons/io';
-import icono from '../../../public/images/icons/icon-arrow.png'
 import { ButtonComponent } from '../../../common/components/Form';
 
 interface IRowTableProps {
+    data: IDataDetails
+}
+
+interface IDataDetails {
     title: string,
     value: string,
-    idListNameProject: string,
     id: string
 }
 
@@ -13,14 +15,14 @@ interface IDetailsProps {
     rows: IRowTableProps[]
     total: number,
     onOk: () => void,
-    onShowModalDetail: (title: string, idListNameProject: string, id: string) => void
+    onShowModalDetail: (title: string, id: string, totalTransfer: string) => void
 }
 
 function DetailsRouteValuesComponent({ rows, total, onOk, onShowModalDetail }: IDetailsProps): React.JSX.Element {
 
-    const onTableRow = (title: string, idListNameProject: string, id: string) => {
+    const onTableRow = (title: string, id: string, totalTransfer: string) => {
         onOk()
-        onShowModalDetail(title, idListNameProject, id)
+        onShowModalDetail(title, id, totalTransfer)
     }
 
     return (
@@ -29,12 +31,13 @@ function DetailsRouteValuesComponent({ rows, total, onOk, onShowModalDetail }: I
 
             <table className="details-table-2 card-grid-item">
                 {
-                    rows?.map((row, index) => {
+                    rows?.map((datos) => {
+                        const { data } = datos
                         return (
-                            <tr key={row.title} onClick={() => onTableRow(row?.title, row.idListNameProject, row.id)}>
-                                <th className="th-title">{row?.title}</th>
+                            <tr key={data.title} onClick={() => onTableRow( data?.title, data.id, data?.value )} >
+                                <th className="th-title">{data?.title}</th>
                                 <th className="th-content">
-                                    {row?.value}
+                                    $ {data?.value}
                                     <IoIosArrowForward style={{color: '#533893'}}/>
                                 </th>
                             </tr>

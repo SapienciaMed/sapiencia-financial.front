@@ -5,20 +5,20 @@ import { ButtonComponent } from '../../../common/components/Form';
 
 interface ISelectedProject {
     option: string,
-    idListNameProject: string,
     onOk: () => void,
-    id: string
+    id: string,
+    total: string,
 }
 
-function DetailsSelectedProjectComponent({ option, idListNameProject, id, onOk}: ISelectedProject): React.JSX.Element {
+function DetailsSelectedProjectComponent({ option, id, onOk, total}: ISelectedProject): React.JSX.Element {
 
-    const { tabs, selectedTab, tabList, handleTabClick } = useDetailsSelectedProject(idListNameProject, option, id)
+    const { tabs, selectedTab, tabList, handleTabClick } = useDetailsSelectedProject(option, id)
 
     return (
         <div className="tabs-component full-width">
             <div className="tabs-selection">
                 {
-                    tabs.map((tab) => {
+                    tabs?.map((tab) => {
                         let active = "";
                         if (selectedTab && selectedTab.id === tab.id) active = "active";
                         return (
@@ -41,7 +41,7 @@ function DetailsSelectedProjectComponent({ option, idListNameProject, id, onOk}:
             <footer className='container-button-descripcion-modal'>
                 <div className='content-label'>
                     <label className="text-black biggest"> Total Traslado:</label>
-                    <label className="text-black biggest" style={{color: '#533893'}}> $ </label>
+                    <label className="text-black biggest" style={{color: '#533893'}}> $ {total} </label>
                 </div>
                 <div className="buttons-bot">
                     <ButtonComponent

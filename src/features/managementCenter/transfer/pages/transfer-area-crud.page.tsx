@@ -1,7 +1,7 @@
 import React from 'react'
 import { ButtonComponent, FormComponent, InputComponent, TextAreaComponent } from '../../../../common/components/Form';
 import { BiPlusCircle } from 'react-icons/bi';
-import { mockData, useTransferAreaCrudPage } from '../hook/transfer-area-crud.hook';
+import { useTransferAreaCrudPage } from '../hook/transfer-area-crud.hook';
 import { Controller } from 'react-hook-form';
 import { EDirection } from '../../../../common/constants/input.enum';
 import TableDetailComponent from '../../components/table-detail.component';
@@ -11,7 +11,8 @@ interface IAppProps {
   }
 
 function TransferAreaCrudPage({ actionForm }: IAppProps) {
-    const {control, errors, tableColumns, tableActions, isBtnDisable, tableComponentRef, navigate, onSubmit, register, onCancel, } = useTransferAreaCrudPage()
+    const {control, errors, tableColumns, tableActions, isBtnDisable, tableComponentRef, addTransferData, 
+        navigate, onSubmit, register, onCancel, handleFormSubmit } = useTransferAreaCrudPage()
 
     return (
         <div className="crud-page full-height">
@@ -28,7 +29,14 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                                 <label className="text-black biggest bold">
                                     Datos básicos
                                 </label>
-                                <div className="title-button text-three large" onClick={() => navigate('./anadir-fondos')}> Añadir valores <BiPlusCircle/> </div>
+                                <div className='title-button text-three large'>
+                                    <ButtonComponent 
+                                        className="button-clean-fields color-lila"
+                                        value='Añadir valores '  
+                                        action={() => { isBtnDisable && handleFormSubmit() }}  
+                                    /> 
+                                    <BiPlusCircle/>
+                                </div>
                             </div>
                             <div className="funcionality-filters-container">
                                 <Controller
@@ -101,7 +109,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                     </section>
 
                     {
-                        mockData.array.length == 0 && 
+                        addTransferData?.array?.length > 0 && 
                             <section className="card-user mt-24px">
                                 <TableDetailComponent
                                     ref={tableComponentRef}
@@ -109,7 +117,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                                     actions={tableActions}
                                     isShowModal={true}
                                     titleMessageModalNoResult={"Fondos"}
-                                    ownData={mockData}
+                                    ownData={addTransferData}
                                     secondaryTitle='Detalles de la ruta'
                                 />
                             </section>

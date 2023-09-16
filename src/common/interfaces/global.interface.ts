@@ -60,3 +60,37 @@ export interface IDropdownPropsFuctionalArea{
   projectId?: string | number,
   id?: string | number,
 }
+
+export interface IobjectAddTransfer{
+  headTransfer?: IHeadTransferData,
+  transferMovesGroups: ITransferMovesGroups[]
+}
+
+export interface IHeadTransferData{
+  actAdminDistrict: string,
+  actAdminSapiencia: string,
+  observations: string,
+  userCreate: string,
+  dateCreate: string,
+  userModify: string,
+  dateModify: string
+}
+
+export interface ITransferMovesGroups{
+  id?: string,
+  data: IData[]
+}
+
+export interface IData{
+  idCard: string,
+  type : string,
+  managerCenter : string,
+  projectId : number,
+  fundId : number,
+  budgetPosition : number,
+  functionalArea: string,
+  posPre: string,
+  value : number,
+  nameProject: string
+  totalProject: string
+}
