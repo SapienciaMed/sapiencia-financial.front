@@ -213,12 +213,9 @@ export function useAddFundsCrud() {
 
   const onSubmitTab = handleSubmit(async (data: ICreateSourceForm) => {
 
-    addTransferData?.array?.length > 0 && console.log(addTransferData.array); // cuando se pega 
     
-    const manualTranferMovement: IobjectAddTransfer = { //crear el objeto cuando se hace manual con el parametro data
-      headTransfer: headTransferData,
-      transferMovesGroups: []
-    }
+    addTransferData?.array?.length > 0 && console.log(addTransferData.array); // Crea el objeto cuando se hace en pegar
+    
 
     if (data.destino.length == 0 || data.origen.length == 0) {
       setMessage({
@@ -251,6 +248,11 @@ export function useAddFundsCrud() {
       }
     }
 
+    const manualTranferMovement: IobjectAddTransfer = { //crear el objeto cuando se hace manual 
+      headTransfer: headTransferData,
+      transferMovesGroups: [transformJSONArrays(data)]
+    }
+
     setMessage({
       title: "Guardar",
       description: "¿Está segur@ de guardar la información en el sistema?",
@@ -277,6 +279,33 @@ export function useAddFundsCrud() {
         navigate(-1)
       },
     });
+  }
+
+  function transformJSONArrays(jsonArray) {
+    const resultado = [
+      ...jsonArray.destino.map((item) => ({
+        idCard: item.cardId,
+        type: "Destino",
+        managerCenter: item.managerCenter,
+        projectId: item.projectId,
+        fundId: "912070123", 
+        budgetPosition: "923202020086", 
+        value: parseInt(item.value)
+      })),
+      ...jsonArray.origen.map((item) => ({
+        idCard: item.cardId,
+        type: "Origen",
+        managerCenter: item.managerCenter,
+        projectId: item.projectId,
+        fundId: "911070123", 
+        budgetPosition: "923202020086", 
+        value: parseInt(item.value)
+      }))
+    ];
+  
+    return {
+      data: resultado
+    };
   }
 
   return {
