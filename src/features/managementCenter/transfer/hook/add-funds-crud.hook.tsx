@@ -59,7 +59,7 @@ export function useAddFundsCrud() {
   const get_total_value = (data): boolean => {
     const total_by_type_transfer = { Origen: 0, Destino: 0 };
   
-    data.reduce((acc, item) => {
+    data?.reduce((acc, item) => {
       const type_transfer = item.typeTransfer;
   
       if (!acc[type_transfer]) {
