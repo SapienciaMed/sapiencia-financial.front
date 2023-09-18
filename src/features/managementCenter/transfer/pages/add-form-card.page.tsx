@@ -7,7 +7,7 @@ import { IAddFormCard } from '../interfaces/TransferAreaCrudInterface'
 import { useWatch } from 'react-hook-form';
 import { IDropdownPropsFuctionalArea } from '../../../../common/interfaces/global.interface';
 
-export const AddFormCardPage = ({arrayDataSelect, control, titleAdd, errors, count, cardId, titleLabelValue, register, remove, setValue}: IAddFormCard) => {
+export const AddFormCardPage = ({arrayDataSelect, control, titleAdd, errors, count, cardId, titleLabelValue, register, removeCard, setValue}: IAddFormCard) => {
 
     const { functionalArea, funds, posPre, } = arrayDataSelect
     const formOrigen = useWatch({ control, name: titleAdd })
@@ -56,7 +56,7 @@ export const AddFormCardPage = ({arrayDataSelect, control, titleAdd, errors, cou
             <ButtonComponent
                 value={"Eliminar"}
                 type="button"
-                action={() => { remove( count ) }}
+                action={() => { removeCard( count ) }}
                 className="button-delete biggest bold"
             />
 

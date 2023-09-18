@@ -44,7 +44,7 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
             ) 
         },
     ]
-    
+   
     const start = tabs.find( (tab) => tab.id.toString().toLowerCase() === option?.toLowerCase());
     const [selectedTab, setSelectedTab] = useState<ITabsMenuTemplate>( start ?? null );
 

@@ -38,9 +38,9 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                     headersArray.forEach((header, idx) => {
                         Reflect.set(rowObject, header.trim().replaceAll(" ", ""), values[idx].trim())
                     });
-                    
-                    valorContracredito = parseFloat(Object(rowObject).VALORCONTRACRÉDITO) || 0;
-                    valorCredito = parseFloat(Object(rowObject).VALORCRÉDITO) || 0; 
+                    console.log({rowObject})
+                    valorContracredito = parseFloat(Object(rowObject).VALORCONTRACRÉDITO.replaceAll('.', '')) || 0;
+                    valorCredito = parseFloat(Object(rowObject).VALORCRÉDITO.replaceAll('.', '')) || 0; 
                     
                     if(valorContracredito > 0 && valorCredito == 0 ){
                         Object(rowObject).typeTransfer="Origen"
@@ -49,22 +49,30 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                         Object(rowObject).typeTransfer="Destino"
                         dataMovementDestiny.push(rowObject)
                     }
-
+                    let moveToSave = {
+                        idCard: generarIdAleatorio(20),
+                        type : Object(rowObject).typeTransfer,
+                        managerCenter : Object(rowObject).CENTROGESTOR, //code
+                        projectId :Object(rowObject).PROYECTO, //CODE
+                        fundId :Object(rowObject).FONDO, //CODE
+                        budgetPosition :Object(rowObject).POSICIÓNPRESUPUESTAL, // CODE
+                        value :Object(rowObject).typeTransfer === 'Origen' ? valorContracredito : valorCredito,
+                        transferId: countTransfer
+                    }
                     if(idx == 1 ){
-                        Object(rowObject).transferId=countTransfer;
-                        dataMovementByTransfer.push({data:[rowObject]})
+                        dataMovementByTransfer.push({data:[moveToSave]})
                     }else{
                             let lastObj = dataMovementByTransfer[countTransfer-1].data[dataMovementByTransfer[countTransfer-1].data.length-1]
-                            if(lastObj.typeTransfer == 'Origen' && lastObj.typeTransfer == Object(rowObject).typeTransfer ){
+                            if(lastObj.type == 'Origen' && lastObj.type == Object(moveToSave).type ){
                                 //agrega en el mismo traslado
-                                dataMovementByTransfer[countTransfer-1].data.push(rowObject)
-                            }else if(lastObj.typeTransfer == 'Destino' && Object(rowObject).typeTransfer=='Origen'){
+                                dataMovementByTransfer[countTransfer-1].data.push(moveToSave)
+                            }else if(lastObj.type == 'Destino' && Object(moveToSave).type=='Origen'){
                                 // se crea un nuevo traslado
                                     countTransfer +=1;
-                                    dataMovementByTransfer.push({data:[rowObject]})
+                                    dataMovementByTransfer.push({data:[moveToSave]})
                             }else{
                                 // se guarda en el mismo traslado
-                                dataMovementByTransfer[countTransfer-1].data.push(rowObject)
+                                dataMovementByTransfer[countTransfer-1].data.push(moveToSave)
                             }
                     }
                     output.push(rowObject)

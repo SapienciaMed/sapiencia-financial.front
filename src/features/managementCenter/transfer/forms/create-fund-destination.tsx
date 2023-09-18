@@ -42,10 +42,28 @@ function CreateFundsDestination({ control, titleAdd, register, arrayDataSelect, 
         return total;
     };
 
+    const dataReset = (index?: number | number[])=>{
+        remove(index);
+        setDataPaste([]);
+    }
+
     useEffect(() => {
-        // if(dataPaste.length > 0 )   {
-        //     append( dataPaste.filter(item => item.typeTransfer == 'Destino' ) ) 
-        // }
+        let dataPasteToCreate = dataPaste.filter(item => item.typeTransfer == 'Destino' )
+        console.log({dataPasteToCreate, fields}) 
+
+        const set1 = new Set(fields);
+        const set2 = new Set(dataPasteToCreate);
+        // Usa el método every() para verificar si todos los elementos de set1 no están en set2
+        let validPaste = Array.from(set2).every(item => !set1.has(item));
+
+        console.log({validPaste})
+
+        if(dataPaste.length > 0 && fields.length==0)   {
+            console.log({fields, dataPaste: dataPaste.filter(item => item.typeTransfer == 'Destino' )})
+             append( dataPaste.filter(item => item.typeTransfer == 'Destino' ) ) 
+            }else if(!validPaste){
+             append( dataPaste.filter(item => item.typeTransfer == 'Destino' ) ) 
+         }
     }, [dataPaste])
     
     return (
@@ -77,7 +95,7 @@ function CreateFundsDestination({ control, titleAdd, register, arrayDataSelect, 
                                 control={control} 
                                 titleAdd={titleAdd} 
                                 arrayDataSelect={arrayDataSelect}
-                                remove={remove} 
+                                removeCard={dataReset} 
                                 count={startIndex + index} 
                                 errors={errors} 
                                 register={register} 

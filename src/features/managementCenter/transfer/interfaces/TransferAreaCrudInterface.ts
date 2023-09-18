@@ -38,7 +38,7 @@ export interface IAddFormCard {
     count: number,
     cardId: string;
     setValue: UseFormSetValue<any>;
-    remove: (index?: number | number[]) => void,
+    removeCard: (index?: number | number[]) => void,
     register: UseFormRegister<ICreateSourceForm>,
     titleLabelValue: string,
 }
