@@ -7,7 +7,7 @@ import { FaRegCopy } from 'react-icons/fa';
 function AddFundsCrudPage() {
 
     const {control, arrayDataSelect, isBtnDisable, totalTransfer,  
-        isBtnVisible, onSubmitTab, formatMoney, onCancel, setValue, register, getValues, validarTabs } = useAddFundsCrud()
+        onSubmitTab, formatMoney, onCancel, setValue, register, getValues } = useAddFundsCrud()
     
     return (
         <div className="crud-page full-height">
@@ -23,7 +23,6 @@ function AddFundsCrudPage() {
                             arrayDataSelect={arrayDataSelect} 
                             setValue={setValue} 
                             getValues={getValues}
-                            validarTabs={validarTabs}
                         />
                     </FormComponent>
                 </div>
@@ -45,7 +44,7 @@ function AddFundsCrudPage() {
                         value="Guardar"
                         type="submit"
                         form="add-fund-form"
-                        disabled={!isBtnDisable}
+                        disabled={isBtnDisable}
                     />
                 </div>
             </section>

@@ -22,14 +22,13 @@ export function useAddFundsCrud() {
       funds: [],
       posPre: []
   })
-  const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
-  const [isBtnVisible, setIsBtnVisible] = useState<boolean>(false)
+  const [isBtnDisable, setIsBtnDisable] = useState<boolean>(true)
   const [ totalTransfer, setTotalTransfer ] = useState<string>('')
 
   const {
     handleSubmit,
     register,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isDirty },
     control,
     watch,
     setValue,
@@ -65,11 +64,10 @@ export function useAddFundsCrud() {
     }, 0);
   }
 
-  const validarTabs = (tab: boolean) =>{ 
-    setIsBtnVisible(tab)
-
-    setIsBtnDisable(isBtnVisible && watchDesti.length > 0 && validateArray(watchDesti));
-  }
+  useEffect(() => {
+    const validate = validateArray(watchOrigin) && validateArray(watchDesti)
+    setIsBtnDisable(validate)
+  },[ watchDesti, watchOrigin ])
 
   useEffect(() => {
     if (!arrayDataSelect.functionalArea.length && !arrayDataSelect.funds.length && !arrayDataSelect.posPre.length) {
@@ -218,14 +216,12 @@ export function useAddFundsCrud() {
     control,
     totalTransfer,
     arrayDataSelect,
-    isBtnVisible,
     isBtnDisable,
     setValue,
     onCancel,
     register,
     getValues,
     onSubmitTab,
-    validarTabs,
     formatMoney,
   }
 }
