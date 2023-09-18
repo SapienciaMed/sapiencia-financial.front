@@ -22,7 +22,6 @@ export function useAddFundsCrud() {
       funds: [],
       posPre: []
   })
-  const [isBtnDisable, setIsBtnDisable] = useState<boolean>(true)
   const [ totalTransfer, setTotalTransfer ] = useState<string>('')
 
   const {
@@ -30,7 +29,6 @@ export function useAddFundsCrud() {
     register,
     formState: { errors, isValid, isDirty },
     control,
-    watch,
     setValue,
     getValues,
   } = useForm<ICreateSourceForm>({
@@ -41,6 +39,7 @@ export function useAddFundsCrud() {
       origen: [],
     },
   });
+
 
   const watchOrigin = useWatch({
     control,
@@ -63,11 +62,6 @@ export function useAddFundsCrud() {
       return isNaN(valor) ? total : total + valor;
     }, 0);
   }
-
-  useEffect(() => {
-    const validate = validateArray(watchOrigin) && validateArray(watchDesti)
-    setIsBtnDisable(validate)
-  },[ watchDesti, watchOrigin ])
 
   useEffect(() => {
     if (!arrayDataSelect.functionalArea.length && !arrayDataSelect.funds.length && !arrayDataSelect.posPre.length) {
@@ -184,6 +178,21 @@ export function useAddFundsCrud() {
   }, [arrayDataSelect])
 
   const onSubmitTab = handleSubmit(async (data: ICreateSourceForm) => {
+
+    if (data.destino.length == 0 || data.origen.length == 0) {
+      setMessage({
+        title: "Validación",
+        description: "Debe ingresar al menos un registro en origen y destino",
+        show: true,
+        OkTitle: "Aceptar",
+        onOk: () => {
+          setMessage({});
+        },
+        background: true
+      })
+      return;
+    }
+
     setMessage({
       title: "Guardar",
       description: "¿Está segur@ de guardar la información en el sistema?",
@@ -216,7 +225,6 @@ export function useAddFundsCrud() {
     control,
     totalTransfer,
     arrayDataSelect,
-    isBtnDisable,
     setValue,
     onCancel,
     register,

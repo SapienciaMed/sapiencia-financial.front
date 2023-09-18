@@ -6,7 +6,7 @@ import { FaRegCopy } from 'react-icons/fa';
 
 function AddFundsCrudPage() {
 
-    const {control, arrayDataSelect, isBtnDisable, totalTransfer,  
+    const {control, arrayDataSelect, totalTransfer,  
         onSubmitTab, formatMoney, onCancel, setValue, register, getValues } = useAddFundsCrud()
     
     return (
@@ -44,7 +44,6 @@ function AddFundsCrudPage() {
                         value="Guardar"
                         type="submit"
                         form="add-fund-form"
-                        disabled={isBtnDisable}
                     />
                 </div>
             </section>
