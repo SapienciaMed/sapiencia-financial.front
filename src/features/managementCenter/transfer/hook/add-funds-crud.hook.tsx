@@ -14,7 +14,7 @@ export function useAddFundsCrud() {
     
   const navigate = useNavigate();
   const resolver = useYupValidationResolver(validationFieldsCreatefunds);
-  const { setMessage } = useContext(AppContext);
+  const { setMessage, dataPasteRedux } = useContext(AppContext);
   const { GetFundsList, GetProjectsList, GetPosPreSapienciaList } = useAdditionsTransfersService()
   const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
       functionalArea: [],
@@ -55,6 +55,25 @@ export function useAddFundsCrud() {
     setTotalTransfer(addNumericalValues(watchOrigin).toString())
   },[ watchOrigin ])
 
+
+  const get_total_value = (data): boolean => {
+    const total_by_type_transfer = { Origen: 0, Destino: 0 };
+  
+    data.reduce((acc, item) => {
+      const type_transfer = item.typeTransfer;
+  
+      if (!acc[type_transfer]) {
+        acc[type_transfer] = 0;
+      }
+  
+      acc[type_transfer] += parseFloat(item.value);
+  
+      return acc;
+    }, total_by_type_transfer);
+  
+    return total_by_type_transfer.Destino == total_by_type_transfer.Origen;
+  };
+  
 
   const addNumericalValues = (arr: IAddFund[]) =>  {
     return arr.reduce((total, item) => {
@@ -181,7 +200,7 @@ export function useAddFundsCrud() {
 
     if (data.destino.length == 0 || data.origen.length == 0) {
       setMessage({
-        title: "Validación",
+        title: "Validación de datos",
         description: "Debe ingresar al menos un registro en origen y destino",
         show: true,
         OkTitle: "Aceptar",
@@ -191,6 +210,21 @@ export function useAddFundsCrud() {
         background: true
       })
       return;
+    }
+
+    if (!get_total_value(dataPasteRedux) ) {
+      setMessage({
+        title: "Validación de datos",
+        description: "Se ha encontrado un error en los datos, los valores son diferentes",
+        show: true,
+        OkTitle: "Aceptar",
+        onOk: () => {
+          setMessage({});
+        },
+        background: true
+      })
+      
+      return
     }
 
     setMessage({

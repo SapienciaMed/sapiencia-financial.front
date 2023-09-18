@@ -92,5 +92,9 @@ export interface IData{
   posPre: string,
   value : number,
   nameProject: string
-  totalProject: string
+  totalProject?: string
+}
+
+export interface IDataPaste extends IData{
+  isPaste: string
 }

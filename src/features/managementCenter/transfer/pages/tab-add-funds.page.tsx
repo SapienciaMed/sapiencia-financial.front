@@ -11,7 +11,7 @@ import { AppContext } from "../../../../common/contexts/app.context";
 function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValues }: IAddFunds) {
 
     
-    const { setMessage } = useContext(AppContext);
+    const { setMessage, setDataPasteRedux } = useContext(AppContext);
     const [dataPaste, setDataPaste] = useState([]);
     const { option } = useParams();
        
@@ -64,6 +64,12 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
     useEffect(() => {
         if (!selectedTab && tabs.length > 0) setSelectedTab(tabs[0]);
     }, [tabs]);
+
+    useEffect(() => {
+        if (dataPaste.length > 0) {
+            setDataPasteRedux(dataPaste)
+        }
+    },[dataPaste])
 
     const onPaste = async () =>  PasteDataFinanceArea({ arrayDataSelect, setDataPaste, setMessage })
 
