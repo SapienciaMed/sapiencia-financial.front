@@ -14,19 +14,36 @@ function ModalMessageComponent(): React.JSX.Element {
   );
 
   return (
-    <div className={`modal modal-bg ${message.show ? "is-open" : "modal-close"}`}>
+    <div className={`modal modal-bg ${message.show ? "is-open" : "modal-close"}` }>
       <div ref={modal} className="modal-container">
         <div className="modal-header">
-          <button
-            className="close button-close tiny hover-three"
-            onClick={
-              message.onClose
-                ? message.onClose
-                : () => setMessage((prev) => ({ ...prev, show: false }))
+          <div className="content-button-header">
+            {
+              message.titleBack && (
+                <button
+                  className="close button-back tiny hover-three"
+                  onClick={
+                    message.onBack
+                      ? message.onBack
+                      : () => setMessage((prev) => ({ ...prev, show: false }))
+                  }
+                >
+                  {message.titleBack}
+                </button>
+              )
             }
-          >
-            X
-          </button>
+            <button
+              className="close button-close tiny hover-three"
+              onClick={
+                message.onClose
+                  ? message.onClose
+                  : () => setMessage((prev) => ({ ...prev, show: false }))
+              }
+            >
+              X
+            </button>
+
+          </div>
           <p >{message?.title}</p>
         </div>
         <div className="modal-content">

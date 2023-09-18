@@ -9,12 +9,12 @@ export interface ICreateSourceForm{
 export interface IAddFund{
     managerCenter: string;
     projectId: string;
-    projectName:string;
+    projectName?: string;
     functionalArea: string;
     funds: string;
     posPre: string;
     value: string;
-    cardId:string;
+    cardId?:string;
 }
   
 

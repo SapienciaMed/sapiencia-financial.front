@@ -4,13 +4,15 @@ import { BiPlusCircle } from 'react-icons/bi';
 import { useTransferAreaCrudPage } from '../hook/transfer-area-crud.hook';
 import { Controller } from 'react-hook-form';
 import { EDirection } from '../../../../common/constants/input.enum';
+import TableDetailComponent from '../../components/table-detail.component';
 
 interface IAppProps {
     actionForm: "new" | "edit";
   }
 
 function TransferAreaCrudPage({ actionForm }: IAppProps) {
-    const {control, errors, navigate, onSubmit, register, isBtnDisable} = useTransferAreaCrudPage()
+    const {control, errors, tableColumns, tableActions, isBtnDisable, tableComponentRef, addTransferData, 
+        navigate, onSubmit, register, onCancel, handleFormSubmit } = useTransferAreaCrudPage()
 
     return (
         <div className="crud-page full-height">
@@ -27,7 +29,14 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                                 <label className="text-black biggest bold">
                                     Datos básicos
                                 </label>
-                                <div className="title-button text-three large" onClick={() => navigate('./anadir-fondos')}> Añadir valores <BiPlusCircle/> </div>
+                                <div className='title-button text-three large'>
+                                    <ButtonComponent 
+                                        className="button-clean-fields color-lila"
+                                        value='Añadir valores '  
+                                        action={() => { isBtnDisable && handleFormSubmit() }}  
+                                    /> 
+                                    <BiPlusCircle/>
+                                </div>
                             </div>
                             <div className="funcionality-filters-container">
                                 <Controller
@@ -99,33 +108,33 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                         </FormComponent>
                     </section>
 
-                    <section className="mobile-actions-2">
-                        <label className="text-black biggest"> Total Traslado: $  </label>
-                        <div className='content-btn'>
-                            <span
-                                className="bold text-center button"
-                                onClick={() => {}}
-                            >
-                                Cancelar
-                            </span>
-                            <ButtonComponent
-                                className="button-main huge hover-three"
-                                value="Trasladar"
-                                type="submit"
-                                form="transfer-form"
-                                disabled={!isBtnDisable}
-                            />
-                        </div>
-                    </section>
+                    {
+                        addTransferData?.array?.length > 0 && 
+                            <section className="card-user mt-24px">
+                                <TableDetailComponent
+                                    ref={tableComponentRef}
+                                    columns={tableColumns}
+                                    actions={tableActions}
+                                    isShowModal={true}
+                                    titleMessageModalNoResult={"Fondos"}
+                                    ownData={addTransferData}
+                                    secondaryTitle='Detalles de la ruta'
+                                />
+                            </section>
+                    }
+
                 </div>
             </section>
 
-            <section className="container-button-bot justify-content-sp">
-                <label className="text-black biggest"> Total Traslado: $   </label>
+            <section className="container-button-bot-2">
+                <div className='content-label'>
+                    <label className="text-black biggest"> Total Traslado:</label>
+                    <label className="text-black biggest" style={{color: '#533893'}}> $  </label>
+                </div>
                 <div className="buttons-bot">
                     <span
                         className="bold text-center button"
-                        onClick={() => {}}
+                        onClick={onCancel}
                     >
                         Cancelar
                     </span>
