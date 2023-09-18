@@ -49,14 +49,10 @@ function CreateFundsDestination({ control, titleAdd, register, arrayDataSelect, 
 
     useEffect(() => {
         let dataPasteToCreate = dataPaste.filter(item => item.typeTransfer == 'Destino' )
-        console.log({dataPasteToCreate, fields}) 
-
         const set1 = new Set(fields);
         const set2 = new Set(dataPasteToCreate);
         // Usa el método every() para verificar si todos los elementos de set1 no están en set2
         let validPaste = Array.from(set2).every(item => !set1.has(item));
-
-        console.log({validPaste})
 
         if(dataPaste.length > 0 && fields.length==0)   {
             console.log({fields, dataPaste: dataPaste.filter(item => item.typeTransfer == 'Destino' )})

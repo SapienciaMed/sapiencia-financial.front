@@ -4,7 +4,7 @@ import { validationFieldsCreatefunds } from "../../../../common/schemas/transfer
 import { IAddFund, ICreateSourceForm } from "../interfaces/TransferAreaCrudInterface";
 import { useAdditionsTransfersService } from "../../hook/additions-transfers-service.hook";
 import { useContext, useEffect, useState } from "react";
-import { IArrayDataSelect } from "../../../../common/interfaces/global.interface";
+import { IArrayDataSelect, IobjectAddTransfer } from "../../../../common/interfaces/global.interface";
 import { EResponseCodes } from "../../../../common/constants/api.enum";
 import { AppContext } from "../../../../common/contexts/app.context";
 import { validateArray } from "../../../../common/utils/validate-object";
@@ -14,7 +14,7 @@ export function useAddFundsCrud() {
     
   const navigate = useNavigate();
   const resolver = useYupValidationResolver(validationFieldsCreatefunds);
-  const { setMessage, dataPasteRedux } = useContext(AppContext);
+  const { setMessage, dataPasteRedux, addTransferData, headTransferData } = useContext(AppContext);
   const { GetFundsList, GetProjectsList, GetPosPreSapienciaList } = useAdditionsTransfersService()
   const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
       functionalArea: [],
@@ -55,8 +55,12 @@ export function useAddFundsCrud() {
     setTotalTransfer(addNumericalValues(watchOrigin).toString())
   },[ watchOrigin ])
 
+  // useEffect(() =>{
+  //   console.log("watchOrigin ", get_total_value(watchOrigin));
+  // },[watchDesti, watchOrigin])
 
-  const get_total_value = (data): boolean => {
+
+  const isTotalSame = (data): boolean => {
     const total_by_type_transfer = { Origen: 0, Destino: 0 };
   
     data?.reduce((acc, item) => {
@@ -72,6 +76,17 @@ export function useAddFundsCrud() {
     }, total_by_type_transfer);
   
     return total_by_type_transfer.Destino == total_by_type_transfer.Origen;
+  };
+
+  useEffect(() => {
+    Object.keys(headTransferData).length === 0 && navigate(-1);
+  },[headTransferData])
+
+  const get_total_value = (data) => {
+    const total = data.reduce((total, item) => {
+      return total + item.value;
+    }, 0);
+    return total;
   };
   
 
@@ -198,10 +213,17 @@ export function useAddFundsCrud() {
 
   const onSubmitTab = handleSubmit(async (data: ICreateSourceForm) => {
 
+    addTransferData?.array?.length > 0 && console.log(addTransferData.array); // cuando se pega 
+    
+    const manualTranferMovement: IobjectAddTransfer = { //crear el objeto cuando se hace manual con el parametro data
+      headTransfer: headTransferData,
+      transferMovesGroups: []
+    }
+
     if (data.destino.length == 0 || data.origen.length == 0) {
       setMessage({
         title: "Validación de datos",
-        description: "Debe ingresar al menos un registro en origen y destino",
+        description: "Debe ingresar algun registro en origen y destino",
         show: true,
         OkTitle: "Aceptar",
         onOk: () => {
@@ -212,19 +234,21 @@ export function useAddFundsCrud() {
       return;
     }
 
-    if (!get_total_value(dataPasteRedux) ) {
-      setMessage({
-        title: "Validación de datos",
-        description: "Se ha encontrado un error en los datos, los valores son diferentes",
-        show: true,
-        OkTitle: "Aceptar",
-        onOk: () => {
-          setMessage({});
-        },
-        background: true
-      })
-      
-      return
+    if(dataPasteRedux.length > 0){
+      if (!isTotalSame(dataPasteRedux) ) {
+        setMessage({
+          title: "Validación de datos",
+          description: "Se ha encontrado un error en los datos, los valores son diferentes",
+          show: true,
+          OkTitle: "Aceptar",
+          onOk: () => {
+            setMessage({});
+          },
+          background: true
+        })
+        
+        return
+      }
     }
 
     setMessage({

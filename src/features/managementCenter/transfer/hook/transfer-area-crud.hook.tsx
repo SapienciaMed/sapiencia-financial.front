@@ -61,118 +61,118 @@ export function useTransferAreaCrudPage() {
 
     useEffect(() => {
         //TODO: Eliminar ya que esto se manda desde el componente que añade los valores (origen - destino), datos no reales 
-        setAddTransferData({
-            array: [
-                {
-                    headTransfer: {
-                        actAdminDistrict: '',
-                        actAdminSapiencia: '',
-                        observations: '',
-                        dateCreate: currentDate(),
-                        dateModify: '2023-08-31',
-                        userCreate: authorization?.user?.numberDocument || '',
-                        userModify: authorization?.user?.numberDocument || '',
-                    },
-                    transferMovesGroups:[
-                        {
-                            id: '1-list',
-                            data: [
-                                {
-                                    idCard: "card1",
-                                    type: "Origen",
-                                    managerCenter : "91500000",
-                                    projectId : 69,
-                                    fundId : 21,
-                                    budgetPosition : 164,
-                                    functionalArea: '',
-                                    posPre: '',
-                                    value : 600000,
-                                    nameProject: 'Aprovechamiento de las ciudades universitarias',
-                                    totalProject: '20500000',
-                                },
-                                {
-                                    idCard: "card2",
-                                    type : "Origen",
-                                    managerCenter : "91500000",
-                                    projectId : 69,
-                                    fundId : 21,
-                                    budgetPosition : 165,
-                                    functionalArea: '',
-                                    posPre: '',
-                                    value : 200000,
-                                    nameProject: 'Aprovechamiento de las ciudades universitarias',
-                                    totalProject: '20500000',
-                                },
-                                {
-                                    idCard: "card3",
-                                    type : "Destino",
-                                    managerCenter : "91500000 - destino",
-                                    projectId : 69,
-                                    fundId : 20,
-                                    budgetPosition : 166,
-                                    functionalArea: '',
-                                    posPre: '',
-                                    value : 100000,
-                                    nameProject: 'Aprovechamiento de las ciudades universitarias',
-                                    totalProject: '20500000',
-                                },
-                                {
-                                    idCard: "card4",
-                                    type : "Destino",
-                                    managerCenter : "91500000 - destino",
-                                    projectId : 69,
-                                    fundId : 20,
-                                    budgetPosition : 167,
-                                    functionalArea: '',
-                                    posPre: '',
-                                    value : 200000,
-                                    nameProject: 'Aprovechamiento de las ciudades universitarias',
-                                    totalProject: '20500000',
-                                },
-                            ]
-                        },
-                        {
-                            id: '2-list',
-                            data: [
-                                {
-                                    idCard: "card1",
-                                    type: "Origen",
-                                    managerCenter : "91500000- origen",
-                                    projectId : 69,
-                                    fundId : 21,
-                                    budgetPosition : 164,
-                                    functionalArea: '',
-                                    posPre: '',
-                                    value : 600000,
-                                    nameProject: 'Aplicación del acceso y la permanencia en la educación postsecundaria',
-                                    totalProject: '20500000',
-                                },
-                                {
-                                    idCard: "card2",
-                                    type : "Destino",
-                                    managerCenter : "91500000 -destino",
-                                    projectId : 70,
-                                    fundId : 21,
-                                    budgetPosition : 165,
-                                    functionalArea: '',
-                                    posPre: '',
-                                    value : 200000,
-                                    nameProject: 'Aplicación del acceso y la permanencia en la educación postsecundaria',
-                                    totalProject: '20500000',
-                                },
-                            ]
-                        }
-                    ]
-                }
-            ],
-            meta: {
-                total: 2,
-                perPage: 10,
-                currentPage: 1,
-                lastPage: 1,
-                firstPage: 1,
-            } 
-        })
+        // setAddTransferData({
+        //     array: [
+        //         {
+        //             headTransfer: {
+        //                 actAdminDistrict: '',
+        //                 actAdminSapiencia: '',
+        //                 observations: '',
+        //                 dateCreate: currentDate(),
+        //                 dateModify: '2023-08-31',
+        //                 userCreate: authorization?.user?.numberDocument || '',
+        //                 userModify: authorization?.user?.numberDocument || '',
+        //             },
+        //             transferMovesGroups:[
+        //                 {
+        //                     id: '1-list',
+        //                     data: [
+        //                         {
+        //                             idCard: "card1",
+        //                             type: "Origen",
+        //                             managerCenter : "91500000",
+        //                             projectId : 69,
+        //                             fundId : 21,
+        //                             budgetPosition : 164,
+        //                             functionalArea: '',
+        //                             posPre: '',
+        //                             value : 600000,
+        //                             nameProject: 'Aprovechamiento de las ciudades universitarias',
+        //                             totalProject: '20500000',
+        //                         },
+        //                         {
+        //                             idCard: "card2",
+        //                             type : "Origen",
+        //                             managerCenter : "91500000",
+        //                             projectId : 69,
+        //                             fundId : 21,
+        //                             budgetPosition : 165,
+        //                             functionalArea: '',
+        //                             posPre: '',
+        //                             value : 200000,
+        //                             nameProject: 'Aprovechamiento de las ciudades universitarias',
+        //                             totalProject: '20500000',
+        //                         },
+        //                         {
+        //                             idCard: "card3",
+        //                             type : "Destino",
+        //                             managerCenter : "91500000 - destino",
+        //                             projectId : 69,
+        //                             fundId : 20,
+        //                             budgetPosition : 166,
+        //                             functionalArea: '',
+        //                             posPre: '',
+        //                             value : 100000,
+        //                             nameProject: 'Aprovechamiento de las ciudades universitarias',
+        //                             totalProject: '20500000',
+        //                         },
+        //                         {
+        //                             idCard: "card4",
+        //                             type : "Destino",
+        //                             managerCenter : "91500000 - destino",
+        //                             projectId : 69,
+        //                             fundId : 20,
+        //                             budgetPosition : 167,
+        //                             functionalArea: '',
+        //                             posPre: '',
+        //                             value : 200000,
+        //                             nameProject: 'Aprovechamiento de las ciudades universitarias',
+        //                             totalProject: '20500000',
+        //                         },
+        //                     ]
+        //                 },
+        //                 {
+        //                     id: '2-list',
+        //                     data: [
+        //                         {
+        //                             idCard: "card1",
+        //                             type: "Origen",
+        //                             managerCenter : "91500000- origen",
+        //                             projectId : 69,
+        //                             fundId : 21,
+        //                             budgetPosition : 164,
+        //                             functionalArea: '',
+        //                             posPre: '',
+        //                             value : 600000,
+        //                             nameProject: 'Aplicación del acceso y la permanencia en la educación postsecundaria',
+        //                             totalProject: '20500000',
+        //                         },
+        //                         {
+        //                             idCard: "card2",
+        //                             type : "Destino",
+        //                             managerCenter : "91500000 -destino",
+        //                             projectId : 70,
+        //                             fundId : 21,
+        //                             budgetPosition : 165,
+        //                             functionalArea: '',
+        //                             posPre: '',
+        //                             value : 200000,
+        //                             nameProject: 'Aplicación del acceso y la permanencia en la educación postsecundaria',
+        //                             totalProject: '20500000',
+        //                         },
+        //                     ]
+        //                 }
+        //             ]
+        //         }
+        //     ],
+        //     meta: {
+        //         total: 2,
+        //         perPage: 10,
+        //         currentPage: 1,
+        //         lastPage: 1,
+        //         firstPage: 1,
+        //     } 
+        // })
     },[])
 
     const onCloseModal = () => setMessage({});

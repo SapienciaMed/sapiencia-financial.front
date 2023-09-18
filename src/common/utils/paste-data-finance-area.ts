@@ -6,7 +6,7 @@ import { generarIdAleatorio } from "./randomGenerate";
 export const PasteDataFinanceArea = async ({ setIsSearchByName, setMessage, setDataPaste, arrayDataSelect, isResetOutput }: IPasteDataFinanceArea) => {
     try {
         const pastedInput = await navigator.clipboard.readText()
-        constructJSONFromPastedInput({ arrayDataSelect, pastedInput, isResetOutput, setMessage, setDataPaste });
+        return constructJSONFromPastedInput({ arrayDataSelect, pastedInput, isResetOutput, setMessage, setDataPaste });
     } catch (error) {
         console.log(error);
     }
@@ -38,7 +38,7 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                     headersArray.forEach((header, idx) => {
                         Reflect.set(rowObject, header.trim().replaceAll(" ", ""), values[idx].trim())
                     });
-                    console.log({rowObject})
+ 
                     valorContracredito = parseFloat(Object(rowObject).VALORCONTRACRÉDITO.replaceAll('.', '')) || 0;
                     valorCredito = parseFloat(Object(rowObject).VALORCRÉDITO.replaceAll('.', '')) || 0; 
                     
@@ -57,8 +57,9 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                         fundId :Object(rowObject).FONDO, //CODE
                         budgetPosition :Object(rowObject).POSICIÓNPRESUPUESTAL, // CODE
                         value :Object(rowObject).typeTransfer === 'Origen' ? valorContracredito : valorCredito,
-                        transferId: countTransfer
+                        // transferId: countTransfer
                     }
+                    
                     if(idx == 1 ){
                         dataMovementByTransfer.push({data:[moveToSave]})
                     }else{
@@ -87,15 +88,6 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
             OkTitle: "Aceptar",
         })
 
-    // TODO: ESTOS SON LOS OBJETOS QUE CONSTRUIR, SI EMBARGO, FALTA ORGANIZARLES EN LOS NOMBRES 
-    // DE LAS PROPIEDADES TANTO DEL COMPONENTE DE CARDS, COMO EL DEL BACK. QIE IGUAL CREO SON IGUALES.
-    // Y ENVIAR A LOS TAPS. PERO CON LA LOGICA QUEDO 1A APARENTEMENTE.
-    // TAMBIEN FALTA UN DETALLE CON LOS "." QUE VIENEN EN LO CAMPOS DE CONTRACREDITO Y CREDITO PORAHORA,
-    // EN PRUEBAS LE QUITABA EL FORMATO, ME FALTA AJUSTAR ESE ENTRADA
-    console.log({dataMovementByTransfer})  
-    console.log({dataMovementOrigin})  
-    console.log({dataMovementDestiny})  
-
     const mapOutputItem = (item, arrayDataSelect) => {
         const commonFields = {
             isPaste: true,
@@ -119,6 +111,7 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
         if (output.length > 0) {
             const mappedOutput = output.map((item) => mapOutputItem(item, arrayDataSelect))
             setDataPaste(mappedOutput);
+            return dataMovementByTransfer
         }
     } catch (error) {
         setMessage({
