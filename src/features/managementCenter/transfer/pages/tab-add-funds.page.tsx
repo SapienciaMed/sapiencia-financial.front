@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { ITabsMenuTemplate } from "../../../../common/interfaces/tabs-menu.interface";
 import { useParams } from "react-router-dom";
 import CreateFundsSource from "../forms/create-funds-source";
@@ -10,7 +10,8 @@ import { AppContext } from "../../../../common/contexts/app.context";
 
 function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValues }: IAddFunds) {
 
-    const { setMessage } = useContext(AppContext);
+    
+    const { setMessage, setDataPasteRedux } = useContext(AppContext);
     const [dataPaste, setDataPaste] = useState([]);
     const { option } = useParams();
        
@@ -55,12 +56,20 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
         })
     );
 
-    const handleTabClick = (tab: ITabsMenuTemplate) => setSelectedTab(tab);
+    const handleTabClick = useCallback((tab: ITabsMenuTemplate) => {
+        setSelectedTab(tab);
+    }, [setSelectedTab]);
 
     
     useEffect(() => {
         if (!selectedTab && tabs.length > 0) setSelectedTab(tabs[0]);
     }, [tabs]);
+
+    useEffect(() => {
+        if (dataPaste.length > 0) {
+            setDataPasteRedux(dataPaste)
+        }
+    },[dataPaste])
 
     const onPaste = async () =>  PasteDataFinanceArea({ arrayDataSelect, setDataPaste, setMessage })
 

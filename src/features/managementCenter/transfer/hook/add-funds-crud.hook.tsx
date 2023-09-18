@@ -14,7 +14,7 @@ export function useAddFundsCrud() {
     
   const navigate = useNavigate();
   const resolver = useYupValidationResolver(validationFieldsCreatefunds);
-  const { setMessage } = useContext(AppContext);
+  const { setMessage, dataPasteRedux } = useContext(AppContext);
   const { GetFundsList, GetProjectsList, GetPosPreSapienciaList } = useAdditionsTransfersService()
   const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
       functionalArea: [],
@@ -22,16 +22,13 @@ export function useAddFundsCrud() {
       funds: [],
       posPre: []
   })
-  const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
-  const [isBtnVisible, setIsBtnVisible] = useState<boolean>(false)
   const [ totalTransfer, setTotalTransfer ] = useState<string>('')
 
   const {
     handleSubmit,
     register,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isDirty },
     control,
-    watch,
     setValue,
     getValues,
   } = useForm<ICreateSourceForm>({
@@ -42,6 +39,7 @@ export function useAddFundsCrud() {
       origen: [],
     },
   });
+
 
   const watchOrigin = useWatch({
     control,
@@ -58,17 +56,30 @@ export function useAddFundsCrud() {
   },[ watchOrigin ])
 
 
+  const get_total_value = (data): boolean => {
+    const total_by_type_transfer = { Origen: 0, Destino: 0 };
+  
+    data.reduce((acc, item) => {
+      const type_transfer = item.typeTransfer;
+  
+      if (!acc[type_transfer]) {
+        acc[type_transfer] = 0;
+      }
+  
+      acc[type_transfer] += parseFloat(item.value);
+  
+      return acc;
+    }, total_by_type_transfer);
+  
+    return total_by_type_transfer.Destino == total_by_type_transfer.Origen;
+  };
+  
+
   const addNumericalValues = (arr: IAddFund[]) =>  {
     return arr.reduce((total, item) => {
       const valor = parseFloat(item.value);
       return isNaN(valor) ? total : total + valor;
     }, 0);
-  }
-
-  const validarTabs = (tab: boolean) =>{ 
-    setIsBtnVisible(tab)
-
-    setIsBtnDisable(isBtnVisible && watchDesti.length > 0 && validateArray(watchDesti));
   }
 
   useEffect(() => {
@@ -186,6 +197,36 @@ export function useAddFundsCrud() {
   }, [arrayDataSelect])
 
   const onSubmitTab = handleSubmit(async (data: ICreateSourceForm) => {
+
+    if (data.destino.length == 0 || data.origen.length == 0) {
+      setMessage({
+        title: "Validación de datos",
+        description: "Debe ingresar al menos un registro en origen y destino",
+        show: true,
+        OkTitle: "Aceptar",
+        onOk: () => {
+          setMessage({});
+        },
+        background: true
+      })
+      return;
+    }
+
+    if (!get_total_value(dataPasteRedux) ) {
+      setMessage({
+        title: "Validación de datos",
+        description: "Se ha encontrado un error en los datos, los valores son diferentes",
+        show: true,
+        OkTitle: "Aceptar",
+        onOk: () => {
+          setMessage({});
+        },
+        background: true
+      })
+      
+      return
+    }
+
     setMessage({
       title: "Guardar",
       description: "¿Está segur@ de guardar la información en el sistema?",
@@ -218,14 +259,11 @@ export function useAddFundsCrud() {
     control,
     totalTransfer,
     arrayDataSelect,
-    isBtnVisible,
-    isBtnDisable,
     setValue,
     onCancel,
     register,
     getValues,
     onSubmitTab,
-    validarTabs,
     formatMoney,
   }
 }

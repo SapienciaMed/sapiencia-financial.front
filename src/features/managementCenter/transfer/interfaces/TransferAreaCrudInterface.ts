@@ -9,12 +9,12 @@ export interface ICreateSourceForm{
 export interface IAddFund{
     managerCenter: string;
     projectId: string;
-    projectName:string;
+    projectName?: string;
     functionalArea: string;
     funds: string;
     posPre: string;
     value: string;
-    cardId:string;
+    cardId?:string;
 }
   
 
@@ -25,7 +25,6 @@ export interface IAddFunds {
     arrayDataSelect: IArrayDataSelect,
     setValue: UseFormSetValue<any>;
     getValues: UseFormGetValues<ICreateSourceForm>,
-    validarTabs?: (tab: boolean) => void,
     setDataPaste?: (value: React.SetStateAction<any[]>) => void,
     dataPaste?: any[],
 }
