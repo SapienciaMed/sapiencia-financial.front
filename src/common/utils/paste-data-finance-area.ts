@@ -53,9 +53,9 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                         idCard: generarIdAleatorio(20),
                         type : Object(rowObject).typeTransfer,
                         managerCenter : Object(rowObject).CENTROGESTOR, //code
-                        projectId :Object(rowObject).PROYECTO, //CODE
-                        fundId :Object(rowObject).FONDO, //CODE
-                        budgetPosition :Object(rowObject).POSICIÓNPRESUPUESTAL, // CODE
+                        projectId :(arrayDataSelect.functionalArea.find(e => e.name == Object(rowObject).PROYECTO))?.id,// ok
+                        fundId : (arrayDataSelect.funds.filter(e => e.value != null).find(e => e.name == Object(rowObject).FONDO))?.id, //ok
+                        budgetPosition : (arrayDataSelect.posPre.filter(e => e.value != null).find(e => e.name == Object(rowObject).POSICIÓNPRESUPUESTAL))?.id, // ok
                         value :Object(rowObject).typeTransfer === 'Origen' ? valorContracredito : valorCredito,
                         // transferId: countTransfer
                     }
