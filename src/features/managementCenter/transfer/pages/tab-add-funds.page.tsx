@@ -4,20 +4,15 @@ import { useParams } from "react-router-dom";
 import CreateFundsSource from "../forms/create-funds-source";
 import CreateFundsDestination from "../forms/create-fund-destination"
 import {  IAddFunds } from "../interfaces/TransferAreaCrudInterface";
-import { useFormState, useWatch } from "react-hook-form";
-import { validateArray } from "../../../../common/utils/validate-object";
 import { FaRegCopy } from "react-icons/fa";
 import { PasteDataFinanceArea } from "../../../../common/utils/paste-data-finance-area";
 import { AppContext } from "../../../../common/contexts/app.context";
 
-function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValues, validarTabs}: IAddFunds) {
+function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValues }: IAddFunds) {
 
     const { setMessage } = useContext(AppContext);
     const [dataPaste, setDataPaste] = useState([]);
     const { option } = useParams();
-    const [isDisabled, setIsDisabled] = useState(false)
-    const formOrigen = useWatch({ control, name: 'origen' })
-    const { isValid } = useFormState({ control})
        
     const tabs: ITabsMenuTemplate[] = [
         { 
@@ -29,6 +24,8 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
                     arrayDataSelect={arrayDataSelect} 
                     setValue={setValue} 
                     getValues={getValues}
+                    dataPaste={dataPaste}
+                    setDataPaste={setDataPaste}
                 /> 
             )
         },
@@ -41,6 +38,8 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
                     arrayDataSelect={arrayDataSelect} 
                     setValue={setValue} 
                     getValues={getValues}
+                    dataPaste={dataPaste}
+                    setDataPaste={setDataPaste}
                 />
             ) 
         },
@@ -56,24 +55,14 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
         })
     );
 
-    const handleTabClick = (tab: ITabsMenuTemplate) => {
-        isDisabled && setSelectedTab(tab);
-    };
+    const handleTabClick = (tab: ITabsMenuTemplate) => setSelectedTab(tab);
 
+    
     useEffect(() => {
         if (!selectedTab && tabs.length > 0) setSelectedTab(tabs[0]);
-        validarTabs(selectedTab?.id == 'destino')
     }, [tabs]);
 
-    useEffect(() => {
-        setIsDisabled(formOrigen?.length > 0 && validateArray(formOrigen))
-    },[ isValid, formOrigen ])
-    
-
-    const onPaste = async () => {
-        const validationIn = 'traslado'
-        PasteDataFinanceArea({arrayDataSelect, setDataPaste, setMessage, validationIn })
-    }
+    const onPaste = async () =>  PasteDataFinanceArea({ arrayDataSelect, setDataPaste, setMessage })
 
     return (
         <div>
@@ -85,7 +74,7 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
                             if (selectedTab && selectedTab.id === tab.id) active = "active";
                             return (
                                 <div
-                                    className={`tab-option ${active} ${(tab.id == 'destino' && !isDisabled) ? 'tab-option2-disabled disabled' : ''}`}
+                                    className={`tab-option ${active} `}
                                     key={tab.id}
                                     onClick={() => {
                                         handleTabClick(tab);

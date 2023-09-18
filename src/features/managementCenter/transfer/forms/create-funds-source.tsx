@@ -1,15 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useFieldArray, useFormState, useWatch } from 'react-hook-form';
 import { IAddFunds } from '../interfaces/TransferAreaCrudInterface';
-import { FaRegCopy } from 'react-icons/fa';
 import { BiPlusCircle } from 'react-icons/bi';
 import { AddFormCardPage } from '../pages/add-form-card.page';
 import { Paginator } from 'primereact/paginator';
 import { paginatorFooter } from '../../../../common/components/table.component';
-import { PasteDataFinanceArea } from '../../../../common/utils/paste-data-finance-area';
 import { AppContext } from '../../../../common/contexts/app.context';
 
-function CreateFundsSource({ control, titleAdd, register, arrayDataSelect, setValue, getValues }: IAddFunds) {
+function CreateFundsSource({ control, titleAdd, register, arrayDataSelect, dataPaste, setValue, getValues, setDataPaste }: IAddFunds) {
 
     const { fields, append, remove } = useFieldArray({
         control,
@@ -22,7 +20,6 @@ function CreateFundsSource({ control, titleAdd, register, arrayDataSelect, setVa
         name: titleAdd
     })
 
-    const [dataPaste, setDataPaste] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -42,13 +39,12 @@ function CreateFundsSource({ control, titleAdd, register, arrayDataSelect, setVa
         return total;
     };
 
-    /* const onPaste = async () => {
-        const validationIn = 'traslado'
-        PasteDataFinanceArea({arrayDataSelect, setDataPaste, setMessage, validationIn })
-    } */
-
     useEffect(() => {
-        dataPaste.length > 0 && append(dataPaste)
+
+        // if(dataPaste.length > 0 )  {
+        //     append( dataPaste.filter(item => item.typeTransfer == 'Origen' ) )
+        // }
+        
     }, [dataPaste])
     
     return (
@@ -56,7 +52,6 @@ function CreateFundsSource({ control, titleAdd, register, arrayDataSelect, setVa
             <div className="title-area">
                 <label className="text-black biggest"> Traslado {titleAdd} </label>
                 <div className='display-justify-flex-center gap-0 gap-08'>
-                    {/* <div className="title-button text-three large" id='pages' onClick={onPaste}> Pegar <FaRegCopy /> </div> */}
                     <div className="title-button text-three large"
                         onClick={() => {
                             append({

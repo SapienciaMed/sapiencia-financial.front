@@ -18,6 +18,6 @@ export interface IPasteDataFinanceArea{
     setMessage: (values: IMessage) => void
     setDataPaste: (value: React.SetStateAction<any[]>) => void,
     arrayDataSelect: IArrayDataSelect,
-    validationIn: 'adicion' | 'traslado',
     pastedInput?: any,
+    isResetOutput?: boolean
 }

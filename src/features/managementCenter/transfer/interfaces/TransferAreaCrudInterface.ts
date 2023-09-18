@@ -25,7 +25,9 @@ export interface IAddFunds {
     arrayDataSelect: IArrayDataSelect,
     setValue: UseFormSetValue<any>;
     getValues: UseFormGetValues<ICreateSourceForm>,
-    validarTabs?: (tab: boolean) => void
+    validarTabs?: (tab: boolean) => void,
+    setDataPaste?: (value: React.SetStateAction<any[]>) => void,
+    dataPaste?: any[],
 }
 
 export interface IAddFormCard {

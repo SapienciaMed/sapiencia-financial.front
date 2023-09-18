@@ -7,7 +7,6 @@ import { useContext, useEffect, useState } from "react";
 import { IArrayDataSelect } from "../../../../common/interfaces/global.interface";
 import { EResponseCodes } from "../../../../common/constants/api.enum";
 import { AppContext } from "../../../../common/contexts/app.context";
-import { ITabsMenuTemplate } from "../../../../common/interfaces/tabs-menu.interface";
 import { validateArray } from "../../../../common/utils/validate-object";
 import { useNavigate } from 'react-router-dom';
 
