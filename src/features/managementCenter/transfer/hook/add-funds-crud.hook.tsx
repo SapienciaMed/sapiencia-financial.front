@@ -234,7 +234,8 @@ export function useAddFundsCrud() {
         return
       }
     }
-     else if (!get_total_value(data)) {
+    else {
+      if (!get_total_value(data)){
         setMessage({
           title: "Validación de datos",
           description: "Se ha encontrado un error en los datos, los valores son diferentes",
@@ -248,6 +249,7 @@ export function useAddFundsCrud() {
 
         return
       }
+    }
     
 
     const manualTranferMovement: IobjectAddTransfer = {

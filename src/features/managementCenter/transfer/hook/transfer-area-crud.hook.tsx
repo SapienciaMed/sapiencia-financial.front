@@ -10,6 +10,8 @@ import DetailsRouteValuesComponent from '../../components/details-route-values.c
 import { ITableAction, ITableElement } from '../../../../common/interfaces/table.interfaces';
 import DetailsSelectedProjectComponent from '../../components/details-selected-project.component';
 import { IobjectAddTransfer } from '../../../../common/interfaces/global.interface';
+import { useTypesTranfersService } from './types-transfers-service.hook';
+import { EResponseCodes } from '../../../../common/constants/api.enum';
 
 export function useTransferAreaCrudPage() {
 
@@ -30,6 +32,7 @@ export function useTransferAreaCrudPage() {
 
     const navigate = useNavigate();
     const { setMessage, setHeadTransferData, setAddTransferData, authorization, addTransferData } = useContext(AppContext);
+    const { createTransfer } = useTypesTranfersService()
 
     const {
         handleSubmit,
@@ -70,12 +73,54 @@ export function useTransferAreaCrudPage() {
                 setValue('adminSapiencia', item.headTransfer.actAdminSapiencia)
                 setValue('remarks', item.headTransfer.observations)
             })  
+        }else{
+            setIsAddBtnDisable(false)
         }
     },[addTransferData])
 
     const onCloseModal = () => setMessage({});
 
-    const onSubmit = handleSubmit(async (data: IBasicTransfers) => {}); // agregar condicion para que sea llamado del boton "Trasladar"
+    const onSubmit = handleSubmit(async (data: IBasicTransfers) => {
+        addTransferData?.array?.length > 0 && 
+            setMessage({
+                title: "Trasladar",
+                description: "¿Está segur@ que desea realizar el traslado?",
+                show: true,
+                OkTitle: "Aceptar",
+                cancelTitle: "Cancelar",
+                onOk: () => {
+                    setMessage({});
+                    createTransfer(addTransferData?.array[0]).then(response => {
+                        if (response.operation.code === EResponseCodes.OK) {
+                            setMessage({
+                                title: "Trasladar",
+                                description: "¡Se han trasladado los fondos correctamente en el sistema!",
+                                show: true,
+                                OkTitle: "Aceptar",
+                                onOk: () => {
+                                    setAddTransferData({
+                                        array: [],
+                                        meta: { total: 0}
+                                    })
+                                    setMessage({});
+                                    navigate(-1)
+                                },
+                            });
+                        }
+                    }).catch((error) => {
+                        setMessage({
+                            title: "Trasladar",
+                            description: error,
+                            show: true,
+                            OkTitle: "Aceptar",
+                            onOk: () => {
+                                setMessage({});
+                            },
+                        });
+                    })
+                },
+            });
+    }); 
 
     const tableColumns: ITableElement<IobjectAddTransfer>[] = [
         {
