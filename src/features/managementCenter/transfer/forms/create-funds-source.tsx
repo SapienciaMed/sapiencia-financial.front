@@ -7,7 +7,7 @@ import { Paginator } from 'primereact/paginator';
 import { paginatorFooter } from '../../../../common/components/table.component';
 import { AppContext } from '../../../../common/contexts/app.context';
 
-function CreateFundsSource({ control, titleAdd, register, arrayDataSelect, dataPaste, setValue, getValues, setDataPaste }: IAddFunds) {
+function CreateFundsSource({ control, titleAdd, register, arrayDataSelect, dataPaste, setValue, getValues, setDataPaste,invalidCardsAdditionSt, watch }: IAddFunds) {
 
     const { fields, append, remove } = useFieldArray({
         control,
@@ -96,6 +96,8 @@ function CreateFundsSource({ control, titleAdd, register, arrayDataSelect, dataP
                                 cardId={field.id}
                                 setValue={setValue}
                                 titleLabelValue='Valor contracrédito'
+                                invalidCardsAdditionSt={invalidCardsAdditionSt}
+                                watch={watch}
                             />
                         </div>
                     )

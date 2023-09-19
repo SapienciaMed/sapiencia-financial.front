@@ -41,15 +41,15 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
 
 
     useEffect(() => {
-        let d = watch(`${titleAdd.toLowerCase()}[${count}].projectId`)
+        let proyId = watch(`${titleAdd.toLowerCase()}[${count}].projectId`)
         const areaList = functionalArea.filter(e => e.value != null).map(e => {
             Object(e).area[0]['projectId'] = e?.id
             return Object(e).area
         });
         const areaListFlat = areaList.flat()
-        let area = areaListFlat.filter(e => e.projectId == d)
+        let area = areaListFlat.filter(e => e.projectId == proyId)
         area = area.filter(e => e.value != null)
-        setProjectIdSelectedSt(d)
+        setProjectIdSelectedSt(proyId)
         setAreaIdSelectedSt(area[0]?.id)
         setAreasByProjectSt(area)
     }, [projectName])
