@@ -11,8 +11,8 @@ interface IAppProps {
   }
 
 function TransferAreaCrudPage({ actionForm }: IAppProps) {
-    const {control, errors, tableColumns, tableActions, isBtnDisable, tableComponentRef, addTransferData, 
-        navigate, onSubmit, register, onCancel, handleFormSubmit } = useTransferAreaCrudPage()
+    const {control, errors, tableColumns, tableActions, isBtnDisable, isAddBtnDisable, tableComponentRef, addTransferData, 
+        onSubmit, register, onCancel, handleFormSubmit } = useTransferAreaCrudPage()
 
     return (
         <div className="crud-page full-height">
@@ -33,7 +33,8 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                                     <ButtonComponent 
                                         className="button-clean-fields color-lila"
                                         value='Añadir valores '  
-                                        action={() => { isBtnDisable && handleFormSubmit() }}  
+                                        action={() => { !isAddBtnDisable && handleFormSubmit() }}
+                                        disabled={isAddBtnDisable}  
                                     /> 
                                     <BiPlusCircle/>
                                 </div>
