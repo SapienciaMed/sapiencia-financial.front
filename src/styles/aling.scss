@@ -59,4 +59,17 @@
   flex-direction: row;
 }
 
+.display-flex-direction-column{
+  display: flex;
+  flex-direction: column;
+  
+}
+
+@media(max-width: 500px) {
+  .display-justify-flex-center {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
 

@@ -12,8 +12,6 @@ import { useNavigate } from "react-router-dom";
 
 export function useAdditionAreaCrud(tabId: string) {
 
-  console.log({ tabId })
-
   const resolver = useYupValidationResolver(fundsAdditionalValidation);
   const { setMessage } = useContext(AppContext);
   const { GetFundsList, GetProjectsList, GetPosPreSapienciaList, validateCreateAdition, createAdition } = useAdditionsTransfersService()

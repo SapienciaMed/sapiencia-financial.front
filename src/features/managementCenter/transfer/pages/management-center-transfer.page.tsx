@@ -21,7 +21,7 @@ function ManagementCenterTransferPage(props: IAppProps): React.JSX.Element {
                             <label className="text-black biggest bold">
                                 Consultar Traslado
                             </label>
-                            <div style={{ marginTop: '0px' }} className="title-button text-three large"> Crear traslado <BiPlusCircle /> </div>
+                            <div style={{ marginTop: '0px' }} className="title-button text-three large" onClick={() => navigate('./create')}> Crear traslado <BiPlusCircle /> </div>
                         </div>
 
                         <div className="funcionality-filters-container">
