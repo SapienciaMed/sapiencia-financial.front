@@ -7,7 +7,7 @@ import { IAddFormCard } from '../interfaces/TransferAreaCrudInterface'
 import { useWatch } from 'react-hook-form';
 import { IDropdownPropsFuctionalArea } from '../../../../common/interfaces/global.interface';
 
-export const AddFormCardPage = ({arrayDataSelect, control, titleAdd, errors, count, cardId, titleLabelValue, register, removeCard, setValue}: IAddFormCard) => {
+export const AddFormCardPage = ({arrayDataSelect, control, titleAdd, errors, count, cardId, titleLabelValue, register, removeCard, setValue, invalidCardsAdditionSt, watch}: IAddFormCard) => {
 
     const { functionalArea, funds, posPre, } = arrayDataSelect
     const formOrigen = useWatch({ control, name: titleAdd })
@@ -49,8 +49,13 @@ export const AddFormCardPage = ({arrayDataSelect, control, titleAdd, errors, cou
         setAreasByProjectSt(area)
     }
 
+    let invalidStyleCard = {
+        background: invalidCardsAdditionSt.find(e => e.idCard == watch(`${titleAdd.toLowerCase()}[${count}].cardId`)) ? 'rgba(255, 0, 0, 0.30)' : 'none',
+        border: invalidCardsAdditionSt.find(e => e.idCard == watch(`${titleAdd.toLowerCase()}[${count}].cardId`)) ? '1px solid #F00' : ''
+    }  
+
   return (
-    <div className='card-user mt-14px'>
+    <div className='card-user mt-14px' style={invalidStyleCard}>
         <div className="title-area">
             <label className="text-black biggest"> {count + 1}. { titleAdd.charAt(0).toUpperCase() + titleAdd.slice(1) } </label>
             <ButtonComponent

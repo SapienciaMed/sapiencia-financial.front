@@ -31,6 +31,7 @@ export function useAddFundsCrud() {
     control,
     setValue,
     getValues,
+    watch
   } = useForm<ICreateSourceForm>({
     resolver,
     mode: "onChange",
@@ -278,10 +279,10 @@ export function useAddFundsCrud() {
         let messageResponse = "";
         const messageResponseDecode =  response.operation.message.split('@@@')
         
-        const budgetsRoutesError = messageResponseDecode[3]
-        const projectsError = messageResponseDecode[6]
-        const budgetsRoutesRepit = messageResponseDecode[9]
-        
+        const budgetsRoutesError = JSON.parse(messageResponseDecode[3])
+        const projectsError = JSON.parse(messageResponseDecode[6])
+        const budgetsRoutesRepit = JSON.parse(messageResponseDecode[9])
+                
         if(budgetsRoutesError.length>0){
           messageResponse = messageResponseDecode[1];
         }else if(projectsError.length>0){
@@ -303,7 +304,9 @@ export function useAddFundsCrud() {
               array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
               meta: { total: 1 }
             });
-            identifyInvalidcard(dataPasteRedux.length > 0 ? addTransferData.array[0] : manualTranferMovement, messageResponse)
+            let addTransferDataFixed = getElementsMovement(addTransferData.array[0].transferMovesGroups)
+            console.log({addTransferDataFixed})
+            identifyInvalidcard(dataPasteRedux.length > 0 ? addTransferDataFixed : manualTranferMovement.transferMovesGroups, response.operation.message)
             //navigate(-1)
           },
           background: true
@@ -312,8 +315,24 @@ export function useAddFundsCrud() {
     })
   })
 
+
+  function getElementsMovement(data1) {
+    // Inicializa un array vacío para almacenar los elementos de data
+    let elementosData = [];
+  
+    // Utiliza el método map() para recorrer data1
+    data1.map(item => {
+      // Utiliza el método concat() para agregar los elementos de data al array elementosData
+      elementosData = elementosData.concat(item.data);
+    });
+  
+    return elementosData;
+  }
+
   const [invalidCardsAdditionSt, setInvalidCardsAdditionSt] = useState([])
+  
   const identifyInvalidcard = (additionMove: any, message: string) => {
+    console.log({additionMove})
     let messageSplit = message.split('@@@')
     let cardValidation = [];
     let invalidCard;
@@ -401,6 +420,7 @@ export function useAddFundsCrud() {
     getValues,
     onSubmitTab,
     formatMoney,
-    invalidCardsAdditionSt
+    invalidCardsAdditionSt,
+    watch
   }
 }

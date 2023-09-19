@@ -9,7 +9,7 @@ import { paginatorFooter } from '../../../../common/components/table.component';
 import { AppContext } from '../../../../common/contexts/app.context';
 
 
-function CreateFundsDestination({ control, titleAdd, register, arrayDataSelect, dataPaste, setValue, getValues, setDataPaste}: IAddFunds) {
+function CreateFundsDestination({ control, titleAdd, register, arrayDataSelect, dataPaste, setValue, getValues, setDataPaste, invalidCardsAdditionSt, watch}: IAddFunds) {
 
     const { fields, append, remove } = useFieldArray({
         control,
@@ -98,6 +98,8 @@ function CreateFundsDestination({ control, titleAdd, register, arrayDataSelect, 
                                 cardId={field.id}
                                 setValue={setValue}
                                 titleLabelValue='Valor crédito'
+                                invalidCardsAdditionSt={invalidCardsAdditionSt}
+                                watch={watch}
                             />
                         </div>
                     )

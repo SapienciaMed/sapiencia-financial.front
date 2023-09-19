@@ -8,7 +8,7 @@ import { FaRegCopy } from "react-icons/fa";
 import { PasteDataFinanceArea } from "../../../../common/utils/paste-data-finance-area";
 import { AppContext } from "../../../../common/contexts/app.context";
 
-function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValues, invalidCardsAdditionSt }: IAddFunds) {
+function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValues, invalidCardsAdditionSt, watch }: IAddFunds) {
 
 
     const { setMessage, setDataPasteRedux, setAddTransferData, headTransferData } = useContext(AppContext);
@@ -28,6 +28,7 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
                     dataPaste={dataPaste}
                     setDataPaste={setDataPaste}
                     invalidCardsAdditionSt={invalidCardsAdditionSt}
+                    watch={watch}
                 />
             )
         },
@@ -43,6 +44,7 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
                     dataPaste={dataPaste}
                     setDataPaste={setDataPaste}
                     invalidCardsAdditionSt={invalidCardsAdditionSt}
+                    watch={watch}
                 />
             )
         },

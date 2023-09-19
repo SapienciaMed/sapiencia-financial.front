@@ -28,6 +28,7 @@ export interface IAddFunds {
     setDataPaste?: (value: React.SetStateAction<any[]>) => void,
     dataPaste?: any[],
     invalidCardsAdditionSt:any;
+    watch:any;
 }
 
 export interface IAddFormCard {
@@ -41,4 +42,6 @@ export interface IAddFormCard {
     removeCard: (index?: number | number[]) => void,
     register: UseFormRegister<ICreateSourceForm>,
     titleLabelValue: string,
+    invalidCardsAdditionSt:any;
+    watch:any;
 }
