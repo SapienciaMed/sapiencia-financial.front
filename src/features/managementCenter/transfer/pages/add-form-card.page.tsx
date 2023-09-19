@@ -64,7 +64,6 @@ export const AddFormCardPage = ({arrayDataSelect, control, titleAdd, errors, cou
                 action={() => { removeCard( count ) }}
                 className="button-delete biggest bold"
             />
-
         </div>
         <div>
         <section className='grid-form-2-container-reverse mt-5px'>
