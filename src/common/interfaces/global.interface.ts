@@ -12,6 +12,8 @@ export interface IMessage {
   onCancel?: () => void;
   onClickOutClose?: boolean;
   onClose?: () => void;
+  titleBack?: string,
+  onBack?: () => void,
   background?: boolean;
 }
 
@@ -49,4 +51,50 @@ export interface IArrayDataSelect{
   areas: IDropdownProps[],
   funds: IDropdownProps[],
   posPre: IDropdownProps[]
+}
+
+export interface IDropdownPropsFuctionalArea{
+  description?:string;
+  name: string,
+  value: string | number;
+  projectId?: string | number,
+  id?: string | number,
+}
+
+export interface IobjectAddTransfer{
+  headTransfer?: IHeadTransferData,
+  transferMovesGroups: ITransferMovesGroups[]
+}
+
+export interface IHeadTransferData{
+  actAdminDistrict: string,
+  actAdminSapiencia: string,
+  observations: string,
+  userCreate: string,
+  dateCreate: string,
+  userModify: string,
+  dateModify: string
+}
+
+export interface ITransferMovesGroups{
+  id?: string,
+  data: IData[]
+}
+
+export interface IData{
+  idCard: string,
+  type : string,
+  managerCenter : string,
+  projectId : number,
+  fundId : number,
+  budgetPosition : number,
+  functionalArea: string,
+  posPre: string,
+  value : number,
+  nameProject: string
+  totalProject?: string
+}
+
+export interface IDataPaste extends IData{
+  isPaste: string
 }
