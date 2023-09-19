@@ -204,6 +204,9 @@ export function useAddFundsCrud() {
   }, [arrayDataSelect])
 
   const onSubmitTab = handleSubmit(async (data: ICreateSourceForm) => {
+    console.log("==>>data >>> ", data)
+    console.log("==>>dataxxxxx >>> ", addTransferData.array[0])
+
 
     if (data.destino.length == 0 || data.origen.length == 0) {
       setMessage({
