@@ -7,9 +7,9 @@ import { useContext, useEffect, useState } from "react";
 import { IArrayDataSelect, IobjectAddTransfer } from "../../../../common/interfaces/global.interface";
 import { EResponseCodes } from "../../../../common/constants/api.enum";
 import { AppContext } from "../../../../common/contexts/app.context";
-import { validateArray } from "../../../../common/utils/validate-object";
 import { useNavigate } from 'react-router-dom';
 import { useTypesTranfersService } from './types-transfers-service.hook';
+import { generarIdAleatorio } from '../../../../common/utils/randomGenerate';
 export function useAddFundsCrud() {
 
   const navigate = useNavigate();
@@ -28,7 +28,6 @@ export function useAddFundsCrud() {
   const {
     handleSubmit,
     register,
-    formState: { errors, isValid, isDirty },
     control,
     setValue,
     getValues,
@@ -47,19 +46,9 @@ export function useAddFundsCrud() {
     name: 'origen'
   })
 
-  const watchDesti = useWatch({
-    control,
-    name: 'destino'
-  })
-
   useEffect(() => {
     setTotalTransfer(addNumericalValues(watchOrigin).toString())
   }, [watchOrigin])
-
-  // useEffect(() =>{
-  //   console.log("watchOrigin ", get_total_value(watchOrigin));
-  // },[watchDesti, watchOrigin])
-
 
   const isTotalSame = (data): boolean => {
     const total_by_type_transfer = { Origen: 0, Destino: 0 };
@@ -84,10 +73,11 @@ export function useAddFundsCrud() {
   }, [headTransferData])
 
   const get_total_value = (data) => {
-    const total = data.reduce((total, item) => {
-      return total + item.value;
-    }, 0);
-    return total;
+    const dest = data.destino.sort((a, b) => a.value - b.value);
+    const orig = data.origen.sort((a, b) => a.value - b.value);
+
+    const valid = dest.every((destino, i) => destino.value == orig[i].value)
+    return valid
   };
 
 
@@ -244,8 +234,23 @@ export function useAddFundsCrud() {
         return
       }
     }
+     else if (!get_total_value(data)) {
+        setMessage({
+          title: "Validación de datos",
+          description: "Se ha encontrado un error en los datos, los valores son diferentes",
+          show: true,
+          OkTitle: "Aceptar",
+          onOk: () => {
+            setMessage({});
+          },
+          background: true
+        })
 
-    const manualTranferMovement: IobjectAddTransfer = { //crear el objeto cuando se hace manual 
+        return
+      }
+    
+
+    const manualTranferMovement: IobjectAddTransfer = {
       headTransfer: headTransferData,
       transferMovesGroups: [transformJSONArrays(data)]
     }
@@ -258,6 +263,7 @@ export function useAddFundsCrud() {
       cancelTitle: "Cancelar",
       onOk: () => {
         const transferDataToSave = dataPasteRedux.length > 0 ? addTransferData.array[0] : manualTranferMovement;
+
         validateCreateTransfer(transferDataToSave).then((response: any) => {
           if (response.operation.code === EResponseCodes.OK) {
             setMessage({
@@ -269,7 +275,13 @@ export function useAddFundsCrud() {
                 setMessage({});
                 setAddTransferData({
                   array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
-                  meta: { total: 1 }
+                  meta: { 
+                    total:  dataPasteRedux.length > 0 ? addTransferData.array.length : manualTranferMovement.transferMovesGroups.length,
+                    perPage: 10,
+                    currentPage: 1,
+                    lastPage: 1,
+                    firstPage: 1,
+                  }
                 });
                 navigate(-1)
               },
@@ -292,6 +304,12 @@ export function useAddFundsCrud() {
       OkTitle: "Aceptar",
       onOk: () => {
         setMessage({});
+        setAddTransferData({
+          array: [],
+          meta: {
+            total: 0,
+          }
+        })
         navigate(-1)
       },
     });
@@ -299,27 +317,30 @@ export function useAddFundsCrud() {
 
   function transformJSONArrays(jsonArray) {
     const resultado = [
-      ...jsonArray.destino.map((item) => ({
-        idCard: item.cardId,
-        type: "Destino",
-        managerCenter: item.managerCenter,
-        projectId: item.projectId,
-        fundId: "912070123",
-        budgetPosition: "923202020086",
-        value: parseInt(item.value)
-      })),
       ...jsonArray.origen.map((item) => ({
         idCard: item.cardId,
         type: "Origen",
         managerCenter: item.managerCenter,
-        projectId: item.projectId,
-        fundId: "911070123",
-        budgetPosition: "923202020086",
-        value: parseInt(item.value)
-      }))
+        projectId: parseInt(item.projectId),
+        fundId: parseInt(item.funds),
+        budgetPosition: parseInt(item.posPre),
+        value: parseInt(item.value),
+        nameProject: item.projectName
+      })),
+      ...jsonArray.destino.map((item) => ({
+        idCard: item.cardId,
+        type: "Destino",
+        managerCenter: item.managerCenter,
+        projectId: parseInt(item.projectId),
+        fundId: parseInt(item.funds),
+        budgetPosition: parseInt(item.posPre),
+        value: parseInt(item.value),
+        nameProject: item.projectName
+      })),
     ];
 
     return {
+      id: generarIdAleatorio(20),
       data: resultado
     };
   }

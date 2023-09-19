@@ -68,6 +68,7 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
     useEffect(() => {
         if (dataPaste.length > 0) {
             setDataPasteRedux(dataPaste)
+            setSelectedTab(tabs[1])
         }
     }, [dataPaste])
 

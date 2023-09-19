@@ -52,27 +52,31 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                     let moveToSave = {
                         idCard: generarIdAleatorio(20),
                         type : Object(rowObject).typeTransfer,
-                        managerCenter : Object(rowObject).CENTROGESTOR, //code
-                        projectId :(arrayDataSelect.functionalArea.find(e => e.name == Object(rowObject).PROYECTO))?.id,// ok
-                        fundId : (arrayDataSelect.funds.filter(e => e.value != null).find(e => e.name == Object(rowObject).FONDO))?.id, //ok
-                        budgetPosition : (arrayDataSelect.posPre.filter(e => e.value != null).find(e => e.name == Object(rowObject).POSICIÓNPRESUPUESTAL))?.id, // ok
+                        managerCenter : Object(rowObject).CENTROGESTOR, 
+                        projectId :(arrayDataSelect.functionalArea.find(e => e.name == Object(rowObject).PROYECTO))?.id,
+                        fundId : (arrayDataSelect.funds.filter(e => e.value != null).find(e => e.name == Object(rowObject).FONDO))?.id, 
+                        budgetPosition : (arrayDataSelect.posPre.filter(e => e.value != null).find(e => e.name == Object(rowObject).POSICIÓNPRESUPUESTAL))?.id,
                         value :Object(rowObject).typeTransfer === 'Origen' ? valorContracredito : valorCredito,
+                        nameProject: Object(rowObject).NOMBREPROYECTO,
                         // transferId: countTransfer
                     }
                     
                     if(idx == 1 ){
-                        dataMovementByTransfer.push({data:[moveToSave]})
+                        dataMovementByTransfer.push({
+                            id: generarIdAleatorio(20),
+                            data:[moveToSave]
+                        })
                     }else{
                             let lastObj = dataMovementByTransfer[countTransfer-1].data[dataMovementByTransfer[countTransfer-1].data.length-1]
                             if(lastObj.type == 'Origen' && lastObj.type == Object(moveToSave).type ){
-                                //agrega en el mismo traslado
                                 dataMovementByTransfer[countTransfer-1].data.push(moveToSave)
                             }else if(lastObj.type == 'Destino' && Object(moveToSave).type=='Origen'){
-                                // se crea un nuevo traslado
                                     countTransfer +=1;
-                                    dataMovementByTransfer.push({data:[moveToSave]})
+                                    dataMovementByTransfer.push({
+                                        id: generarIdAleatorio(20),
+                                        data:[moveToSave]
+                                    })
                             }else{
-                                // se guarda en el mismo traslado
                                 dataMovementByTransfer[countTransfer-1].data.push(moveToSave)
                             }
                     }
