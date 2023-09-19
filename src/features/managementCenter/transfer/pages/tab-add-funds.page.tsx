@@ -68,7 +68,9 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
     useEffect(() => {
         if (dataPaste.length > 0) {
             setDataPasteRedux(dataPaste)
-            setSelectedTab(tabs[1])
+            setTimeout(() => {
+                setSelectedTab(tabs[1])
+            }, 600);
         }
     }, [dataPaste])
 
@@ -91,28 +93,30 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
     return (
         <div>
             <div className="tabs-component">
-                <div style={{width:'100%',display:'flex',justifyContent:'space-between'}}>
-                    <div className="tabs-selection">
-                        {
-                            tabs.map((tab) => {
-                                let active = "";
-                                if (selectedTab && selectedTab.id === tab.id) active = "active";
-                                return (
-                                    <div
-                                        className={`tab-option ${active} `}
-                                        key={tab.id}
-                                        onClick={() => {
-                                            handleTabClick(tab);
-                                        }}
-                                    >
-                                        {tab.title}
-                                    </div>
+                <div className="title-area">
+                    <div className="display-justify-flex-center p-rating" style={{ width: "100%"}}>
+                        <div className="tabs-selection">
+                            {
+                                tabs.map((tab) => {
+                                    let active = "";
+                                    if (selectedTab && selectedTab.id === tab.id) active = "active";
+                                    return (
+                                        <div
+                                            className={`tab-option ${active} `}
+                                            key={tab.id}
+                                            onClick={() => {
+                                                handleTabClick(tab);
+                                            }}
+                                        >
+                                            {tab.title}
+                                        </div>
 
-                                );
-                            })
-                        }
+                                    );
+                                })
+                            }
+                        </div>
+                        <div className="title-button text-three large" id='pages' onClick={onPaste} style={{ marginTop: "0"}}> Pegar <FaRegCopy /> </div>
                     </div>
-                    <div className="title-button text-three large" id='pages' onClick={onPaste} style={{display:'flex'}}> Pegar <FaRegCopy /> </div>
                 </div>
                 <div className="tabs-content">
                     {selectedTab ? tabList[`${selectedTab?.title}`].content : "no data"}

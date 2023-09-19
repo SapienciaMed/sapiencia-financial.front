@@ -7,12 +7,11 @@ interface ISelectedProject {
     option: string,
     onOk: () => void,
     id: string,
-    total: string,
 }
 
-function DetailsSelectedProjectComponent({ option, id, onOk, total}: ISelectedProject): React.JSX.Element {
+function DetailsSelectedProjectComponent({ option, id, onOk }: ISelectedProject): React.JSX.Element {
 
-    const { tabs, selectedTab, tabList, handleTabClick } = useDetailsSelectedProject(option, id)
+    const { tabs, selectedTab, tabList, total, handleTabClick } = useDetailsSelectedProject(option, id)
 
     return (
         <div className="tabs-component full-width">
@@ -41,7 +40,7 @@ function DetailsSelectedProjectComponent({ option, id, onOk, total}: ISelectedPr
             <footer className='container-button-descripcion-modal'>
                 <div className='content-label'>
                     <label className="text-black biggest"> Total Traslado:</label>
-                    <label className="text-black biggest" style={{color: '#533893'}}> $ {total} </label>
+                    <label className="text-black biggest" style={{color: '#533893'}}> $ {String(total).replace(/\B(?=(\d{3})+(?!\d))/g, '.')} </label>
                 </div>
                 <div className="buttons-bot">
                     <ButtonComponent

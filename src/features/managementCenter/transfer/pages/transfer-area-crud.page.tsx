@@ -11,7 +11,7 @@ interface IAppProps {
   }
 
 function TransferAreaCrudPage({ actionForm }: IAppProps) {
-    const {control, errors, tableColumns, tableActions, isBtnDisable, isAddBtnDisable, tableComponentRef, addTransferData, 
+    const {control, errors, tableColumns, tableActions, isBtnDisable, isAddBtnDisable, tableComponentRef, addTransferData, totalTransfer,
         onSubmit, register, onCancel, handleFormSubmit } = useTransferAreaCrudPage()
 
     return (
@@ -130,7 +130,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
             <section className="container-button-bot-2">
                 <div className='content-label'>
                     <label className="text-black biggest"> Total Traslado:</label>
-                    <label className="text-black biggest" style={{color: '#533893'}}> $  </label>
+                    <label className="text-black biggest" style={{color: '#533893'}}> $ {totalTransfer} </label>
                 </div>
                 <div className="buttons-bot">
                     <span

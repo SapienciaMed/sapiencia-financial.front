@@ -26,6 +26,7 @@ export function useTransferAreaCrudPage() {
         } }],
         total: 0
     })
+    const [totalTransfer, setTotalTransfer] = useState<string>('')
 
     const navigate = useNavigate();
     const { setMessage, setHeadTransferData, setAddTransferData, authorization, addTransferData } = useContext(AppContext);
@@ -61,8 +62,7 @@ export function useTransferAreaCrudPage() {
         )
     },[showModalDetail])
 
-    useEffect(() => {
-        
+    useEffect(() => {  
         if(addTransferData?.array?.length > 0 ){
             setIsAddBtnDisable(addTransferData?.array?.length > 0);
             addTransferData.array.map(item => {
@@ -89,23 +89,24 @@ export function useTransferAreaCrudPage() {
             header: "Total a trasladar",
             renderCell: (row) => {
                 const total_transfer = row?.transferMovesGroups.reduce((accumulatedSum, item) => {
-                    return accumulatedSum + item.data?.reduce((projectSum, proyecto) => {
+                    return accumulatedSum + item.data?.filter( data => data.type == 'Origen').reduce((projectSum, proyecto) => {
                         const totalProject = proyecto?.value;
                         return projectSum + totalProject;
                     }, 0);
                 }, 0);
+                setTotalTransfer(total_transfer.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'))
                 return <>$ { total_transfer.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') }</>
             }
         },
     ];
 
-    const tableActions: ITableAction<any>[] = [ // any: cambiarlo por el tipado del addTransferData
+    const tableActions: ITableAction<any>[] = [
         {
             icon: "Detail",
             onClick: (row) => {
 
                 const rows = row?.transferMovesGroups.map((item) => {
-                    const totalProjectSum = item.data.reduce( (sum, proyecto) => sum + proyecto?.value, 0 );
+                    const totalProjectSum = item.data.filter(item => item.type === "Origen").reduce((acc, item) => acc + item.value, 0);
                     return {
                         data: {
                             id: item.id,
@@ -114,8 +115,9 @@ export function useTransferAreaCrudPage() {
                         },
                     };
                 });
-                const total_transfer = row?.transferMovesGroups.reduce((accumulatedSum, item) => {
-                    return accumulatedSum + item.data?.reduce((projectSum, proyecto) => {
+
+                const total_transfer =  row?.transferMovesGroups.reduce((accumulatedSum, item) => {
+                    return accumulatedSum + item.data?.filter( data => data.type == 'Origen').reduce((projectSum, proyecto) => {
                         const totalProject = proyecto?.value;
                         return projectSum + totalProject;
                     }, 0);
@@ -126,7 +128,7 @@ export function useTransferAreaCrudPage() {
         },
         {
             icon: "Delete",
-            onClick: () => { 
+            onClick: (row) => { 
                 setMessage({
                     title: "Eliminar fondos",
                     show: true,
@@ -134,7 +136,13 @@ export function useTransferAreaCrudPage() {
                     cancelTitle: "Cancelar",
                     description: '¿Estás segur@ que desea eliminar los fondos?',
                     onOk: () => {
-                        //borrar el fondo
+                        setAddTransferData({
+                            array: [],
+                            meta: {
+                            total: 0,
+                            }
+                        })
+                        setMessage({})
                     },
                     background: true
                 })
@@ -154,7 +162,7 @@ export function useTransferAreaCrudPage() {
                 setMessage({})
                 setShowModalDetail({ show: true, row: showModalDetail.row, total: showModalDetail.total })
             },
-            description: <DetailsSelectedProjectComponent option='' onOk={onCloseModal} id={id} total={totalTransfer} />,
+            description: <DetailsSelectedProjectComponent option='' onOk={onCloseModal} id={id} />,
             background: true
         })
     }
@@ -222,6 +230,7 @@ export function useTransferAreaCrudPage() {
         addTransferData,
         tableComponentRef,
         isAddBtnDisable,
+        totalTransfer,
         onCancel,
         onSubmit,
         navigate,

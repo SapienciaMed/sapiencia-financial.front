@@ -231,6 +231,11 @@ div[id="single-spa-application:@sapiencia/financial"] {
     align-items: center;
     padding: 0 0.9rem;
     cursor : pointer ;
+    transition: background-color 0.3s ease;
+
+    &:hover{
+      background: #e7e5e5;
+    }
 
     th {
       font: normal normal 400 1rem/120% "Rubik", sans-serif;    
