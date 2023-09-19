@@ -16,7 +16,7 @@ export function useAddFundsCrud() {
   const resolver = useYupValidationResolver(validationFieldsCreatefunds);
   const { setMessage, dataPasteRedux, addTransferData, headTransferData, setAddTransferData } = useContext(AppContext);
   const { GetFundsList, GetProjectsList, GetPosPreSapienciaList } = useAdditionsTransfersService()
-  const { validateCreateTransfer } = useTypesTranfersService();
+  const { validateCreateTransfer, createTransfer } = useTypesTranfersService();
   const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
     functionalArea: [],
     areas: [],
@@ -255,44 +255,90 @@ export function useAddFundsCrud() {
       transferMovesGroups: [transformJSONArrays(data)]
     }
 
-    setMessage({
-      title: "Guardar",
-      description: "¿Está segur@ de guardar la información en el sistema?",
-      show: true,
-      OkTitle: "Aceptar",
-      cancelTitle: "Cancelar",
-      onOk: () => {
-        const transferDataToSave = dataPasteRedux.length > 0 ? addTransferData.array[0] : manualTranferMovement;
-
-        validateCreateTransfer(transferDataToSave).then((response: any) => {
-          if (response.operation.code === EResponseCodes.OK) {
-            setMessage({
-              title: "Guardar",
-              description: "Se ha guardado correctamente la información",
-              show: true,
-              OkTitle: "Aceptar",
-              onOk: () => {
-                setMessage({});
-                setAddTransferData({
-                  array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
-                  meta: { 
-                    total:  dataPasteRedux.length > 0 ? addTransferData.array.length : manualTranferMovement.transferMovesGroups.length,
-                    perPage: 10,
-                    currentPage: 1,
-                    lastPage: 1,
-                    firstPage: 1,
-                  }
-                });
-                navigate(-1)
-              },
-              background: true
-            })
-          }
+    const transferDataToSave = dataPasteRedux.length > 0 ? addTransferData.array[0] : manualTranferMovement;
+    validateCreateTransfer(transferDataToSave).then((response: any) => {
+      if (response.operation.code === EResponseCodes.OK) {
+        setMessage({
+          title: "Agregar",
+          description: "¡Valores agregados exitosamente!",
+          show: true,
+          OkTitle: "Aceptar",
+          onOk: () => {
+            setMessage({});
+            setAddTransferData({
+              array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
+              meta: { total: 1 }
+            });
+            navigate(-1)
+          },
+          background: true
         })
-      },
-      background: true
+      } else {
+
+        let messageResponse = "";
+        const messageResponseDecode =  response.operation.message.split('@@@')
+        
+        const budgetsRoutesError = messageResponseDecode[3]
+        const projectsError = messageResponseDecode[6]
+        const budgetsRoutesRepit = messageResponseDecode[9]
+        
+        if(budgetsRoutesError.length>0){
+          messageResponse = messageResponseDecode[1];
+        }else if(projectsError.length>0){
+          messageResponse = messageResponseDecode[4];
+        }else if(budgetsRoutesRepit.length>0){
+          messageResponse = messageResponseDecode[7];
+        }
+
+        console.log({messageResponseDecode})
+
+        setMessage({
+          title: "Error",
+          description: messageResponse,
+          show: true,
+          OkTitle: "Aceptar",
+          onOk: () => {
+            setMessage({});
+            setAddTransferData({
+              array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
+              meta: { total: 1 }
+            });
+            identifyInvalidcard(dataPasteRedux.length > 0 ? addTransferData.array[0] : manualTranferMovement, messageResponse)
+            //navigate(-1)
+          },
+          background: true
+        })
+      }
     })
   })
+
+  const [invalidCardsAdditionSt, setInvalidCardsAdditionSt] = useState([])
+  const identifyInvalidcard = (additionMove: any, message: string) => {
+    let messageSplit = message.split('@@@')
+    let cardValidation = [];
+    let invalidCard;
+    if (messageSplit[3] && JSON.parse(messageSplit[3])?.length > 0) {
+      JSON.parse(messageSplit[3]).forEach(code => {
+        invalidCard = additionMove.find(addition => addition.idCard.includes(code))
+        cardValidation.push(invalidCard)
+      })
+      setInvalidCardsAdditionSt(cardValidation)
+    } else if (messageSplit[6] && JSON.parse(messageSplit[6])?.length > 0) {
+      JSON.parse(messageSplit[6]).forEach(code => {
+        invalidCard = additionMove.find(addition => addition.idCard.includes(code))
+        cardValidation.push(invalidCard)
+        setInvalidCardsAdditionSt(cardValidation)
+      })
+    } else if (messageSplit[9] && JSON.parse(messageSplit[9])?.length > 0) {
+      JSON.parse(messageSplit[9]).forEach(code => {
+        invalidCard = additionMove.find(addition => addition.idCard.includes(code))
+        cardValidation.push(invalidCard)
+        setInvalidCardsAdditionSt(cardValidation)
+      })
+
+    }
+  }
+
 
   const formatMoney = (amount) => amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
@@ -355,5 +401,6 @@ export function useAddFundsCrud() {
     getValues,
     onSubmitTab,
     formatMoney,
+    invalidCardsAdditionSt
   }
 }

@@ -27,6 +27,7 @@ export interface IAddFunds {
     getValues: UseFormGetValues<ICreateSourceForm>,
     setDataPaste?: (value: React.SetStateAction<any[]>) => void,
     dataPaste?: any[],
+    invalidCardsAdditionSt:any;
 }
 
 export interface IAddFormCard {
