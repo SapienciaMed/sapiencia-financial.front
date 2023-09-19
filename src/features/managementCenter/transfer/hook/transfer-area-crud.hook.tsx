@@ -282,7 +282,7 @@ export function useTransferAreaCrudPage() {
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
 
-        return `${day}-${month}-${year}`
+        return `${year}-${month<10 ? '0'+month :  month}-${ day<10 ? '0'+day :  day}`
     }
 
     const onAddvalues = async (data: IBasicTransfers) => {

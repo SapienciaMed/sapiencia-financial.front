@@ -41,7 +41,7 @@ function AddFundsCrudPage() {
                     </span>
                      <ButtonComponent
                         className="button-main huge hover-three"
-                        value="Guardar"
+                        value="Agregar"
                         type="submit"
                         form="add-fund-form"
                     />

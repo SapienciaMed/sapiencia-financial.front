@@ -21,10 +21,16 @@ export function useTypesTranfersService() {
         const endpoint: string = "/create";
         return post(`${roleUrl}${endpoint}`,data);
     }
+    
+    async function createTransfer(data: Object): Promise<ApiResponse<any[]>> {
+        const endpoint: string = "/save-data";
+        return post(`${roleUrl}${endpoint}`,data);
+    }
 
     return { 
         GetTypesTransfers,
         GetTransfers,
-        validateCreateTransfer
+        validateCreateTransfer,
+        createTransfer
      }
 }

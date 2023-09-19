@@ -16,7 +16,7 @@ export function useAddFundsCrud() {
   const resolver = useYupValidationResolver(validationFieldsCreatefunds);
   const { setMessage, dataPasteRedux, addTransferData, headTransferData, setAddTransferData } = useContext(AppContext);
   const { GetFundsList, GetProjectsList, GetPosPreSapienciaList } = useAdditionsTransfersService()
-  const { validateCreateTransfer } = useTypesTranfersService();
+  const { validateCreateTransfer, createTransfer } = useTypesTranfersService();
   const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
     functionalArea: [],
     areas: [],
@@ -250,35 +250,42 @@ export function useAddFundsCrud() {
       transferMovesGroups: [transformJSONArrays(data)]
     }
 
-    setMessage({
-      title: "Guardar",
-      description: "¿Está segur@ de guardar la información en el sistema?",
-      show: true,
-      OkTitle: "Aceptar",
-      cancelTitle: "Cancelar",
-      onOk: () => {
-        const transferDataToSave = dataPasteRedux.length > 0 ? addTransferData.array[0] : manualTranferMovement;
-        validateCreateTransfer(transferDataToSave).then((response: any) => {
-          if (response.operation.code === EResponseCodes.OK) {
-            setMessage({
-              title: "Guardar",
-              description: "Se ha guardado correctamente la información",
-              show: true,
-              OkTitle: "Aceptar",
-              onOk: () => {
-                setMessage({});
-                setAddTransferData({
-                  array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
-                  meta: { total: 1 }
-                });
-                navigate(-1)
-              },
-              background: true
-            })
-          }
+    const transferDataToSave = dataPasteRedux.length > 0 ? addTransferData.array[0] : manualTranferMovement;
+    validateCreateTransfer(transferDataToSave).then((response: any) => {
+      console.log({ response })
+      if (response.operation.code === EResponseCodes.OK) {
+        setMessage({
+          title: "Agregar",
+          description: "¡Valores agregados exitosamente!",
+          show: true,
+          OkTitle: "Aceptar",
+          onOk: () => {
+            setMessage({});
+            setAddTransferData({
+              array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
+              meta: { total: 1 }
+            });
+            navigate(-1)
+          },
+          background: true
         })
-      },
-      background: true
+      } else {
+        setMessage({
+          title: "Agregar",
+          description: "¡No se cargaron los datos exitosamente!",
+          show: true,
+          OkTitle: "Aceptar",
+          onOk: () => {
+            setMessage({});
+            setAddTransferData({
+              array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
+              meta: { total: 1 }
+            });
+            navigate(-1)
+          },
+          background: true
+        })
+      }
     })
   })
 
