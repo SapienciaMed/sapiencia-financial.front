@@ -9,20 +9,21 @@ import { EResponseCodes } from "../../../../common/constants/api.enum";
 import { AppContext } from "../../../../common/contexts/app.context";
 import { validateArray } from "../../../../common/utils/validate-object";
 import { useNavigate } from 'react-router-dom';
-
+import { useTypesTranfersService } from './types-transfers-service.hook';
 export function useAddFundsCrud() {
-    
+
   const navigate = useNavigate();
   const resolver = useYupValidationResolver(validationFieldsCreatefunds);
-  const { setMessage, dataPasteRedux, addTransferData, headTransferData } = useContext(AppContext);
+  const { setMessage, dataPasteRedux, addTransferData, headTransferData, setAddTransferData } = useContext(AppContext);
   const { GetFundsList, GetProjectsList, GetPosPreSapienciaList } = useAdditionsTransfersService()
+  const { validateCreateTransfer } = useTypesTranfersService();
   const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
-      functionalArea: [],
-      areas: [],
-      funds: [],
-      posPre: []
+    functionalArea: [],
+    areas: [],
+    funds: [],
+    posPre: []
   })
-  const [ totalTransfer, setTotalTransfer ] = useState<string>('')
+  const [totalTransfer, setTotalTransfer] = useState<string>('')
 
   const {
     handleSubmit,
@@ -46,14 +47,14 @@ export function useAddFundsCrud() {
     name: 'origen'
   })
 
-  const watchDesti =  useWatch({
+  const watchDesti = useWatch({
     control,
     name: 'destino'
   })
 
   useEffect(() => {
     setTotalTransfer(addNumericalValues(watchOrigin).toString())
-  },[ watchOrigin ])
+  }, [watchOrigin])
 
   // useEffect(() =>{
   //   console.log("watchOrigin ", get_total_value(watchOrigin));
@@ -62,25 +63,25 @@ export function useAddFundsCrud() {
 
   const isTotalSame = (data): boolean => {
     const total_by_type_transfer = { Origen: 0, Destino: 0 };
-  
+
     data?.reduce((acc, item) => {
       const type_transfer = item.typeTransfer;
-  
+
       if (!acc[type_transfer]) {
         acc[type_transfer] = 0;
       }
-  
+
       acc[type_transfer] += parseFloat(item.value);
-  
+
       return acc;
     }, total_by_type_transfer);
-  
+
     return total_by_type_transfer.Destino == total_by_type_transfer.Origen;
   };
 
   useEffect(() => {
     Object.keys(headTransferData).length === 0 && navigate(-1);
-  },[headTransferData])
+  }, [headTransferData])
 
   const get_total_value = (data) => {
     const total = data.reduce((total, item) => {
@@ -88,9 +89,9 @@ export function useAddFundsCrud() {
     }, 0);
     return total;
   };
-  
 
-  const addNumericalValues = (arr: IAddFund[]) =>  {
+
+  const addNumericalValues = (arr: IAddFund[]) => {
     return arr.reduce((total, item) => {
       const valor = parseFloat(item.value);
       return isNaN(valor) ? total : total + valor;
@@ -128,17 +129,17 @@ export function useAddFundsCrud() {
             functionalArea: arrayEntitiesProject
           }));
         } else {
-            setMessage({
-              title: `Error en la consulta de datos`,
-              show: true,
-              description: response.operation.message,
-              OkTitle: 'Aceptar',
-              background: true,
-              onOk: () => {
-                setMessage({});
-              },
-            });
-          }
+          setMessage({
+            title: `Error en la consulta de datos`,
+            show: true,
+            description: response.operation.message,
+            OkTitle: 'Aceptar',
+            background: true,
+            onOk: () => {
+              setMessage({});
+            },
+          });
+        }
       }).catch((error) => console.log(error))
 
       GetFundsList({ page: "1", perPage: "1" }).then(response => {
@@ -162,17 +163,17 @@ export function useAddFundsCrud() {
           setArrayDataSelect(prevState => ({ ...prevState, funds: arrayEntitiesFund }));
 
         } else {
-            setMessage({
-              title: `Error en la consulta de datos`,
-              show: true,
-              description: response.operation.message,
-              OkTitle: 'Aceptar',
-              background: true,
-              onOk: () => {
-                setMessage({});
-              },
-            });
-          }
+          setMessage({
+            title: `Error en la consulta de datos`,
+            show: true,
+            description: response.operation.message,
+            OkTitle: 'Aceptar',
+            background: true,
+            onOk: () => {
+              setMessage({});
+            },
+          });
+        }
       }).catch((error) => console.log(error))
 
       GetPosPreSapienciaList().then(response => {
@@ -194,28 +195,24 @@ export function useAddFundsCrud() {
           }, []);
 
           setArrayDataSelect(prevState => ({ ...prevState, posPre: arrayEntitiesPosPres }));
-        }else {
-            setMessage({
-              title: `Error en la consulta de datos`,
-              show: true,
-              description: response.operation.message,
-              OkTitle: 'Aceptar',
-              background: true,
-              onOk: () => {
-                setMessage({});
-              },
-            });
-          }
+        } else {
+          setMessage({
+            title: `Error en la consulta de datos`,
+            show: true,
+            description: response.operation.message,
+            OkTitle: 'Aceptar',
+            background: true,
+            onOk: () => {
+              setMessage({});
+            },
+          });
+        }
       }).catch((error) => console.log(error))
     }
 
   }, [arrayDataSelect])
 
   const onSubmitTab = handleSubmit(async (data: ICreateSourceForm) => {
-
-    
-    addTransferData?.array?.length > 0 && console.log(addTransferData.array); // Crea el objeto cuando se hace en pegar
-    
 
     if (data.destino.length == 0 || data.origen.length == 0) {
       setMessage({
@@ -231,8 +228,8 @@ export function useAddFundsCrud() {
       return;
     }
 
-    if(dataPasteRedux.length > 0){
-      if (!isTotalSame(dataPasteRedux) ) {
+    if (dataPasteRedux.length > 0) {
+      if (!isTotalSame(dataPasteRedux)) {
         setMessage({
           title: "Validación de datos",
           description: "Se ha encontrado un error en los datos, los valores son diferentes",
@@ -243,7 +240,7 @@ export function useAddFundsCrud() {
           },
           background: true
         })
-        
+
         return
       }
     }
@@ -260,9 +257,28 @@ export function useAddFundsCrud() {
       OkTitle: "Aceptar",
       cancelTitle: "Cancelar",
       onOk: () => {
-        setMessage({})
+        const transferDataToSave = dataPasteRedux.length > 0 ? addTransferData.array[0] : manualTranferMovement;
+        validateCreateTransfer(transferDataToSave).then((response: any) => {
+          if (response.operation.code === EResponseCodes.OK) {
+            setMessage({
+              title: "Guardar",
+              description: "Se ha guardado correctamente la información",
+              show: true,
+              OkTitle: "Aceptar",
+              onOk: () => {
+                setMessage({});
+                setAddTransferData({
+                  array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
+                  meta: { total: 1 }
+                });
+                navigate(-1)
+              },
+              background: true
+            })
+          }
+        })
       },
-       background: true
+      background: true
     })
   })
 
@@ -288,8 +304,8 @@ export function useAddFundsCrud() {
         type: "Destino",
         managerCenter: item.managerCenter,
         projectId: item.projectId,
-        fundId: "912070123", 
-        budgetPosition: "923202020086", 
+        fundId: "912070123",
+        budgetPosition: "923202020086",
         value: parseInt(item.value)
       })),
       ...jsonArray.origen.map((item) => ({
@@ -297,12 +313,12 @@ export function useAddFundsCrud() {
         type: "Origen",
         managerCenter: item.managerCenter,
         projectId: item.projectId,
-        fundId: "911070123", 
-        budgetPosition: "923202020086", 
+        fundId: "911070123",
+        budgetPosition: "923202020086",
         value: parseInt(item.value)
       }))
     ];
-  
+
     return {
       data: resultado
     };

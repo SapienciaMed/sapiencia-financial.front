@@ -191,8 +191,8 @@ export function useTransferAreaCrudPage() {
             header: "Total a trasladar",
             renderCell: (row) => {
                 const total_transfer = row?.transferMovesGroups.reduce((accumulatedSum, item) => {
-                    return accumulatedSum + item.data.reduce((projectSum, proyecto) => {
-                        const totalProject = parseFloat(proyecto.totalProject.replace(/\./g, '').replace(/,/g, '.'));
+                    return accumulatedSum + item.data?.reduce((projectSum, proyecto) => {
+                        const totalProject = parseFloat(proyecto?.totalProject?.replace(/\./g, '').replace(/,/g, '.'));
                         return projectSum + totalProject;
                     }, 0);
                 }, 0);
@@ -217,8 +217,8 @@ export function useTransferAreaCrudPage() {
                     };
                 });
                 const total_transfer = row?.transferMovesGroups.reduce((accumulatedSum, item) => {
-                    return accumulatedSum + item.data.reduce((projectSum, proyecto) => {
-                        const totalProject = parseFloat(proyecto.totalProject.replace(/\./g, '').replace(/,/g, '.'));
+                    return accumulatedSum + item.data?.reduce((projectSum, proyecto) => {
+                        const totalProject = parseFloat(proyecto?.totalProject?.replace(/\./g, '').replace(/,/g, '.'));
                         return projectSum + totalProject;
                     }, 0);
                 }, 0);
