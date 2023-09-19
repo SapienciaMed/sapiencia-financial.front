@@ -31,6 +31,7 @@ function BudgetsPage(props: IAppProps): React.JSX.Element {
                         </div>
 
                         <div className="one-filter-container">
+                            
                             <Controller
                                 control={controlRegister}
                                 name={"number"}
@@ -42,7 +43,7 @@ function BudgetsPage(props: IAppProps): React.JSX.Element {
                                         idInput={field.name}
                                         value={`${field.value}`}
                                         className="input-basic"
-                                        typeInput="text"
+                                        typeInput="number"
                                         register={register}
                                         label="Posición presupuestal"
                                         classNameLabel="text-black biggest bold"
@@ -80,7 +81,7 @@ function BudgetsPage(props: IAppProps): React.JSX.Element {
                                     columns={tableColumns}
                                     actions={tableActions}
                                     isShowModal={true}
-                                    titleMessageModalNoResult={"Posición Pesupuestal"}
+                                    titleMessageModalNoResult={"Posición Presupuestal"}
                                 />
                             </div>
                     )

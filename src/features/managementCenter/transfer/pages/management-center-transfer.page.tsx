@@ -13,7 +13,7 @@ function ManagementCenterTransferPage(props: IAppProps): React.JSX.Element {
         <div className='main-page'>
             <div className='card-table'>
                 <div className="title-area">
-                    <div className="text-black extra-large bold">Traslado</div>
+                    <div className="text-black extra-large bold">Traslados</div>
                 </div>
                 <FormComponent action={onSubmit}>
                     <div className="card-form">
@@ -105,7 +105,8 @@ function ManagementCenterTransferPage(props: IAppProps): React.JSX.Element {
                                 url={`${process.env.urlApiFinancial}/api/v1/transfers/get-paginated`}
                                 columns={tableColumns}
                                 actions={tableActions}
-                                isShowModal={false}
+                                isShowModal={true}
+                                titleMessageModalNoResult="Traslado"
                             />
                         </div>
                     )
