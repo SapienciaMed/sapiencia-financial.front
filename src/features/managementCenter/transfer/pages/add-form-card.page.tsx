@@ -67,6 +67,7 @@ export const AddFormCardPage = ({arrayDataSelect, control, titleAdd, errors, cou
         </div>
         <div>
         <section className='grid-form-2-container-reverse mt-5px'>
+            <>{JSON.stringify(watch(`${titleAdd}[${count}]`))}</>
             <SelectComponent
                 idInput={`${titleAdd}[${count}].managerCenter`}
                 control={control}
