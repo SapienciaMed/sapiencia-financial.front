@@ -49,7 +49,6 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                         Object(rowObject).typeTransfer="Destino"
                         dataMovementDestiny.push(rowObject)
                     }
-                    console.log("Lunaaaaa ", Object(rowObject))
                     let moveToSave = {
                         idCard: generarIdAleatorio(20),
                         type : Object(rowObject).typeTransfer,
