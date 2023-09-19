@@ -15,6 +15,10 @@ export function useDetailsSelectedProject(option: string, id: string ) {
     const originValue = getFoundProject('Origen')
     const destinationValue  = getFoundProject('Destino')
 
+    const total = originValue.reduce((accumulatedSum, item) => {
+        return accumulatedSum + item.value
+    }, 0);
+
     const rowsOrigin = originValue?.map((item, index) => ({
         id: index + 1,
         project: [
@@ -70,6 +74,7 @@ export function useDetailsSelectedProject(option: string, id: string ) {
         tabs,
         selectedTab,
         tabList,
+        total,
         handleTabClick
     }
 }
