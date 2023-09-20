@@ -6,11 +6,9 @@ export interface ITypeTransfers {
 }
 
 export interface IBasicTransfers {
-    // page: number;
-    // perPage: number;
-    adminDistrict: string;
-    adminSapiencia: string;
-    remarks: string
+    actAdminDistrict: string;
+    actAdminSapiencia: string;
+    observations: string
   }
 
 export interface IPasteDataFinanceArea{

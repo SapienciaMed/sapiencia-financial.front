@@ -42,7 +42,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                             <div className="funcionality-filters-container">
                                 <Controller
                                     control={control}
-                                    name={"adminDistrict"}
+                                    name={"actAdminDistrict"}
                                     defaultValue=""
                                     render={({ field }) => {
                                         return (
@@ -64,7 +64,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                                 />
                                 <Controller
                                     control={control}
-                                    name={"adminSapiencia"}
+                                    name={"actAdminSapiencia"}
                                     defaultValue=""
                                     render={({ field }) => {
                                         return (
@@ -87,7 +87,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                             </div>
                             <Controller
                                 control={control}
-                                name={"remarks"}
+                                name={"observations"}
                                 defaultValue=""
                                 render={({ field }) => {
                                     return (
