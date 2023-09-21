@@ -2,8 +2,8 @@ import { Control, UseFormRegister, FieldErrors, UseFormSetValue, UseFormGetValue
 import { IArrayDataSelect } from "../../../../common/interfaces/global.interface";
 
 export interface ICreateSourceForm{
-    origen: IAddFund[],
-    destino: IAddFund[],
+    origen: IAddFund[];
+    destino: IAddFund[];
 }
 
 export interface IAddFund{
@@ -15,6 +15,7 @@ export interface IAddFund{
     posPre: string;
     value: string;
     cardId?:string;
+    typeTransfer?:string;
 }
   
 
