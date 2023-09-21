@@ -32,7 +32,7 @@ export function useTransferAreaCrudPage() {
     const [totalTransfer, setTotalTransfer] = useState<string>('')
 
     const navigate = useNavigate();
-    const { setMessage, setHeadTransferData, setAddTransferData, authorization, addTransferData } = useContext(AppContext);
+    const { setMessage, setHeadTransferData, setAddTransferData, setDetailTransferData, authorization, addTransferData, detailTransferData } = useContext(AppContext);
     const { createTransfer } = useTypesTranfersService()
 
     const {
@@ -50,6 +50,11 @@ export function useTransferAreaCrudPage() {
     useEffect(() => {
         setIsBtnDisable(inputValue.every(value => value != '' && value != undefined) && addTransferData?.array?.length > 0 )
     },[inputValue])
+
+    useEffect(() => {
+        detailTransferData && console.log(detailTransferData);
+        
+    },[detailTransferData])
 
     useEffect(() => {
        if (addTransferData?.array?.length > 0 && inputValue.some(value => value != '' && value != undefined)) {
@@ -217,6 +222,12 @@ export function useTransferAreaCrudPage() {
                             total: 0,
                             }
                         })
+                        setDetailTransferData({
+                            array: [],
+                            meta: {
+                            total: 0,
+                            }
+                        })
                         setMessage({})
                     },
                     background: true
@@ -256,6 +267,12 @@ export function useTransferAreaCrudPage() {
                       total: 0,
                     }
                   })
+                  setDetailTransferData({
+                    array: [],
+                    meta: {
+                    total: 0,
+                    }
+                })
                 setHeadTransferData({
                     actAdminDistrict: '',
                     actAdminSapiencia: '',
@@ -302,7 +319,7 @@ export function useTransferAreaCrudPage() {
         isBtnDisable,
         tableColumns,
         tableActions,
-        addTransferData,
+        detailTransferData,
         tableComponentRef,
         isAddBtnDisable,
         totalTransfer,

@@ -1,4 +1,6 @@
-import { IArrayDataSelect, IMessage } from "../../../../common/interfaces/global.interface";
+import { Dispatch, SetStateAction } from "react";
+import { IArrayDataSelect, IMessage, IobjectAddTransfer } from "../../../../common/interfaces/global.interface";
+import { IPagingData } from "../../../../common/utils/api-response";
 
 export interface ITypeTransfers {
     id: number;
@@ -17,5 +19,6 @@ export interface IPasteDataFinanceArea{
     setDataPaste: (value: React.SetStateAction<any[]>) => void,
     arrayDataSelect: IArrayDataSelect,
     pastedInput?: any,
-    isResetOutput?: boolean
+    isResetOutput?: boolean,
+    setDetailTransferData: Dispatch<SetStateAction<IPagingData<IobjectAddTransfer>>>;
 }

@@ -5,10 +5,10 @@ import { AppContext } from "../../../common/contexts/app.context";
 
 export function useDetailsSelectedProject(option: string, id: string ) {
     
-    const { addTransferData } = useContext(AppContext);
+    const { detailTransferData } = useContext(AppContext);
 
     const getFoundProject = (type: string) => {
-        const foundProject = addTransferData.array[0].transferMovesGroups?.find((value) => value.id == id && value.data?.some(data => data.type == type))
+        const foundProject = detailTransferData.array[0].transferMovesGroups?.find((value) => value.id == id && value.data?.some(data => data.type == type))
         return foundProject?.data.filter(u => u.type == type)
     }
     
@@ -26,7 +26,7 @@ export function useDetailsSelectedProject(option: string, id: string ) {
             { title: "Proyecto", value: String(item.projectId) },
             { title: "Área funcional", value: item.functionalArea },
             { title: "Fondo", value: String(item.fundId) },
-            { title: "PosPre", value: item.posPre },
+            { title: "PosPre", value: String(item.budgetPosition) },
             { title: "Valor contra crédito", value: `$ ${item.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}` }
         ]
     }));
@@ -38,7 +38,7 @@ export function useDetailsSelectedProject(option: string, id: string ) {
             { title: "Proyecto", value: String(item.projectId) },
             { title: "Área funcional", value: item.functionalArea },
             { title: "Fondo", value: String(item.fundId) },
-            { title: "PosPre", value: item.posPre },
+            { title: "PosPre", value: String(item.budgetPosition) },
             { title: "Valor crédito", value: `$ ${item.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}` }
         ]
     }))

@@ -9,14 +9,16 @@ import { EResponseCodes } from "../../../../common/constants/api.enum";
 import { AppContext } from "../../../../common/contexts/app.context";
 import { useNavigate } from 'react-router-dom';
 import { useTypesTranfersService } from './types-transfers-service.hook';
-import { generarIdAleatorio } from '../../../../common/utils/randomGenerate';
+import { get_total_value, transformJSONArrays, filterElementsMeetConditions, isTotalSame } from '../../../../common/utils/';
+
 export function useAddFundsCrud() {
 
   const navigate = useNavigate();
   const resolver = useYupValidationResolver(validationFieldsCreatefunds);
-  const { setMessage, dataPasteRedux, addTransferData, headTransferData, setAddTransferData } = useContext(AppContext);
+  const { setMessage, dataPasteRedux, addTransferData, headTransferData, 
+    setAddTransferData, setDetailTransferData, setDataPasteRedux } = useContext(AppContext);
   const { GetFundsList, GetProjectsList, GetPosPreSapienciaList } = useAdditionsTransfersService()
-  const { validateCreateTransfer, createTransfer } = useTypesTranfersService();
+  const { validateCreateTransfer } = useTypesTranfersService();
   const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
     functionalArea: [],
     areas: [],
@@ -51,36 +53,9 @@ export function useAddFundsCrud() {
     setTotalTransfer(addNumericalValues(watchOrigin).toString())
   }, [watchOrigin])
 
-  const isTotalSame = (data): boolean => {
-    const total_by_type_transfer = { Origen: 0, Destino: 0 };
-
-    data?.reduce((acc, item) => {
-      const type_transfer = item.typeTransfer;
-
-      if (!acc[type_transfer]) {
-        acc[type_transfer] = 0;
-      }
-
-      acc[type_transfer] += parseFloat(item.value);
-
-      return acc;
-    }, total_by_type_transfer);
-
-    return total_by_type_transfer.Destino == total_by_type_transfer.Origen;
-  };
-
   useEffect(() => {
     Object.keys(headTransferData).length === 0 && navigate(-1);
   }, [headTransferData])
-
-  const get_total_value = (data) => {
-    const dest = data.destino.sort((a, b) => a.value - b.value);
-    const orig = data.origen.sort((a, b) => a.value - b.value);
-
-    const valid = dest.every((destino, i) => destino.value == orig[i].value)
-    return valid
-  };
-
 
   const addNumericalValues = (arr: IAddFund[]) => {
     return arr.reduce((total, item) => {
@@ -204,9 +179,6 @@ export function useAddFundsCrud() {
   }, [arrayDataSelect])
 
   const onSubmitTab = handleSubmit(async (data: ICreateSourceForm) => {
-    console.log("==>>data >>> ", data)
-    console.log("==>>dataxxxxx >>> ", addTransferData.array[0])
-
 
     if (data.destino.length == 0 || data.origen.length == 0) {
       setMessage({
@@ -222,6 +194,7 @@ export function useAddFundsCrud() {
       return;
     }
 
+    //TODO: Validar si se puede borrar
     if (dataPasteRedux.length > 0) {
       if (!isTotalSame(dataPasteRedux)) {
         setMessage({
@@ -238,27 +211,25 @@ export function useAddFundsCrud() {
         return
       }
     }
-    else {
-      if (!get_total_value(data)){
-        setMessage({
-          title: "Validación de datos",
-          description: "Se ha encontrado un error en los datos, los valores son diferentes",
-          show: true,
-          OkTitle: "Aceptar",
-          onOk: () => {
-            setMessage({});
-          },
-          background: true
-        })
+    //TODO: Validar si se puede borrar
+    if (!get_total_value(data) && dataPasteRedux.length == 0){
+      setMessage({
+        title: "Validación de datos",
+        description: "Se ha encontrado un error en los datos, los valores son diferentes",
+        show: true,
+        OkTitle: "Aceptar",
+        onOk: () => {
+          setMessage({});
+        },
+        background: true
+      })
 
-        return
-      }
+      return
     }
     
-
     const manualTranferMovement: IobjectAddTransfer = {
       headTransfer: headTransferData,
-      transferMovesGroups: [transformJSONArrays(data)]
+      transferMovesGroups: transformJSONArrays(data) 
     }
 
     const transferDataToSave = dataPasteRedux.length > 0 ? addTransferData.array[0] : manualTranferMovement;
@@ -271,10 +242,25 @@ export function useAddFundsCrud() {
           OkTitle: "Aceptar",
           onOk: () => {
             setMessage({});
-            setAddTransferData({
+           
+            setAddTransferData({  //se manda en el context los datos con los id para guardar en la bd, ya sea de forma pegar o manual
               array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
               meta: { total: 1 }
             });
+
+            Object.keys(dataPasteRedux).length === 0 && setDetailTransferData({ //se manda en el context los datos sin los id y ser visualizado en detalles
+              array: [
+                {
+                  headTransfer: headTransferData,
+                  transferMovesGroups: filterElementsMeetConditions(arrayDataSelect, data)
+                }
+              ],
+              meta: {
+                total: manualTranferMovement.transferMovesGroups.length,
+              }
+            })
+
+            setDataPasteRedux([])
             navigate(-1)
           },
           background: true
@@ -296,8 +282,6 @@ export function useAddFundsCrud() {
           messageResponse = messageResponseDecode[7];
         }
 
-        console.log({messageResponseDecode})
-
         setMessage({
           title: "Error",
           description: messageResponse,
@@ -310,7 +294,6 @@ export function useAddFundsCrud() {
               meta: { total: 1 }
             });
             let addTransferDataFixed = getElementsMovement(addTransferData.array[0].transferMovesGroups)
-            console.log({addTransferDataFixed})
             identifyInvalidcard(dataPasteRedux.length > 0 ? addTransferDataFixed : manualTranferMovement.transferMovesGroups, response.operation.message)
             //navigate(-1)
           },
@@ -319,7 +302,6 @@ export function useAddFundsCrud() {
       }
     })
   })
-
 
   function getElementsMovement(data1) {
     // Inicializa un array vacío para almacenar los elementos de data
@@ -380,39 +362,16 @@ export function useAddFundsCrud() {
             total: 0,
           }
         })
+        setDetailTransferData({
+          array: [],
+          meta: {
+          total: 0,
+          }
+      })
+      setMessage({})
         navigate(-1)
       },
     });
-  }
-
-  function transformJSONArrays(jsonArray) {
-    const resultado = [
-      ...jsonArray.origen.map((item) => ({
-        idCard: item.cardId,
-        type: "Origen",
-        managerCenter: item.managerCenter,
-        projectId: parseInt(item.projectId),
-        fundId: parseInt(item.funds),
-        budgetPosition: parseInt(item.posPre),
-        value: parseInt(item.value),
-        nameProject: item.projectName
-      })),
-      ...jsonArray.destino.map((item) => ({
-        idCard: item.cardId,
-        type: "Destino",
-        managerCenter: item.managerCenter,
-        projectId: parseInt(item.projectId),
-        fundId: parseInt(item.funds),
-        budgetPosition: parseInt(item.posPre),
-        value: parseInt(item.value),
-        nameProject: item.projectName
-      })),
-    ];
-
-    return {
-      id: generarIdAleatorio(20),
-      data: resultado
-    };
   }
 
   return {
