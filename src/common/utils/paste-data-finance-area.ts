@@ -42,7 +42,6 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
  
                     valorContracredito = parseFloat(Object(rowObject).VALORCONTRACRÉDITO.replaceAll('.', '')) || 0;
                     valorCredito = parseFloat(Object(rowObject).VALORCRÉDITO.replaceAll('.', '')) || 0; 
-                    
                     if(valorContracredito > 0 && valorCredito == 0 ){
                         Object(rowObject).typeTransfer="Origen"
                         dataMovementOrigin.push(rowObject)

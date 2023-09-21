@@ -180,6 +180,37 @@ export function useAddFundsCrud() {
 
   const onSubmitTab = handleSubmit(async (data: ICreateSourceForm) => {
 
+    // Agregar la propiedad "type" a cada elemento en el array "destino"
+    //const destino = data.destino.map(item => ({ ...item, type: "Destino" }));
+
+    // Agregar la propiedad "type" a cada elemento en el array "Origen"
+    //const origen = data.destino.map(item => ({ ...item, type: "Origen" }));
+
+    // Concatenar los dos arrays
+    const resultado = data.destino.concat(data.origen);
+
+    // Recorrer el objeto dataSend
+    addTransferData.array[0].transferMovesGroups.forEach(group => {
+      group.data.forEach(item => {
+        // Buscar un elemento en "resultado" que coincida con las propiedades
+        const matchingItem = resultado.find(result => (
+          result.managerCenter === item.managerCenter &&
+          result.typeTransfer === item.type &&
+          result.value === String(item.value) && // Asegurarse de que el valor sea una cadena
+          result.projectId === String(item.projectId) && // Asegurarse de que el projectId sea una cadena
+          result.funds === String(item.fundId) && // Asegurarse de que el fundId sea una cadena
+          result.posPre === String(item.budgetPosition) // Asegurarse de que posPre sea una cadena
+        ));
+
+        // Si se encontró una coincidencia, actualizar el valor de "idCard" por "cardId"
+        if (matchingItem) {
+          item.idCard = matchingItem.cardId;
+        }
+      });
+    });
+
+    console.log("....>>>> ", addTransferData.array[0]);
+
     if (data.destino.length == 0 || data.origen.length == 0) {
       setMessage({
         title: "Validación de datos",
@@ -194,38 +225,38 @@ export function useAddFundsCrud() {
       return;
     }
 
-    //TODO: Validar si se puede borrar
-    if (dataPasteRedux.length > 0) {
-      if (!isTotalSame(dataPasteRedux)) {
-        setMessage({
-          title: "Validación de datos",
-          description: "Se ha encontrado un error en los datos, los valores son diferentes",
-          show: true,
-          OkTitle: "Aceptar",
-          onOk: () => {
-            setMessage({});
-          },
-          background: true
-        })
+    // //TODO: Validar si se puede borrar
+    // if (dataPasteRedux.length > 0) {
+    //   if (!isTotalSame(dataPasteRedux)) {
+    //     setMessage({
+    //       title: "Validación de datos",
+    //       description: "Se ha encontrado un error en los datos, los valores son diferentes",
+    //       show: true,
+    //       OkTitle: "Aceptar",
+    //       onOk: () => {
+    //         setMessage({});
+    //       },
+    //       background: true
+    //     })
 
-        return
-      }
-    }
-    //TODO: Validar si se puede borrar
-    if (!get_total_value(data) && dataPasteRedux.length == 0){
-      setMessage({
-        title: "Validación de datos",
-        description: "Se ha encontrado un error en los datos, los valores son diferentes",
-        show: true,
-        OkTitle: "Aceptar",
-        onOk: () => {
-          setMessage({});
-        },
-        background: true
-      })
+    //     return
+    //   }
+    // }
+    // //TODO: Validar si se puede borrar
+    // if (!get_total_value(data) && dataPasteRedux.length == 0){
+    //   setMessage({
+    //     title: "Validación de datos",
+    //     description: "Se ha encontrado un error en los datos, los valores son diferentes",
+    //     show: true,
+    //     OkTitle: "Aceptar",
+    //     onOk: () => {
+    //       setMessage({});
+    //     },
+    //     background: true
+    //   })
 
-      return
-    }
+    //   return
+    // }
     
     const manualTranferMovement: IobjectAddTransfer = {
       headTransfer: headTransferData,
@@ -268,22 +299,26 @@ export function useAddFundsCrud() {
       } else {
 
         let messageResponse = "";
-        const messageResponseDecode =  response.operation.message.split('@@@')
-        
-        const budgetsRoutesError = JSON.parse(messageResponseDecode[3])
-        const projectsError = JSON.parse(messageResponseDecode[6])
-        const budgetsRoutesRepit = JSON.parse(messageResponseDecode[9])
-                
-        if(budgetsRoutesError.length>0){
+        const messageResponseDecode = response.operation.message.split('@@@')
+        console.log({ messageResponseDecode })
+        const budgetsRoutesError = messageResponseDecode.length > 1 ? JSON.parse(messageResponseDecode[3]) : []
+        const projectsError = messageResponseDecode.length > 1 ? JSON.parse(messageResponseDecode[6]) : []
+        const budgetsRoutesRepit = messageResponseDecode.length > 1 ? JSON.parse(messageResponseDecode[9]) : []
+
+        if (budgetsRoutesError.length > 0) {
           messageResponse = messageResponseDecode[1];
-        }else if(projectsError.length>0){
+        } else if (projectsError.length > 0) {
           messageResponse = messageResponseDecode[4];
-        }else if(budgetsRoutesRepit.length>0){
+        } else if (budgetsRoutesRepit.length > 0) {
           messageResponse = messageResponseDecode[7];
+        } else {
+          messageResponse = messageResponseDecode[0]
         }
 
+        console.log({ messageResponseDecode })
+
         setMessage({
-          title: "Error",
+          title: "Validación de datos",
           description: messageResponse,
           show: true,
           OkTitle: "Aceptar",
@@ -295,7 +330,13 @@ export function useAddFundsCrud() {
             });
             let addTransferDataFixed = getElementsMovement(addTransferData.array[0].transferMovesGroups)
             identifyInvalidcard(dataPasteRedux.length > 0 ? addTransferDataFixed : manualTranferMovement.transferMovesGroups, response.operation.message)
-            //navigate(-1)
+            if (messageResponseDecode.length == 1) {
+              setAddTransferData({
+                array: [],
+                meta: { total: 1 }
+              });
+              navigate(-1)
+            }
           },
           background: true
         })
@@ -306,20 +347,20 @@ export function useAddFundsCrud() {
   function getElementsMovement(data1) {
     // Inicializa un array vacío para almacenar los elementos de data
     let elementosData = [];
-  
+
     // Utiliza el método map() para recorrer data1
     data1.map(item => {
       // Utiliza el método concat() para agregar los elementos de data al array elementosData
       elementosData = elementosData.concat(item.data);
     });
-  
+
     return elementosData;
   }
 
   const [invalidCardsAdditionSt, setInvalidCardsAdditionSt] = useState([])
-  
+
   const identifyInvalidcard = (additionMove: any, message: string) => {
-    console.log({additionMove})
+    console.log({ additionMove })
     let messageSplit = message.split('@@@')
     let cardValidation = [];
     let invalidCard;
