@@ -31,12 +31,12 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                                 </label>
                                 <div className='title-button text-three large'>
                                     <ButtonComponent 
-                                        className="button-clean-fields color-lila"
+                                        className={`button-clean-fields color-lila ${ isAddBtnDisable && 'color-gray'}`}
                                         value='Añadir valores '  
                                         action={() => { !isAddBtnDisable && handleFormSubmit() }}
                                         disabled={isAddBtnDisable}  
                                     /> 
-                                    <BiPlusCircle/>
+                                    <BiPlusCircle className={`${isAddBtnDisable && 'color-gray'}`}/>
                                 </div>
                             </div>
                             <div className="funcionality-filters-container">
@@ -117,7 +117,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                                     columns={tableColumns}
                                     actions={tableActions}
                                     isShowModal={true}
-                                    titleMessageModalNoResult={"Fondos"}
+                                    titleMessageModalNoResult={"Traslado"}
                                     ownData={detailTransferData}
                                     secondaryTitle='Detalles de la ruta'
                                 />

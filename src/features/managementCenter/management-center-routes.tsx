@@ -18,7 +18,7 @@ export const ManagementCenterRoutes = () => {
 
       <Route path={"/traslado"} element={<ManagementCenterTransferPage/> } />
       <Route path={"/traslado/create"} element={<TransferAreaCrudPage actionForm="new"/>} />
-      <Route path={"/traslado/create/anadir-fondos"} element={<AddFundsCrudPage/>} />
+      <Route path={"/traslado/create/anadir-traslado"} element={<AddFundsCrudPage/>} />
 
       <Route
         path={"/disminucion"}
