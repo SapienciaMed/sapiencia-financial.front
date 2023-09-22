@@ -55,7 +55,6 @@ function CreateFundsDestination({ control, titleAdd, register, arrayDataSelect, 
         let validPaste = Array.from(set2).every(item => !set1.has(item));
 
         if(dataPaste.length > 0 && fields.length==0)   {
-            console.log({fields, dataPaste: dataPaste.filter(item => item.typeTransfer == 'Destino' )})
              append( dataPaste.filter(item => item.typeTransfer == 'Destino' ) ) 
             }else if(!validPaste){
              append( dataPaste.filter(item => item.typeTransfer == 'Destino' ) ) 

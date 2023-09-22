@@ -12,6 +12,7 @@ import DetailsSelectedProjectComponent from '../../components/details-selected-p
 import { IobjectAddTransfer } from '../../../../common/interfaces/global.interface';
 import { useTypesTranfersService } from './types-transfers-service.hook';
 import { EResponseCodes } from '../../../../common/constants/api.enum';
+import { cleanTransferContext } from '../../../../common/utils';
 
 export function useTransferAreaCrudPage() {
 
@@ -125,14 +126,11 @@ export function useTransferAreaCrudPage() {
           if (response.operation.code === EResponseCodes.OK) {
             setMessage({
               title: "Trasladar",
-              description: "¡Se han trasladado los fondos correctamente en el sistema!",
+              description: "¡Se han realizado los traslados correctamente en el sistema!",
               show: true,
               OkTitle: "Aceptar",
               onOk: () => {
-                setAddTransferData({
-                  array: [],
-                  meta: { total: 0 }
-                });
+                cleanTransferContext({ setAddTransferData, setDetailTransferData })
                 setMessage({});
                 navigate(-1);
               },
@@ -205,24 +203,13 @@ export function useTransferAreaCrudPage() {
             icon: "Delete",
             onClick: (row) => { 
                 setMessage({
-                    title: "Eliminar fondos",
+                    title: "Eliminar traslado",
                     show: true,
                     OkTitle: "Aceptar",
                     cancelTitle: "Cancelar",
-                    description: '¿Estás segur@ que desea eliminar los fondos?',
+                    description: '¿Estás segur@ que desea eliminar el traslado?',
                     onOk: () => {
-                        setAddTransferData({
-                            array: [],
-                            meta: {
-                            total: 0,
-                            }
-                        })
-                        setDetailTransferData({
-                            array: [],
-                            meta: {
-                            total: 0,
-                            }
-                        })
+                        cleanTransferContext({ setAddTransferData, setDetailTransferData })
                         setMessage({})
                     },
                     background: true
@@ -256,18 +243,7 @@ export function useTransferAreaCrudPage() {
             cancelTitle: "Cancelar",
             description: '¿Estás segur@ que desea cancelar la operación?',
             onOk: () => {
-                setAddTransferData({
-                    array: [],
-                    meta: {
-                      total: 0,
-                    }
-                  })
-                  setDetailTransferData({
-                    array: [],
-                    meta: {
-                    total: 0,
-                    }
-                })
+                cleanTransferContext({ setAddTransferData, setDetailTransferData })
                 setHeadTransferData({
                     actAdminDistrict: '',
                     actAdminSapiencia: '',
@@ -303,7 +279,7 @@ export function useTransferAreaCrudPage() {
             userCreate: authorization?.user?.numberDocument || '',
             userModify: authorization?.user?.numberDocument || '',
         })
-        navigate('./anadir-fondos')
+        navigate('./anadir-traslado')
     };
     
     const handleFormSubmit = () => handleSubmit(onAddvalues)();

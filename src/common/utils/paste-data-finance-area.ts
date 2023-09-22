@@ -13,13 +13,11 @@ export const PasteDataFinanceArea = async ({ setMessage, setDataPaste, arrayData
 }
 
 const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, arrayDataSelect, isResetOutput, setDetailTransferData }: IPasteDataFinanceArea) => {
-    let rawRows = pastedInput.split("\n");
+    let rawRows = pastedInput.split("\n").filter(line => line.trim() !== "");
     let headersArray = rawRows[0].split("\t");
     let output = [];
 
     const validHeaders = AddValidHeadersTransfer 
-    const isAllHeadersValid = headersArray.every(value => validHeaders.includes(value));
-    const isLengthEqual = headersArray.length === validHeaders.length;
     
     let dataMovementByTransfer = [];
     let dataMovementByTransferDetail = [];
@@ -30,7 +28,7 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
     let valorContracredito = 0;
     let valorCredito = 0;
 
-    isAllHeadersValid && isLengthEqual ?
+    (headersArray.every(value => AddValidHeadersTransfer.includes(value)) && headersArray.length == AddValidHeadersTransfer.length) ?
         rawRows.forEach((rawRow, idx) => {
             if (rawRow != '') {
                 if (idx > 0) {
@@ -135,8 +133,10 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
         };
     };
 
+    const isFullField = (objeto) => Object.values(objeto).every(value => value !== undefined);
+
     try {
-        if (output.length > 0) {
+        if (output.length > 0 && dataMovementByTransfer.every(item => item.data.every(isFullField))) {
             const mappedOutput = output.map((item) => mapOutputItem(item, arrayDataSelect))
             setDataPaste(mappedOutput);
             setDetailTransferData({
@@ -150,6 +150,8 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                 }
             })
             return dataMovementByTransfer
+        } else {
+            throw new Error("Los datos contienen campos vacíos o valores inválidos");
         }
     } catch (error) {
         setMessage({
