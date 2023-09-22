@@ -11,23 +11,29 @@ import { EDirection } from "../../../common/constants/input.enum";
 
 
 interface IAppProps {
-  actionForm: "new" | "edit";
+  actionForm: "new" | "edit" ;
+  typeMovement: "addition" | "decrease";
 }
 
-function AdditionAreaCrud({ actionForm }: IAppProps) {
+function AdditionAreaCrud({ actionForm,typeMovement }: IAppProps) {
   const navigate = useNavigate();
 
   const [tabId, setTabId] = useState<string>()
   const tabSelected = (e)=>{
     setTabId(e.id)
   }
-  const { control, arrayDataSelect, errors, onSubmitTab, showModal, setMessage, getValues, watch, register, invalidCardsAdditionSt, setValue, isAllowSave } = useAdditionAreaCrud(tabId);
+  const { control, arrayDataSelect, errors, onSubmitTab, showModal, setMessage, getValues, watch, register, invalidCardsAdditionSt, setValue, isAllowSave } = useAdditionAreaCrud(tabId,typeMovement);
   
   return (
     <div className="crud-page">
       <div className="main-page full-height">
         <p className="text-black extra-large">
-          {actionForm === "new" ? "Crear adición" : "Editar adición"}
+          {/* {actionForm === "new" ? "Crear adición" : "Editar adición"} */}
+          {
+            actionForm === "new" 
+              ? (typeMovement === "addition" ? "Crear adición" : "Crear disminución")
+              : (actionForm === "edit" ? (typeMovement === "addition" ? "Editar adición" : "Editar disminución") : "")
+          }
         </p>
         <div className="card-user" >
           <FormComponent action={onSubmitTab} id="form-acts">

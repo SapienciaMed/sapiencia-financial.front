@@ -55,4 +55,5 @@ export interface IIncome{
   posPre: string;
   value: string;
   cardId:string;
+  typeMovement?: string;
 }
