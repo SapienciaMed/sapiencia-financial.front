@@ -3,16 +3,16 @@ import { AddValidHeadersTransfer } from "../constants/doc.enum";
 import { generarIdAleatorio } from "./randomGenerate";
 
 
-export const PasteDataFinanceArea = async ({ setIsSearchByName, setMessage, setDataPaste, arrayDataSelect, isResetOutput }: IPasteDataFinanceArea) => {
+export const PasteDataFinanceArea = async ({ setMessage, setDataPaste, arrayDataSelect, isResetOutput, setDetailTransferData }: IPasteDataFinanceArea) => {
     try {
         const pastedInput = await navigator.clipboard.readText()
-        return constructJSONFromPastedInput({ arrayDataSelect, pastedInput, isResetOutput, setMessage, setDataPaste });
+        return constructJSONFromPastedInput({ arrayDataSelect, pastedInput, isResetOutput, setMessage, setDataPaste, setDetailTransferData });
     } catch (error) {
         console.log(error);
     }
 }
 
-const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, arrayDataSelect, isResetOutput }: IPasteDataFinanceArea) => {
+const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, arrayDataSelect, isResetOutput, setDetailTransferData }: IPasteDataFinanceArea) => {
     let rawRows = pastedInput.split("\n");
     let headersArray = rawRows[0].split("\t");
     let output = [];
@@ -22,6 +22,7 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
     const isLengthEqual = headersArray.length === validHeaders.length;
     
     let dataMovementByTransfer = [];
+    let dataMovementByTransferDetail = [];
     let dataMovementOrigin = [];
     let dataMovementDestiny = [];
     let countTransfer=1;
@@ -57,26 +58,50 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                         budgetPosition : (arrayDataSelect.posPre.filter(e => e.value != null).find(e => e.name == Object(rowObject).POSICIÓNPRESUPUESTAL))?.id,
                         value :Object(rowObject).typeTransfer === 'Origen' ? valorContracredito : valorCredito,
                         nameProject: Object(rowObject).NOMBREPROYECTO,
-                        // transferId: countTransfer
                     }
-                    
+
+                    //se crea un arreglo nuevo para que muestre los datos
+                    const moveToSaveDetail = {
+                        type : Object(rowObject).typeTransfer,
+                        managerCenter : Object(rowObject).CENTROGESTOR, 
+                        projectId :(arrayDataSelect.functionalArea.find(e => e.name == Object(rowObject).PROYECTO))?.name,
+                        fundId : (arrayDataSelect.funds.filter(e => e.value != null).find(e => e.name == Object(rowObject).FONDO))?.name, 
+                        budgetPosition : (arrayDataSelect.posPre.filter(e => e.value != null).find(e => e.name == Object(rowObject).POSICIÓNPRESUPUESTAL))?.name,
+                        value :Object(rowObject).typeTransfer === 'Origen' ? valorContracredito : valorCredito,
+                        nameProject: Object(rowObject).NOMBREPROYECTO,
+                        functionalArea: Object(rowObject).ÁREAFUNCIONAL 
+                    }
+
                     if(idx == 1 ){
                         dataMovementByTransfer.push({
                             id: generarIdAleatorio(20),
                             data:[moveToSave]
                         })
+                        dataMovementByTransferDetail.push({
+                            id: generarIdAleatorio(20),
+                            data:[moveToSaveDetail]
+                        })
                     }else{
                             let lastObj = dataMovementByTransfer[countTransfer-1].data[dataMovementByTransfer[countTransfer-1].data.length-1]
-                            if(lastObj.type == 'Origen' && lastObj.type == Object(moveToSave).type ){
+                            const lastObjDetail = dataMovementByTransferDetail[countTransfer-1].data[dataMovementByTransferDetail[countTransfer-1].data.length-1]
+
+                            if(lastObj.type == 'Origen' && lastObj.type == Object(moveToSave).type && lastObjDetail.type == 'Origen' && lastObjDetail.type == Object(moveToSaveDetail).type ){
                                 dataMovementByTransfer[countTransfer-1].data.push(moveToSave)
-                            }else if(lastObj.type == 'Destino' && Object(moveToSave).type=='Origen'){
+                                dataMovementByTransferDetail[countTransfer-1].data.push(moveToSaveDetail)
+
+                            }else if(lastObj.type == 'Destino' && Object(moveToSave).type=='Origen' && lastObjDetail.type == 'Destino' && Object(moveToSaveDetail).type=='Origen' ){
                                     countTransfer +=1;
                                     dataMovementByTransfer.push({
                                         id: generarIdAleatorio(20),
                                         data:[moveToSave]
                                     })
+                                    dataMovementByTransferDetail.push({
+                                        id: generarIdAleatorio(20),
+                                        data:[moveToSaveDetail]
+                                    })
                             }else{
                                 dataMovementByTransfer[countTransfer-1].data.push(moveToSave)
+                                dataMovementByTransferDetail[countTransfer-1].data.push(moveToSaveDetail)
                             }
                     }
                     output.push(rowObject)
@@ -114,6 +139,16 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
         if (output.length > 0) {
             const mappedOutput = output.map((item) => mapOutputItem(item, arrayDataSelect))
             setDataPaste(mappedOutput);
+            setDetailTransferData({
+                array: [
+                    {
+                        transferMovesGroups: dataMovementByTransferDetail
+                    }
+                ],
+                meta: {
+                    total: dataMovementByTransferDetail.length,
+                }
+            })
             return dataMovementByTransfer
         }
     } catch (error) {

@@ -50,8 +50,8 @@ export const AddFormCardPage = ({arrayDataSelect, control, titleAdd, errors, cou
     }
 
     let invalidStyleCard = {
-        background: invalidCardsAdditionSt.find(e => e.idCard == watch(`${titleAdd.toLowerCase()}[${count}].cardId`)) ? 'rgba(255, 0, 0, 0.30)' : 'none',
-        border: invalidCardsAdditionSt.find(e => e.idCard == watch(`${titleAdd.toLowerCase()}[${count}].cardId`)) ? '1px solid #F00' : ''
+        background: invalidCardsAdditionSt?.find(e => e?.idCard == watch(`${titleAdd.toLowerCase()}[${count}].cardId`)) ? 'rgba(255, 0, 0, 0.30)' : 'none',
+        border: invalidCardsAdditionSt?.find(e => e?.idCard == watch(`${titleAdd.toLowerCase()}[${count}].cardId`)) ? '1px solid #F00' : ''
     }  
 
   return (
