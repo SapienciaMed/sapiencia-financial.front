@@ -9,14 +9,16 @@ import { EResponseCodes } from "../../../../common/constants/api.enum";
 import { AppContext } from "../../../../common/contexts/app.context";
 import { useNavigate } from 'react-router-dom';
 import { useTypesTranfersService } from './types-transfers-service.hook';
-import { generarIdAleatorio } from '../../../../common/utils/randomGenerate';
+import { transformJSONArrays, filterElementsMeetConditions, identifyInvalidcardTransfers } from '../../../../common/utils/';
+
 export function useAddFundsCrud() {
 
   const navigate = useNavigate();
   const resolver = useYupValidationResolver(validationFieldsCreatefunds);
-  const { setMessage, dataPasteRedux, addTransferData, headTransferData, setAddTransferData } = useContext(AppContext);
+  const { setMessage, dataPasteRedux, addTransferData, headTransferData, 
+    setAddTransferData, setDetailTransferData, setDataPasteRedux } = useContext(AppContext);
   const { GetFundsList, GetProjectsList, GetPosPreSapienciaList } = useAdditionsTransfersService()
-  const { validateCreateTransfer, createTransfer } = useTypesTranfersService();
+  const { validateCreateTransfer } = useTypesTranfersService();
   const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
     functionalArea: [],
     areas: [],
@@ -24,6 +26,7 @@ export function useAddFundsCrud() {
     posPre: []
   })
   const [totalTransfer, setTotalTransfer] = useState<string>('')
+  const [invalidCardsAdditionSt, setInvalidCardsAdditionSt] = useState([])
 
   const {
     handleSubmit,
@@ -51,36 +54,9 @@ export function useAddFundsCrud() {
     setTotalTransfer(addNumericalValues(watchOrigin).toString())
   }, [watchOrigin])
 
-  const isTotalSame = (data): boolean => {
-    const total_by_type_transfer = { Origen: 0, Destino: 0 };
-
-    data?.reduce((acc, item) => {
-      const type_transfer = item.typeTransfer;
-
-      if (!acc[type_transfer]) {
-        acc[type_transfer] = 0;
-      }
-
-      acc[type_transfer] += parseFloat(item.value);
-
-      return acc;
-    }, total_by_type_transfer);
-
-    return total_by_type_transfer.Destino == total_by_type_transfer.Origen;
-  };
-
   useEffect(() => {
     Object.keys(headTransferData).length === 0 && navigate(-1);
   }, [headTransferData])
-
-  const get_total_value = (data) => {
-    const dest = data.destino.sort((a, b) => a.value - b.value);
-    const orig = data.origen.sort((a, b) => a.value - b.value);
-
-    const valid = dest.every((destino, i) => destino.value == orig[i].value)
-    return valid
-  };
-
 
   const addNumericalValues = (arr: IAddFund[]) => {
     return arr.reduce((total, item) => {
@@ -204,39 +180,6 @@ export function useAddFundsCrud() {
   }, [arrayDataSelect])
 
   const onSubmitTab = handleSubmit(async (data: ICreateSourceForm) => {
-    console.log("==>>data >>> ", data)
-    console.log("==>>dataxxxxx >>> ", addTransferData.array[0])
-    // Agregar la propiedad "type" a cada elemento en el array "destino"
-    //const destino = data.destino.map(item => ({ ...item, type: "Destino" }));
-
-    // Agregar la propiedad "type" a cada elemento en el array "Origen"
-    //const origen = data.destino.map(item => ({ ...item, type: "Origen" }));
-
-    // Concatenar los dos arrays
-    const resultado = data.destino.concat(data.origen);
-
-    console.log({ resultado });
-    // Recorrer el objeto dataSend
-    addTransferData.array[0].transferMovesGroups.forEach(group => {
-      group.data.forEach(item => {
-        // Buscar un elemento en "resultado" que coincida con las propiedades
-        const matchingItem = resultado.find(result => (
-          result.managerCenter === item.managerCenter &&
-          result.typeTransfer === item.type &&
-          result.value === String(item.value) && // Asegurarse de que el valor sea una cadena
-          result.projectId === String(item.projectId) && // Asegurarse de que el projectId sea una cadena
-          result.funds === String(item.fundId) && // Asegurarse de que el fundId sea una cadena
-          result.posPre === String(item.budgetPosition) // Asegurarse de que posPre sea una cadena
-        ));
-
-        // Si se encontró una coincidencia, actualizar el valor de "idCard" por "cardId"
-        if (matchingItem) {
-          item.idCard = matchingItem.cardId;
-        }
-      });
-    });
-
-    console.log("....>>>> ", addTransferData.array[0]);
 
     if (data.destino.length == 0 || data.origen.length == 0) {
       setMessage({
@@ -251,47 +194,34 @@ export function useAddFundsCrud() {
       })
       return;
     }
+    const resultado = data.destino.concat(data.origen);
 
-    if (dataPasteRedux.length > 0) {
-      if (!isTotalSame(dataPasteRedux)) {
-        setMessage({
-          title: "Validación de datos",
-          description: "Se ha encontrado un error en los datos, los valores son diferentes",
-          show: true,
-          OkTitle: "Aceptar",
-          onOk: () => {
-            setMessage({});
-          },
-          background: true
-        })
-
-        return
-      }
-    }
-    else {
-      if (!get_total_value(data)) {
-        setMessage({
-          title: "Validación de datos",
-          description: "Se ha encontrado un error en los datos, los valores son diferentes",
-          show: true,
-          OkTitle: "Aceptar",
-          onOk: () => {
-            setMessage({});
-          },
-          background: true
-        })
-
-        return
-      }
-    }
-
-
+    addTransferData?.array?.length > 0 && addTransferData?.array[0]?.transferMovesGroups?.forEach(group => {
+      group.data.forEach(item => {
+        const matchingItem = resultado.find(result => (
+          result.managerCenter === item.managerCenter &&
+          result.typeTransfer === item.type &&
+          result.value === String(item.value) && 
+          result.projectId === String(item.projectId) && 
+          result.funds === String(item.fundId) && 
+          result.posPre === String(item.budgetPosition) 
+        ));
+        // Si se encontró una coincidencia, actualizar el valor de "idCard" por "cardId"
+        if (matchingItem) {
+          item.idCard = matchingItem.cardId;
+        }
+      });
+    });
+    
     const manualTranferMovement: IobjectAddTransfer = {
       headTransfer: headTransferData,
-      transferMovesGroups: [transformJSONArrays(data)]
+      transferMovesGroups: transformJSONArrays(data) 
     }
+    // console.log("🚀 manualTranferMovement:", manualTranferMovement)
 
     const transferDataToSave = dataPasteRedux.length > 0 ? addTransferData.array[0] : manualTranferMovement;
+    // console.log("🚀 transferDataToSave:", transferDataToSave)
+
     validateCreateTransfer(transferDataToSave).then((response: any) => {
       if (response.operation.code === EResponseCodes.OK) {
         setMessage({
@@ -301,10 +231,25 @@ export function useAddFundsCrud() {
           OkTitle: "Aceptar",
           onOk: () => {
             setMessage({});
-            setAddTransferData({
+           
+            setAddTransferData({  //se manda en el context los datos con los id para guardar en la bd, ya sea de forma pegar o manual
               array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
               meta: { total: 1 }
             });
+
+            Object.keys(dataPasteRedux).length === 0 && setDetailTransferData({ //se manda en el context los datos sin los id y ser visualizado en detalles
+              array: [
+                {
+                  headTransfer: headTransferData,
+                  transferMovesGroups: filterElementsMeetConditions(arrayDataSelect, data)
+                }
+              ],
+              meta: {
+                total: manualTranferMovement.transferMovesGroups.length,
+              }
+            })
+
+            setDataPasteRedux([])
             navigate(-1)
           },
           background: true
@@ -313,7 +258,7 @@ export function useAddFundsCrud() {
 
         let messageResponse = "";
         const messageResponseDecode = response.operation.message.split('@@@')
-        console.log({ messageResponseDecode })
+
         const budgetsRoutesError = messageResponseDecode.length > 1 ? JSON.parse(messageResponseDecode[3]) : []
         const projectsError = messageResponseDecode.length > 1 ? JSON.parse(messageResponseDecode[6]) : []
         const budgetsRoutesRepit = messageResponseDecode.length > 1 ? JSON.parse(messageResponseDecode[9]) : []
@@ -328,8 +273,6 @@ export function useAddFundsCrud() {
           messageResponse = messageResponseDecode[0]
         }
 
-        console.log({ messageResponseDecode })
-
         setMessage({
           title: "Validación de datos",
           description: messageResponse,
@@ -337,18 +280,25 @@ export function useAddFundsCrud() {
           OkTitle: "Aceptar",
           onOk: () => {
             setMessage({});
-            setAddTransferData({
-              array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
-              meta: { total: 1 }
-            });
-            let addTransferDataFixed = getElementsMovement(addTransferData.array[0].transferMovesGroups)
-            identifyInvalidcard(dataPasteRedux.length > 0 ? addTransferDataFixed : manualTranferMovement.transferMovesGroups, response.operation.message)
-            if (messageResponseDecode.length == 1) {
+            // setAddTransferData({
+            //   array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
+            //   meta: { total: 1 }
+            // });
+            let addTransferDataFixed = getElementsMovement(addTransferData?.array?.length > 0  ? addTransferData?.array[0]?.transferMovesGroups : manualTranferMovement.transferMovesGroups) 
+            identifyInvalidcardTransfers(addTransferDataFixed, response.operation.message, setInvalidCardsAdditionSt)
+            
+            if (messageResponseDecode.length == 1) {       
               setAddTransferData({
                 array: [],
                 meta: { total: 1 }
               });
-              navigate(-1)
+              if(messageResponse == 'El nombre de Acto Admin Distrito, Acto Admin Sapiencia y/o Observaciones ya se encuentran registrados.'){ 
+                navigate(-1)
+                setAddTransferData({
+                  array: [],
+                  meta: { total: 1 }
+                });
+              }
             }
           },
           background: true
@@ -357,49 +307,15 @@ export function useAddFundsCrud() {
     })
   })
 
-
   function getElementsMovement(data1) {
-    // Inicializa un array vacío para almacenar los elementos de data
     let elementosData = [];
 
-    // Utiliza el método map() para recorrer data1
-    data1.map(item => {
-      // Utiliza el método concat() para agregar los elementos de data al array elementosData
-      elementosData = elementosData.concat(item.data);
+    data1?.map(item => {
+      elementosData = elementosData.concat(item?.data);
     });
-
+    
     return elementosData;
   }
-
-  const [invalidCardsAdditionSt, setInvalidCardsAdditionSt] = useState([])
-
-  const identifyInvalidcard = (additionMove: any, message: string) => {
-    console.log({ additionMove })
-    let messageSplit = message.split('@@@')
-    let cardValidation = [];
-    let invalidCard;
-    if (messageSplit[3] && JSON.parse(messageSplit[3])?.length > 0) {
-      JSON.parse(messageSplit[3]).forEach(code => {
-        invalidCard = additionMove.find(addition => addition.idCard.includes(code))
-        cardValidation.push(invalidCard)
-      })
-      setInvalidCardsAdditionSt(cardValidation)
-    } else if (messageSplit[6] && JSON.parse(messageSplit[6])?.length > 0) {
-      JSON.parse(messageSplit[6]).forEach(code => {
-        invalidCard = additionMove.find(addition => addition.idCard.includes(code))
-        cardValidation.push(invalidCard)
-        setInvalidCardsAdditionSt(cardValidation)
-      })
-    } else if (messageSplit[9] && JSON.parse(messageSplit[9])?.length > 0) {
-      JSON.parse(messageSplit[9]).forEach(code => {
-        invalidCard = additionMove.find(addition => addition.idCard.includes(code))
-        cardValidation.push(invalidCard)
-        setInvalidCardsAdditionSt(cardValidation)
-      })
-
-    }
-  }
-
 
   const formatMoney = (amount) => amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
@@ -417,39 +333,16 @@ export function useAddFundsCrud() {
             total: 0,
           }
         })
+        setDetailTransferData({
+          array: [],
+          meta: {
+          total: 0,
+          }
+      })
+      setMessage({})
         navigate(-1)
       },
     });
-  }
-
-  function transformJSONArrays(jsonArray) {
-    const resultado = [
-      ...jsonArray.origen.map((item) => ({
-        idCard: item.cardId,
-        type: "Origen",
-        managerCenter: item.managerCenter,
-        projectId: parseInt(item.projectId),
-        fundId: parseInt(item.funds),
-        budgetPosition: parseInt(item.posPre),
-        value: parseInt(item.value),
-        nameProject: item.projectName
-      })),
-      ...jsonArray.destino.map((item) => ({
-        idCard: item.cardId,
-        type: "Destino",
-        managerCenter: item.managerCenter,
-        projectId: parseInt(item.projectId),
-        fundId: parseInt(item.funds),
-        budgetPosition: parseInt(item.posPre),
-        value: parseInt(item.value),
-        nameProject: item.projectName
-      })),
-    ];
-
-    return {
-      id: generarIdAleatorio(20),
-      data: resultado
-    };
   }
 
   return {

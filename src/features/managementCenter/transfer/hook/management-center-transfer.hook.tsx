@@ -6,9 +6,6 @@ import useYupValidationResolver from "../../../../common/hooks/form-validator.ho
 import { IBudgets } from "../../../functionality/interfaces/Budgets";
 import { IDropdownProps } from "../../../../common/interfaces/select.interface";
 import { useTypesTranfersService } from "./types-transfers-service.hook";
-import { EResponseCodes } from "../../../../common/constants/api.enum";
-import { ITypeTransfers } from "../interfaces/TypesTranfersInterfaces";
-import { IFilterBudgets } from "../../interfaces/FilterBudgets";
 import { transferValidator } from "../../../../common/schemas/transfer-schema";
 import { ITransfers } from "../interfaces/TranfersInterfaces";
 import { IFilterTransferInterface } from "../interfaces/FilterTransferInterface";
@@ -81,32 +78,7 @@ export function useManagementCenterTransfer() {
 
     useEffect(() => {
         loadTableData();
-        GetTypesTransfers().then(response => {
-            if (response.operation.code === EResponseCodes.OK) {
-                const typeTransfers: ITypeTransfers[] = response.data;
-                const arrayEntities: IDropdownProps[] = typeTransfers.map((entity) => {
-                    return { name: entity.name, value: entity.id };
-                });
-                setTypesTransfersData(arrayEntities);
-            }
-        }).catch(() => { });
     }, [])
-
-    useEffect(() => {
-        loadTableData();
-        GetTransfers().then(response => {
-            if (response.operation.code === EResponseCodes.OK) {
-                console.log({ response })
-                /* const typeTransfers: ITypeTransfers[] = response.data;
-                const arrayEntities: IDropdownProps[] = typeTransfers.map((entity) => {
-                    return { name: entity.name, value: entity.id };
-                });
-                setTypesTransfersData(arrayEntities); */
-            }
-        }).catch(() => { });
-    }, [])
-
-    
 
     return {
         tableComponentRef,

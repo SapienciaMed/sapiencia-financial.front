@@ -11,7 +11,7 @@ interface IAppProps {
   }
 
 function TransferAreaCrudPage({ actionForm }: IAppProps) {
-    const {control, errors, tableColumns, tableActions, isBtnDisable, isAddBtnDisable, tableComponentRef, addTransferData, totalTransfer,
+    const {control, errors, tableColumns, tableActions, isBtnDisable, isAddBtnDisable, tableComponentRef, detailTransferData, totalTransfer,
         onSubmit, register, onCancel, handleFormSubmit } = useTransferAreaCrudPage()
 
     return (
@@ -42,7 +42,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                             <div className="funcionality-filters-container">
                                 <Controller
                                     control={control}
-                                    name={"adminDistrict"}
+                                    name={"actAdminDistrict"}
                                     defaultValue=""
                                     render={({ field }) => {
                                         return (
@@ -64,7 +64,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                                 />
                                 <Controller
                                     control={control}
-                                    name={"adminSapiencia"}
+                                    name={"actAdminSapiencia"}
                                     defaultValue=""
                                     render={({ field }) => {
                                         return (
@@ -87,7 +87,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                             </div>
                             <Controller
                                 control={control}
-                                name={"remarks"}
+                                name={"observations"}
                                 defaultValue=""
                                 render={({ field }) => {
                                     return (
@@ -110,7 +110,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                     </section>
 
                     {
-                        addTransferData?.array?.length > 0 && 
+                        detailTransferData?.array?.length > 0 && 
                             <section className="card-user mt-24px">
                                 <TableDetailComponent
                                     ref={tableComponentRef}
@@ -118,7 +118,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                                     actions={tableActions}
                                     isShowModal={true}
                                     titleMessageModalNoResult={"Fondos"}
-                                    ownData={addTransferData}
+                                    ownData={detailTransferData}
                                     secondaryTitle='Detalles de la ruta'
                                 />
                             </section>

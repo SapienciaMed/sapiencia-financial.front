@@ -24,6 +24,8 @@ interface IAppContext {
   setAddTransferData: Dispatch<SetStateAction<IPagingData<IobjectAddTransfer>>>;
   dataPasteRedux:  IDataPaste[],
   setDataPasteRedux: Dispatch<SetStateAction<IDataPaste[]>>,
+  detailTransferData: IPagingData<IobjectAddTransfer>,
+  setDetailTransferData: Dispatch<SetStateAction<IPagingData<IobjectAddTransfer>>>;
 }
 interface IProps {
   children: ReactElement | ReactElement[];
@@ -42,7 +44,9 @@ export const AppContext = createContext<IAppContext>({
   addTransferData: {} as IPagingData<IobjectAddTransfer>,
   setAddTransferData: () => {},
   dataPasteRedux:  {} as IDataPaste[],
-  setDataPasteRedux: () => {}
+  setDataPasteRedux: () => {},
+  detailTransferData: {} as IPagingData<IobjectAddTransfer>,
+  setDetailTransferData: () => {},
 });
 
 export function AppContextProvider({ children }: IProps) {
@@ -55,6 +59,7 @@ export function AppContextProvider({ children }: IProps) {
   const [headTransferData, setHeadTransferData] = useState<IHeadTransferData>({} as IHeadTransferData)
   const [addTransferData, setAddTransferData] = useState<IPagingData<IobjectAddTransfer>>({} as IPagingData<IobjectAddTransfer>)
   const [dataPasteRedux, setDataPasteRedux] = useState<IDataPaste[]>({} as IDataPaste[])
+  const [detailTransferData, setDetailTransferData] = useState<IPagingData<IobjectAddTransfer>>({} as IPagingData<IobjectAddTransfer>)
 
   // Metodo que verifica si el usuario posee permisos sobre un accion
   function validateActionAccess(indicator: string): boolean {
@@ -75,9 +80,11 @@ export function AppContextProvider({ children }: IProps) {
       addTransferData,
       setAddTransferData,
       dataPasteRedux,
-      setDataPasteRedux
+      setDataPasteRedux,
+      detailTransferData,
+      setDetailTransferData
     };
-  }, [message, authorization, messageEdit, headTransferData, addTransferData, dataPasteRedux]);
+  }, [message, authorization, messageEdit, headTransferData, addTransferData, dataPasteRedux, detailTransferData]);
 
   return <AppContext.Provider value={values}>{children}</AppContext.Provider>;
 }
