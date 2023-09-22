@@ -81,7 +81,7 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
     const onPaste = async () => {
         const values = await PasteDataFinanceArea({ arrayDataSelect, setDataPaste, setMessage, setDetailTransferData })
 
-        setAddTransferData({
+       values?.length > 0 && setAddTransferData({
             array: [
                 {
                     headTransfer: headTransferData,

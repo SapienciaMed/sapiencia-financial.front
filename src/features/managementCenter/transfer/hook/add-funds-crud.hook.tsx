@@ -9,7 +9,8 @@ import { EResponseCodes } from "../../../../common/constants/api.enum";
 import { AppContext } from "../../../../common/contexts/app.context";
 import { useNavigate } from 'react-router-dom';
 import { useTypesTranfersService } from './types-transfers-service.hook';
-import { transformJSONArrays, filterElementsMeetConditions, identifyInvalidcardTransfers } from '../../../../common/utils/';
+import { transformJSONArrays, filterElementsMeetConditions, identifyInvalidcardTransfers, 
+  cleanTransferContext, isTotalSame, get_total_value } from '../../../../common/utils/';
 
 export function useAddFundsCrud() {
 
@@ -64,6 +65,7 @@ export function useAddFundsCrud() {
       return isNaN(valor) ? total : total + valor;
     }, 0);
   }
+
 
   useEffect(() => {
     if (!arrayDataSelect.functionalArea.length && !arrayDataSelect.funds.length && !arrayDataSelect.posPre.length) {
@@ -194,6 +196,39 @@ export function useAddFundsCrud() {
       })
       return;
     }
+
+    if (dataPasteRedux.length > 0) {
+      if (!isTotalSame(dataPasteRedux)) {
+        setMessage({
+          title: "Validación de datos",
+          description: "Se ha encontrado un error en los datos, los valores son diferentes",
+          show: true,
+          OkTitle: "Aceptar",
+          onOk: () => {
+            setMessage({});
+          },
+          background: true
+        })
+
+        return
+      }
+    }
+    else if (!get_total_value(data)) {
+      setMessage({
+        title: "Validación de datos",
+        description: "Se ha encontrado un error en los datos, los valores son diferentes",
+        show: true,
+        OkTitle: "Aceptar",
+        onOk: () => {
+          setMessage({});
+        },
+        background: true
+      })
+
+      return
+    }
+    
+
     const resultado = data.destino.concat(data.origen);
 
     addTransferData?.array?.length > 0 && addTransferData?.array[0]?.transferMovesGroups?.forEach(group => {
@@ -217,10 +252,7 @@ export function useAddFundsCrud() {
       headTransfer: headTransferData,
       transferMovesGroups: transformJSONArrays(data) 
     }
-    // console.log("🚀 manualTranferMovement:", manualTranferMovement)
-
     const transferDataToSave = dataPasteRedux.length > 0 ? addTransferData.array[0] : manualTranferMovement;
-    // console.log("🚀 transferDataToSave:", transferDataToSave)
 
     validateCreateTransfer(transferDataToSave).then((response: any) => {
       if (response.operation.code === EResponseCodes.OK) {
@@ -230,6 +262,29 @@ export function useAddFundsCrud() {
           show: true,
           OkTitle: "Aceptar",
           onOk: () => {
+            setMessage({});
+           
+            setAddTransferData({  //se manda en el context los datos con los id para guardar en la bd, ya sea de forma pegar o manual
+              array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
+              meta: { total: 1 }
+            });
+
+            Object.keys(dataPasteRedux).length === 0 && setDetailTransferData({ //se manda en el context los datos sin los id y ser visualizado en detalles
+              array: [
+                {
+                  headTransfer: headTransferData,
+                  transferMovesGroups: filterElementsMeetConditions(arrayDataSelect, data)
+                }
+              ],
+              meta: {
+                total: manualTranferMovement.transferMovesGroups.length,
+              }
+            })
+
+            setDataPasteRedux([])
+            navigate(-1)
+          },
+          onClose: () => {
             setMessage({});
            
             setAddTransferData({  //se manda en el context los datos con los id para guardar en la bd, ya sea de forma pegar o manual
@@ -280,25 +335,12 @@ export function useAddFundsCrud() {
           OkTitle: "Aceptar",
           onOk: () => {
             setMessage({});
-            // setAddTransferData({
-            //   array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
-            //   meta: { total: 1 }
-            // });
             let addTransferDataFixed = getElementsMovement(addTransferData?.array?.length > 0  ? addTransferData?.array[0]?.transferMovesGroups : manualTranferMovement.transferMovesGroups) 
             identifyInvalidcardTransfers(addTransferDataFixed, response.operation.message, setInvalidCardsAdditionSt)
-            
-            if (messageResponseDecode.length == 1) {       
-              setAddTransferData({
-                array: [],
-                meta: { total: 1 }
-              });
-              if(messageResponse == 'El nombre de Acto Admin Distrito, Acto Admin Sapiencia y/o Observaciones ya se encuentran registrados.'){ 
-                navigate(-1)
-                setAddTransferData({
-                  array: [],
-                  meta: { total: 1 }
-                });
-              }
+
+            if(messageResponse == 'El nombre de Acto Admin Distrito, Acto Admin Sapiencia y/o Observaciones ya se encuentran registrados.'){ 
+              cleanTransferContext({ setAddTransferData, setDetailTransferData })
+              navigate(-1)
             }
           },
           background: true
@@ -326,20 +368,8 @@ export function useAddFundsCrud() {
       show: true,
       OkTitle: "Aceptar",
       onOk: () => {
-        setMessage({});
-        setAddTransferData({
-          array: [],
-          meta: {
-            total: 0,
-          }
-        })
-        setDetailTransferData({
-          array: [],
-          meta: {
-          total: 0,
-          }
-      })
-      setMessage({})
+        cleanTransferContext({ setAddTransferData, setDetailTransferData })
+        setMessage({})
         navigate(-1)
       },
     });
