@@ -9,7 +9,7 @@ import { EResponseCodes } from "../../../../common/constants/api.enum";
 import { AppContext } from "../../../../common/contexts/app.context";
 import { useNavigate } from 'react-router-dom';
 import { useTypesTranfersService } from './types-transfers-service.hook';
-import { get_total_value, transformJSONArrays, filterElementsMeetConditions, isTotalSame } from '../../../../common/utils/';
+import { transformJSONArrays, filterElementsMeetConditions, identifyInvalidcardTransfers } from '../../../../common/utils/';
 
 export function useAddFundsCrud() {
 
@@ -26,6 +26,7 @@ export function useAddFundsCrud() {
     posPre: []
   })
   const [totalTransfer, setTotalTransfer] = useState<string>('')
+  const [invalidCardsAdditionSt, setInvalidCardsAdditionSt] = useState([])
 
   const {
     handleSubmit,
@@ -180,37 +181,6 @@ export function useAddFundsCrud() {
 
   const onSubmitTab = handleSubmit(async (data: ICreateSourceForm) => {
 
-    // Agregar la propiedad "type" a cada elemento en el array "destino"
-    //const destino = data.destino.map(item => ({ ...item, type: "Destino" }));
-
-    // Agregar la propiedad "type" a cada elemento en el array "Origen"
-    //const origen = data.destino.map(item => ({ ...item, type: "Origen" }));
-
-    // Concatenar los dos arrays
-    const resultado = data.destino.concat(data.origen);
-
-    // Recorrer el objeto dataSend
-    addTransferData.array[0].transferMovesGroups.forEach(group => {
-      group.data.forEach(item => {
-        // Buscar un elemento en "resultado" que coincida con las propiedades
-        const matchingItem = resultado.find(result => (
-          result.managerCenter === item.managerCenter &&
-          result.typeTransfer === item.type &&
-          result.value === String(item.value) && // Asegurarse de que el valor sea una cadena
-          result.projectId === String(item.projectId) && // Asegurarse de que el projectId sea una cadena
-          result.funds === String(item.fundId) && // Asegurarse de que el fundId sea una cadena
-          result.posPre === String(item.budgetPosition) // Asegurarse de que posPre sea una cadena
-        ));
-
-        // Si se encontró una coincidencia, actualizar el valor de "idCard" por "cardId"
-        if (matchingItem) {
-          item.idCard = matchingItem.cardId;
-        }
-      });
-    });
-
-    console.log("....>>>> ", addTransferData.array[0]);
-
     if (data.destino.length == 0 || data.origen.length == 0) {
       setMessage({
         title: "Validación de datos",
@@ -224,46 +194,34 @@ export function useAddFundsCrud() {
       })
       return;
     }
+    const resultado = data.destino.concat(data.origen);
 
-    // //TODO: Validar si se puede borrar
-    // if (dataPasteRedux.length > 0) {
-    //   if (!isTotalSame(dataPasteRedux)) {
-    //     setMessage({
-    //       title: "Validación de datos",
-    //       description: "Se ha encontrado un error en los datos, los valores son diferentes",
-    //       show: true,
-    //       OkTitle: "Aceptar",
-    //       onOk: () => {
-    //         setMessage({});
-    //       },
-    //       background: true
-    //     })
-
-    //     return
-    //   }
-    // }
-    // //TODO: Validar si se puede borrar
-    // if (!get_total_value(data) && dataPasteRedux.length == 0){
-    //   setMessage({
-    //     title: "Validación de datos",
-    //     description: "Se ha encontrado un error en los datos, los valores son diferentes",
-    //     show: true,
-    //     OkTitle: "Aceptar",
-    //     onOk: () => {
-    //       setMessage({});
-    //     },
-    //     background: true
-    //   })
-
-    //   return
-    // }
+    addTransferData?.array?.length > 0 && addTransferData?.array[0]?.transferMovesGroups?.forEach(group => {
+      group.data.forEach(item => {
+        const matchingItem = resultado.find(result => (
+          result.managerCenter === item.managerCenter &&
+          result.typeTransfer === item.type &&
+          result.value === String(item.value) && 
+          result.projectId === String(item.projectId) && 
+          result.funds === String(item.fundId) && 
+          result.posPre === String(item.budgetPosition) 
+        ));
+        // Si se encontró una coincidencia, actualizar el valor de "idCard" por "cardId"
+        if (matchingItem) {
+          item.idCard = matchingItem.cardId;
+        }
+      });
+    });
     
     const manualTranferMovement: IobjectAddTransfer = {
       headTransfer: headTransferData,
       transferMovesGroups: transformJSONArrays(data) 
     }
+    // console.log("🚀 manualTranferMovement:", manualTranferMovement)
 
     const transferDataToSave = dataPasteRedux.length > 0 ? addTransferData.array[0] : manualTranferMovement;
+    // console.log("🚀 transferDataToSave:", transferDataToSave)
+
     validateCreateTransfer(transferDataToSave).then((response: any) => {
       if (response.operation.code === EResponseCodes.OK) {
         setMessage({
@@ -300,7 +258,7 @@ export function useAddFundsCrud() {
 
         let messageResponse = "";
         const messageResponseDecode = response.operation.message.split('@@@')
-        console.log({ messageResponseDecode })
+
         const budgetsRoutesError = messageResponseDecode.length > 1 ? JSON.parse(messageResponseDecode[3]) : []
         const projectsError = messageResponseDecode.length > 1 ? JSON.parse(messageResponseDecode[6]) : []
         const budgetsRoutesRepit = messageResponseDecode.length > 1 ? JSON.parse(messageResponseDecode[9]) : []
@@ -315,8 +273,6 @@ export function useAddFundsCrud() {
           messageResponse = messageResponseDecode[0]
         }
 
-        console.log({ messageResponseDecode })
-
         setMessage({
           title: "Validación de datos",
           description: messageResponse,
@@ -324,18 +280,25 @@ export function useAddFundsCrud() {
           OkTitle: "Aceptar",
           onOk: () => {
             setMessage({});
-            setAddTransferData({
-              array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
-              meta: { total: 1 }
-            });
-            let addTransferDataFixed = getElementsMovement(addTransferData.array[0].transferMovesGroups)
-            identifyInvalidcard(dataPasteRedux.length > 0 ? addTransferDataFixed : manualTranferMovement.transferMovesGroups, response.operation.message)
-            if (messageResponseDecode.length == 1) {
+            // setAddTransferData({
+            //   array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
+            //   meta: { total: 1 }
+            // });
+            let addTransferDataFixed = getElementsMovement(addTransferData?.array?.length > 0  ? addTransferData?.array[0]?.transferMovesGroups : manualTranferMovement.transferMovesGroups) 
+            identifyInvalidcardTransfers(addTransferDataFixed, response.operation.message, setInvalidCardsAdditionSt)
+            
+            if (messageResponseDecode.length == 1) {       
               setAddTransferData({
                 array: [],
                 meta: { total: 1 }
               });
-              navigate(-1)
+              if(messageResponse == 'El nombre de Acto Admin Distrito, Acto Admin Sapiencia y/o Observaciones ya se encuentran registrados.'){ 
+                navigate(-1)
+                setAddTransferData({
+                  array: [],
+                  meta: { total: 1 }
+                });
+              }
             }
           },
           background: true
@@ -345,47 +308,14 @@ export function useAddFundsCrud() {
   })
 
   function getElementsMovement(data1) {
-    // Inicializa un array vacío para almacenar los elementos de data
     let elementosData = [];
 
-    // Utiliza el método map() para recorrer data1
-    data1.map(item => {
-      // Utiliza el método concat() para agregar los elementos de data al array elementosData
-      elementosData = elementosData.concat(item.data);
+    data1?.map(item => {
+      elementosData = elementosData.concat(item?.data);
     });
-
+    
     return elementosData;
   }
-
-  const [invalidCardsAdditionSt, setInvalidCardsAdditionSt] = useState([])
-
-  const identifyInvalidcard = (additionMove: any, message: string) => {
-    console.log({ additionMove })
-    let messageSplit = message.split('@@@')
-    let cardValidation = [];
-    let invalidCard;
-    if (messageSplit[3] && JSON.parse(messageSplit[3])?.length > 0) {
-      JSON.parse(messageSplit[3]).forEach(code => {
-        invalidCard = additionMove.find(addition => addition.idCard.includes(code))
-        cardValidation.push(invalidCard)
-      })
-      setInvalidCardsAdditionSt(cardValidation)
-    } else if (messageSplit[6] && JSON.parse(messageSplit[6])?.length > 0) {
-      JSON.parse(messageSplit[6]).forEach(code => {
-        invalidCard = additionMove.find(addition => addition.idCard.includes(code))
-        cardValidation.push(invalidCard)
-        setInvalidCardsAdditionSt(cardValidation)
-      })
-    } else if (messageSplit[9] && JSON.parse(messageSplit[9])?.length > 0) {
-      JSON.parse(messageSplit[9]).forEach(code => {
-        invalidCard = additionMove.find(addition => addition.idCard.includes(code))
-        cardValidation.push(invalidCard)
-        setInvalidCardsAdditionSt(cardValidation)
-      })
-
-    }
-  }
-
 
   const formatMoney = (amount) => amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 

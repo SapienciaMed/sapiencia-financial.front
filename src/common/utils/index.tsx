@@ -6,3 +6,4 @@ export * from './randomGenerate';
 export * from './transform-json-arrays-transfer';
 export * from './validate-object';
 export * from './validate-total';
+export * from './identify-invalid-card-transfer'

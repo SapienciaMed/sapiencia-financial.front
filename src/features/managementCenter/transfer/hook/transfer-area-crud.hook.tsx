@@ -52,11 +52,6 @@ export function useTransferAreaCrudPage() {
     },[inputValue])
 
     useEffect(() => {
-        detailTransferData && console.log(detailTransferData);
-        
-    },[detailTransferData])
-
-    useEffect(() => {
        if (addTransferData?.array?.length > 0 && inputValue.some(value => value != '' && value != undefined)) {
             setValidate(addTransferData?.array.some(item => {
                 return Object.entries(inputValues).every(([key, value]) => item.headTransfer[key] === value);
