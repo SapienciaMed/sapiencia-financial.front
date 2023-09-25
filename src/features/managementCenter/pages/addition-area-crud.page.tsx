@@ -27,8 +27,7 @@ function AdditionAreaCrud({ actionForm, typeMovement }: IAppProps) {
   return (
     <div className="crud-page">
       <div className="main-page full-height">
-        <p className="text-black extra-large">
-          {/* {actionForm === "new" ? "Crear adición" : "Editar adición"} */}
+        <p className="text-black extra-large">         
           {
             actionForm === "new"
               ? (typeMovement === "Adicion" ? "Crear adición" : "Crear disminución")

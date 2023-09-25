@@ -37,6 +37,7 @@ export interface IAdditionsFilters {
   perPage: number;
   adminDistrict?: string;
   adminSapiencia?: string;
+  typeMovement?: string;
 }
 
 export interface IAdditionsForm{
