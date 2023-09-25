@@ -65,8 +65,7 @@ export function useAdditionAreaCrud(tabId: string,typeMovement:string) {
       projectId: outcome.projectId,
       fundId: outcome.funds,
       budgetPosition: outcome.posPre,
-      value: parseFloat(outcome.value),      
-      typeMovement: typeMovement
+      value: parseFloat(outcome.value)
     })
     )
     
@@ -77,15 +76,15 @@ export function useAdditionAreaCrud(tabId: string,typeMovement:string) {
       projectId: outcome.projectId,
       fundId: outcome.funds,
       budgetPosition: outcome.posPre,
-      value: parseFloat(outcome.value),      
-      typeMovement: typeMovement
+      value: parseFloat(outcome.value),     
     })
     )
-
+    
     let addition = {
       headAdditon: {
         actAdminDistrict: data.actAdministrativeDistrict,
         actAdminSapiencia: data.actAdministrativeSapiencia,
+        typeMovement: typeMovement,
         userCreate: "123456789",
         dateCreate: "2023-08-28",
         userModify: "123456789",

@@ -12,7 +12,7 @@ import { EDirection } from "../../../common/constants/input.enum";
 
 interface IAppProps {
   actionForm: "new" | "edit" ;
-  typeMovement: "addition" | "decrease";
+  typeMovement: "Adicion" | "Disminucion";
 }
 
 function AdditionAreaCrud({ actionForm,typeMovement }: IAppProps) {
@@ -31,8 +31,8 @@ function AdditionAreaCrud({ actionForm,typeMovement }: IAppProps) {
           {/* {actionForm === "new" ? "Crear adición" : "Editar adición"} */}
           {
             actionForm === "new" 
-              ? (typeMovement === "addition" ? "Crear adición" : "Crear disminución")
-              : (actionForm === "edit" ? (typeMovement === "addition" ? "Editar adición" : "Editar disminución") : "")
+              ? (typeMovement === "Adicion" ? "Crear adición" : "Crear disminución")
+              : (actionForm === "edit" ? (typeMovement === "Adicion" ? "Editar adición" : "Editar disminución") : "")
           }
         </p>
         <div className="card-user" >

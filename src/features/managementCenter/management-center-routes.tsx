@@ -17,14 +17,14 @@ export const ManagementCenterRoutes = () => {
   return (
     <Routes>
       <Route path={"/adicion"} element={<ManagementCenterAdditionalPage />} />
-      <Route path={"/adicion/create"} element={<AdditionAreaCrudPage actionForm="new" typeMovement="addition"/>} />
+      <Route path={"/adicion/create"} element={<AdditionAreaCrudPage actionForm="new" typeMovement="Adicion"/>} />
 
       <Route path={"/traslado"} element={<ManagementCenterTransferPage/> } />
       <Route path={"/traslado/create"} element={<TransferAreaCrudPage actionForm="new"/>} />
       <Route path={"/traslado/create/anadir-fondos"} element={<AddFundsCrudPage/>} />
 
       <Route path={"/disminucion"} element={<ManagementCenterDecreasePage/>} />
-      <Route path={"/disminucion/create"} element={<AdditionAreaCrudPage actionForm="new" typeMovement="decrease"/>} />
+      <Route path={"/disminucion/create"} element={<AdditionAreaCrudPage actionForm="new" typeMovement="Disminucion"/>} />
     </Routes>
   )
 }
