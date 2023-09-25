@@ -44,6 +44,7 @@ export interface IAdditionsForm{
   gasto: IIncome[],
   actAdministrativeDistrict: string;
   actAdministrativeSapiencia: string;
+  typeMovement: string;
 }
 
 export interface IIncome{

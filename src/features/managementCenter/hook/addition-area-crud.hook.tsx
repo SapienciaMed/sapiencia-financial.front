@@ -7,10 +7,13 @@ import { AppContext } from "../../../common/contexts/app.context";
 import { IArrayDataSelect, IMessage } from "../../../common/interfaces/global.interface";
 import { useAdditionsTransfersService } from "./additions-transfers-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate,useParams } from "react-router-dom";
 
 
-export function useAdditionAreaCrud(tabId: string) {
+export function useAdditionAreaCrud(tabId: string,typeMovement:string) {
+
+  
+
 
   const resolver = useYupValidationResolver(fundsAdditionalValidation);
   const { setMessage } = useContext(AppContext);
@@ -65,7 +68,7 @@ export function useAdditionAreaCrud(tabId: string) {
       value: parseFloat(outcome.value)
     })
     )
-
+    
     const gastoFixed = data.gasto.map(outcome => ({
       idCard: outcome.cardId,
       type: 'Gasto',
@@ -73,14 +76,15 @@ export function useAdditionAreaCrud(tabId: string) {
       projectId: outcome.projectId,
       fundId: outcome.funds,
       budgetPosition: outcome.posPre,
-      value: parseFloat(outcome.value)
+      value: parseFloat(outcome.value),     
     })
     )
-
+    
     let addition = {
       headAdditon: {
         actAdminDistrict: data.actAdministrativeDistrict,
         actAdminSapiencia: data.actAdministrativeSapiencia,
+        typeMovement: typeMovement,
         userCreate: "123456789",
         dateCreate: "2023-08-28",
         userModify: "123456789",
