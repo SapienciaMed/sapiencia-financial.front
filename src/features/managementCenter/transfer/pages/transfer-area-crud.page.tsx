@@ -29,7 +29,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                                 <label className="text-black biggest bold">
                                     Datos básicos
                                 </label>
-                                <div className='title-button text-three large'>
+                                <div className='title-button text-three large' style={{marginTop: '0px'}}>
                                     <ButtonComponent 
                                         className={`button-clean-fields color-lila ${ isAddBtnDisable && 'color-gray'}`}
                                         value='Añadir valores '  

@@ -119,7 +119,7 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
                                 })
                             }
                         </div>
-                        <div className="title-button text-three large" id='pages' onClick={onPaste} style={{ marginTop: "0"}}> Pegar <FaRegCopy /> </div>
+                        <div className="title-button text-three large" id='pages' onClick={() => { dataPaste?.length <= 0 && onPaste() }} style={{ marginTop: "0"}}> Pegar <FaRegCopy /> </div>
                     </div>
                 </div>
                 <div className="tabs-content">
