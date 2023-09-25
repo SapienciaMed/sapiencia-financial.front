@@ -50,10 +50,13 @@ export function useAddFundsCrud() {
     control,
     name: 'origen'
   })
-
+  
+  const watchAll = watch()
+  
   useEffect(() => {
     setTotalTransfer(addNumericalValues(watchOrigin).toString())
   }, [watchOrigin])
+
 
   useEffect(() => {
     Object.keys(headTransferData).length === 0 && navigate(-1);
@@ -227,34 +230,34 @@ export function useAddFundsCrud() {
 
       return
     }
-    
 
     const resultado = data.destino.concat(data.origen);
 
     addTransferData?.array?.length > 0 && addTransferData?.array[0]?.transferMovesGroups?.forEach(group => {
       group.data.forEach(item => {
         const matchingItem = resultado.find(result => (
-          result.managerCenter === item.managerCenter &&
-          result.typeTransfer === item.type &&
-          result.value === String(item.value) && 
-          result.projectId === String(item.projectId) && 
-          result.funds === String(item.fundId) && 
-          result.posPre === String(item.budgetPosition) 
+          result.managerCenter == item.managerCenter &&
+          result.typeTransfer == item.type &&
+          result.value == String(item.value) && 
+          result.projectId == String(item.projectId) && 
+          result.funds == String(item.fundId) && 
+          result.posPre == String(item.budgetPosition) 
         ));
         // Si se encontró una coincidencia, actualizar el valor de "idCard" por "cardId"
         if (matchingItem) {
           item.idCard = matchingItem.cardId;
         }
       });
-    });
-    
+    }); 
+
     const manualTranferMovement: IobjectAddTransfer = {
       headTransfer: headTransferData,
       transferMovesGroups: transformJSONArrays(data) 
     }
+    
     const transferDataToSave = dataPasteRedux.length > 0 ? addTransferData.array[0] : manualTranferMovement;
 
-    validateCreateTransfer(transferDataToSave).then((response: any) => {
+    transferDataToSave && validateCreateTransfer(transferDataToSave).then((response: any) => {
       if (response.operation.code === EResponseCodes.OK) {
         setMessage({
           title: "Agregar",

@@ -237,11 +237,11 @@ export function useTransferAreaCrudPage() {
 
     const onCancel = () => {
         setMessage({
-            title: "Cancelar",
+            title: "Cancelar traslado",
             show: true,
             OkTitle: "Aceptar",
             cancelTitle: "Cancelar",
-            description: '¿Estás segur@ que desea cancelar la operación?',
+            description: '¿Estás segur@ que desea cancelar el traslado?',
             onOk: () => {
                 cleanTransferContext({ setAddTransferData, setDetailTransferData })
                 setHeadTransferData({

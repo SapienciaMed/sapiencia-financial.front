@@ -17,12 +17,8 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
     let headersArray = rawRows[0].split("\t");
     let output = [];
 
-    const validHeaders = AddValidHeadersTransfer 
-    
     let dataMovementByTransfer = [];
     let dataMovementByTransferDetail = [];
-    let dataMovementOrigin = [];
-    let dataMovementDestiny = [];
     let countTransfer=1;
     
     let valorContracredito = 0;
@@ -37,16 +33,17 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                     headersArray.forEach((header, idx) => {
                         Reflect.set(rowObject, header.trim().replaceAll(" ", ""), values[idx].trim())
                     });
- 
-                    valorContracredito = parseFloat(Object(rowObject).VALORCONTRACRÉDITO.replaceAll('.', '')) || 0;
-                    valorCredito = parseFloat(Object(rowObject).VALORCRÉDITO.replaceAll('.', '')) || 0; 
+                    
+
+                    valorContracredito = (Object(rowObject).VALORCONTRACRÉDITO == '' || Object(rowObject).VALORCRÉDITO == '' ) ? null : (parseFloat(Object(rowObject).VALORCONTRACRÉDITO.replaceAll('.', '')) || 0) ;
+                    valorCredito = (Object(rowObject).VALORCONTRACRÉDITO == '' || Object(rowObject).VALORCRÉDITO == '' ) ? null : ( parseFloat(Object(rowObject).VALORCRÉDITO.replaceAll('.', '')) || 0) ; 
+
                     if(valorContracredito > 0 && valorCredito == 0 ){
-                        Object(rowObject).typeTransfer="Origen"
-                        dataMovementOrigin.push(rowObject)
+                        Object(rowObject).typeTransfer = "Origen"
                     }else if(valorContracredito == 0 && valorCredito > 0 ){
-                        Object(rowObject).typeTransfer="Destino"
-                        dataMovementDestiny.push(rowObject)
+                        Object(rowObject).typeTransfer = "Destino"
                     }
+                    
                     let moveToSave = {
                         idCard: generarIdAleatorio(20),
                         type : Object(rowObject).typeTransfer,
@@ -58,7 +55,7 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                         nameProject: Object(rowObject).NOMBREPROYECTO,
                     }
 
-                    //se crea un arreglo nuevo para que muestre los datos
+                    //se crea un arreglo nuevo para que muestre el nombre de los datos y no los id
                     const moveToSaveDetail = {
                         type : Object(rowObject).typeTransfer,
                         managerCenter : Object(rowObject).CENTROGESTOR, 
@@ -101,11 +98,12 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                                 dataMovementByTransfer[countTransfer-1].data.push(moveToSave)
                                 dataMovementByTransferDetail[countTransfer-1].data.push(moveToSaveDetail)
                             }
-                    }
+                        }
                     output.push(rowObject)
                 }
             }
         })
+        
         :
         setMessage({
             title: "Validación de datos",
@@ -132,11 +130,12 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
             ...commonFields,
         };
     };
+    
 
-    const isFullField = (objeto) => Object.values(objeto).every(value => value !== undefined);
+    const isFullField = (objeto) => Object.values(objeto).every(value => value !== undefined && value != '' && value != null);
 
-    try {
-        if (output.length > 0 && dataMovementByTransfer.every(item => item.data.every(isFullField))) {
+    try {    
+        if ( output.length > 0 && dataMovementByTransfer.every(item => item.data.every(isFullField)) ) {      
             const mappedOutput = output.map((item) => mapOutputItem(item, arrayDataSelect))
             setDataPaste(mappedOutput);
             setDetailTransferData({
@@ -150,7 +149,7 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                 }
             })
             return dataMovementByTransfer
-        } else {
+        }else {
             throw new Error("Los datos contienen campos vacíos o valores inválidos");
         }
     } catch (error) {
