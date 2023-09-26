@@ -21,15 +21,16 @@ export function useProjectOperationCrud(exerciseSt:number) {
 
   const navigate = useNavigate();
 
-  let dateFromDefault = `${exerciseSt ?? dateToday.getFullYear()}-01-01`
-  let dateToDefault = `${exerciseSt ?? dateToday.getFullYear()}-12-31`
+  const actualFullYear = dateToday.getFullYear();
+  let dateFromDefault = `${exerciseSt ?? actualFullYear}-01-01`
+  let dateToDefault = `${exerciseSt ?? actualFullYear}-12-31`
 
   const [dateFromDefaultSt, setDateFromDefaultSt] = useState(dateFromDefault)
   const [dateToDefaultSt, setDateToDefaultSt] = useState(dateToDefault)
 
   useEffect(() => {
-    setDateFromDefaultSt(`${exerciseSt ?? dateToday.getFullYear()}-01-01`)
-    setDateToDefaultSt(`${exerciseSt ?? dateToday.getFullYear()}-12-31`)
+    setDateFromDefaultSt(`${exerciseSt ?? actualFullYear}-01-01`)
+    setDateToDefaultSt(`${exerciseSt ?? actualFullYear}-12-31`)
   }, [exerciseSt])
   
 
@@ -63,12 +64,8 @@ export function useProjectOperationCrud(exerciseSt:number) {
     resolver,
   });
 
-  let dateFromWatch = getValues('dateFrom');
-  let dateToWatch = watch('dateTo');
-
   const validateButton = (values) => { return Object.values(values).every(campo => campo !== null && campo !== undefined && campo !== '') }
-  const fullFields = validateButton(defaultValues);
-
+ 
   // Effect que activa el watch que detecta los cambios en todo el form
   React.useEffect(() => {
     const subscription = watch(() => { });
@@ -183,6 +180,7 @@ export function useProjectOperationCrud(exerciseSt:number) {
     setValue,
     isAllowSave,
     dateFromDefaultSt,
-    dateToDefaultSt
+    dateToDefaultSt,
+    actualFullYear
   };
 }

@@ -19,11 +19,13 @@ function ProjectOperationCrud({ action }: IAppProps) {
   const navigate = useNavigate();
   const [exerciseSt, setExerciseSt] = useState(null)
   
-  const { errors, onSubmitTab, showModal, setMessage, register, isAllowSave, control, dateFromDefaultSt, dateToDefaultSt } = useProjectOperationCrud(exerciseSt);
+  const { errors, onSubmitTab, showModal, setMessage, register, isAllowSave, control, dateFromDefaultSt, dateToDefaultSt,actualFullYear } = useProjectOperationCrud(exerciseSt);
 
   const [isModifyDateFrom, setIsModifyDateFrom] = useState(false)
   const [isModifyDateTo, setIsModifyDateTo] = useState(false)
 
+  const [dateFromDefaultStValidateDate, setDateFromDefaultStValidateDate] = useState(dateFromDefaultSt)
+  
   useEffect(() => {
     setIsModifyDateFrom(true)
   }, [dateFromDefaultSt])
@@ -89,7 +91,7 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 direction={EDirection.column}
                 errors={errors}
                 onChange={(e)=>setExerciseSt(e.target.value)}
-                min={2023}
+                min={actualFullYear}
               />
 
             </section>
@@ -109,13 +111,15 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 fieldArray={true}
                 errors={errors}
               />
+
+
               <InputComponent
                 idInput="dateFrom"
                 className="input-basic medium"
                 typeInput="date"
                 register={register}
                 value={!isModifyDateFrom ? undefined : dateFromDefaultSt}
-                onChange={()=>setIsModifyDateFrom(false)}
+                onChange={(e)=>{setIsModifyDateFrom(false);setDateFromDefaultStValidateDate(e.target.value)}}
                 label="Validez desde"
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
@@ -127,11 +131,12 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 typeInput="date"
                 register={register}
                 value={!isModifyDateTo ? undefined : dateToDefaultSt}
-                onChange={()=>setIsModifyDateTo(false)}
+                onChange={(e)=>setIsModifyDateTo(false)}
                 label="Validez hasta"
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
                 errors={errors}
+                min={dateFromDefaultStValidateDate}
               />
             </section>
           </FormComponent>
