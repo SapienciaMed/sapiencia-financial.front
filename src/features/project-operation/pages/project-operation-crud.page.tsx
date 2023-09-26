@@ -17,7 +17,21 @@ interface IAppProps {
 
 function ProjectOperationCrud({ action }: IAppProps) {
   const navigate = useNavigate();
-  const { errors, onSubmitTab, showModal, setMessage, register, isAllowSave, control } = useProjectOperationCrud();
+  const [exerciseSt, setExerciseSt] = useState(null)
+  
+  const { errors, onSubmitTab, showModal, setMessage, register, isAllowSave, control, dateFromDefaultSt, dateToDefaultSt } = useProjectOperationCrud(exerciseSt);
+
+  const [isModifyDateFrom, setIsModifyDateFrom] = useState(false)
+  const [isModifyDateTo, setIsModifyDateTo] = useState(false)
+
+  useEffect(() => {
+    setIsModifyDateFrom(true)
+  }, [dateFromDefaultSt])
+  
+  useEffect(() => {
+    setIsModifyDateTo(true)
+  }, [dateToDefaultSt])
+  
 
   return (
     <div className="crud-page">
@@ -30,156 +44,96 @@ function ProjectOperationCrud({ action }: IAppProps) {
             <section className="grid-form-2-container-reverse grid-column-e-proj-operation mt-5px">
 
               <SelectComponent
-                idInput={`managerCenter`}
+                idInput={`entityId`}
                 control={control}
                 label='Entidad CP'
                 className="select-basic medium"
                 classNameLabel="text-black big bold text-required"
                 placeholder={'Seleccionar'}
-                data={[{ id: "91500000", name: "91500000", value: "91500000" }]}
+                data={[{ id: 1, name: "SAPI", value: 1 }]}
                 filter={true}
                 fieldArray={true}
                 errors={errors}
+                disabled={true}
               />
               <SelectComponent
-                idInput={`projectId`}
+                idInput={`number`}
                 control={control}
                 label='Proyecto'
                 className="select-basic medium"
                 classNameLabel="text-black big bold text-required"
                 placeholder={'Seleccionar'}
-                //data={functionalArea}
+                data={[{ id: "1", name: "90000000", value: "1" }]}
                 filter={true}
                 fieldArray={true}
                 errors={errors}
-              //optionSelected={optionSelected}
+                disabled={true}
               />
               <InputComponent
-                  idInput="actAdministrativeDistrict"
-                  className="input-basic medium"
-                  typeInput="text"
-                  register={register}
-                  label="Denominación"
-                  classNameLabel="text-black big bold text-required"
-                  direction={EDirection.column}
-                  errors={errors}
-                />
-                <InputComponent
-                  idInput="actAdministrativeSapiencia"
-                  className="input-basic medium"
-                  typeInput="text"
-                  register={register}
-                  label="Vigencia"
-                  classNameLabel="text-black big bold text-required"
-                  direction={EDirection.column}
-                  errors={errors}
-                />
+                idInput="name"
+                className="input-basic medium"
+                typeInput="text"
+                register={register}
+                label="Denominación"
+                classNameLabel="text-black big bold text-required"
+                direction={EDirection.column}
+                errors={errors}
+              />
+              <InputComponent
+                idInput="exercise"
+                className="input-basic medium"
+                typeInput="number"
+                register={register}
+                label="Vigencia"
+                classNameLabel="text-black big bold text-required"
+                direction={EDirection.column}
+                errors={errors}
+                onChange={(e)=>setExerciseSt(e.target.value)}
+                min={2023}
+              />
 
             </section>
             <section className="grid-form-2-container-reverse grid-column-four mt-5px">
-            <SelectComponent
-                  idInput={`projectId`}
-                  control={control}
-                  label='Estado'
-                  className="select-basic medium"
-                  classNameLabel="text-black big bold text-required"
-                  placeholder={'Seleccionar'}
-                  //data={functionalArea}
-                  filter={true}
-                  fieldArray={true}
-                  errors={errors}
-                //optionSelected={optionSelected}
-                />
-            
-            <InputComponent
-                  idInput="actAdministrativeSapiencia"
-                  className="input-basic medium"
-                  typeInput="date"
-                  register={register}
-                  label="Validez desde"
-                  classNameLabel="text-black big bold text-required"
-                  direction={EDirection.column}
-                  errors={errors}
-                />
-                <InputComponent
-                  idInput="actAdministrativeSapiencia"
-                  className="input-basic medium"
-                  typeInput="date"
-                  register={register}
-                  label="Validez hasta"
-                  classNameLabel="text-black big bold text-required"
-                  direction={EDirection.column}
-                  errors={errors}
-                />
-
+              <SelectComponent
+                idInput={`isActivated`}
+                control={control}
+                label='Estado'
+                className="select-basic medium"
+                classNameLabel="text-black big bold text-required"
+                placeholder={'Seleccionar'}
+                data={[
+                  { id: "1", name: "Activo", value: 1 },
+                  { id: "0", name: "Inactivo", value: 0 },
+                ]}
+                filter={true}
+                fieldArray={true}
+                errors={errors}
+              />
+              <InputComponent
+                idInput="dateFrom"
+                className="input-basic medium"
+                typeInput="date"
+                register={register}
+                value={!isModifyDateFrom ? undefined : dateFromDefaultSt}
+                onChange={()=>setIsModifyDateFrom(false)}
+                label="Validez desde"
+                classNameLabel="text-black big bold text-required"
+                direction={EDirection.column}
+                errors={errors}
+              />
+              <InputComponent
+                idInput="dateTo"
+                className="input-basic medium"
+                typeInput="date"
+                register={register}
+                value={!isModifyDateTo ? undefined : dateToDefaultSt}
+                onChange={()=>setIsModifyDateTo(false)}
+                label="Validez hasta"
+                classNameLabel="text-black big bold text-required"
+                direction={EDirection.column}
+                errors={errors}
+              />
             </section>
-
-            {/* <InputComponent
-                  idInput="actAdministrativeDistrict"
-                  className="input-basic medium"
-                  typeInput="text"
-                  register={register}
-                  label="Denominación"
-                  classNameLabel="text-black biggest bold text-required"
-                  direction={EDirection.column}
-                  errors={errors}
-                />
-                <InputComponent
-                  idInput="actAdministrativeSapiencia"
-                  className="input-basic medium"
-                  typeInput="text"
-                  register={register}
-                  label="Vigencia"
-                  classNameLabel="text-black biggest bold text-required"
-                  direction={EDirection.column}
-                  errors={errors}
-                />
-                <SelectComponent
-                  idInput={`projectId`}
-                  control={control}
-                  label='Estado'
-                  className="select-basic medium"
-                  classNameLabel="text-black big bold text-required"
-                  placeholder={'Seleccionar'}
-                  //data={functionalArea}
-                  filter={true}
-                  fieldArray={true}
-                  errors={errors}
-                //optionSelected={optionSelected}
-                />
-                
-                <InputComponent
-                  idInput="actAdministrativeSapiencia"
-                  className="input-basic medium"
-                  typeInput="date"
-                  register={register}
-                  label="Validez desde"
-                  classNameLabel="text-black biggest bold text-required"
-                  direction={EDirection.column}
-                  errors={errors}
-                />
-                <InputComponent
-                  idInput="actAdministrativeSapiencia"
-                  className="input-basic medium"
-                  typeInput="date"
-                  register={register}
-                  label="Validez hasta"
-                  classNameLabel="text-black biggest bold text-required"
-                  direction={EDirection.column}
-                  errors={errors}
-                /> */}
-            {/* <TabManagerAdditionPage        
-              controlRegister={control}
-              watch={watch}
-              showModal={showModal}
-              onSubmitTab={onSubmitTab}
-              getValues={getValues}
-              arrayDataSelect={arrayDataSelect}
-              register={register}
-              invalidCardsAdditionSt={invalidCardsAdditionSt}
-              setValue={setValue}
-              tabSelected={tabSelected}
-            /> */}
           </FormComponent>
           <section className="container-button-core mt-24px">
             <div className="display-align-flex-center">
@@ -191,12 +145,12 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 action={() => {
                   showModal({
                     title: "Cancelar",
-                    description: "¿Está segur@ que desea cancelar la adición?",
+                    description: "¿Está segur@ que desea cancelar el proyecto?",
                     show: true,
                     OkTitle: "Aceptar",
                     onOk: () => {
                       setMessage({});
-                      navigate("/gestion-financiera/centro-gestor/adicion");
+                      navigate("/gestion-financiera/presupuesto/proyecto-funcionamiento");
                     },
                   });
                 }}
