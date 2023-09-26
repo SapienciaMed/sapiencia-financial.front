@@ -11,7 +11,7 @@ import { AppContext } from "../../../../common/contexts/app.context";
 function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValues, invalidCardsAdditionSt, watch }: IAddFunds) {
 
 
-    const { setMessage, setDataPasteRedux, setAddTransferData, headTransferData } = useContext(AppContext);
+    const { setMessage, setDataPasteRedux, setAddTransferData, headTransferData, setDetailTransferData } = useContext(AppContext);
     const [dataPaste, setDataPaste] = useState([]);
     const { option } = useParams();
 
@@ -79,9 +79,9 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
     }, [dataPaste])
 
     const onPaste = async () => {
-        const values = await PasteDataFinanceArea({ arrayDataSelect, setDataPaste, setMessage })
+        const values = await PasteDataFinanceArea({ arrayDataSelect, setDataPaste, setMessage, setDetailTransferData })
 
-        setAddTransferData({
+       values?.length > 0 && setAddTransferData({
             array: [
                 {
                     headTransfer: headTransferData,
@@ -119,7 +119,7 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
                                 })
                             }
                         </div>
-                        <div className="title-button text-three large" id='pages' onClick={onPaste} style={{ marginTop: "0"}}> Pegar <FaRegCopy /> </div>
+                        <div className="title-button text-three large" id='pages' onClick={() => { dataPaste?.length <= 0 && onPaste() }} style={{ marginTop: "0"}}> Pegar <FaRegCopy /> </div>
                     </div>
                 </div>
                 <div className="tabs-content">

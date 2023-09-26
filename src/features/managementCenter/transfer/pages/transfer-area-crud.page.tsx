@@ -11,7 +11,7 @@ interface IAppProps {
   }
 
 function TransferAreaCrudPage({ actionForm }: IAppProps) {
-    const {control, errors, tableColumns, tableActions, isBtnDisable, isAddBtnDisable, tableComponentRef, addTransferData, totalTransfer,
+    const {control, errors, tableColumns, tableActions, isBtnDisable, isAddBtnDisable, tableComponentRef, detailTransferData, totalTransfer,
         onSubmit, register, onCancel, handleFormSubmit } = useTransferAreaCrudPage()
 
     return (
@@ -29,20 +29,20 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                                 <label className="text-black biggest bold">
                                     Datos básicos
                                 </label>
-                                <div className='title-button text-three large'>
+                                <div className='title-button text-three large' style={{marginTop: '0px'}}>
                                     <ButtonComponent 
-                                        className="button-clean-fields color-lila"
+                                        className={`button-clean-fields color-lila ${ isAddBtnDisable && 'color-gray'}`}
                                         value='Añadir valores '  
                                         action={() => { !isAddBtnDisable && handleFormSubmit() }}
                                         disabled={isAddBtnDisable}  
                                     /> 
-                                    <BiPlusCircle/>
+                                    <BiPlusCircle className={`${isAddBtnDisable && 'color-gray'}`}/>
                                 </div>
                             </div>
                             <div className="funcionality-filters-container">
                                 <Controller
                                     control={control}
-                                    name={"adminDistrict"}
+                                    name={"actAdminDistrict"}
                                     defaultValue=""
                                     render={({ field }) => {
                                         return (
@@ -64,7 +64,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                                 />
                                 <Controller
                                     control={control}
-                                    name={"adminSapiencia"}
+                                    name={"actAdminSapiencia"}
                                     defaultValue=""
                                     render={({ field }) => {
                                         return (
@@ -87,7 +87,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                             </div>
                             <Controller
                                 control={control}
-                                name={"remarks"}
+                                name={"observations"}
                                 defaultValue=""
                                 render={({ field }) => {
                                     return (
@@ -110,15 +110,15 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                     </section>
 
                     {
-                        addTransferData?.array?.length > 0 && 
+                        detailTransferData?.array?.length > 0 && 
                             <section className="card-user mt-24px">
                                 <TableDetailComponent
                                     ref={tableComponentRef}
                                     columns={tableColumns}
                                     actions={tableActions}
                                     isShowModal={true}
-                                    titleMessageModalNoResult={"Fondos"}
-                                    ownData={addTransferData}
+                                    titleMessageModalNoResult={"Traslado"}
+                                    ownData={detailTransferData}
                                     secondaryTitle='Detalles de la ruta'
                                 />
                             </section>

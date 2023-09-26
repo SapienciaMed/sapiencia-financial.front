@@ -12,6 +12,7 @@ import DetailsSelectedProjectComponent from '../../components/details-selected-p
 import { IobjectAddTransfer } from '../../../../common/interfaces/global.interface';
 import { useTypesTranfersService } from './types-transfers-service.hook';
 import { EResponseCodes } from '../../../../common/constants/api.enum';
+import { cleanTransferContext } from '../../../../common/utils';
 
 export function useTransferAreaCrudPage() {
 
@@ -19,6 +20,7 @@ export function useTransferAreaCrudPage() {
     const resolver = useYupValidationResolver(transferAreaCrudValidator);
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
     const [isAddBtnDisable, setIsAddBtnDisable] = useState<boolean>(false)
+    const [validate, setValidate] = useState(true)
     const [ showModalDetail, setShowModalDetail ] =useState({
         show: false,
         row: [ { data: {
@@ -31,7 +33,7 @@ export function useTransferAreaCrudPage() {
     const [totalTransfer, setTotalTransfer] = useState<string>('')
 
     const navigate = useNavigate();
-    const { setMessage, setHeadTransferData, setAddTransferData, authorization, addTransferData } = useContext(AppContext);
+    const { setMessage, setHeadTransferData, setAddTransferData, setDetailTransferData, authorization, addTransferData, detailTransferData } = useContext(AppContext);
     const { createTransfer } = useTypesTranfersService()
 
     const {
@@ -40,14 +42,23 @@ export function useTransferAreaCrudPage() {
         formState: { errors },
         control,
         watch,
-        setValue
+        setValue,
     } = useForm<IBasicTransfers>({resolver});
 
-    const inputValue =  watch(['adminDistrict', 'adminSapiencia', 'remarks'])
-
+    const inputValue =  watch(['actAdminDistrict', 'actAdminSapiencia', 'observations'])
+    const inputValues = watch()
+        
     useEffect(() => {
         setIsBtnDisable(inputValue.every(value => value != '' && value != undefined) && addTransferData?.array?.length > 0 )
     },[inputValue])
+
+    useEffect(() => {
+       if (addTransferData?.array?.length > 0 && inputValue.some(value => value != '' && value != undefined)) {
+            setValidate(addTransferData?.array.some(item => {
+                return Object.entries(inputValues).every(([key, value]) => item.headTransfer[key] === value);
+            }))
+       }
+    },[inputValues])
 
     useEffect(() => {
         showModalDetail?.show && (
@@ -69,9 +80,9 @@ export function useTransferAreaCrudPage() {
         if(addTransferData?.array?.length > 0 ){
             setIsAddBtnDisable(addTransferData?.array?.length > 0);
             addTransferData.array.map(item => {
-                setValue('adminDistrict', item.headTransfer.actAdminDistrict)
-                setValue('adminSapiencia', item.headTransfer.actAdminSapiencia)
-                setValue('remarks', item.headTransfer.observations)
+                setValue('actAdminDistrict', item.headTransfer.actAdminDistrict)
+                setValue('actAdminSapiencia', item.headTransfer.actAdminSapiencia)
+                setValue('observations', item.headTransfer.observations)
             })  
         }else{
             setIsAddBtnDisable(false)
@@ -90,37 +101,54 @@ export function useTransferAreaCrudPage() {
                 cancelTitle: "Cancelar",
                 onOk: () => {
                     setMessage({});
-                    createTransfer(addTransferData?.array[0]).then(response => {
-                        if (response.operation.code === EResponseCodes.OK) {
-                            setMessage({
-                                title: "Trasladar",
-                                description: "¡Se han trasladado los fondos correctamente en el sistema!",
-                                show: true,
-                                OkTitle: "Aceptar",
-                                onOk: () => {
-                                    setAddTransferData({
-                                        array: [],
-                                        meta: { total: 0}
-                                    })
-                                    setMessage({});
-                                    navigate(-1)
-                                },
-                            });
-                        }
-                    }).catch((error) => {
-                        setMessage({
-                            title: "Trasladar",
-                            description: error,
-                            show: true,
-                            OkTitle: "Aceptar",
-                            onOk: () => {
-                                setMessage({});
-                            },
-                        });
-                    })
+                    if (!validate) {
+                        const addTransfer = addTransferData?.array.map(us => ({
+                          ...us,
+                          headTransfer: {
+                            ...us.headTransfer,
+                            actAdminDistrict: data.actAdminDistrict,
+                            actAdminSapiencia: data.actAdminSapiencia,
+                            observations: data.observations,
+                          }
+                        }));
+                      
+                        handleTransfer(addTransfer[0]);
+                      } else {
+                        handleTransfer(addTransferData?.array[0]);
+                      }
+                   
                 },
             });
     }); 
+
+    const handleTransfer = (transferData) => {
+        createTransfer(transferData).then(response => {
+          if (response.operation.code === EResponseCodes.OK) {
+            setMessage({
+              title: "Trasladar",
+              description: "¡Se han realizado los traslados correctamente en el sistema!",
+              show: true,
+              OkTitle: "Aceptar",
+              onOk: () => {
+                cleanTransferContext({ setAddTransferData, setDetailTransferData })
+                setMessage({});
+                navigate(-1);
+              },
+            });
+          }
+        }).catch((error) => {
+          setMessage({
+            title: "Trasladar",
+            description: error,
+            show: true,
+            OkTitle: "Aceptar",
+            onOk: () => {
+              setMessage({});
+            },
+          });
+        });
+    };
+      
 
     const tableColumns: ITableElement<IobjectAddTransfer>[] = [
         {
@@ -175,18 +203,13 @@ export function useTransferAreaCrudPage() {
             icon: "Delete",
             onClick: (row) => { 
                 setMessage({
-                    title: "Eliminar fondos",
+                    title: "Eliminar traslado",
                     show: true,
                     OkTitle: "Aceptar",
                     cancelTitle: "Cancelar",
-                    description: '¿Estás segur@ que desea eliminar los fondos?',
+                    description: '¿Estás segur@ que desea eliminar el traslado?',
                     onOk: () => {
-                        setAddTransferData({
-                            array: [],
-                            meta: {
-                            total: 0,
-                            }
-                        })
+                        cleanTransferContext({ setAddTransferData, setDetailTransferData })
                         setMessage({})
                     },
                     background: true
@@ -214,18 +237,13 @@ export function useTransferAreaCrudPage() {
 
     const onCancel = () => {
         setMessage({
-            title: "Cancelar",
+            title: "Cancelar traslado",
             show: true,
             OkTitle: "Aceptar",
             cancelTitle: "Cancelar",
-            description: '¿Estás segur@ que desea cancelar la operación?',
+            description: '¿Estás segur@ que desea cancelar el traslado?',
             onOk: () => {
-                setAddTransferData({
-                    array: [],
-                    meta: {
-                      total: 0,
-                    }
-                  })
+                cleanTransferContext({ setAddTransferData, setDetailTransferData })
                 setHeadTransferData({
                     actAdminDistrict: '',
                     actAdminSapiencia: '',
@@ -253,15 +271,15 @@ export function useTransferAreaCrudPage() {
 
     const onAddvalues = async (data: IBasicTransfers) => {
         setHeadTransferData({
-            actAdminDistrict: data.adminDistrict,
-            actAdminSapiencia: data.adminSapiencia,
-            observations: data.remarks,
+            actAdminDistrict: data.actAdminDistrict,
+            actAdminSapiencia: data.actAdminSapiencia,
+            observations: data.observations,
             dateCreate: currentDate(),
             dateModify: '2023-08-31',
             userCreate: authorization?.user?.numberDocument || '',
             userModify: authorization?.user?.numberDocument || '',
         })
-        navigate('./anadir-fondos')
+        navigate('./anadir-traslado')
     };
     
     const handleFormSubmit = () => handleSubmit(onAddvalues)();
@@ -272,7 +290,7 @@ export function useTransferAreaCrudPage() {
         isBtnDisable,
         tableColumns,
         tableActions,
-        addTransferData,
+        detailTransferData,
         tableComponentRef,
         isAddBtnDisable,
         totalTransfer,

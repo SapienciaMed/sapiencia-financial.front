@@ -3,33 +3,28 @@ import { AddValidHeadersTransfer } from "../constants/doc.enum";
 import { generarIdAleatorio } from "./randomGenerate";
 
 
-export const PasteDataFinanceArea = async ({ setIsSearchByName, setMessage, setDataPaste, arrayDataSelect, isResetOutput }: IPasteDataFinanceArea) => {
+export const PasteDataFinanceArea = async ({ setMessage, setDataPaste, arrayDataSelect, isResetOutput, setDetailTransferData }: IPasteDataFinanceArea) => {
     try {
         const pastedInput = await navigator.clipboard.readText()
-        return constructJSONFromPastedInput({ arrayDataSelect, pastedInput, isResetOutput, setMessage, setDataPaste });
+        return constructJSONFromPastedInput({ arrayDataSelect, pastedInput, isResetOutput, setMessage, setDataPaste, setDetailTransferData });
     } catch (error) {
         console.log(error);
     }
 }
 
-const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, arrayDataSelect, isResetOutput }: IPasteDataFinanceArea) => {
-    let rawRows = pastedInput.split("\n");
+const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, arrayDataSelect, isResetOutput, setDetailTransferData }: IPasteDataFinanceArea) => {
+    let rawRows = pastedInput.split("\n").filter(line => line.trim() !== "");
     let headersArray = rawRows[0].split("\t");
     let output = [];
 
-    const validHeaders = AddValidHeadersTransfer 
-    const isAllHeadersValid = headersArray.every(value => validHeaders.includes(value));
-    const isLengthEqual = headersArray.length === validHeaders.length;
-    
     let dataMovementByTransfer = [];
-    let dataMovementOrigin = [];
-    let dataMovementDestiny = [];
+    let dataMovementByTransferDetail = [];
     let countTransfer=1;
     
     let valorContracredito = 0;
     let valorCredito = 0;
 
-    isAllHeadersValid && isLengthEqual ?
+    (headersArray.every(value => AddValidHeadersTransfer.includes(value)) && headersArray.length == AddValidHeadersTransfer.length) ?
         rawRows.forEach((rawRow, idx) => {
             if (rawRow != '') {
                 if (idx > 0) {
@@ -38,16 +33,17 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                     headersArray.forEach((header, idx) => {
                         Reflect.set(rowObject, header.trim().replaceAll(" ", ""), values[idx].trim())
                     });
- 
-                    valorContracredito = parseFloat(Object(rowObject).VALORCONTRACRÉDITO.replaceAll('.', '')) || 0;
-                    valorCredito = parseFloat(Object(rowObject).VALORCRÉDITO.replaceAll('.', '')) || 0; 
+                    
+
+                    valorContracredito = (Object(rowObject).VALORCONTRACRÉDITO == '' || Object(rowObject).VALORCRÉDITO == '' ) ? null : (parseFloat(Object(rowObject).VALORCONTRACRÉDITO.replaceAll('.', '')) || 0) ;
+                    valorCredito = (Object(rowObject).VALORCONTRACRÉDITO == '' || Object(rowObject).VALORCRÉDITO == '' ) ? null : ( parseFloat(Object(rowObject).VALORCRÉDITO.replaceAll('.', '')) || 0) ; 
+
                     if(valorContracredito > 0 && valorCredito == 0 ){
-                        Object(rowObject).typeTransfer="Origen"
-                        dataMovementOrigin.push(rowObject)
+                        Object(rowObject).typeTransfer = "Origen"
                     }else if(valorContracredito == 0 && valorCredito > 0 ){
-                        Object(rowObject).typeTransfer="Destino"
-                        dataMovementDestiny.push(rowObject)
+                        Object(rowObject).typeTransfer = "Destino"
                     }
+                    
                     let moveToSave = {
                         idCard: generarIdAleatorio(20),
                         type : Object(rowObject).typeTransfer,
@@ -57,32 +53,57 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                         budgetPosition : (arrayDataSelect.posPre.filter(e => e.value != null).find(e => e.name == Object(rowObject).POSICIÓNPRESUPUESTAL))?.id,
                         value :Object(rowObject).typeTransfer === 'Origen' ? valorContracredito : valorCredito,
                         nameProject: Object(rowObject).NOMBREPROYECTO,
-                        // transferId: countTransfer
                     }
-                    
+
+                    //se crea un arreglo nuevo para que muestre el nombre de los datos y no los id
+                    const moveToSaveDetail = {
+                        type : Object(rowObject).typeTransfer,
+                        managerCenter : Object(rowObject).CENTROGESTOR, 
+                        projectId :(arrayDataSelect.functionalArea.find(e => e.name == Object(rowObject).PROYECTO))?.name,
+                        fundId : (arrayDataSelect.funds.filter(e => e.value != null).find(e => e.name == Object(rowObject).FONDO))?.name, 
+                        budgetPosition : (arrayDataSelect.posPre.filter(e => e.value != null).find(e => e.name == Object(rowObject).POSICIÓNPRESUPUESTAL))?.name,
+                        value :Object(rowObject).typeTransfer === 'Origen' ? valorContracredito : valorCredito,
+                        nameProject: Object(rowObject).NOMBREPROYECTO,
+                        functionalArea: Object(rowObject).ÁREAFUNCIONAL 
+                    }
+
                     if(idx == 1 ){
                         dataMovementByTransfer.push({
                             id: generarIdAleatorio(20),
                             data:[moveToSave]
                         })
+                        dataMovementByTransferDetail.push({
+                            id: generarIdAleatorio(20),
+                            data:[moveToSaveDetail]
+                        })
                     }else{
                             let lastObj = dataMovementByTransfer[countTransfer-1].data[dataMovementByTransfer[countTransfer-1].data.length-1]
-                            if(lastObj.type == 'Origen' && lastObj.type == Object(moveToSave).type ){
+                            const lastObjDetail = dataMovementByTransferDetail[countTransfer-1].data[dataMovementByTransferDetail[countTransfer-1].data.length-1]
+
+                            if(lastObj.type == 'Origen' && lastObj.type == Object(moveToSave).type && lastObjDetail.type == 'Origen' && lastObjDetail.type == Object(moveToSaveDetail).type ){
                                 dataMovementByTransfer[countTransfer-1].data.push(moveToSave)
-                            }else if(lastObj.type == 'Destino' && Object(moveToSave).type=='Origen'){
+                                dataMovementByTransferDetail[countTransfer-1].data.push(moveToSaveDetail)
+
+                            }else if(lastObj.type == 'Destino' && Object(moveToSave).type=='Origen' && lastObjDetail.type == 'Destino' && Object(moveToSaveDetail).type=='Origen' ){
                                     countTransfer +=1;
                                     dataMovementByTransfer.push({
                                         id: generarIdAleatorio(20),
                                         data:[moveToSave]
                                     })
+                                    dataMovementByTransferDetail.push({
+                                        id: generarIdAleatorio(20),
+                                        data:[moveToSaveDetail]
+                                    })
                             }else{
                                 dataMovementByTransfer[countTransfer-1].data.push(moveToSave)
+                                dataMovementByTransferDetail[countTransfer-1].data.push(moveToSaveDetail)
                             }
-                    }
+                        }
                     output.push(rowObject)
                 }
             }
         })
+        
         :
         setMessage({
             title: "Validación de datos",
@@ -109,12 +130,27 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
             ...commonFields,
         };
     };
+    
 
-    try {
-        if (output.length > 0) {
+    const isFullField = (objeto) => Object.values(objeto).every(value => value !== undefined && value != '' && value != null);
+
+    try {    
+        if ( output.length > 0 && dataMovementByTransfer.every(item => item.data.every(isFullField)) ) {      
             const mappedOutput = output.map((item) => mapOutputItem(item, arrayDataSelect))
             setDataPaste(mappedOutput);
+            setDetailTransferData({
+                array: [
+                    {
+                        transferMovesGroups: dataMovementByTransferDetail
+                    }
+                ],
+                meta: {
+                    total: dataMovementByTransferDetail.length,
+                }
+            })
             return dataMovementByTransfer
+        }else {
+            throw new Error("Los datos contienen campos vacíos o valores inválidos");
         }
     } catch (error) {
         setMessage({
