@@ -4,3 +4,4 @@ export * from "./vinculation-schemas";
 export * from "./functional-area-schemas";
 export * from "./projects-schemas";
 export * from "./budget-routes";
+export * from "./project-operation";
