@@ -3,16 +3,16 @@ import { AddValidHeadersTransfer } from "../constants/doc.enum";
 import { generarIdAleatorio } from "./randomGenerate";
 
 
-export const PasteDataFinanceArea = async ({ setMessage, setDataPaste, arrayDataSelect, isResetOutput, setDetailTransferData }: IPasteDataFinanceArea) => {
+export const PasteDataFinanceArea = async ({ setMessage, setDataPaste, arrayDataSelect, isResetOutput }: IPasteDataFinanceArea) => {
     try {
         const pastedInput = await navigator.clipboard.readText()
-        return constructJSONFromPastedInput({ arrayDataSelect, pastedInput, isResetOutput, setMessage, setDataPaste, setDetailTransferData });
+        return constructJSONFromPastedInput({ arrayDataSelect, pastedInput, isResetOutput, setMessage, setDataPaste });
     } catch (error) {
         console.log(error);
     }
 }
 
-const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, arrayDataSelect, isResetOutput, setDetailTransferData }: IPasteDataFinanceArea) => {
+const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, arrayDataSelect, isResetOutput }: IPasteDataFinanceArea) => {
     let rawRows = pastedInput.split("\n").filter(line => line.trim() !== "");
     let headersArray = rawRows[0].split("\t");
     let output = [];
@@ -138,16 +138,16 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
         if ( output.length > 0 && dataMovementByTransfer.every(item => item.data.every(isFullField)) ) {      
             const mappedOutput = output.map((item) => mapOutputItem(item, arrayDataSelect))
             setDataPaste(mappedOutput);
-            setDetailTransferData({
-                array: [
-                    {
-                        transferMovesGroups: dataMovementByTransferDetail
-                    }
-                ],
-                meta: {
-                    total: dataMovementByTransferDetail.length,
-                }
-            })
+            // setDetailTransferData({
+            //     array: [
+            //         {
+            //             transferMovesGroups: dataMovementByTransferDetail
+            //         }
+            //     ],
+            //     meta: {
+            //         total: dataMovementByTransferDetail.length,
+            //     }
+            // })
             return dataMovementByTransfer
         }else {
             throw new Error("Los datos contienen campos vacíos o valores inválidos");

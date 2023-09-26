@@ -122,31 +122,32 @@ export function useTransferAreaCrudPage() {
     }); 
 
     const handleTransfer = (transferData) => {
-        createTransfer(transferData).then(response => {
-          if (response.operation.code === EResponseCodes.OK) {
-            setMessage({
-              title: "Trasladar",
-              description: "¡Se han realizado los traslados correctamente en el sistema!",
-              show: true,
-              OkTitle: "Aceptar",
-              onOk: () => {
-                cleanTransferContext({ setAddTransferData, setDetailTransferData })
-                setMessage({});
-                navigate(-1);
-              },
-            });
-          }
-        }).catch((error) => {
-          setMessage({
-            title: "Trasladar",
-            description: error,
-            show: true,
-            OkTitle: "Aceptar",
-            onOk: () => {
-              setMessage({});
-            },
-          });
-        });
+        console.log("🚀 transferData:", transferData)
+        // createTransfer(transferData).then(response => {
+        //   if (response.operation.code === EResponseCodes.OK) {
+        //     setMessage({
+        //       title: "Trasladar",
+        //       description: "¡Se han realizado los traslados correctamente en el sistema!",
+        //       show: true,
+        //       OkTitle: "Aceptar",
+        //       onOk: () => {
+        //         cleanTransferContext({ setAddTransferData, setDetailTransferData })
+        //         setMessage({});
+        //         navigate(-1);
+        //       },
+        //     });
+        //   }
+        // }).catch((error) => {
+        //   setMessage({
+        //     title: "Trasladar",
+        //     description: error,
+        //     show: true,
+        //     OkTitle: "Aceptar",
+        //     onOk: () => {
+        //       setMessage({});
+        //     },
+        //   });
+        // });
     };
       
 
@@ -177,6 +178,7 @@ export function useTransferAreaCrudPage() {
         {
             icon: "Detail",
             onClick: (row) => {
+            console.log("🚀 useTransferAreaCrudPage ~ row:", row)
 
                 const rows = row?.transferMovesGroups.map((item) => {
                     const totalProjectSum = item.data.filter(item => item.type === "Origen").reduce((acc, item) => acc + item.value, 0);
