@@ -2,28 +2,37 @@ import React, { useContext, useEffect, useState } from "react";
 import { useForm, useFieldArray } from 'react-hook-form';
 /* import { IAdditionsForm } from "../interfaces/Additions"; */
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
-import { fundsAdditionalValidation } from "../../../common/schemas";
+import { projectOperationCrudValidator } from "../../../common/schemas";
 import { AppContext } from "../../../common/contexts/app.context";
 import { IArrayDataSelect, IMessage } from "../../../common/interfaces/global.interface";
-/* import { useAdditionsTransfersService } from "./additions-transfers-service.hook"; */
-import { EResponseCodes } from "../../../common/constants/api.enum";
 import { useNavigate } from "react-router-dom";
 import { IProjectOperation } from "../interface/ProjectOperation";
+import { useProjectOperationService } from "./project-operation-service.hook";
 
 
-export function useProjectOperationCrud() {
+export function useProjectOperationCrud(exerciseSt:number) {
 
-  const resolver = useYupValidationResolver(fundsAdditionalValidation);
+  const dateToday = new Date()
+
+  const resolver = useYupValidationResolver(projectOperationCrudValidator);
   const { setMessage } = useContext(AppContext);
-  
-  const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
-    functionalArea: [],
-    areas: [],
-    funds: [],
-    posPre: []
-  })
+
+  const { createProjectOperation } = useProjectOperationService()
+
   const navigate = useNavigate();
-  const [invalidCardsAdditionSt, setInvalidCardsAdditionSt] = useState([])
+
+  const actualFullYear = dateToday.getFullYear();
+  let dateFromDefault = `${exerciseSt ?? actualFullYear}-01-01`
+  let dateToDefault = `${exerciseSt ?? actualFullYear}-12-31`
+
+  const [dateFromDefaultSt, setDateFromDefaultSt] = useState(dateFromDefault)
+  const [dateToDefaultSt, setDateToDefaultSt] = useState(dateToDefault)
+
+  useEffect(() => {
+    setDateFromDefaultSt(`${exerciseSt ?? actualFullYear}-01-01`)
+    setDateToDefaultSt(`${exerciseSt ?? actualFullYear}-12-31`)
+  }, [exerciseSt])
+  
 
   const {
     handleSubmit,
@@ -36,18 +45,27 @@ export function useProjectOperationCrud() {
     getFieldState,
   } = useForm<IProjectOperation>({
     defaultValues: {
-      ingreso: [],
-      gasto: [],
-      actAdministrativeDistrict: '',
-      actAdministrativeSapiencia: ''
+      id: null,
+      entityId: 1,
+      number: '1',
+      name: undefined,
+      isActivated: 0,
+      exercise: dateToday.getFullYear(),
+      dateFrom: dateFromDefault,
+      dateTo: dateToDefault,
+      budgetValue: null,
+      assignmentValue: null,
+      userModify: '',
+      dateModify: '',
+      userCreate: '',
+      dateCreate: '',
     },
     mode: 'onSubmit',
     resolver,
   });
 
   const validateButton = (values) => { return Object.values(values).every(campo => campo !== null && campo !== undefined && campo !== '') }
-  const fullFields = validateButton(defaultValues);
-
+ 
   // Effect que activa el watch que detecta los cambios en todo el form
   React.useEffect(() => {
     const subscription = watch(() => { });
@@ -55,22 +73,78 @@ export function useProjectOperationCrud() {
   }, [watch]);
 
   const onSubmitTab = handleSubmit(async (data: IProjectOperation) => {
+    data.userCreate="Usuario"
 
+      showModal({
+        //type?: EResponseCodes;
+        title: "Guardar",
+        description: "¿Está segur@ de guardar proyecto?",
+        show: true,
+        OkTitle: "Aceptar",
+        cancelTitle: "Cancelar",
+        onOk: () => {
+          setMessage({})
+          messageConfirmSave(data)
+        },
+        onCancel: () => {
+          setMessage({})
+          onCancelNew()
+        },
+        // onClickOutClose?: boolean;
+        onClose: () => {
+          setMessage({})
+          onCancelNew()
+        },
+        background: true
+      })
+
+  
   });
 
 
-  const messageConfirmSave = async (addition: any, resValidate: any) => {
-    showModal({
-      //type?: EResponseCodes;
-      title: "Guardado",
-      description: "message",
-      show: true,
-      OkTitle: "Aceptar",
-      onOk: () => {
-        setMessage({})
-        onCancelNew()
-      }
-    })
+  const messageConfirmSave = async (data: any) => {
+    
+    const response = await createProjectOperation(data)
+    console.log({response})
+    if(response.operation.code=="OK" && !Object(response).data.data.errno){
+
+      showModal({
+        //type?: EResponseCodes;
+        title: "Guardado",
+        description: response.operation.message,
+        show: true,
+        OkTitle: "Aceptar",
+        onOk: () => {
+          setMessage({})
+          onCancelNew()
+        }
+      })
+
+    }else if(response.operation.code=="OK" && Object(response).data.data.errno==1062){
+      showModal({
+        //type?: EResponseCodes;
+        title: "Validación de datos",
+        description: "El proyecto ya existe",
+        show: true,
+        OkTitle: "Aceptar",
+        onOk: () => {
+          setMessage({})
+          onCancelNew()
+        }
+      })
+    }else{
+      showModal({
+        //type?: EResponseCodes;
+        title: "Validación de datos",
+        description: "Se generó un error inesperado, comuníquese con el administrador o intente mas tarde!",
+        show: true,
+        OkTitle: "Aceptar",
+        onOk: () => {
+          setMessage({})
+          onCancelNew()
+        }
+      }) 
+    }    
   }
 
   const onCancelNew = () => {
@@ -89,14 +163,13 @@ export function useProjectOperationCrud() {
     });
   };
 
-  
-  
-  const [isAllowSave, setIsAllowSave] = useState(false)
-  
+
+
+  const [isAllowSave, setIsAllowSave] = useState(true)
+
 
   return {
     control,
-    arrayDataSelect,
     errors,
     register,
     watch,
@@ -104,8 +177,10 @@ export function useProjectOperationCrud() {
     showModal,
     setMessage,
     getValues,
-    invalidCardsAdditionSt,
     setValue,
-    isAllowSave
+    isAllowSave,
+    dateFromDefaultSt,
+    dateToDefaultSt,
+    actualFullYear
   };
 }

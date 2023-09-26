@@ -134,14 +134,14 @@ function ProjectsOperationsPage(props: IAppProps): React.JSX.Element {
             !isVisibleTable ? "card-form isVisible" : "card-form isNotVisible"
           }
         >
-          <TableComponent
+          {/* <TableComponent
             ref={tableComponentRef}
             url={`${process.env.urlApiFinancial}/api/v1/funds/get-paginated`}
             columns={tableColumns}
             actions={tableActions}
             isShowModal={true}
             titleMessageModalNoResult={"Detalles del proyecto"}
-          />
+          /> */}
         </div>
       </div>
     </div>
