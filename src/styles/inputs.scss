@@ -13,7 +13,6 @@
   &column {
     @include generate-flex-container(column, null, null, null, null, 8px);
   }
-
   .error-message {
     font-size: 0.7rem;
     color: $alert-failed-color;
@@ -197,11 +196,12 @@
     15px
   );
   place-items: center;
+  
 
   &:focus {
     outline: none;
   }
-
+  
   &.error {
     border: 1px solid $alert-failed-color;
   }
@@ -224,6 +224,7 @@
   &.large {
     height: 3em;
   }
+
 }
 
 .select-basic-black {

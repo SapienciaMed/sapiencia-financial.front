@@ -36,7 +36,6 @@ function App() {
               <Route path={"/*"} element={<Home/>} />
 
               <Route path={"/gestion-financiera/presupuesto/*"} element={<FunctionalityRoutes/>} />
-
               <Route path={"/gestion-financiera/centro-gestor/*"} element={<ManagementCenterRoutes/>} />
 
               <Route path={"/gestion-financiera/ruta-presupuestal"} element={<BudgetRoutes/>} />
