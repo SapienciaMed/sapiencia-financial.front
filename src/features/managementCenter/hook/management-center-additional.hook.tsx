@@ -35,7 +35,7 @@ export function useManagementCenterAdditional( typeMovement:string ){
         },
         {
             fieldName: "additionMove",
-            header: "Total adición",
+            header: typeMovement === 'Adicion' ? "Total adición" : typeMovement === 'Disminucion' ? "Total disminución" : "",
             renderCell: (row) => {
                 const { totalIncome, totalSpends } = row.additionMove.reduce(
                     (totals, move) => {
