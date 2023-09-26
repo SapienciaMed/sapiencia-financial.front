@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ButtonComponent, FormComponent, InputComponent, SelectComponent } from '../../../common/components/Form';
 import { BiPlusCircle } from 'react-icons/bi';
 import TableComponent from '../../../common/components/table.component';
@@ -6,22 +6,24 @@ import { useManagementCenterAdditional } from '../hook/management-center-additio
 import { EDirection } from '../../../common/constants/input.enum';
 import { Controller } from 'react-hook-form';
 
-function ManagementCenterAdditionalPage(): React.JSX.Element{
+function ManagementCenterAdditionalPage({typeMovement}): React.JSX.Element{   
 
     const { errors, controlRegister, isBtnDisable, tableComponentRef, showTable, tableActions, tableColumns, 
-        reset, onSubmit, navigate, setShowTable, register } = useManagementCenterAdditional()
+        reset, onSubmit, navigate, setShowTable, register } = useManagementCenterAdditional(typeMovement)        
 
     return (
         <div className='main-page'>
             <div className='card-table'>
-                <div className="title-area">
-                    <div className="text-black extra-large bold">Adición</div>
+                <div className="title-area">                    
+                    <div className="text-black extra-large bold">{typeMovement === "Adicion" ? "Adición" : "Disminución"}</div>                    
                 </div>
                 <FormComponent action={onSubmit} >
                     <div className="card-form">
                         <div className="title-area"> 
-                            <label className="text-black biggest bold"> Consultar adición </label>
-                            <div className="title-button text-three large" onClick={() => { navigate('./create') }}> Crear adición <BiPlusCircle/> </div>
+                            <label className="text-black biggest bold"> {typeMovement === "Adicion" ? "Consultar adición" : "Consultar disminución"}  </label>
+                            <div className="title-button text-three large" onClick={() => { navigate('./create') }}>  
+                                Crear {typeMovement === "Adicion" ? "Adición" : "Disminución"} <BiPlusCircle/> 
+                            </div>
                         </div>
                         
                         <div className="funcionality-filters-container">
@@ -103,7 +105,8 @@ function ManagementCenterAdditionalPage(): React.JSX.Element{
                                 columns={tableColumns}
                                 actions={tableActions}
                                 isShowModal={true}
-                                titleMessageModalNoResult='Adición'
+                                {...(typeMovement === "Adicion" ? { titleMessageModalNoResult: 'Adición' } : { titleMessageModalNoResult: 'Disminución' })}
+                                
                             />
                         </div>
                 }
