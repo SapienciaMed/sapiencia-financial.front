@@ -3,6 +3,8 @@ import { Route, Routes } from "react-router-dom";
 
 
 export const FunctionalityRoutes = () => {
+    const ProjectsOperationsPage =  lazy(() => import("../project-operation/pages/projects-operations.page"));
+    const ProjectsOperationsCrud = lazy(() => import("../project-operation/pages/project-operation-crud.page"));
     
     const FoundsPage =  lazy(() => import("./pages/funds.page"));
     const FundsCrud = lazy(() => import("./pages/funds-crud.page"));
@@ -20,6 +22,12 @@ export const FunctionalityRoutes = () => {
 
   return (
     <Routes>
+
+
+        <Route path={"/proyecto-funcionamiento"} element={<ProjectsOperationsPage/>} />
+        <Route path={"/proyecto-funcionamiento/create"} element={<ProjectsOperationsCrud action="new"/>} />
+        <Route path={"/proyecto-funcionamiento/edit/:id"} element={<ProjectsOperationsCrud action="edit"/>} />
+        
         <Route path={"/fondos"} element={<FoundsPage/>} />
         <Route path={"/fondos/create"} element={<FundsCrud action="new"/>} />
         <Route path={"/fondos/edit/:id"} element={<FundsCrud action="edit"/>} />
