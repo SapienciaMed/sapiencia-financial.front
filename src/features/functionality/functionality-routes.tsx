@@ -9,8 +9,8 @@ export const FunctionalityRoutes = () => {
     const FoundsPage =  lazy(() => import("./pages/funds.page"));
     const FundsCrud = lazy(() => import("./pages/funds-crud.page"));
     
-    const BudgetsPage = lazy(() => import("./pages/budgets.page"))
-    const BudgetsCrud = lazy(()  => import("./pages/budgets-crud.page"));
+    const BudgetsPage = lazy(() => import("./budgetPosition/pages/budgets.page"))
+    const BudgetsCrud = lazy(()  => import("./budgetPosition/pages/budgets-crud.page"));
     
     const Link = lazy(()  => import("./pages/link.page"));
     const ProjectsLinkPage = lazy(()  => import("./pages/projects-link.page"));
@@ -18,7 +18,7 @@ export const FunctionalityRoutes = () => {
     const FunctionalAreaPage = lazy(() => import ("./pages/functional-area.page"));
 
     const PosPreSapienciaForm = lazy(()  => import("./pages/pospre-sapiencia-crud.page"));
-    const BudgetsView = lazy(()  => import("./pages/budgets-view.page"));
+    const BudgetsView = lazy(()  => import("./budgetPosition/pages/budgets-view.page"));
 
   return (
     <Routes>

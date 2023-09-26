@@ -1,6 +1,6 @@
-import useCrudService from "../../../common/hooks/crud-service.hook";
-import { ApiResponse } from "../../../common/utils/api-response";
-import { IBudgets } from "../interfaces/Budgets";
+import useCrudService from "../../../../common/hooks/crud-service.hook";
+import { ApiResponse } from "../../../../common/utils/api-response";
+import { IBudgets } from "../../interfaces/Budgets";
 
 
 export function useBudgetsService() {

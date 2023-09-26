@@ -319,6 +319,10 @@ div[id="single-spa-application:@sapiencia/financial"] {
   color: #b1b1b1;
 }
 
+.no-box-shadow{
+  box-shadow: none;
+}
+
 @media (min-width: 1024px) {
   div[id="single-spa-application:@sapiencia/financial"] {
     width: initial;

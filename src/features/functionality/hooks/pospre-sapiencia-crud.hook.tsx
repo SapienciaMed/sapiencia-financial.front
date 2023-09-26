@@ -4,7 +4,7 @@ import useYupValidationResolver from "../../../common/hooks/form-validator.hook"
 import { pospreSapienciaCrudValidator } from "../../../common/schemas";
 import { useContext, useEffect } from "react";
 import { usePosPreSapienciaService } from "./pospre-sapiencia-service.hook";
-import { useBudgetsService } from "./budgets-service.hook";
+import { useBudgetsService } from "../budgetPosition/hooks/budgets-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import { AppContext } from "../../../common/contexts/app.context";
 import { IPosPreSapiencia } from "../interfaces/PosPreSapiencia";

@@ -18,7 +18,7 @@ export function useVinculationMGAData(pospre: string) {
     const navigate = useNavigate();
     const [lastMove,setLastMove] = useState([]);
     const tableComponentRef = useRef(null);
-    const {CreateVinculation,DeleteVinculation} = useVinculationService();
+    const { CreateVinculation, DeleteVinculation } = useVinculationService();
     const resolver = useYupValidationResolver(vinculationValidator);
     const { setMessage } = useContext(AppContext);
     const [activitiesLink, setActivitiesLink] = useState<number[]>([]);
@@ -101,19 +101,19 @@ export function useVinculationMGAData(pospre: string) {
 
     const tableColumnsEdit: ITableElement<IActivityMGA>[] = [
         {
-            fieldName: "id",
+            fieldName: "consecutiveActivityDetailed",
             header: "Codigo",
         },
         {
-            fieldName: "unit",
+            fieldName: "measurementActivityDetailed",
             header: "Unidad de medida"
         },
         {
-            fieldName: "quantity",
+            fieldName: "amountActivityDetailed",
             header: "Cantidad"
         },
         {
-            fieldName: "cost",
+            fieldName: "totalCostActivityDetailed",
             header: "Costo"
         },
     ];
@@ -168,14 +168,17 @@ export function useVinculationMGAData(pospre: string) {
         if (tableComponentRef.current) {
             tableComponentRef.current.loadData(searchCriteria);
         }
-    }
+    }   
+
+    useEffect(() => {
+        if(Number(pospre)) loadTableData( { budgetId: Number(pospre), active:true} );
+    }, [pospre])
 
     const onNew = () => {
         navigate("./../../../");
     };
 
     async function vinculateActivities(message?:boolean):Promise<void> {
-
         let status = true;
         if(activitiesUnLink){
             const res = await DeleteVinculation(Number(pospre),activitiesUnLink);
@@ -246,5 +249,5 @@ export function useVinculationMGAData(pospre: string) {
     },[inputValue])
 
     return { register, reset, errors, tableComponentRef, tableColumns, showTable, control, onSubmit, isBtnDisable,
-        tableActions,tableColumnsEdit, setShowTable, vinculateActivities,loadTableData }
+        tableActions,tableColumnsEdit, setShowTable, vinculateActivities, loadTableData }
 } 

@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import TabListComponent from '../../../common/components/tab-list.component';
 import { ITabsMenuTemplate } from '../../../common/interfaces/tabs-menu.interface';
 import FoundsPage from './funds.page';
-import BudgetsPage from './budgets.page';
+import BudgetsPage from '../budgetPosition/pages/budgets.page';
 import FunctionalAreaPage from './functional-area.page';
 import React from 'react';
 

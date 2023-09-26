@@ -1,23 +1,27 @@
 import React from "react";
-import { useVinculationMGAData } from "../hooks/vinculation-mga.hook";
+import { useVinculationMGAData } from "../../hooks/vinculation-mga.hook";
 import {
   ButtonComponent,
   FormComponent,
   InputComponent,
   SelectComponent,
-} from "../../../common/components/Form";
-import { EDirection } from "../../../common/constants/input.enum";
+} from "../../../../common/components/Form";
+import { EDirection } from "../../../../common/constants/input.enum";
 import { useBudgetsCrudData } from "../hooks/budgets-crud.hook";
 import { useParams, useNavigate } from "react-router-dom";
-import TableComponent from "../../../common/components/table.component";
+import TableComponent from "../../../../common/components/table.component";
+import TabBudgetView from "./tab-budget-view";
+import BudgetViewPage from "./budget-view.page";
 
 
 function BudgetsForm() {
   const navigate = useNavigate();
   const { id: budgetsId } = useParams();
-  const { tableComponentRef, tableColumnsEdit, tableActions,loadTableData, vinculateActivities } =
-    useVinculationMGAData(budgetsId);
-  const { register, errors, entitiesData, controlRegister} = useBudgetsCrudData(budgetsId,vinculateActivities,loadTableData);
+  //TODO: Eliminar?
+  const { vinculateActivities } = useVinculationMGAData(budgetsId);
+
+  const { register, errors, entitiesData, controlRegister} = useBudgetsCrudData( budgetsId, vinculateActivities );
+
   return (
     <div className="crud-page full-height">
       <div className="main-page full-height">
@@ -33,7 +37,7 @@ function BudgetsForm() {
             className="funds-form"
             id="budgets-form"
           >
-            <div className="card-form">
+            <div className="card-form no-box-shadow">
               <div className="fund-data-container">
                 <InputComponent
                   idInput="number"
@@ -70,7 +74,7 @@ function BudgetsForm() {
                 />
               </div>
             </div>
-            <div className="card-form">
+            <div className="card-form no-box-shadow">
               <div className="title-area">
                 <div className="text-black biggest bold">Datos básicos</div>
               </div>
@@ -97,17 +101,9 @@ function BudgetsForm() {
                 />
               </div>
             </div>
-                <div>
-                  <div className="card-form">
-                    <TableComponent
-                      ref={tableComponentRef}
-                      url={`${process.env.urlApiFinancial}/api/v1/vinculation-mga/get-paginated`}
-                      columns={tableColumnsEdit}
-                      actions={tableActions}
-                      isShowModal={false}
-                    />
-                  </div>
-                </div>
+
+            <BudgetViewPage/>
+
           </FormComponent>
         </div>
         <div className="container-button-bot">

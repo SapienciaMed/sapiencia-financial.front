@@ -1,15 +1,15 @@
 import React from "react";
-import { useVinculationMGAData } from "../hooks/vinculation-mga.hook";
+import { useVinculationMGAData } from "../../hooks/vinculation-mga.hook";
 import {
   ButtonComponent,
   FormComponent,
   InputComponent,
   SelectComponent,
-} from "../../../common/components/Form";
-import { EDirection } from "../../../common/constants/input.enum";
+} from "../../../../common/components/Form";
+import { EDirection } from "../../../../common/constants/input.enum";
 import { useBudgetsCrudData } from "../hooks/budgets-crud.hook";
 import { useParams } from "react-router-dom";
-import TableComponent from "../../../common/components/table.component";
+import TableComponent from "../../../../common/components/table.component";
 import { Controller } from "react-hook-form";
 
 interface IAppProps {
@@ -24,7 +24,6 @@ function BudgetsForm({ action }: IAppProps) {
     tableColumns,
     tableActions,
     vinculateActivities,
-    loadTableData,
   } = useVinculationMGAData(budgetsId);
   const {
     register,
@@ -36,7 +35,8 @@ function BudgetsForm({ action }: IAppProps) {
     onCancelNew,
     onCancelEdit,
     controlRegister,
-  } = useBudgetsCrudData(budgetsId, vinculateActivities, loadTableData);
+  } = useBudgetsCrudData(budgetsId, vinculateActivities);
+  
   return (
     <div className="crud-page full-height">
       <div className="main-page full-height">

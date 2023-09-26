@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
+import { ITableAction, ITableElement } from "../../../../common/interfaces/table.interfaces";
 import { useForm } from "react-hook-form";
-import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
-import { fundsValidator } from "../../../common/schemas";
-import { IBudgets } from "../interfaces/Budgets";
-import { budgetsValidator } from "../../../common/schemas/budgets-schemas";
+import useYupValidationResolver from "../../../../common/hooks/form-validator.hook";
+import { fundsValidator } from "../../../../common/schemas";
+import { IBudgets } from "../../interfaces/Budgets";
+import { budgetsValidator } from "../../../../common/schemas/budgets-schemas";
 
 interface IFilterBudgets {
     number: string
@@ -21,13 +21,13 @@ export function useBudgetsData() {
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
     
     const {
-    handleSubmit,
-    register,
-    formState: { errors },
-    control: controlRegister,
-    reset,
-    watch
-  } = useForm<IFilterBudgets>({ resolver });
+        handleSubmit,
+        register,
+        formState: { errors },
+        control: controlRegister,
+        reset,
+        watch
+    } = useForm<IFilterBudgets>({ resolver });
 
     const inputValue =  watch(['number'])
 
@@ -93,7 +93,7 @@ export function useBudgetsData() {
 
     useEffect(() => {
         loadTableData();
-    }, [])
+    },[])
 
     useEffect(() => {
         setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
