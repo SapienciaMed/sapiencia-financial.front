@@ -83,7 +83,7 @@ function AdditionAreaCrud({ actionForm, typeMovement }: IAppProps) {
                 action={() => {
                   showModal({
                     title: "Cancelar",
-                    description: "¿Está segur@ que desea cancelar la adición?",
+                    description: "¿Está segur@ que desea cancelar la información en el sistema?",
                     show: true,
                     OkTitle: "Aceptar",
                     onOk: () => {
