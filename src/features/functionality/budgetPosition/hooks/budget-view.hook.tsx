@@ -3,11 +3,11 @@ import { ITabsMenuTemplate } from "../../../../common/interfaces/tabs-menu.inter
 import ViewVinculationMGA from "../pages/view-vinculation-mga";
 import ViewPospreSapiencia from "../pages/view-pospre-sapiencia";
 
-export function useBudgetView(idBudget: string, option: string, budgetsData: string) {
+export function useBudgetView(idBudget: string, option: string ) {
    
     const tabs: ITabsMenuTemplate[] = [
         { id: "vinculacion-mga", title: "Vinculación MGA", content: <ViewVinculationMGA/>, action: () => {}},
-        { id: "pospre-sapiencia", title: "Pospre sapiencia", content: <ViewPospreSapiencia budgetsData={budgetsData}/>, action: () => {} },
+        { id: "pospre-sapiencia", title: "Pospre sapiencia", content: <ViewPospreSapiencia/>, action: () => {} },
     ];
     const start = tabs.find((tab) => tab.id.toString().toLowerCase() === option?.toLowerCase());
     return {
