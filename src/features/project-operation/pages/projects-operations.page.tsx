@@ -6,6 +6,8 @@ import { EDirection } from "../../../common/constants/input.enum";
 import React from "react";
 import { Controller } from "react-hook-form";
 import { useFundsData } from "../../functionality/hooks/funds.hook";
+import { useDataProjectOperation } from "../hook/data-project-operation.hook";
+import { BiPlusCircle } from "react-icons/bi";
 
 interface IAppProps { }
 
@@ -24,124 +26,30 @@ function ProjectsOperationsPage(props: IAppProps): React.JSX.Element {
     isVisibleTable,
     setIsVisibleTable,
     isBtnDisable
-  } = useFundsData();
+  } = useDataProjectOperation();
 
   return (
     <div className='main-page'>
       <div className='card-table'>
         <div className="title-area">
           <div className="text-black extra-large bold">Consultar proyecto</div>
+          <div style={{ marginTop: '30px' }} className="title-button text-three large" onClick={() => navigate('./create')}> Crear proyecto <BiPlusCircle /> </div>
         </div>
-        <div
-          className="title-button text-main biggest"
-          onClick={() => {
-            navigate("./create");
-          }}
-        >
-          Crear proyecto <AiOutlinePlusCircle />
-        </div>
-        {/* <FormComponent action={onSubmit}>
-          <div className="card-form">
-            <div className="title-area">
-              <label className="text-black biggest bold">Consultar Proyecto funcionamiento</label>
 
-              <div
-                className="title-button text-main biggest"
-                onClick={() => {
-                  navigate("./create");
-                }}
-              >
-                Crear proyecto <AiOutlinePlusCircle />
-              </div>
-            </div>
-            <div className="funcionality-filters-container">
-              <SelectComponent
-                idInput="entity"
-                className="select-basic"
-                errors={errors}
-                label="Entidad CP"
-                classNameLabel="text-black biggest bold"
-                direction={EDirection.column}
-                data={entitiesData}
-                control={controlRegister}
-              />
-              <Controller
-                control={controlRegister}
-                name={"number"}
-                defaultValue=''
-                render={({ field }) => {
-                  return (
-                    <InputComponent
-                      id={field.name}
-                      idInput={field.name}
-                      value={`${field.value}`}
-                      className="input-basic"
-                      typeInput="number"
-                      register={register}
-                      label="Fondos"
-                      classNameLabel="text-black biggest bold"
-                      direction={EDirection.column}
-                      errors={errors}
-                      onChange={field.onChange}
-                      min={0}
-                    /> 
-                  )
-                }}
-              />
-              <DatePickerComponent
-                idInput="dateFrom"
-                control={controlRegister}
-                label={"Validez de"}
-                errors={errors}
-                classNameLabel="text-black biggest bold"
-                className="dataPicker-basic"
-                placeholder="DD/MM/YYYY"
-                dateFormat="dd/mm/yy"
-              />
-              <DatePickerComponent
-                idInput="dateTo"
-                control={controlRegister}
-                label={"Validez a"}
-                errors={errors}
-                classNameLabel="text-black biggest bold"
-                className="dataPicker-basic"
-                placeholder="DD/MM/YYYY"
-                dateFormat="dd/mm/yy"
-              />
-            </div>
-          </div>
-          <div className="funcionality-buttons-container">
-            <span
-              className="bold text-center button"
-              onClick={() => {
-                reset();
-                tableComponentRef.current.emptyData();
-                setIsVisibleTable(false);
-              }}
-            >
-              Limpiar campos
-            </span>
-            <ButtonComponent
-              className="button-main huge hover-three"
-              value="Buscar"
-              type="submit"
-              disabled={!isBtnDisable}
-            />
-          </div>
-        </FormComponent> */}
         <div
           className={
-            !isVisibleTable ? "card-form isVisible" : "card-form isNotVisible"
+            !isVisibleTable ? "card-user isVisible" : "card-user isNotVisible"
           }
         >
-          {/* <TableComponent
+          <TableComponent
             ref={tableComponentRef}
-            url={`${process.env.urlApiFinancial}/api/v1/funds/get-paginated`}
+            url={`${process.env.urlApiFinancial}/api/v1/projectOperation/get-paginated`}
             columns={tableColumns}
             actions={tableActions}
             isShowModal={true}
-            titleMessageModalNoResult={"Detalles del proyecto"}
-          /> */}
+            titleMessageModalNoResult={"No se encontraron registros"}
+            secondaryTitle="Detalles del proyecto"
+          />
         </div>
       </div>
     </div>
