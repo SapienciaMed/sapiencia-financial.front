@@ -92,6 +92,16 @@ export interface IBudgetRoute {
   pospreSapiencia:      IBudget;
   fund:                 IBudget;
   projectVinculation:   ProjectVinculation;
+
+
+  managerCenter?: string;
+  projectId?: string;
+  projectName?:string;
+  functionalArea?: string;
+  funds?: string;
+  posPre?: string;
+  value?: string;
+  cardId?:string;
 }
 
 export interface IBudget {

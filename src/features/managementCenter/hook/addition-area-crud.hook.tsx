@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useForm, useFieldArray } from 'react-hook-form';
-import { IAdditionsForm, IData } from "../interfaces/Additions";
+import { IAdditionsForm, IAdditionsMovements, IBudgetRoute, IData, IIncome } from "../interfaces/Additions";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { fundsAdditionalValidation } from "../../../common/schemas";
 import { AppContext } from "../../../common/contexts/app.context";
@@ -367,7 +367,7 @@ export function useAdditionAreaCrud(tabId: string,typeMovement:string,idMovement
       showAdition(idMovement).then((response) => {
             if (response.operation.code === EResponseCodes.OK) {
                 setAditionData(response.data);
-               //console.log(response)
+               
             }
         });
     }
@@ -376,11 +376,13 @@ export function useAdditionAreaCrud(tabId: string,typeMovement:string,idMovement
 
 useEffect(() => {
   if (aditionData) {   
-      //console.log('Datos', aditionData?.head[0]?.actAdminDistrict);
-      console.log('Datos', aditionData?.details[0]?.additionId);
+      console.log('Datos', aditionData?.details[0].budgetRoute.managementCenter);
+      
 
       setValue("actAdministrativeDistrict", aditionData?.head[0]?.actAdminDistrict);
       setValue("actAdministrativeSapiencia", aditionData?.head[0]?.actAdminSapiencia);
+      setValue(`managerCenter` as any, aditionData?.details[0].budgetRoute.managementCenter);
+
   } 
 }, [aditionData]);
 
