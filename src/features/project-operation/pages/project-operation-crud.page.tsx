@@ -25,7 +25,7 @@ function ProjectOperationCrud({ action }: IAppProps) {
   const [isModifyDateTo, setIsModifyDateTo] = useState(false)
 
   const [dateFromDefaultStValidateDate, setDateFromDefaultStValidateDate] = useState(dateFromDefaultSt)
-  const [dateToDefaultStValidateDate, setDateToDefaultStValidateDate] = useState(dateFromDefaultSt)
+  const [dateToDefaultStValidateDate, setDateToDefaultStValidateDate] = useState(dateToDefaultSt)
   
   useEffect(() => {
     setIsModifyDateFrom(true)
@@ -112,7 +112,6 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 fieldArray={true}
                 errors={errors}
               />
-
 
               <InputComponent
                 idInput="dateFrom"

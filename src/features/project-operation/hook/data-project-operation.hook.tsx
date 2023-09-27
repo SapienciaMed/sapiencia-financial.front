@@ -39,7 +39,7 @@ export function useDataProjectOperation() {
 
     const tableColumns: ITableElement<IProjectOperation>[] = [
         {
-            fieldName: "entityId",
+            fieldName: "entity.name",
             header: "Entidad CP",
         },
         {
