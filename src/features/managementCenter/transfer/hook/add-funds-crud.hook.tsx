@@ -10,7 +10,7 @@ import { AppContext } from "../../../../common/contexts/app.context";
 import { useNavigate } from 'react-router-dom';
 import { useTypesTranfersService } from './types-transfers-service.hook';
 import { transformJSONArrays, filterElementsMeetConditions, identifyInvalidcardTransfers, 
-  cleanTransferContext, isTotalSame, get_total_value } from '../../../../common/utils/';
+  cleanTransferContext, get_total_value } from '../../../../common/utils/';
 import { handleCommonError } from '../../../../common/utils/handle-common-error';
 
 export function useAddFundsCrud() {
@@ -154,7 +154,7 @@ export function useAddFundsCrud() {
   }, [arrayDataSelect])
 
   const onSubmitTab = handleSubmit(async (data: ICreateSourceForm) => {
-    
+
     if (data.destino.length == 0 || data.origen.length == 0) {
       setMessage({
         title: "Validación de datos",
@@ -169,23 +169,7 @@ export function useAddFundsCrud() {
       return;
     }
 
-    if (dataPasteRedux.length > 0) {
-      if (!isTotalSame(dataPasteRedux)) {
-        setMessage({
-          title: "Validación de datos",
-          description: "Se ha encontrado un error en los datos, los valores son diferentes",
-          show: true,
-          OkTitle: "Aceptar",
-          onOk: () => {
-            setMessage({});
-          },
-          background: true
-        })
-
-        return
-      }
-    }
-    else if (!get_total_value(data)) {
+    if (!get_total_value(data)) {
       setMessage({
         title: "Validación de datos",
         description: "Se ha encontrado un error en los datos, los valores son diferentes",
@@ -207,7 +191,7 @@ export function useAddFundsCrud() {
         const matchingItem = resultado.find(result => (
           result.managerCenter == item.managerCenter &&
           result.typeTransfer == item.type &&
-          result.value == String(item.value) && 
+          // result.value == String(item.value) && 
           result.projectId == String(item.projectId) && 
           result.funds == String(item.fundId) && 
           result.posPre == String(item.budgetPosition) 
@@ -225,9 +209,7 @@ export function useAddFundsCrud() {
     }
 
     const transferDataToSave = dataPasteRedux.length > 0 ? compararYCombinar( manualTranferMovement, addTransferData.array[0] ): manualTranferMovement;
-    console.log("🚀 transferDataToSave:", transferDataToSave)
-    
-    console.log("🚀  ~ arrayDataSelect:", arrayDataSelect)
+
     transferDataToSave && validateCreateTransfer(transferDataToSave).then((response: any) => {
       if (response.operation.code === EResponseCodes.OK) {
         setMessage({
@@ -247,7 +229,7 @@ export function useAddFundsCrud() {
               array: [
                 {
                   headTransfer: headTransferData,
-                  transferMovesGroups: filterElementsMeetConditions(arrayDataSelect, data)
+                  transferMovesGroups: filterElementsMeetConditions(arrayDataSelect, transferDataToSave.transferMovesGroups)
                 }
               ],
               meta: {
@@ -270,7 +252,7 @@ export function useAddFundsCrud() {
               array: [
                 {
                   headTransfer: headTransferData,
-                  transferMovesGroups: filterElementsMeetConditions(arrayDataSelect, data)
+                  transferMovesGroups: filterElementsMeetConditions(arrayDataSelect, transferDataToSave.transferMovesGroups)
                 }
               ],
               meta: {
@@ -358,9 +340,8 @@ export function useAddFundsCrud() {
           data: group.data.reduce((acc, item) => {
             // Buscar el objeto correspondiente en manualTranferMovement por idCard
             const match = manualTranferMovement.transferMovesGroups[0].data.find(
-              (manualItem) => manualItem.idCard === item.idCard
+              (manualItem) => manualItem.idCard == item.idCard
             );
-
             // Si se encuentra una coincidencia, combinar los datos
             if (match) {
               acc.push({
@@ -378,7 +359,6 @@ export function useAddFundsCrud() {
         };
       }).filter((group) => group.data.length > 0)
     } 
-
     return resultado;
   }
 

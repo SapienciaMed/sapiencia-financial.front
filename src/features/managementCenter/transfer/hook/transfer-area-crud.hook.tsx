@@ -34,6 +34,7 @@ export function useTransferAreaCrudPage() {
 
     const navigate = useNavigate();
     const { setMessage, setHeadTransferData, setAddTransferData, setDetailTransferData, authorization, addTransferData, detailTransferData } = useContext(AppContext);
+
     const { createTransfer } = useTypesTranfersService()
 
     const {
@@ -122,32 +123,31 @@ export function useTransferAreaCrudPage() {
     }); 
 
     const handleTransfer = (transferData) => {
-        console.log("🚀 transferData:", transferData)
-        // createTransfer(transferData).then(response => {
-        //   if (response.operation.code === EResponseCodes.OK) {
-        //     setMessage({
-        //       title: "Trasladar",
-        //       description: "¡Se han realizado los traslados correctamente en el sistema!",
-        //       show: true,
-        //       OkTitle: "Aceptar",
-        //       onOk: () => {
-        //         cleanTransferContext({ setAddTransferData, setDetailTransferData })
-        //         setMessage({});
-        //         navigate(-1);
-        //       },
-        //     });
-        //   }
-        // }).catch((error) => {
-        //   setMessage({
-        //     title: "Trasladar",
-        //     description: error,
-        //     show: true,
-        //     OkTitle: "Aceptar",
-        //     onOk: () => {
-        //       setMessage({});
-        //     },
-        //   });
-        // });
+        createTransfer(transferData).then(response => {
+          if (response.operation.code === EResponseCodes.OK) {
+            setMessage({
+              title: "Trasladar",
+              description: "¡Se han realizado los traslados correctamente en el sistema!",
+              show: true,
+              OkTitle: "Aceptar",
+              onOk: () => {
+                cleanTransferContext({ setAddTransferData, setDetailTransferData })
+                setMessage({});
+                navigate(-1);
+              },
+            });
+          }
+        }).catch((error) => {
+          setMessage({
+            title: "Trasladar",
+            description: error,
+            show: true,
+            OkTitle: "Aceptar",
+            onOk: () => {
+              setMessage({});
+            },
+          });
+        });
     };
       
 
