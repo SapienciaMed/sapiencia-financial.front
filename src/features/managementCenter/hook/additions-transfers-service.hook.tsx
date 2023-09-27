@@ -1,6 +1,7 @@
 
 import useCrudService from '../../../common/hooks/crud-service.hook';
 import { ApiResponse, IPagingData } from '../../../common/utils/api-response';
+import { IAdditionsForm, IAdditionsWithMovements, IData } from "../interfaces/Additions";
 import { IAdditionsTransfersDistrictInterfaces, IAdditionsTransfersSapienciaInterfaces, IFundsAdditionList, IPosPreAddition, IPosPreSapienciaAdditionList, IProjectAdditionList } from '../../functionality/interfaces/AdditionsTransfersInterfaces';
 export const useAdditionsTransfersService = () => {
     const baseURL: string = process.env.urlApiFinancial;
@@ -47,5 +48,10 @@ export const useAdditionsTransfersService = () => {
         return post(`${roleUrl}${endpoint}`,data);
     }
 
-    return { GetAllAdditionsByDistrict, GetAllAdditionsBySapiencia, GetProjectsList, GetFundsList, GetPosPreList, GetPosPreSapienciaList, validateCreateAdition, createAdition }
+    async function showAdition(id: string): Promise<ApiResponse<IData>> {
+        const endpoint: string = `/get-by-id/${id}`;
+        return get(`${roleUrl}${endpoint}`);
+        }    
+
+    return { GetAllAdditionsByDistrict, GetAllAdditionsBySapiencia, GetProjectsList, GetFundsList, GetPosPreList, GetPosPreSapienciaList, validateCreateAdition, createAdition,showAdition }
 }

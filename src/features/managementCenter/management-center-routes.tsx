@@ -24,6 +24,7 @@ export const ManagementCenterRoutes = () => {
 
       <Route path={"/disminucion"} element={<ManagementCenterAdditionalPage typeMovement="Disminucion"/>} />
       <Route path={"/disminucion/create"} element={<AdditionAreaCrudPage actionForm="new" typeMovement="Disminucion"/>} />
+      <Route path={"/disminucion/edit/:id"} element={<AdditionAreaCrudPage actionForm="edit" typeMovement="Disminucion"/>} />
     </Routes>
   )
 }

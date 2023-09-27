@@ -6,7 +6,7 @@ import {
 } from "../../../common/components/Form";
 import TabManagerAdditionPage from "./tab-manager-addition.page";
 import { useAdditionAreaCrud } from "../hook/addition-area-crud.hook";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { EDirection } from "../../../common/constants/input.enum";
 
 
@@ -17,12 +17,13 @@ interface IAppProps {
 
 function AdditionAreaCrud({ actionForm, typeMovement }: IAppProps) {
   const navigate = useNavigate();
+  const { id: idMovement } = useParams();
 
   const [tabId, setTabId] = useState<string>()
   const tabSelected = (e) => {
     setTabId(e.id)
   }
-  const { control, arrayDataSelect, errors, onSubmitTab, showModal, setMessage, getValues, watch, register, invalidCardsAdditionSt, setValue, isAllowSave } = useAdditionAreaCrud(tabId, typeMovement);
+  const { control, arrayDataSelect, errors, onSubmitTab, showModal, setMessage, getValues, watch, register, invalidCardsAdditionSt, setValue, isAllowSave } = useAdditionAreaCrud(tabId, typeMovement,idMovement);
 
   return (
     <div className="crud-page">

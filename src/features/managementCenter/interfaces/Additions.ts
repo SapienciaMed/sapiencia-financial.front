@@ -58,3 +58,65 @@ export interface IIncome{
   value: string;
   cardId:string;
 }
+
+
+
+
+
+
+
+
+export interface IData {
+  head:    IHead[];
+  details: IDetail[];
+}
+
+export interface IDetail {
+  id:            number;
+  additionId:    number;
+  type:          string;
+  budgetRouteId: number;
+  value:         string;
+  budgetRoute:   IBudgetRoute;
+}
+
+export interface IBudgetRoute {
+  id:                   number;
+  managementCenter:     string;
+  div:                  string;
+  idProjectVinculation: number;
+  idFund:               number;
+  idBudget:             number;
+  idPospreSapiencia:    number;
+  budget:               IBudget;
+  pospreSapiencia:      IBudget;
+  fund:                 IBudget;
+  projectVinculation:   ProjectVinculation;
+}
+
+export interface IBudget {
+  id:            number;
+  number:        string;
+  ejercise?:     number;
+  denomination?: string;
+  description:   string;
+  consecutive?:  number;
+}
+
+export interface ProjectVinculation {
+  id:               number;
+  functionalAreaId: number;
+  projectId:        string;
+  conceptProject:   string;
+  areaFuntional:    IBudget;
+}
+
+export interface IHead {
+  id:                number;
+  actAdminDistrict:  string;
+  actAdminSapiencia: string;
+}
+
+export interface Operation {
+  code: string;
+}

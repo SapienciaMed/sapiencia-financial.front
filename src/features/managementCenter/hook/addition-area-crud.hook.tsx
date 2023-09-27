@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useForm, useFieldArray } from 'react-hook-form';
-import { IAdditionsForm } from "../interfaces/Additions";
+import { IAdditionsForm, IData } from "../interfaces/Additions";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { fundsAdditionalValidation } from "../../../common/schemas";
 import { AppContext } from "../../../common/contexts/app.context";
@@ -10,14 +10,14 @@ import { EResponseCodes } from "../../../common/constants/api.enum";
 import { useLocation, useNavigate,useParams } from "react-router-dom";
 
 
-export function useAdditionAreaCrud(tabId: string,typeMovement:string) {
+export function useAdditionAreaCrud(tabId: string,typeMovement:string,idMovement:string) {
 
   
 
 
   const resolver = useYupValidationResolver(fundsAdditionalValidation);
   const { setMessage } = useContext(AppContext);
-  const { GetFundsList, GetProjectsList, GetPosPreSapienciaList, validateCreateAdition, createAdition } = useAdditionsTransfersService()
+  const { GetFundsList, GetProjectsList, GetPosPreSapienciaList, validateCreateAdition, createAdition,showAdition } = useAdditionsTransfersService()
   const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
     functionalArea: [],
     areas: [],
@@ -356,7 +356,38 @@ export function useAdditionAreaCrud(tabId: string,typeMovement:string) {
     return false; // El objeto no tiene ningún campo con valor
   }
 
+  //Editar
+ 
 
+
+  const [aditionData, setAditionData] = useState<IData>(null);
+
+  useEffect(() => {
+    if (idMovement) {
+      showAdition(idMovement).then((response) => {
+            if (response.operation.code === EResponseCodes.OK) {
+                setAditionData(response.data);
+               //console.log(response)
+            }
+        });
+    }
+}, [idMovement]);
+
+
+useEffect(() => {
+  if (aditionData) {   
+      //console.log('Datos', aditionData?.head[0]?.actAdminDistrict);
+      console.log('Datos', aditionData?.details[0]?.additionId);
+
+      setValue("actAdministrativeDistrict", aditionData?.head[0]?.actAdminDistrict);
+      setValue("actAdministrativeSapiencia", aditionData?.head[0]?.actAdminSapiencia);
+  } 
+}, [aditionData]);
+
+
+
+
+  
   return {
     control,
     arrayDataSelect,
@@ -369,6 +400,6 @@ export function useAdditionAreaCrud(tabId: string,typeMovement:string) {
     getValues,
     invalidCardsAdditionSt,
     setValue,
-    isAllowSave
+    isAllowSave,
   };
 }
