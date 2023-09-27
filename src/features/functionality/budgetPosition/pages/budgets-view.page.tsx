@@ -20,7 +20,7 @@ function BudgetsForm() {
   //TODO: Eliminar?
   const { vinculateActivities } = useVinculationMGAData(budgetsId);
 
-  const { register, errors, entitiesData, controlRegister} = useBudgetsCrudData( budgetsId, vinculateActivities );
+  const { register, errors, entitiesData, budgetsData, controlRegister} = useBudgetsCrudData( budgetsId, vinculateActivities );
 
   return (
     <div className="crud-page full-height">
@@ -102,7 +102,7 @@ function BudgetsForm() {
               </div>
             </div>
 
-            <BudgetViewPage/>
+            <BudgetViewPage budgetsData={budgetsData?.number}/>
 
           </FormComponent>
         </div>

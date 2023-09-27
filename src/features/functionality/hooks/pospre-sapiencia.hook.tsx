@@ -4,12 +4,13 @@ import useYupValidationResolver from "../../../common/hooks/form-validator.hook"
 import { useEffect, useRef, useState } from "react";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { useNavigate } from "react-router-dom";
+import { IPosPreSapiencia, IPospreSapienciaData } from "../interfaces/PosPreSapiencia";
 
 interface IPospreSapienciaFilters {
     inputPospreSapiencia: string
 }
 
-export function usePospreSapienciaData(pospre: string) {
+export function usePospreSapienciaData({budgetsId, validateAction, budgetsData }: IPospreSapienciaData) {
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
     const resolver = useYupValidationResolver(pospreSapienciaValidator);
@@ -47,11 +48,40 @@ export function usePospreSapienciaData(pospre: string) {
             header: "Descripción"
         },
     ];
+
     const tableActions: ITableAction<any>[] = [
         {
             icon: "Edit",
             onClick: (row) => {
                 navigate(`./edit/${row.id}`);
+            },
+        }
+    ];
+
+    const tableColumnsView: ITableElement<IPosPreSapiencia>[] = [
+        {
+            fieldName: "budget.number",
+            header: "Codigo pospre",
+        },
+        {
+            fieldName: "number",
+            header: "Código sapiensa"
+        },
+        {
+            fieldName: "ejercise",
+            header: "Ejercicio"
+        },
+        {
+            fieldName: "description",
+            header: "Descripción"
+        },
+    ];
+
+    const tableActionsView: ITableAction<IPosPreSapiencia>[] = [
+        {
+            icon: "Detail",
+            onClick: (row) => {
+               
             },
         }
     ];
@@ -63,20 +93,25 @@ export function usePospreSapienciaData(pospre: string) {
     }
 
     const onSubmitSearch = handleSubmit(async (data: IPospreSapienciaFilters) => {
-        if(pospre){
+        if(budgetsId){
             setShowTable(true)
-            loadTableData({budgetId: pospre, number: data.inputPospreSapiencia});
+            loadTableData({budgetId: budgetsId, number: data.inputPospreSapiencia});
         } 
     });
     
     useEffect(() => {
-        if(pospre) loadTableData({budgetId: pospre});
-    }, [pospre]);
+        if(budgetsId && validateAction == 'new') loadTableData({budgetId: budgetsId});
+    }, [budgetsId]);
+
+    useEffect(() => {
+        if (validateAction == 'view') loadTableData({ budgetNumberSapi: budgetsData  })
+    },[validateAction])
 
     useEffect(() => {
         setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
     },[inputValue])
 
 
-    return { register, reset, showTable, control, errors, tableComponentRef, tableColumns, tableActions, isBtnDisable, setShowTable, onSubmitSearch }
+    return { register, reset, showTable, control, errors, tableComponentRef, tableColumns, tableActions, isBtnDisable, 
+        tableColumnsView, tableActionsView, setShowTable, onSubmitSearch }
 } 

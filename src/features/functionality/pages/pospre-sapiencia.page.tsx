@@ -11,7 +11,7 @@ function PosPreSapienca(): React.JSX.Element {
     const { pospre } = useParams();
     const navigate = useNavigate();
     const { register, reset, errors, tableComponentRef, tableColumns, tableActions, control,
-        showTable, isBtnDisable, setShowTable, onSubmitSearch } = usePospreSapienciaData(pospre);
+        showTable, isBtnDisable, setShowTable, onSubmitSearch } = usePospreSapienciaData({budgetsId: pospre, validateAction: 'new'});
 
     return (
         <div>

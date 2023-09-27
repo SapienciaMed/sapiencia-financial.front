@@ -245,5 +245,6 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
         });
     }
 
-    return { register, errors, entitiesData, onSubmitNewBudgets, onSubmitEditBudgets, onCancelNew, onCancelEdit, confirmClose, controlRegister };
+    return { register, errors, entitiesData, budgetsData, controlRegister, onSubmitNewBudgets, onSubmitEditBudgets, onCancelNew, 
+        onCancelEdit, confirmClose };
 }

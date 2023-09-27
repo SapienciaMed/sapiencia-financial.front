@@ -2,10 +2,13 @@ import { useParams } from "react-router-dom";
 import TabListComponent from "../../../../common/components/tab-list.component";
 import { useBudgetView } from "../hooks/budget-view.hook";
 
-function BudgetViewPage() {
+interface IBudgetViewPage{
+    budgetsData: string
+}
+function BudgetViewPage( {budgetsData}: IBudgetViewPage) {
     
     const { id, option } = useParams();
-    const { tabs, start } = useBudgetView(id, option);
+    const { tabs, start } = useBudgetView(id, option, budgetsData );
    
     return (
         <div className='main-page'>

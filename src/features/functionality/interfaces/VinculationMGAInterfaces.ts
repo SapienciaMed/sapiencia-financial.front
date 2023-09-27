@@ -25,3 +25,21 @@ export interface IFiltersVinculationMGA {
   mgaId?:number;
   active?:boolean;
 }
+
+export interface IApiPlanningDetailedActivitiesSpecify {
+
+  activityDetailedId: number;           
+  consecutiveActivityDetailed: string;   
+  detailActivityDetailed: string;       
+  amountActivityDetailed: number;       
+  measurementActivityDetailed: number;  
+  unitCostActivityDetailed: number;     
+  totalCostActivityDetailed: number;    
+  activityId: number;                   
+  codeMga: number;                      
+  codeConsecutiveProductMga: string;    
+  productDescriptionMGA: string;        
+  codeConsecutiveActivityMga: string;   
+  activityDescriptionMGA: string;      
+
+}

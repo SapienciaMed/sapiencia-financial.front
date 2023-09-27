@@ -6,10 +6,11 @@ import { AppContext } from "../../../common/contexts/app.context";
 import { useContext, useEffect, useRef, useState } from "react";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { useNavigate } from "react-router-dom";
-import { IActivityMGA } from "../interfaces/VinculationMGAInterfaces";
+import { IActivityMGA, IApiPlanningDetailedActivitiesSpecify } from "../interfaces/VinculationMGAInterfaces";
 import { SwitchComponent } from "../../../common/components/Form";
 import {useVinculationService} from "../hooks/vinculation-mga-service.hook"
 import { EResponseCodes } from "../../../common/constants/api.enum";
+
 interface IVinculationMGAFilters {
     inputCodigoMGA: string
 }
@@ -52,7 +53,7 @@ export function useVinculationMGAData(pospre: string) {
         },
         {
             fieldName: "cost",
-            header: "Costo total"
+            header: "Costo total",
         },
         {   
             fieldName: "id",
@@ -114,43 +115,64 @@ export function useVinculationMGAData(pospre: string) {
         },
         {
             fieldName: "totalCostActivityDetailed",
-            header: "Costo"
+            header: "Costo",
         },
     ];
    
+    const tableColumnsView: ITableElement<IApiPlanningDetailedActivitiesSpecify>[] = [
+        {
+            fieldName: "consecutiveActivityDetailed",
+            header: "Codigo",
+        },
+        {
+            fieldName: "measurementActivityDetailed",
+            header: "Unidad de medida"
+        },
+        {
+            fieldName: "amountActivityDetailed",
+            header: "Cantidad"
+        },
+        {
+            fieldName: "totalCostActivityDetailed",
+            header: "Costo",
+            renderCell(row) {
+                return <span> $ {row.totalCostActivityDetailed.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</span>
+            },
+        },
+    ];
 
-    const tableActions: ITableAction<IActivityMGA>[] = [
+    const tableActions: ITableAction<IApiPlanningDetailedActivitiesSpecify>[] = [
         {
             icon: "Detail",
             onClick: (row) => {
                 const rows = [
                     {
                         title: "Código",
-                        value: `${row.id}`
+                        value: `${row.consecutiveActivityDetailed}`
                     },
                     {
                         title: "Unidad de medida",
-                        value: `${row.unit}`
+                        value: `${row.measurementActivityDetailed}`
                     },
                     {
                         title: "Cantidad",
-                        value: `${row.quantity}`
+                        value: `${row.amountActivityDetailed}`
                     },
                     {
                         title: "Costo",
-                        value: `${row.cost}`
+                        value: `$ ${row.totalCostActivityDetailed.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
                     },
                     {
                         title: "Producto MGA",
-                        value: `${row.description}`
+                        value: `${row.codeConsecutiveProductMga}`
                     },
                     {
                         title: "Actividad MGA",
-                        value: `${row.description}`
+                        value: `${row.codeMga}`
                     },
                     {
                         title: "Actividades detalladas",
-                        value: `${row.description}`
+                        value: `${row.detailActivityDetailed}`
                     }
                 ]
                 setMessage({
@@ -249,5 +271,5 @@ export function useVinculationMGAData(pospre: string) {
     },[inputValue])
 
     return { register, reset, errors, tableComponentRef, tableColumns, showTable, control, onSubmit, isBtnDisable,
-        tableActions,tableColumnsEdit, setShowTable, vinculateActivities, loadTableData }
+        tableActions,tableColumnsEdit, tableColumnsView, setShowTable, vinculateActivities, loadTableData }
 } 
