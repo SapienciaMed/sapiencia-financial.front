@@ -64,6 +64,15 @@ export function useProjectOperationCrud(exerciseSt:number) {
     resolver,
   });
 
+  const [name, projectId, id, excercise ] = watch(["name","number","id","exercise"]);
+
+  useEffect(() => {
+    //(fundData && action == 'edit') && setIsBtnDisable(validateFieldEqualsEdition(fundData))
+    console.log({name, projectId, id, excercise})
+  
+  },[name, projectId, id, excercise])
+
+
   const validateButton = (values) => { return Object.values(values).every(campo => campo !== null && campo !== undefined && campo !== '') }
  
   // Effect que activa el watch que detecta los cambios en todo el form

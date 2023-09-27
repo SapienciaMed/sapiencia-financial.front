@@ -25,6 +25,7 @@ function ProjectOperationCrud({ action }: IAppProps) {
   const [isModifyDateTo, setIsModifyDateTo] = useState(false)
 
   const [dateFromDefaultStValidateDate, setDateFromDefaultStValidateDate] = useState(dateFromDefaultSt)
+  const [dateToDefaultStValidateDate, setDateToDefaultStValidateDate] = useState(dateFromDefaultSt)
   
   useEffect(() => {
     setIsModifyDateFrom(true)
@@ -124,6 +125,7 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
                 errors={errors}
+                max={dateToDefaultStValidateDate}
               />
               <InputComponent
                 idInput="dateTo"
@@ -131,7 +133,7 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 typeInput="date"
                 register={register}
                 value={!isModifyDateTo ? undefined : dateToDefaultSt}
-                onChange={(e)=>setIsModifyDateTo(false)}
+                onChange={(e)=>{setIsModifyDateTo(false);setDateToDefaultStValidateDate(e.target.value);}}
                 label="Validez hasta"
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
