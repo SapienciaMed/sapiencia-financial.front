@@ -3,14 +3,10 @@ import { useVinculationMGAData } from "../../hooks/vinculation-mga.hook";
 import TableComponent from "../../../../common/components/table.component";
 import { usePospreSapienciaData } from "../../hooks/pospre-sapiencia.hook";
 
-interface IViewPospreSapiencia{
-    budgetsData: string
-}
-
-function ViewPospreSapiencia( {budgetsData}: IViewPospreSapiencia): React.JSX.Element {
+function ViewPospreSapiencia(): React.JSX.Element {
 
     const { id: budgetsId } = useParams();
-    const { tableComponentRef,  tableColumnsView, tableActionsView, } = usePospreSapienciaData({budgetsId, validateAction: 'view', budgetsData});
+    const { tableComponentRef,  tableColumnsView, tableActionsView, } = usePospreSapienciaData({budgetsId, validateAction: 'view'});
 
     return(
         <div className="card-form no-box-shadow">

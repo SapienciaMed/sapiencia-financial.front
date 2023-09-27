@@ -1,5 +1,4 @@
 import React from "react";
-import { useVinculationMGAData } from "../../hooks/vinculation-mga.hook";
 import {
   ButtonComponent,
   FormComponent,
@@ -9,18 +8,14 @@ import {
 import { EDirection } from "../../../../common/constants/input.enum";
 import { useBudgetsCrudData } from "../hooks/budgets-crud.hook";
 import { useParams, useNavigate } from "react-router-dom";
-import TableComponent from "../../../../common/components/table.component";
-import TabBudgetView from "./tab-budget-view";
 import BudgetViewPage from "./budget-view.page";
 
 
 function BudgetsForm() {
   const navigate = useNavigate();
   const { id: budgetsId } = useParams();
-  //TODO: Eliminar?
-  const { vinculateActivities } = useVinculationMGAData(budgetsId);
 
-  const { register, errors, entitiesData, budgetsData, controlRegister} = useBudgetsCrudData( budgetsId, vinculateActivities );
+  const { register, errors, entitiesData, budgetsData, controlRegister} = useBudgetsCrudData( budgetsId );
 
   return (
     <div className="crud-page full-height">
@@ -102,27 +97,27 @@ function BudgetsForm() {
               </div>
             </div>
 
-            <BudgetViewPage budgetsData={budgetsData?.number}/>
+            <BudgetViewPage/>
 
           </FormComponent>
         </div>
-        <div className="container-button-bot">
-        <div className="buttons-bot">
-          <span
-            className="bold text-center button" >
-          </span>
-          <ButtonComponent
-            className="button-main huge hover-three"
-            value="Aceptar"
-            type="button"
-            form="budgets-form"
-            action={() => {
-                navigate("./../..")
-              }}
-          />
-        </div>
       </div>
-      </div>
+        <section className="container-button-bot-2 one-content">
+          <div className="buttons-bot">
+              <span
+                className="bold text-center button" >
+              </span>
+              <ButtonComponent
+                className="button-main huge hover-three"
+                value="Aceptar"
+                type="button"
+                form="budgets-form"
+                action={() => {
+                  navigate("./../..")
+                }}
+              />
+            </div>
+        </section>
     </div>
   );
 }

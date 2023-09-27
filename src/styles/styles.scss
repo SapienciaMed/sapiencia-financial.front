@@ -97,6 +97,13 @@ div[id="single-spa-application:@sapiencia/financial"] {
     border-top: none;
   }
 
+  &.one-content{
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding: 0.5rem 1.5rem;
+    height: fit-content;
+  }
+
 }
 
 .select-applications {
