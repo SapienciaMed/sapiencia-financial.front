@@ -34,6 +34,7 @@ export function useTransferAreaCrudPage() {
 
     const navigate = useNavigate();
     const { setMessage, setHeadTransferData, setAddTransferData, setDetailTransferData, authorization, addTransferData, detailTransferData } = useContext(AppContext);
+
     const { createTransfer } = useTypesTranfersService()
 
     const {
@@ -177,7 +178,6 @@ export function useTransferAreaCrudPage() {
         {
             icon: "Detail",
             onClick: (row) => {
-
                 const rows = row?.transferMovesGroups.map((item) => {
                     const totalProjectSum = item.data.filter(item => item.type === "Origen").reduce((acc, item) => acc + item.value, 0);
                     return {

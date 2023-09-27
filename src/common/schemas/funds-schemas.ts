@@ -86,7 +86,7 @@ export const fundsAdditionalValidation =  yup.object({
                     .required("Completar información del campo"),
                 functionalArea: yup 
                     .string()
-                    .required("El campo es obligatorio"),
+                    .required("Completar información del campo"),
                 funds: yup 
                     .string()
                     .required("Completar información del campo"),

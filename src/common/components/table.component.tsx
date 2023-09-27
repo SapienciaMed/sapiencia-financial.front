@@ -96,7 +96,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
       page: currentPage || 1,
       perPage: sameData || excludeData ? "Infinity" : perPage,
     });
-    console.log({res})
+    
     if (res.operation.code === EResponseCodes.OK) {
       if (sameData) {
         const sameFilters = Reflect.ownKeys(sameData);

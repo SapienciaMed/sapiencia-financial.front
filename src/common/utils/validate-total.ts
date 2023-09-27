@@ -1,10 +1,10 @@
 import { ICreateSourceForm } from "../../features/managementCenter/transfer/interfaces/TransferAreaCrudInterface";
 
 export const get_total_value = (data: ICreateSourceForm) => {
-    const dest = data.destino.sort((a, b) => parseInt(a.value) - parseInt(b.value) );
-    const orig = data.origen.sort((a, b) => parseInt(a.value) - parseInt(b.value) );
-
-    const valid = dest.every((destino, i) => destino.value == orig[i].value);
+    const dest = data.destino.sort((a, b) => parseInt(a.value) - parseInt(b.value)).reduce((total, item) => total + parseInt(item.value), 0);
+    const orig = data.origen.sort((a, b) => parseInt(a.value) - parseInt(b.value)).reduce((total, item) => total + parseInt(item.value), 0);
+    
+    const valid = dest == orig
     return valid;
 };
 

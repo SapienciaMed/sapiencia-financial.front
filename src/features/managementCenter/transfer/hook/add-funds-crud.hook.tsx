@@ -10,7 +10,8 @@ import { AppContext } from "../../../../common/contexts/app.context";
 import { useNavigate } from 'react-router-dom';
 import { useTypesTranfersService } from './types-transfers-service.hook';
 import { transformJSONArrays, filterElementsMeetConditions, identifyInvalidcardTransfers, 
-  cleanTransferContext, isTotalSame, get_total_value } from '../../../../common/utils/';
+  cleanTransferContext, get_total_value } from '../../../../common/utils/';
+import { handleCommonError } from '../../../../common/utils/handle-common-error';
 
 export function useAddFundsCrud() {
 
@@ -45,18 +46,14 @@ export function useAddFundsCrud() {
     },
   });
 
-
   const watchOrigin = useWatch({
     control,
     name: 'origen'
   })
-  
-  const watchAll = watch()
-  
+
   useEffect(() => {
     setTotalTransfer(addNumericalValues(watchOrigin).toString())
   }, [watchOrigin])
-
 
   useEffect(() => {
     Object.keys(headTransferData).length === 0 && navigate(-1);
@@ -68,7 +65,6 @@ export function useAddFundsCrud() {
       return isNaN(valor) ? total : total + valor;
     }, 0);
   }
-
 
   useEffect(() => {
     if (!arrayDataSelect.functionalArea.length && !arrayDataSelect.funds.length && !arrayDataSelect.posPre.length) {
@@ -101,16 +97,7 @@ export function useAddFundsCrud() {
             functionalArea: arrayEntitiesProject
           }));
         } else {
-          setMessage({
-            title: `Error en la consulta de datos`,
-            show: true,
-            description: response.operation.message,
-            OkTitle: 'Aceptar',
-            background: true,
-            onOk: () => {
-              setMessage({});
-            },
-          });
+          handleCommonError({ response, setMessage,  navigate, setAddTransferData, setDetailTransferData})
         }
       }).catch((error) => console.log(error))
 
@@ -135,16 +122,7 @@ export function useAddFundsCrud() {
           setArrayDataSelect(prevState => ({ ...prevState, funds: arrayEntitiesFund }));
 
         } else {
-          setMessage({
-            title: `Error en la consulta de datos`,
-            show: true,
-            description: response.operation.message,
-            OkTitle: 'Aceptar',
-            background: true,
-            onOk: () => {
-              setMessage({});
-            },
-          });
+          handleCommonError({ response, setMessage,  navigate, setAddTransferData, setDetailTransferData})
         }
       }).catch((error) => console.log(error))
 
@@ -168,16 +146,7 @@ export function useAddFundsCrud() {
 
           setArrayDataSelect(prevState => ({ ...prevState, posPre: arrayEntitiesPosPres }));
         } else {
-          setMessage({
-            title: `Error en la consulta de datos`,
-            show: true,
-            description: response.operation.message,
-            OkTitle: 'Aceptar',
-            background: true,
-            onOk: () => {
-              setMessage({});
-            },
-          });
+          handleCommonError({ response, setMessage,  navigate, setAddTransferData, setDetailTransferData})
         }
       }).catch((error) => console.log(error))
     }
@@ -200,23 +169,7 @@ export function useAddFundsCrud() {
       return;
     }
 
-    if (dataPasteRedux.length > 0) {
-      if (!isTotalSame(dataPasteRedux)) {
-        setMessage({
-          title: "Validación de datos",
-          description: "Se ha encontrado un error en los datos, los valores son diferentes",
-          show: true,
-          OkTitle: "Aceptar",
-          onOk: () => {
-            setMessage({});
-          },
-          background: true
-        })
-
-        return
-      }
-    }
-    else if (!get_total_value(data)) {
+    if (!get_total_value(data)) {
       setMessage({
         title: "Validación de datos",
         description: "Se ha encontrado un error en los datos, los valores son diferentes",
@@ -238,7 +191,7 @@ export function useAddFundsCrud() {
         const matchingItem = resultado.find(result => (
           result.managerCenter == item.managerCenter &&
           result.typeTransfer == item.type &&
-          result.value == String(item.value) && 
+          // result.value == String(item.value) && 
           result.projectId == String(item.projectId) && 
           result.funds == String(item.fundId) && 
           result.posPre == String(item.budgetPosition) 
@@ -254,8 +207,8 @@ export function useAddFundsCrud() {
       headTransfer: headTransferData,
       transferMovesGroups: transformJSONArrays(data) 
     }
-    
-    const transferDataToSave = dataPasteRedux.length > 0 ? addTransferData.array[0] : manualTranferMovement;
+
+    const transferDataToSave = dataPasteRedux.length > 0 ? compararYCombinar( manualTranferMovement, addTransferData.array[0] ): manualTranferMovement;
 
     transferDataToSave && validateCreateTransfer(transferDataToSave).then((response: any) => {
       if (response.operation.code === EResponseCodes.OK) {
@@ -268,15 +221,15 @@ export function useAddFundsCrud() {
             setMessage({});
            
             setAddTransferData({  //se manda en el context los datos con los id para guardar en la bd, ya sea de forma pegar o manual
-              array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
+              array: [transferDataToSave],
               meta: { total: 1 }
             });
 
-            Object.keys(dataPasteRedux).length === 0 && setDetailTransferData({ //se manda en el context los datos sin los id y ser visualizado en detalles
+            setDetailTransferData({ //se manda en el context los datos sin los id y ser visualizado en detalles
               array: [
                 {
                   headTransfer: headTransferData,
-                  transferMovesGroups: filterElementsMeetConditions(arrayDataSelect, data)
+                  transferMovesGroups: filterElementsMeetConditions(arrayDataSelect, transferDataToSave.transferMovesGroups)
                 }
               ],
               meta: {
@@ -291,22 +244,22 @@ export function useAddFundsCrud() {
             setMessage({});
            
             setAddTransferData({  //se manda en el context los datos con los id para guardar en la bd, ya sea de forma pegar o manual
-              array: dataPasteRedux.length > 0 ? addTransferData.array : [manualTranferMovement],
+              array: [transferDataToSave],
               meta: { total: 1 }
             });
 
-            Object.keys(dataPasteRedux).length === 0 && setDetailTransferData({ //se manda en el context los datos sin los id y ser visualizado en detalles
+            setDetailTransferData({ //se manda en el context los datos sin los id y ser visualizado en detalles
               array: [
                 {
                   headTransfer: headTransferData,
-                  transferMovesGroups: filterElementsMeetConditions(arrayDataSelect, data)
+                  transferMovesGroups: filterElementsMeetConditions(arrayDataSelect, transferDataToSave.transferMovesGroups)
                 }
               ],
               meta: {
                 total: manualTranferMovement.transferMovesGroups.length,
               }
             })
-
+            
             setDataPasteRedux([])
             navigate(-1)
           },
@@ -376,6 +329,37 @@ export function useAddFundsCrud() {
         navigate(-1)
       },
     });
+  }
+
+  function compararYCombinar(manualTranferMovement, addTransferData) {
+    const resultado = {
+      headTransfer: manualTranferMovement.headTransfer,
+      transferMovesGroups: addTransferData.transferMovesGroups.map((group) => {
+        return {
+          id: group.id,
+          data: group.data.reduce((acc, item) => {
+            // Buscar el objeto correspondiente en manualTranferMovement por idCard
+            const match = manualTranferMovement.transferMovesGroups[0].data.find(
+              (manualItem) => manualItem.idCard == item.idCard
+            );
+            // Si se encuentra una coincidencia, combinar los datos
+            if (match) {
+              acc.push({
+                ...item,
+                projectId: match.projectId,
+                fundId: match.fundId,
+                budgetPosition: match.budgetPosition,
+                value: match.value,
+                nameProject: match.nameProject,
+              });
+            }
+
+            return acc;
+          }, []),
+        };
+      }).filter((group) => group.data.length > 0)
+    } 
+    return resultado;
   }
 
   return {
