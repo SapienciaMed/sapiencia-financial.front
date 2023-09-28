@@ -180,39 +180,41 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
         }
         
         setMessage({
-            title: "Editar posición presupuestal",
+            title: "Editar Posición presupuestal",
             description: "¿Estás segur@ de editar la posición presupuestal?",
             show: true,
             OkTitle: "Aceptar",
             cancelTitle: "Cancelar",
             onOk: () => {
                 vinculateActivities &&  vinculateActivities();
-                UpdateBudgets(parseInt(budgetsId), insertData).then(response => {
-                    if (response.operation.code === EResponseCodes.OK) {
-                        setMessage({
-                            title: "Editar Pospre",
-                            description: "Se ha editado el Pospre exitosamente",
-                            show: true,
-                            OkTitle: "Aceptar",
-                            onOk: () => {
-                                onCancelEdit();
-                                setMessage({});
-                            },
-                            background: true
-                        });
-                    } else {
-                        setMessage({
-                            title: "Validacion de datos",
-                            description: response.operation.message,
-                            show: true,
-                            OkTitle: "Aceptar",
-                            onOk: () => {
-                                setMessage({});
-                            },
-                            background: true
-                        });
-                    }
-                })
+
+                //Se tiene que guardar todos (¿crear un redux?)
+                // UpdateBudgets(parseInt(budgetsId), insertData).then(response => {
+                //     if (response.operation.code === EResponseCodes.OK) {
+                //         setMessage({
+                //             title: "Editar Pospre",
+                //             description: "Se ha editado el Pospre exitosamente",
+                //             show: true,
+                //             OkTitle: "Aceptar",
+                //             onOk: () => {
+                //                 onCancelEdit();
+                //                 setMessage({});
+                //             },
+                //             background: true
+                //         });
+                //     } else {
+                //         setMessage({
+                //             title: "Validacion de datos",
+                //             description: response.operation.message,
+                //             show: true,
+                //             OkTitle: "Aceptar",
+                //             onOk: () => {
+                //                 setMessage({});
+                //             },
+                //             background: true
+                //         });
+                //     }
+                // })
             },
             onCancel: () => {
               setMessage({});
@@ -230,10 +232,10 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
         navigate("./../../");
     };
 
-    const confirmClose = (callback) =>{
+    const confirmClose = (callback: () => void,  action: "new" | "edit") =>{
         setMessage({
-            title: "Cancelar posición presupuestal",
-            description: "¿Estás segur@ que desea cancelar la posición presupuestal?",
+            title: `${action == 'new'? 'Cancelar posición presupuestal' : 'Cancelar Edición' }`,
+            description: ` ${ action == 'new'? '¿Estás segur@ que desea cancelar la posición presupuestal?' : '¿Estas segur@ que deseas cancelar la edición?'} `,
             show: true,
             OkTitle: "Aceptar",
             cancelTitle: "Cancelar",

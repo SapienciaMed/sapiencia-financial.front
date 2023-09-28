@@ -16,3 +16,7 @@ export interface IBudgets {
   pospresap?: any[]
 }
 
+export interface IBudgetViewPage {
+  actions: "vinculation" | "edit" | "view"
+}
+

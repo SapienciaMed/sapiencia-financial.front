@@ -97,7 +97,7 @@ function BudgetsForm() {
               </div>
             </div>
 
-            <BudgetViewPage/>
+            <BudgetViewPage actions="view"/>
 
           </FormComponent>
         </div>

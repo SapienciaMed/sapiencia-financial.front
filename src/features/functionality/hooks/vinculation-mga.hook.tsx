@@ -17,7 +17,8 @@ interface IVinculationMGAFilters {
 
 export function useVinculationMGAData(pospre: string) {
     const navigate = useNavigate();
-    const [lastMove,setLastMove] = useState([]);
+    const [ lastMove, setLastMove ] = useState([]);
+    const [ lastMoveEdit, setLastMoveEdit ] = useState([]);
     const tableComponentRef = useRef(null);
     const { CreateVinculation, DeleteVinculation } = useVinculationService();
     const resolver = useYupValidationResolver(vinculationValidator);
@@ -55,7 +56,7 @@ export function useVinculationMGAData(pospre: string) {
             fieldName: "cost",
             header: "Costo total",
         },
-        {   
+        {
             fieldName: "id",
             header: "Vincular",
             renderCell:(row) => {
@@ -75,9 +76,7 @@ export function useVinculationMGAData(pospre: string) {
                         }
                     } else {
                         const auxLast = lastMove;
-                        if (auxLast.findIndex((value)=>{
-                            value.id == row.id;}))
-                        {
+                        if (auxLast.findIndex((value)=>{value.id == row.id;})){
                             auxLast.splice(auxLast.findIndex((value)=>{
                                 value.id == row.id;
                             }),1)
@@ -95,12 +94,12 @@ export function useVinculationMGAData(pospre: string) {
                             setActivitiesLink(array);
                         }
                     }
-                }} /> 
+                }} />
             }
         },
     ];
 
-    const tableColumnsEdit: ITableElement<IActivityMGA>[] = [
+    const tableColumnsEdit: ITableElement<IApiPlanningDetailedActivitiesSpecify>[] = [
         {
             fieldName: "consecutiveActivityDetailed",
             header: "Codigo",
@@ -117,8 +116,33 @@ export function useVinculationMGAData(pospre: string) {
             fieldName: "totalCostActivityDetailed",
             header: "Costo",
         },
+        {
+            fieldName: "id",
+            header: "Estado",
+            renderCell: (row) => {
+                return (
+                    <SwitchComponent
+                        idInput={ String(row.activityDetailedId)}
+                        value={ Object.keys(row).length > 0}
+                        onChange={(value) => {
+                            if (!value.value) { // Cuando se vaya a eliminar una vinculacion agregue en un estado, los objetos que se quieren desvincular
+                                setLastMoveEdit([...lastMoveEdit,{id:row}])
+                            } else {
+                                //Cuando se vuelve a colocar el switch en encendido haga lo siguiente:
+                                const auxLast = lastMoveEdit;
+                                const indexToRemove = lastMoveEdit.findIndex((value) => value.id.activityDetailedId === row.activityDetailedId);                              
+                                if (indexToRemove !== -1) { //Si se encontró una coincidencia, se elimina ese elemento del array 
+                                    auxLast.splice(indexToRemove, 1);
+                                    setLastMoveEdit(auxLast);
+                                }
+                            }
+                        }}
+                    />
+                )
+            }
+        }
     ];
-   
+
     const tableColumnsView: ITableElement<IApiPlanningDetailedActivitiesSpecify>[] = [
         {
             fieldName: "consecutiveActivityDetailed",
@@ -141,7 +165,7 @@ export function useVinculationMGAData(pospre: string) {
         },
     ];
 
-    const tableActions: ITableAction<IApiPlanningDetailedActivitiesSpecify>[] = [
+    const tableActionsView: ITableAction<IApiPlanningDetailedActivitiesSpecify>[] = [
         {
             icon: "Detail",
             onClick: (row) => {
@@ -186,11 +210,12 @@ export function useVinculationMGAData(pospre: string) {
         }
     ];
 
+
     function loadTableData(searchCriteria?: object): void {
         if (tableComponentRef.current) {
             tableComponentRef.current.loadData(searchCriteria);
         }
-    }   
+    }
 
     useEffect(() => {
         if(Number(pospre)) loadTableData( { budgetId: Number(pospre), active:true} );
@@ -200,65 +225,68 @@ export function useVinculationMGAData(pospre: string) {
         navigate("./../../../");
     };
 
+    //Todo: Validar => No creo que se necesite
     async function vinculateActivities(message?:boolean):Promise<void> {
+        //Deberia enviar en la peticion. el cambio que se hagan en el mga tanto editar como vincular
+        
         let status = true;
-        if(activitiesUnLink){
-            const res = await DeleteVinculation(Number(pospre),activitiesUnLink);
-            if(res.operation.code != EResponseCodes.OK){
-                    message && setMessage({
-                    title: "Validacion de datos",
-                    description: res.operation.message,
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        setMessage({});
-                    },
-                    background: true
-                });
-                status = false;
-            }
-        }
-        if(status && activitiesLink){
-            const res = await CreateVinculation(Number(pospre), activitiesLink);
-            if(res.operation.code != EResponseCodes.OK){
-                message && setMessage({
-                    title: "Validacion de datos",
-                    description: res.operation.message,
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        setMessage({});
-                    },
-                    background: true
-                });
-            } 
-        }
-        if (lastMove.length <= 0) {
-            
-            message && setMessage({
-                title: "Vinculación MGA",
-                description: "Se ha Eliminado la vinculación MGA exitosamente",
-                show: true,
-                OkTitle: "Aceptar",
-                onOk: () => {
-                    onNew();
-                    setMessage({});
-                },
-                background: true
-            });
-        } else {
-            message && setMessage({
-                title: "Vinculación MGA",
-                description: "Se ha creado la vinculación MGA exitosamente",
-                show: true,
-                OkTitle: "Aceptar",
-                onOk: () => {
-                    onNew();
-                    setMessage({});
-                },
-                background: true
-            });
-        }
+        // if(activitiesUnLink){
+        //     const res = await DeleteVinculation(Number(pospre),activitiesUnLink);
+        //     if(res.operation.code != EResponseCodes.OK){
+        //             message && setMessage({
+        //             title: "Validacion de datos",
+        //             description: res.operation.message,
+        //             show: true,
+        //             OkTitle: "Aceptar",
+        //             onOk: () => {
+        //                 setMessage({});
+        //             },
+        //             background: true
+        //         });
+        //         status = false;
+        //     }
+        // }
+        // if(status && activitiesLink){
+        //     const res = await CreateVinculation(Number(pospre), activitiesLink);
+        //     if(res.operation.code != EResponseCodes.OK){
+        //         message && setMessage({
+        //             title: "Validacion de datos",
+        //             description: res.operation.message,
+        //             show: true,
+        //             OkTitle: "Aceptar",
+        //             onOk: () => {
+        //                 setMessage({});
+        //             },
+        //             background: true
+        //         });
+        //     }
+        // }
+        // if (lastMove.length <= 0) {
+
+        //     message && setMessage({
+        //         title: "Vinculación MGA",
+        //         description: "Se ha Eliminado la vinculación MGA exitosamente",
+        //         show: true,
+        //         OkTitle: "Aceptar",
+        //         onOk: () => {
+        //             onNew();
+        //             setMessage({});
+        //         },
+        //         background: true
+        //     });
+        // } else {
+        //     message && setMessage({
+        //         title: "Vinculación MGA",
+        //         description: "Se ha creado la vinculación MGA exitosamente",
+        //         show: true,
+        //         OkTitle: "Aceptar",
+        //         onOk: () => {
+        //             onNew();
+        //             setMessage({});
+        //         },
+        //         background: true
+        //     });
+        // }
     }
 
     const onSubmit = handleSubmit(async (data: IVinculationMGAFilters) => {
@@ -270,6 +298,6 @@ export function useVinculationMGAData(pospre: string) {
         setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
     },[inputValue])
 
-    return { register, reset, errors, tableComponentRef, tableColumns, showTable, control, onSubmit, isBtnDisable,
-        tableActions,tableColumnsEdit, tableColumnsView, setShowTable, vinculateActivities, loadTableData }
-} 
+    return { register, reset, errors, tableComponentRef, tableColumns, showTable, control, onSubmit, isBtnDisable, 
+        tableActionsView, tableColumnsEdit, tableColumnsView, setShowTable, vinculateActivities, loadTableData }
+}

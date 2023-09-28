@@ -11,6 +11,7 @@ import { useBudgetsCrudData } from "../hooks/budgets-crud.hook";
 import { useParams } from "react-router-dom";
 import TableComponent from "../../../../common/components/table.component";
 import { Controller } from "react-hook-form";
+import BudgetViewPage from "./budget-view.page";
 
 interface IAppProps {
   action: "new" | "edit";
@@ -20,9 +21,6 @@ function BudgetsForm({ action }: IAppProps) {
   const { id: budgetsId } = useParams();
 
   const {
-    tableComponentRef,
-    tableColumns,
-    tableActions,
     vinculateActivities,
   } = useVinculationMGAData(budgetsId);
   const {
@@ -35,7 +33,7 @@ function BudgetsForm({ action }: IAppProps) {
     onCancelNew,
     onCancelEdit,
     controlRegister,
-  } = useBudgetsCrudData(budgetsId, vinculateActivities);
+  } = useBudgetsCrudData(budgetsId, vinculateActivities );
   
   return (
     <div className="crud-page full-height">
@@ -170,34 +168,15 @@ function BudgetsForm({ action }: IAppProps) {
                 />
               </div>
             </div>
-            {action === "new" ? (
-              <></>
-            ) : (
-              <div>
-                <div className={`tabs-component`}>
-                  <div className="tabs-selection">
-                    <div className={`tab-option active`}>Vinculación MGA</div>
-                    <div className={`tab-option`}>ProspeSapiencia</div>
-                  </div>
-                </div>
-                <br />
-                <div className="card-form">
-                  <TableComponent
-                    ref={tableComponentRef}
-                    url={`${process.env.urlApiFinancial}/api/v1/vinculation-mga/get-paginated`}
-                    columns={tableColumns}
-                    actions={tableActions}
-                    isShowModal={false}
-                    secondaryTitle="Vinculación MGA"
-                  />
-                </div>
-              </div>
-            )}
+            {
+              action == 'edit' && 
+                <BudgetViewPage actions="edit"/>
+            }
             <div className="mobile-actions mobile">
               <span
                 className="bold text-center button"
                 onClick={() => {
-                  confirmClose(action === "new" ? onCancelNew : onCancelEdit);
+                  confirmClose(action === "new" ? onCancelNew : onCancelEdit, action);
                 }}
               >
                 Cancelar
@@ -212,7 +191,7 @@ function BudgetsForm({ action }: IAppProps) {
           <span
             className="bold text-center button"
             onClick={() => {
-              confirmClose(action === "new" ? onCancelNew : onCancelEdit);
+              confirmClose(action === "new" ? onCancelNew : onCancelEdit, action);
             }}
           >
             Cancelar
