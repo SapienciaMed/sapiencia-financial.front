@@ -5,7 +5,7 @@ import {
   InputComponent,
   SelectComponent,
 } from "../../../common/components/Form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { EDirection } from "../../../common/constants/input.enum";
 import { useProjectOperationCrud } from "../hook/project-operation-crud.hook";
 import { InputNumberComponent } from "../../../common/components/Form/input-number.component";
@@ -16,10 +16,11 @@ interface IAppProps {
 }
 
 function ProjectOperationCrud({ action }: IAppProps) {
+  const { id: projectOperationalId } = useParams();
   const navigate = useNavigate();
   const [exerciseSt, setExerciseSt] = useState(null)
   
-  const { errors, onSubmitTab, showModal, setMessage, register, isAllowSave, control, dateFromDefaultSt, dateToDefaultSt,actualFullYear } = useProjectOperationCrud(exerciseSt);
+  const { errors, onSubmitTab, showModal, setMessage, register, isAllowSave, control, dateFromDefaultSt, dateToDefaultSt,actualFullYear } = useProjectOperationCrud(projectOperationalId, exerciseSt);
 
   const [isModifyDateFrom, setIsModifyDateFrom] = useState(false)
   const [isModifyDateTo, setIsModifyDateTo] = useState(false)
@@ -35,6 +36,14 @@ function ProjectOperationCrud({ action }: IAppProps) {
     setIsModifyDateTo(true)
   }, [dateToDefaultSt])
   
+
+  useEffect(() => {
+    if(exerciseSt=="" || !exerciseSt){
+      setDateFromDefaultStValidateDate("0000-00-00")
+      setDateToDefaultStValidateDate("0000-00-00")
+    }
+  }, [exerciseSt])
+
 
   return (
     <div className="crud-page">
@@ -93,6 +102,7 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 errors={errors}
                 onChange={(e)=>setExerciseSt(e.target.value)}
                 min={actualFullYear}
+                disabled={action === "new" ? false : true}
               />
 
             </section>
@@ -103,7 +113,7 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 label='Estado'
                 className="select-basic medium"
                 classNameLabel="text-black big bold text-required"
-                placeholder={'Seleccionar'}
+                //placeholder={'Seleccionar'}
                 data={[
                   { id: "1", name: "Activo", value: 1 },
                   { id: "0", name: "Inactivo", value: 0 },
