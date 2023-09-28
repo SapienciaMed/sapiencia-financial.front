@@ -41,7 +41,7 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                     }else if(valorContracredito == 0 && valorCredito > 0 ){
                         Object(rowObject).typeTransfer = "Destino"
                     }
-                    
+                        
                     let moveToSave = {
                         idCard: generarIdAleatorio(20),
                         type : Object(rowObject).typeTransfer,
@@ -54,7 +54,6 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
                         functionalArea:  Object(arrayDataSelect.functionalArea.filter(e => e.value != null).find((e) => e.area.find(i => i.name == Object(rowObject).ÁREAFUNCIONAL)?.id))?.id,
                     }
 
-                   
                     if(idx == 1 ){
                         dataMovementByTransfer.push({
                             id: generarIdAleatorio(20),
@@ -90,13 +89,13 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
             OkTitle: "Aceptar",
         })
 
-    const mapOutputItem = (item, arrayDataSelect) => {
+    const mapOutputItem = (item) => {
         const commonFields = {
             isPaste: true,
             cardId: generarIdAleatorio(20),
             managerCenter: item.CENTROGESTOR,
             projectId: (arrayDataSelect.functionalArea.find(e => e.name == item.PROYECTO))?.id,
-            functionalArea: Object(arrayDataSelect.functionalArea.filter(e => e.value != null).find((e) => e.area[0]?.name == item.ÁREAFUNCIONAL))?.area[0]?.id,
+            functionalArea: arrayDataSelect.functionalArea.filter(e => e.value != null && e.name == item.PROYECTO ).find(objeto => objeto.area.some(area => area.name == item.ÁREAFUNCIONAL))?.id,
             funds: (arrayDataSelect.funds.filter(e => e.value != null).find(e => e.name == item.FONDO))?.id,
             projectName: item.NOMBREPROYECTO,
             value: item.VALORCONTRACRÉDITO == '-' ? item.VALORCRÉDITO.replaceAll('.', '') : item.VALORCONTRACRÉDITO.replaceAll('.', ''),
@@ -108,24 +107,13 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
             ...commonFields,
         };
     };
-    
 
     const isFullField = (objeto) => Object.values(objeto).every(value => value !== undefined && value != '' && value != null);
 
     try {    
         if ( output.length > 0 && dataMovementByTransfer.every(item => item.data.every(isFullField)) ) {      
-            const mappedOutput = output.map((item) => mapOutputItem(item, arrayDataSelect))
+            const mappedOutput = output.map((item) => mapOutputItem(item))
             setDataPaste(mappedOutput);
-            // setDetailTransferData({
-            //     array: [
-            //         {
-            //             transferMovesGroups: dataMovementByTransferDetail
-            //         }
-            //     ],
-            //     meta: {
-            //         total: dataMovementByTransferDetail.length,
-            //     }
-            // })
             return dataMovementByTransfer
         }else {
             throw new Error("Los datos contienen campos vacíos o valores inválidos");
