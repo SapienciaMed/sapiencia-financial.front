@@ -3,5 +3,6 @@ export interface IDropdownProps {
     name: string,
     value: string | number;
     id?: string | number,
-    area?: any[]
+    area?: any[],
+    projectId?: string | number,
 }
