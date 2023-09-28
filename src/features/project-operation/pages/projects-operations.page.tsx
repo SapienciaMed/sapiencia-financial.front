@@ -1,11 +1,5 @@
-import { AiOutlinePlusCircle } from "react-icons/ai";
-import { FormComponent, InputComponent, DatePickerComponent, SelectComponent, ButtonComponent } from "../../../common/components/Form";
-import TableComponent from "../../../common/components/table.component";
-import { EDirection } from "../../../common/constants/input.enum";
-//import { useFundsData } from "../hooks/funds.hook";
 import React from "react";
-import { Controller } from "react-hook-form";
-import { useFundsData } from "../../functionality/hooks/funds.hook";
+import TableComponent from "../../../common/components/table.component";
 import { useDataProjectOperation } from "../hook/data-project-operation.hook";
 import { BiPlusCircle } from "react-icons/bi";
 
@@ -16,16 +10,8 @@ function ProjectsOperationsPage(props: IAppProps): React.JSX.Element {
     tableActions,
     tableColumns,
     tableComponentRef,
-    onSubmit,
     navigate,
-    register,
-    errors,
-    reset,
-    controlRegister,
-    entitiesData,
     isVisibleTable,
-    setIsVisibleTable,
-    isBtnDisable
   } = useDataProjectOperation();
 
   return (

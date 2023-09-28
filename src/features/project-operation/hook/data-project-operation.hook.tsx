@@ -19,7 +19,6 @@ export function useDataProjectOperation() {
     const navigate = useNavigate();
     const resolver = useYupValidationResolver(fundsValidator);
     const { setMessage } = useContext(AppContext);
-    /* const { GetEntities } = useEntitiesService(); */
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
     const [isVisibleTable, setIsVisibleTable] = useState<Boolean>(false);
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
@@ -32,7 +31,6 @@ export function useDataProjectOperation() {
         watch,
         control: controlRegister
     } = useForm<any>({ resolver, mode:'all' });
-    //} = useForm<IFundsFilters>({ resolver, mode:'all' });
     
     const inputValue =  watch(['entity','number', 'dateFrom', 'dateTo'])
 
@@ -55,7 +53,7 @@ export function useDataProjectOperation() {
             header: "Vigencia"
         },
         {
-            fieldName: "isActivated",
+            fieldName: "isActivatedDescription",
             header: "Estado"
         },
         {
@@ -81,49 +79,7 @@ export function useDataProjectOperation() {
     }
     
     const tableActions: ITableAction<IProjectOperation>[] = [
-        /* {
-            icon: "Detail",
-            onClick: (row) => {
-                const rows = [
-                    {
-                        title: "Entidad CP",
-                        value: `${row.entityId}`
-                    },
-                    {
-                        title: "Proyecto",
-                        value: `${row.number}`
-                    },
-                    {
-                        title: "Denominación",
-                        value: `${row.name}`
-                    },
-                    {
-                        title: "Vigencia",
-                        value: `${row.exercise}`
-                    },
-                    {
-                        title: "Estado",
-                        value: `${row.isActivated}`
-                    },
-                    {
-                        title: "Validez a",
-                        value: `${DateTime.fromISO(row.dateTo).toLocaleString()}`
-                    },
-                    {
-                        title: "Validez a",
-                        value: `${DateTime.fromISO(row.dateTo).toLocaleString()}`
-                    }
-                ]
-                setMessage({
-                    title: "Detalle de Fondos",
-                    show: true,
-                    OkTitle: "Aceptar",
-                    description: <DetailsComponent rows={rows} />,
-                    background: true
-                })
-            },
-        }, */
-        {
+       {
             icon: "Edit",
             onClick: (row) => {
                 navigate(`./edit/${row.id}`);
@@ -145,15 +101,6 @@ export function useDataProjectOperation() {
 
     useEffect(() => {
         loadTableData();
-        /* GetEntities().then(response => {
-            if (response.operation.code === EResponseCodes.OK) {
-                const entities: IEntities[] = response.data;
-                const arrayEntities: IDropdownProps[] = entities.map((entity) => {
-                    return { name: entity.name, value: entity.id };
-                });
-                setEntitiesData(arrayEntities);
-            }
-        }).catch(() => { }); */
     }, [])
 
     useEffect(() => {
