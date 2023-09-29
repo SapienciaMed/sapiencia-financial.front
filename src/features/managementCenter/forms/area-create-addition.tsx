@@ -52,27 +52,53 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
             setHasAppended(true); 
         }
     }, [aditionData]); */    
-    const [processedDataId, setProcessedDataId] = useState(null);
-    console.log('como llegan los datos',aditionData)
+  
+   
     useEffect(() => {
-        if (aditionData && aditionData.id !== processedDataId) {
+        if (aditionData) {
             aditionData.details.forEach((item: Detail) => {
-                if (item.type == "Gasto") {
+                if (item.type == "Ingreso") {
+                    if (item.budgetRoute && item.budgetRoute.projectVinculation && item.budgetRoute.projectVinculation.areaFuntional) {
                     append({
                         managerCenter: item.budgetRoute.managementCenter,
                         projectId: item.budgetRoute.projectVinculation.id,
                         projectName: item.budgetRoute.projectVinculation.conceptProject,
-                        functionalArea: item.budgetRoute.projectVinculation.functionalAreaId,
+                        functionalArea: item.budgetRoute.projectVinculation.areaFuntional.id,
                         funds: item.budgetRoute.fund.id,
                         posPre: item.budgetRoute.pospreSapiencia.id,
                         value: item.value,
                         cardId: generarIdAleatorio(20) 
-                    });
+                    });    
+                }            
                 }                
             });
-            setProcessedDataId(aditionData.id);
+            
         }
-    }, [aditionData]);
+    }, [aditionData]); 
+
+/* 
+    const processDetailItem = (item) => {
+        return {
+            managerCenter: item.budgetRoute.managementCenter,
+            projectId: item.budgetRoute.projectVinculation.id,
+            projectName: item.budgetRoute.projectVinculation.conceptProject,
+            functionalArea: item.budgetRoute.projectVinculation.areaFuntional.id,
+            funds: item.budgetRoute.fund.id,
+            posPre: item.budgetRoute.pospreSapiencia.id,
+            value: item.value,
+            cardId: generarIdAleatorio(20)
+        };
+    };
+
+    useEffect(() => {
+        if (aditionData) {
+            aditionData.details.forEach((item) => {
+                if (item.type === "Ingreso") {
+                    append(processDetailItem(item));
+                }
+            });            
+        }
+    }, [aditionData]); */
 
 
     const [isSearchByName, setIsSearchByName] = useState(false)

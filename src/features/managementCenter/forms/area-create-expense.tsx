@@ -27,10 +27,10 @@ interface IAppProps {
 function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSelect, showModal, register, invalidCardsAdditionSt, setValue, watch }: IAppProps) {
 
     const { aditionData } = useAdditionAreaEdit();
-    const [processedDataId, setProcessedDataId] = useState(null);
+   
 
     useEffect(() => {
-        if (aditionData && aditionData.id !== processedDataId) {
+        if (aditionData) {
             aditionData.details.forEach((item: Detail) => {
                 if (item.type == "Gasto") {
                     append({
@@ -44,8 +44,7 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
                         cardId: generarIdAleatorio(20) 
                     });
                 }                
-            });
-            setProcessedDataId(aditionData.id);
+            });           
         }
     }, [aditionData]);
     
