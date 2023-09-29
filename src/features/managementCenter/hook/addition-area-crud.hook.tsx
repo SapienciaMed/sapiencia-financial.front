@@ -1,23 +1,21 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useForm, useFieldArray } from 'react-hook-form';
-import { IAdditionsForm, IAdditionsMovements, IBudgetRoute, IData, IIncome } from "../interfaces/Additions";
+import { IAdditionsForm } from "../interfaces/Additions";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { fundsAdditionalValidation } from "../../../common/schemas";
 import { AppContext } from "../../../common/contexts/app.context";
 import { IArrayDataSelect, IMessage } from "../../../common/interfaces/global.interface";
 import { useAdditionsTransfersService } from "./additions-transfers-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
-import { useLocation, useNavigate,useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAdditionAreaEdit } from "./addition-area-edit.hook";
 
 
-export function useAdditionAreaCrud(tabId: string,typeMovement:string,idMovement:string) {
-
-  
-
+export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actionForm?: string) {
 
   const resolver = useYupValidationResolver(fundsAdditionalValidation);
   const { setMessage } = useContext(AppContext);
-  const { GetFundsList, GetProjectsList, GetPosPreSapienciaList, validateCreateAdition, createAdition,showAdition } = useAdditionsTransfersService()
+  const { GetFundsList, GetProjectsList, GetPosPreSapienciaList, validateCreateAdition, createAdition,validateEditAdition,editAdition } = useAdditionsTransfersService()
   const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
     functionalArea: [],
     areas: [],
@@ -25,6 +23,7 @@ export function useAdditionAreaCrud(tabId: string,typeMovement:string,idMovement
     posPre: []
   })
   const navigate = useNavigate();
+  const { id: idMovement } = useParams();   
   const [invalidCardsAdditionSt, setInvalidCardsAdditionSt] = useState([])
 
   const {
@@ -57,97 +56,191 @@ export function useAdditionAreaCrud(tabId: string,typeMovement:string,idMovement
   }, [watch]);
 
   const onSubmitTab = handleSubmit(async (data: IAdditionsForm) => {
-
-    const ingresoFixed = data.ingreso.map(outcome => ({
-      idCard: outcome.cardId,
-      type: 'Ingreso',
-      managerCenter: outcome.managerCenter,
-      projectId: outcome.projectId,
-      fundId: outcome.funds,
-      budgetPosition: outcome.posPre,
-      value: parseFloat(outcome.value)
-    })
-    )
-    
-    const gastoFixed = data.gasto.map(outcome => ({
-      idCard: outcome.cardId,
-      type: 'Gasto',
-      managerCenter: outcome.managerCenter,
-      projectId: outcome.projectId,
-      fundId: outcome.funds,
-      budgetPosition: outcome.posPre,
-      value: parseFloat(outcome.value),     
-    })
-    )
-    
-    let addition = {
-      headAdditon: {
-        actAdminDistrict: data.actAdministrativeDistrict,
-        actAdminSapiencia: data.actAdministrativeSapiencia,
-        typeMovement: typeMovement,
-        userCreate: "123456789",
-        dateCreate: "2023-08-28",
-        userModify: "123456789",
-        dateModify: "2023-08-28"
-      },
-      additionMove: ingresoFixed.concat(gastoFixed)
-    }
-    let resValidate = await validateCreateAdition(addition)
-
-    if (resValidate.operation.code == 'FAIL') {
-      showModal({
-        //type?: EResponseCodes;
-        title: "Validación de datos",
-        description: resValidate.operation.message.split('@@@').length == 1
-          ? resValidate.operation.message
-          : (JSON.parse((resValidate.operation.message.split('@@@'))[3]).length > 0
-            ? (resValidate.operation.message.split('@@@'))[1]
-            : JSON.parse((resValidate.operation.message.split('@@@'))[6]).length > 0
-              ? (resValidate.operation.message.split('@@@'))[4]
-              : (resValidate.operation.message.split('@@@'))[7]),
-        show: true,
-        OkTitle: "Aceptar",
-        //cancelTitle: "Cancerlar",
-        onOk: () => {
-          setMessage({})
-          identifyInvalidcard(addition.additionMove, resValidate.operation.message)
-        },
-        // onCancel?: () => void;
-        // onClickOutClose?: boolean;
-        onClose: () => {
-          setMessage({})
-          identifyInvalidcard(addition.additionMove, resValidate.operation.message)
-        }
-        // background?: boolean;
+    if (actionForm === "new") {
+      const ingresoFixed = data.ingreso.map(outcome => ({
+        idCard: outcome.cardId,
+        type: 'Ingreso',
+        managerCenter: outcome.managerCenter,
+        projectId: outcome.projectId,
+        fundId: outcome.funds,
+        budgetPosition: outcome.posPre,
+        value: parseFloat(outcome.value)
       })
+      )
 
-    } else {
-
-      showModal({
-        //type?: EResponseCodes;
-        title: "Guardar",
-        description: "¿Está segur@ de guardar la información en el sistema?",
-        show: true,
-        OkTitle: "Aceptar",
-        cancelTitle: "Cancelar",
-        onOk: () => {
-          setMessage({})
-          messageConfirmSave(addition, resValidate)
-        },
-        onCancel: () => {
-          setMessage({})
-          onCancelNew()
-        },
-        // onClickOutClose?: boolean;
-        onClose: () => {
-          setMessage({})
-          onCancelNew()
-        },
-        background: true
+      const gastoFixed = data.gasto.map(outcome => ({
+        idCard: outcome.cardId,
+        type: 'Gasto',
+        managerCenter: outcome.managerCenter,
+        projectId: outcome.projectId,
+        fundId: outcome.funds,
+        budgetPosition: outcome.posPre,
+        value: parseFloat(outcome.value),
       })
+      )
+
+      let addition = {
+        headAdditon: {
+          actAdminDistrict: data.actAdministrativeDistrict,
+          actAdminSapiencia: data.actAdministrativeSapiencia,
+          typeMovement: typeMovement,
+          userCreate: "123456789",
+          dateCreate: "2023-08-28",
+          userModify: "123456789",
+          dateModify: "2023-08-28"
+        },
+        additionMove: ingresoFixed.concat(gastoFixed)
+      }
+      let resValidate = await validateCreateAdition(addition)
+
+      if (resValidate.operation.code == 'FAIL') {
+        showModal({
+          //type?: EResponseCodes;
+          title: "Validación de datos",
+          description: resValidate.operation.message.split('@@@').length == 1
+            ? resValidate.operation.message
+            : (JSON.parse((resValidate.operation.message.split('@@@'))[3]).length > 0
+              ? (resValidate.operation.message.split('@@@'))[1]
+              : JSON.parse((resValidate.operation.message.split('@@@'))[6]).length > 0
+                ? (resValidate.operation.message.split('@@@'))[4]
+                : (resValidate.operation.message.split('@@@'))[7]),
+          show: true,
+          OkTitle: "Aceptar",
+          //cancelTitle: "Cancerlar",
+          onOk: () => {
+            setMessage({})
+            identifyInvalidcard(addition.additionMove, resValidate.operation.message)
+          },
+          // onCancel?: () => void;
+          // onClickOutClose?: boolean;
+          onClose: () => {
+            setMessage({})
+            identifyInvalidcard(addition.additionMove, resValidate.operation.message)
+          }
+          // background?: boolean;
+        })
+      //Editar
+      } else {
+
+        showModal({
+          //type?: EResponseCodes;
+          title: "Guardar",
+          description: "¿Está segur@ de guardar la información en el sistema?",
+          show: true,
+          OkTitle: "Aceptar",
+          cancelTitle: "Cancelar",
+          onOk: () => {
+            setMessage({})
+            messageConfirmSave(addition, resValidate)            
+          },
+          onCancel: () => {
+            setMessage({})
+            onCancelNew()
+
+          },
+          // onClickOutClose?: boolean;
+          onClose: () => {
+            setMessage({})
+            onCancelNew()
+          },
+          background: true
+        })
+
+      }
+    } else if (actionForm === "edit") {    
+      const ingresoFixed = data.ingreso.map(outcome => ({
+        idCard: outcome.cardId,
+        type: 'Ingreso',
+        managerCenter: outcome.managerCenter,
+        projectId: outcome.projectId,
+        fundId: outcome.funds,
+        budgetPosition: outcome.posPre,
+        value: parseFloat(outcome.value)
+      })
+      )
+
+      const gastoFixed = data.gasto.map(outcome => ({
+        idCard: outcome.cardId,
+        type: 'Gasto',
+        managerCenter: outcome.managerCenter,
+        projectId: outcome.projectId,
+        fundId: outcome.funds,
+        budgetPosition: outcome.posPre,
+        value: parseFloat(outcome.value),
+      })
+      )
+
+      let addition = {
+        headAdditon: {
+          actAdminDistrict: data.actAdministrativeDistrict,
+          actAdminSapiencia: data.actAdministrativeSapiencia,
+          typeMovement: typeMovement,
+          userCreate: "123456789",
+          dateCreate: "2023-08-28",
+          userModify: "123456789",
+          dateModify: "2023-08-28"
+        },
+        additionMove: ingresoFixed.concat(gastoFixed)
+      }
+
+      let resValidate = await validateEditAdition(idMovement,addition)
+
+      if (resValidate.operation.code == 'FAIL') {
+        showModal({
+          //type?: EResponseCodes;
+          title: "Validación de datos",
+          description: resValidate.operation.message.split('@@@').length == 1
+            ? resValidate.operation.message
+            : (JSON.parse((resValidate.operation.message.split('@@@'))[3]).length > 0
+              ? (resValidate.operation.message.split('@@@'))[1]
+              : JSON.parse((resValidate.operation.message.split('@@@'))[6]).length > 0
+                ? (resValidate.operation.message.split('@@@'))[4]
+                : (resValidate.operation.message.split('@@@'))[7]),
+          show: true,
+          OkTitle: "Aceptar",
+          //cancelTitle: "Cancerlar",
+          onOk: () => {
+            setMessage({})
+            identifyInvalidcard(addition.additionMove, resValidate.operation.message)
+          },
+          // onCancel?: () => void;
+          // onClickOutClose?: boolean;
+          onClose: () => {
+            setMessage({})
+            identifyInvalidcard(addition.additionMove, resValidate.operation.message)
+          }
+          // background?: boolean;
+        })
+
+      } else {
+
+        showModal({
+          //type?: EResponseCodes;
+          title: "Guardar",
+          description: "¿Está segur@ de guardar la información en el sistema?",
+          show: true,
+          OkTitle: "Aceptar",
+          cancelTitle: "Cancelar",
+          onOk: () => {
+            setMessage({})
+            messageConfirmEdit(addition, resValidate)
+            /*    */
+          },
+          onCancel: () => {
+            setMessage({})
+            onCancelNew()
+          },
+          // onClickOutClose?: boolean;
+          onClose: () => {
+            setMessage({})
+            onCancelNew()
+          },
+          background: true
+        })
+
+      }
 
     }
-
   });
 
 
@@ -162,6 +255,24 @@ export function useAdditionAreaCrud(tabId: string,typeMovement:string,idMovement
       onOk: () => {
         setMessage({})
         onCancelNew()
+      }
+    })
+  }
+  const messageConfirmEdit = async (addition: any, resValidate: any) => {
+    let res = await editAdition(idMovement,addition)
+    showModal({
+      //type?: EResponseCodes;
+      title: "Guardado",
+      description: res.operation.message,
+      show: true,
+      OkTitle: "Aceptar",
+      onOk: () => {
+        setMessage({})
+        onCancelNew()
+        const route = typeMovement === "Adicion"
+            ? "/gestion-financiera/centro-gestor/adicion"
+            : "/gestion-financiera/centro-gestor/disminucion";
+            navigate(route);
       }
     })
   }
@@ -292,7 +403,7 @@ export function useAdditionAreaCrud(tabId: string,typeMovement:string,idMovement
 
 
   let formData = watch()
-  
+
   const [isAllowSave, setIsAllowSave] = useState(false)
   /* const [tabIdSt, setTabIdSt] = useState(tabId)
   useEffect(() => {
@@ -302,32 +413,32 @@ export function useAdditionAreaCrud(tabId: string,typeMovement:string,idMovement
   useEffect(() => {
     let formDataEmptyAddition = []
     let formDataEmptyExpense = []
-      formData.ingreso.forEach((element: any) => {
-        let objectWithValue = validateObjectsWithValue(element)
-        if (!objectWithValue && !element.projectName) {
-          formDataEmptyAddition.push(true)
+    formData.ingreso.forEach((element: any) => {
+      let objectWithValue = validateObjectsWithValue(element)
+      if (!objectWithValue && !element.projectName) {
+        formDataEmptyAddition.push(true)
 
-        }
-      })
-      formData.gasto.forEach((element: any) => {
-        let objectWithValue = validateObjectsWithValue(element)
-        if (!objectWithValue && !element.projectName) {
-          formDataEmptyExpense.push(true)
-
-        }
-      })
-      if(tabId=='ingreso'){
-        if(formData.ingreso.length==0){
-          setIsAllowSave(false)
-          return;
-        }
-      }else if(tabId=='gasto'){
-        if(formData.gasto.length==0){
-          setIsAllowSave(false)
-          return;
-        }
-         
       }
+    })
+    formData.gasto.forEach((element: any) => {
+      let objectWithValue = validateObjectsWithValue(element)
+      if (!objectWithValue && !element.projectName) {
+        formDataEmptyExpense.push(true)
+
+      }
+    })
+    if (tabId == 'ingreso') {
+      if (formData.ingreso.length == 0) {
+        setIsAllowSave(false)
+        return;
+      }
+    } else if (tabId == 'gasto') {
+      if (formData.gasto.length == 0) {
+        setIsAllowSave(false)
+        return;
+      }
+
+    }
 
     if (!formDataEmptyAddition.includes(true) && formData.ingreso.length > 0) {
       setIsAllowSave(true)
@@ -356,40 +467,20 @@ export function useAdditionAreaCrud(tabId: string,typeMovement:string,idMovement
     return false; // El objeto no tiene ningún campo con valor
   }
 
+
+
   //Editar
- 
 
-
-  const [aditionData, setAditionData] = useState<IData>(null);
+  const { aditionData } = useAdditionAreaEdit();
 
   useEffect(() => {
-    if (idMovement) {
-      showAdition(idMovement).then((response) => {
-            if (response.operation.code === EResponseCodes.OK) {
-                setAditionData(response.data);
-               
-            }
-        });
-    }
-}, [idMovement]);
-
-
-useEffect(() => {
-  if (aditionData) {   
-      console.log('Datos', aditionData?.details[0].budgetRoute.managementCenter);
-      
-
+    if (aditionData) {
       setValue("actAdministrativeDistrict", aditionData?.head[0]?.actAdminDistrict);
       setValue("actAdministrativeSapiencia", aditionData?.head[0]?.actAdminSapiencia);
-      setValue(`managerCenter` as any, aditionData?.details[0].budgetRoute.managementCenter);
-
-  } 
-}, [aditionData]);
+    }
+  }, [aditionData]);
 
 
-
-
-  
   return {
     control,
     arrayDataSelect,
@@ -402,6 +493,7 @@ useEffect(() => {
     getValues,
     invalidCardsAdditionSt,
     setValue,
-    isAllowSave,
+    isAllowSave
+
   };
 }

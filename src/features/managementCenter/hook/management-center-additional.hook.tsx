@@ -57,8 +57,7 @@ export function useManagementCenterAdditional( typeMovement:string ){
         },
         {
             icon: "Edit",
-            onClick: (row) => {
-                console.log(row)
+            onClick: (row) => {                
                 navigate(`./edit/${row.id}`);
             },
             

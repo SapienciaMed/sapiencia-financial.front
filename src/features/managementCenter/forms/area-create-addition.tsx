@@ -7,8 +7,14 @@ import { paginatorFooter } from '../../../common/components/table.component';
 import ScreenAddIncome from '../pages/screen-add-income.page';
 import { IArrayDataSelect, IMessage } from '../../../common/interfaces/global.interface';
 import { AddValidHeaders } from '../../../common/constants/doc.enum';
-import { IAdditionsForm } from '../interfaces/Additions';
+import { Detail, IAdditionsForm, IData } from '../interfaces/Additions';
 import { generarIdAleatorio } from '../../../common/utils/randomGenerate';
+import { useAdditionAreaEdit } from '../hook/addition-area-edit.hook';
+import { useNavigate, useParams } from 'react-router-dom';
+import { EResponseCodes } from '../../../common/constants/api.enum';
+import { useAdditionsTransfersService } from '../hook/additions-transfers-service.hook';
+
+import { useRef } from 'react';
 
 interface IAppProps {
     titleAdd: string,
@@ -23,6 +29,50 @@ interface IAppProps {
 }
 
 function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getValues, showModal, register, invalidCardsAdditionSt, setValue, watch }: IAppProps) {
+
+    const { aditionData } = useAdditionAreaEdit()
+    const [hasAppended, setHasAppended] = useState(false);
+
+    useEffect(() => {
+        // Solo ejecuta el código si hasn't hecho append anteriormente y hay detalles en aditionData
+        if (!hasAppended && aditionData?.details.length > 0) {
+            aditionData?.details.filter(d => d.type == "Ingreso").map(
+                (item: Detail) => {
+                    append({
+                        managerCenter: item.budgetRoute.managementCenter,
+                        projectId: item.budgetRoute.projectVinculation.id,
+                        projectName: item.budgetRoute.projectVinculation.conceptProject,
+                        functionalArea: item.budgetRoute.projectVinculation.areaFuntional.id,
+                        funds: item.budgetRoute.fund.id,
+                        posPre: item.budgetRoute.pospreSapiencia.id,
+                        value: item.value,
+                        cardId: generarIdAleatorio(20)
+                    })
+                }
+            )
+            setHasAppended(true); // Marca que ya hiciste append
+        }
+    }, [aditionData]);
+
+    /* useEffect(() => {
+        if (aditionData?.details.length > 0) {
+            aditionData.details.forEach((item: Detail) => {
+                if (item.type == "Ingreso") {
+                    append({
+                        managerCenter: item.budgetRoute.managementCenter,
+                        projectId: item.budgetRoute.projectVinculation.id,
+                        projectName: item.budgetRoute.projectVinculation.conceptProject,
+                        functionalArea: item.budgetRoute.projectVinculation.areaFuntional.id,
+                        funds: item.budgetRoute.fund.id,
+                        posPre: item.budgetRoute.pospreSapiencia.id,
+                        value: item.value,
+                        cardId: generarIdAleatorio(20) 
+                    });
+                }                
+            });
+        }
+    }, [aditionData]); */
+
 
     const [isSearchByName, setIsSearchByName] = useState(false)
 

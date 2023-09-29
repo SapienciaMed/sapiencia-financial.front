@@ -45,42 +45,37 @@ export interface IAdditionsForm{
   gasto: IIncome[],
   actAdministrativeDistrict: string;
   actAdministrativeSapiencia: string;
-  typeMovement: string;
+  typeMovement: string;  
 }
 
 export interface IIncome{
   managerCenter: string;
-  projectId: string;
+  projectId: string | number;
   projectName:string;
-  functionalArea: string;
-  funds: string;
-  posPre: string;
+  functionalArea: string | number;
+  funds: string | number;
+  posPre: string | number;
   value: string;
   cardId:string;
 }
 
 
-
-
-
-
-
-
 export interface IData {
-  head:    IHead[];
-  details: IDetail[];
+  head:    Head[];
+  details: Detail[];
+  id: number
 }
 
-export interface IDetail {
+export interface Detail {
   id:            number;
   additionId:    number;
   type:          string;
   budgetRouteId: number;
   value:         string;
-  budgetRoute:   IBudgetRoute;
+  budgetRoute:   BudgetRoute;
 }
 
-export interface IBudgetRoute {
+export interface BudgetRoute {
   id:                   number;
   managementCenter:     string;
   div:                  string;
@@ -88,23 +83,13 @@ export interface IBudgetRoute {
   idFund:               number;
   idBudget:             number;
   idPospreSapiencia:    number;
-  budget:               IBudget;
-  pospreSapiencia:      IBudget;
-  fund:                 IBudget;
+  budget:               Budget;
+  pospreSapiencia:      Budget;
+  fund:                 Budget;
   projectVinculation:   ProjectVinculation;
-
-
-  managerCenter?: string;
-  projectId?: string;
-  projectName?:string;
-  functionalArea?: string;
-  funds?: string;
-  posPre?: string;
-  value?: string;
-  cardId?:string;
 }
 
-export interface IBudget {
+export interface Budget {
   id:            number;
   number:        string;
   ejercise?:     number;
@@ -118,15 +103,11 @@ export interface ProjectVinculation {
   functionalAreaId: number;
   projectId:        string;
   conceptProject:   string;
-  areaFuntional:    IBudget;
+  areaFuntional:    Budget;
 }
 
-export interface IHead {
+export interface Head {
   id:                number;
   actAdminDistrict:  string;
   actAdminSapiencia: string;
-}
-
-export interface Operation {
-  code: string;
 }
