@@ -30,17 +30,17 @@ function ProjectOperationCrud({ action }: IAppProps) {
   
   useEffect(() => {
     setIsModifyDateFrom(true)
-  }, [dateFromDefaultSt])
+  }, [dateFromDefaultSt, exerciseSt])
   
   useEffect(() => {
     setIsModifyDateTo(true)
-  }, [dateToDefaultSt])
+  }, [dateToDefaultSt, exerciseSt])
   
 
   useEffect(() => {
     if(exerciseSt=="" || !exerciseSt){
-      setDateFromDefaultStValidateDate("0000-00-00")
-      setDateToDefaultStValidateDate("0000-00-00")
+      setDateFromDefaultStValidateDate("")
+      setDateToDefaultStValidateDate("")
     }
   }, [exerciseSt])
 
@@ -115,8 +115,8 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 classNameLabel="text-black big bold text-required"
                 //placeholder={'Seleccionar'}
                 data={[
-                  { id: "1", name: "Activo", value: 1 },
-                  { id: "0", name: "Inactivo", value: 0 },
+                  { id: "1", name: "Activo", value: "1" },
+                  { id: "0", name: "Inactivo", value: "0" },
                 ]}
                 filter={true}
                 fieldArray={true}
@@ -128,7 +128,7 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 className="input-basic medium"
                 typeInput="date"
                 register={register}
-                value={!isModifyDateFrom ? undefined : dateFromDefaultSt}
+                value={!isModifyDateFrom ? null : dateFromDefaultSt}
                 onChange={(e)=>{setIsModifyDateFrom(false);setDateFromDefaultStValidateDate(e.target.value)}}
                 label="Validez desde"
                 classNameLabel="text-black big bold text-required"
