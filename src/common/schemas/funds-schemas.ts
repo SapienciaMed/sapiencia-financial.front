@@ -39,6 +39,16 @@ export const fundsAdditional = yup.object({
         .string()
 })
 
+export const consultFundsAdditional = yup.object({
+    adminDistrict: yup
+        .string()
+        .max(200, "Solo se permiten 200 caracteres"),            
+        adminSapiencia: yup         
+        .string()
+        .max(100, "Solo se permiten 100 caracteres"),
+             
+})
+
 export const fundsAdditionalValidation =  yup.object({
     ingreso: yup.array()
         .of(yup.object().shape({
