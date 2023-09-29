@@ -149,9 +149,9 @@ export function useBudgetRoutesData() {
                 setProjectsVinculation(response.data);
             }
         });
-        GetProjectsList({ page: "1", perPage: "1" }).then(responseProjectList => {
+        GetProjectsList().then(responseProjectList => {
             if (responseProjectList.operation.code === EResponseCodes.OK) {
-                setProjects(responseProjectList.data.array);
+                setProjects(responseProjectList.data);
             }
         })
     }, [])

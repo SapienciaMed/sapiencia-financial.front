@@ -15,10 +15,12 @@ export interface IProjectAdditionList {
     projectId : string;
     budgetValue : number;
     linked : boolean;
-    areaFuntional?: IFunctionalAreaAddition,
+    areaFuntional?: IFunctionalAreaAddition
     conceptProject?: string;
-    assignmentValue ?: string
-}
+    assignmentValue: number
+    type?: string;
+  }
+  
 
 export interface IFunctionalAreaAddition {
     id?: number;

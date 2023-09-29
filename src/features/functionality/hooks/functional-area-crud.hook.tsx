@@ -204,9 +204,9 @@ export function useFunctionalAreaCrudData(id: string) {
                 setValueRegister("description", response.data.description);
             }
         });
-        GetProjectsList({ page: "1", perPage: "1" }).then(responseProjectList => {
+        GetProjectsList().then(responseProjectList => {
             if (responseProjectList.operation.code === EResponseCodes.OK) {
-                setProjects(responseProjectList.data.array);
+                setProjects(responseProjectList.data);
             }
         })
     }, [id]);

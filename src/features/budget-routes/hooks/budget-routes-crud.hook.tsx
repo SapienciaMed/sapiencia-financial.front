@@ -52,10 +52,10 @@ export function useBudgetRoutesCrudData(id: string) {
         if (response.operation.code === EResponseCodes.OK) {
             projectsVinculate = response.data;
         }
-        const response2 = await GetProjectsList({ page: "1", perPage: "1" });
+        const response2 = await GetProjectsList();
         if (response2.operation.code === EResponseCodes.OK) {
             const arrayProjects: IDropdownProps[] = projectsVinculate.map((projectVinculate) => {
-                const project = response2.data.array.find((data) => data.projectId === projectVinculate.projectId );
+                const project = response2.data.find((data) => data.projectId === projectVinculate.projectId );
                 return { name: `${projectVinculate.projectId} - ${project?.conceptProject ? project.conceptProject : ''}`, value: projectVinculate.id }
             });
 

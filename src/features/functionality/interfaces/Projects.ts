@@ -1,12 +1,13 @@
-import { IFunctionalArea } from "./Functional-Area";
-import { DateTime } from 'luxon';
+import { DateTime } from "luxon";
 
 export interface IProject {
-  id: string,
-  name: string,
-  plannedValue: number,
-  assignmentValue: number,
-  linked?: number
+  id: string;
+  type: string;
+  projectCode: string;
+  name: string;
+  plannedValue: number;
+  assignmentValue: number;
+  linked?: number;
 }
 
 export interface IProjectFilters {
@@ -17,8 +18,8 @@ export interface IProjectFilters {
 
 export interface IProjectsVinculation {
   id?: number;
-  functionalAreaId?: number,
-  projectId: string,
+  functionalAreaId?: number;
+  projectId: string;
   budgetValue: number;
   linked: boolean;
   userCreate?: string;
@@ -27,8 +28,8 @@ export interface IProjectsVinculation {
 
 export interface IProjectsVinculationTable {
   id?: number;
-  functionalAreaId?: number,
-  projectId: string,
+  functionalAreaId?: number;
+  projectId: string;
   budgetValue: number;
   linked: number;
   userCreate?: string;
