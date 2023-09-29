@@ -31,10 +31,9 @@ interface IAppProps {
 function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getValues, showModal, register, invalidCardsAdditionSt, setValue, watch }: IAppProps) {
 
     const { aditionData } = useAdditionAreaEdit()
-    const [hasAppended, setHasAppended] = useState(false);
+    //const [hasAppended, setHasAppended] = useState(false);
 
-    useEffect(() => {
-        // Solo ejecuta el código si hasn't hecho append anteriormente y hay detalles en aditionData
+   /*  useEffect(() => {        
         if (!hasAppended && aditionData?.details.length > 0) {
             aditionData?.details.filter(d => d.type == "Ingreso").map(
                 (item: Detail) => {
@@ -50,19 +49,20 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
                     })
                 }
             )
-            setHasAppended(true); // Marca que ya hiciste append
+            setHasAppended(true); 
         }
-    }, [aditionData]);
-
-    /* useEffect(() => {
-        if (aditionData?.details.length > 0) {
+    }, [aditionData]); */    
+    const [processedDataId, setProcessedDataId] = useState(null);
+    console.log('como llegan los datos',aditionData)
+    useEffect(() => {
+        if (aditionData && aditionData.id !== processedDataId) {
             aditionData.details.forEach((item: Detail) => {
-                if (item.type == "Ingreso") {
+                if (item.type == "Gasto") {
                     append({
                         managerCenter: item.budgetRoute.managementCenter,
                         projectId: item.budgetRoute.projectVinculation.id,
                         projectName: item.budgetRoute.projectVinculation.conceptProject,
-                        functionalArea: item.budgetRoute.projectVinculation.areaFuntional.id,
+                        functionalArea: item.budgetRoute.projectVinculation.functionalAreaId,
                         funds: item.budgetRoute.fund.id,
                         posPre: item.budgetRoute.pospreSapiencia.id,
                         value: item.value,
@@ -70,8 +70,9 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
                     });
                 }                
             });
+            setProcessedDataId(aditionData.id);
         }
-    }, [aditionData]); */
+    }, [aditionData]);
 
 
     const [isSearchByName, setIsSearchByName] = useState(false)
