@@ -496,6 +496,14 @@ div[id="single-spa-application:@sapiencia/financial"] {
       gap: 0.5rem;
     }
   }
+
+  .funds-form {
+    .mobile-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+  }
 }
 
 @media (max-width: 680px) {

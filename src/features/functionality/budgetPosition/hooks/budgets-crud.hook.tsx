@@ -23,19 +23,25 @@ interface IBudgetsCrudForm {
 export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () => Promise<void> ) {
     const [budgetsData, setBudgetsData] = useState<IBudgets>(null);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
+    const [isBtnDisable, setIsBtnDisable] = useState(true)
+    const [ isDifferentValues, setIsDifferentValues ] = useState(false)
 
     const resolver = useYupValidationResolver(budgetsCrudValidator);
     const { GetEntities } = useEntitiesService();
     const { CreateBudgets, GetBudgets, UpdateBudgets } = useBudgetsService();
-    const { authorization, setMessage } = useContext(AppContext);
+    const { authorization, setMessage, isValue } = useContext(AppContext);
+
     const {
         handleSubmit,
         register,
         formState: { errors },
         setValue: setValueRegister,
-        control: controlRegister
+        control: controlRegister,
+        watch
     } = useForm<IBudgetsCrudForm>({ resolver });
+
     const navigate = useNavigate();
+    const watchData = watch()
 
     useEffect(() => {
         GetEntities().then(response => {
@@ -77,7 +83,7 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
         }
     }, [budgetsId]);
 
-    useEffect(() => {
+    useEffect(() => { 
         if (!budgetsData) return;
         setValueRegister("number", String(budgetsData.number));
         setValueRegister("entity", budgetsData.entityId);
@@ -85,6 +91,21 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
         setValueRegister("description", budgetsData.description);
         setValueRegister("ejercise", String(budgetsData.ejercise));
     }, [budgetsData])
+
+    
+    useEffect(() => {
+        if(watchData.description != '' && watchData.denomination != '' && ( budgetsData != null || budgetsData != undefined ) ) {
+            if((budgetsData.denomination.trim() != watchData.denomination.trim()) || (budgetsData.description.trim() != watchData.description.trim())){
+                setIsDifferentValues(true)
+            }else{
+                setIsDifferentValues(false)
+            }
+        }       
+    },[watchData])
+
+    useEffect(() => {
+        setIsBtnDisable(!(isValue || isDifferentValues));
+    }, [isValue, isDifferentValues]);
 
     const onSubmitNewBudgets = handleSubmit(async (data: IBudgetsCrudForm) => {
         const insertData: IBudgets = {
@@ -95,8 +116,6 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
             userCreate: authorization.user.numberDocument,
             ejercise: parseInt(data.ejercise),
         }
-
-
 
         showModal({
             //type?: EResponseCodes;
@@ -123,8 +142,7 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
 
         
     });
-
-    
+ 
     const showModal = (values: IMessage) => {
         setMessage({
           title: values.title,
@@ -135,9 +153,8 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
           cancelTitle: values.cancelTitle
     
         });
-      };
+    };
     
-
     const messageConfirmSave = async (insertData:any) => {
         CreateBudgets(insertData).then(response => {
             if (response.operation.code === EResponseCodes.OK) {
@@ -165,9 +182,7 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
                 });
             }
         })
-      }
-
-
+    }
 
     const onSubmitEditBudgets = handleSubmit(async (data: IBudgetsCrudForm) => {
         const insertData: IBudgets = {
@@ -178,7 +193,6 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
             userCreate: authorization.user.numberDocument,
             ejercise: parseInt(data.ejercise),
         }
-        
         setMessage({
             title: "Editar Posición presupuestal",
             description: "¿Estás segur@ de editar la posición presupuestal?",
@@ -186,9 +200,9 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
             OkTitle: "Aceptar",
             cancelTitle: "Cancelar",
             onOk: () => {
-                vinculateActivities &&  vinculateActivities();
-
-                //Se tiene que guardar todos (¿crear un redux?)
+                (vinculateActivities && isValue ) &&  vinculateActivities();
+                isDifferentValues && console.log("guardar cambios pospre origen ");
+                
                 // UpdateBudgets(parseInt(budgetsId), insertData).then(response => {
                 //     if (response.operation.code === EResponseCodes.OK) {
                 //         setMessage({
@@ -247,6 +261,6 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
         });
     }
 
-    return { register, errors, entitiesData, budgetsData, controlRegister, onSubmitNewBudgets, onSubmitEditBudgets, onCancelNew, 
+    return { register, errors, entitiesData, budgetsData, controlRegister, isBtnDisable, onSubmitNewBudgets, onSubmitEditBudgets, onCancelNew, 
         onCancelEdit, confirmClose };
 }

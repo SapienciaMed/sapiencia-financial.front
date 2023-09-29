@@ -15,14 +15,15 @@ interface IVinculationMGAFilters {
     inputCodigoMGA: string
 }
 
-export function useVinculationMGAData(pospre: string) {
+export function useVinculationMGAData(pospre: string ) {
     const navigate = useNavigate();
     const [ lastMove, setLastMove ] = useState([]);
     const [ lastMoveEdit, setLastMoveEdit ] = useState([]);
+
     const tableComponentRef = useRef(null);
     const { CreateVinculation, DeleteVinculation } = useVinculationService();
     const resolver = useYupValidationResolver(vinculationValidator);
-    const { setMessage } = useContext(AppContext);
+    const { setMessage, setIsValue, isValue } = useContext(AppContext);
     const [activitiesLink, setActivitiesLink] = useState<number[]>([]);
     const [activitiesUnLink, setActivitiesUnLink] = useState<number[]>([]);
     const [showTable, setShowTable] = useState(false);
@@ -102,7 +103,7 @@ export function useVinculationMGAData(pospre: string) {
     const tableColumnsEdit: ITableElement<IApiPlanningDetailedActivitiesSpecify>[] = [
         {
             fieldName: "consecutiveActivityDetailed",
-            header: "Codigo",
+            header: "Código producto MGA",
         },
         {
             fieldName: "measurementActivityDetailed",
@@ -114,7 +115,7 @@ export function useVinculationMGAData(pospre: string) {
         },
         {
             fieldName: "totalCostActivityDetailed",
-            header: "Costo",
+            header: "Costo total",
         },
         {
             fieldName: "id",
@@ -126,22 +127,28 @@ export function useVinculationMGAData(pospre: string) {
                         value={ Object.keys(row).length > 0}
                         onChange={(value) => {
                             if (!value.value) { // Cuando se vaya a eliminar una vinculacion agregue en un estado, los objetos que se quieren desvincular
-                                setLastMoveEdit([...lastMoveEdit,{id:row}])
+                                setLastMoveEdit([ ...lastMoveEdit, { id:row } ]);
+
                             } else {
                                 //Cuando se vuelve a colocar el switch en encendido haga lo siguiente:
-                                const auxLast = lastMoveEdit;
-                                const indexToRemove = lastMoveEdit.findIndex((value) => value.id.activityDetailedId === row.activityDetailedId);                              
-                                if (indexToRemove !== -1) { //Si se encontró una coincidencia, se elimina ese elemento del array 
-                                    auxLast.splice(indexToRemove, 1);
-                                    setLastMoveEdit(auxLast);
-                                }
+                                const deleteLast = lastMoveEdit.filter((elemento) => {
+                                    return elemento.id.activityDetailedId !== row.activityDetailedId;
+                                });
+
+                                setLastMoveEdit(deleteLast);
+
                             }
+                            
                         }}
                     />
                 )
             }
         }
     ];
+
+    useEffect(() => {
+        setIsValue(lastMoveEdit.length > 0)
+    },[lastMoveEdit])
 
     const tableColumnsView: ITableElement<IApiPlanningDetailedActivitiesSpecify>[] = [
         {
@@ -171,7 +178,7 @@ export function useVinculationMGAData(pospre: string) {
             onClick: (row) => {
                 const rows = [
                     {
-                        title: "Código",
+                        title: "Código producto MGA",
                         value: `${row.consecutiveActivityDetailed}`
                     },
                     {
@@ -183,7 +190,7 @@ export function useVinculationMGAData(pospre: string) {
                         value: `${row.amountActivityDetailed}`
                     },
                     {
-                        title: "Costo",
+                        title: "Costo Total",
                         value: `$ ${row.totalCostActivityDetailed.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
                     },
                     {
@@ -210,7 +217,6 @@ export function useVinculationMGAData(pospre: string) {
         }
     ];
 
-
     function loadTableData(searchCriteria?: object): void {
         if (tableComponentRef.current) {
             tableComponentRef.current.loadData(searchCriteria);
@@ -225,9 +231,9 @@ export function useVinculationMGAData(pospre: string) {
         navigate("./../../../");
     };
 
-    //Todo: Validar => No creo que se necesite
     async function vinculateActivities(message?:boolean):Promise<void> {
-        //Deberia enviar en la peticion. el cambio que se hagan en el mga tanto editar como vincular
+        //Deberia enviar en la peticion. el cambio que se hagan en el mga cuando se desvincule un mga
+        console.log("guardar las vinculaciones MGA");
         
         let status = true;
         // if(activitiesUnLink){

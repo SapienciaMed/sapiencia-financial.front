@@ -68,7 +68,7 @@ export function usePospreSapienciaData({budgetsId, validateAction }: IPospreSapi
         },
         {
             fieldName: "number",
-            header: "Descripción Pospre sapiencia"
+            header: "Pospre sapiencia"
         },
         {
             fieldName: "ejercise",
@@ -114,6 +114,46 @@ export function usePospreSapienciaData({budgetsId, validateAction }: IPospreSapi
         }
     ];
 
+    const tableActionEdit: ITableAction<any>[] = [
+        {
+            icon: "Edit",
+            onClick: (row) => {
+                navigate(`./pospre-sapiencia/edit/${row.id}`);
+            },
+        },
+        {
+            icon: "Detail",
+            onClick: (row) => {
+                const rows = [
+                    {
+                        title: "Pospre origen",
+                        value: `${row.budget.number}`
+                    },
+                    {
+                        title: "Pospre sapiencia",
+                        value: `${row.number}`
+                    },
+                    {
+                        title: "Ejercicio",
+                        value: `${row.ejercise}`
+                    },
+                    {
+                        title: "Descripción",
+                        value: `${row.description}`
+                    },
+                ]
+
+                setMessage({
+                    title: "Detalle Vinculación MGA ",
+                    show: true,
+                    OkTitle: "Aceptar",
+                    description: <DetailsComponent rows={rows} />,
+                    background: true
+                })
+            },
+        }
+    ]
+
     function loadTableData(searchCriteria?: object): void {
         if (tableComponentRef.current) {
             tableComponentRef.current.loadData(searchCriteria);
@@ -140,6 +180,6 @@ export function usePospreSapienciaData({budgetsId, validateAction }: IPospreSapi
     },[inputValue])
 
 
-    return { register, reset, showTable, control, errors, tableComponentRef, tableColumns, tableActions, isBtnDisable, 
+    return { register, reset, showTable, control, errors, tableComponentRef, tableColumns, tableActions, isBtnDisable, tableActionEdit,
         tableColumnsView, tableActionsView, setShowTable, onSubmitSearch }
 } 

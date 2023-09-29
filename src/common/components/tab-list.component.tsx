@@ -41,7 +41,7 @@ function TabListComponent({ tabs, classNameProp, start, index }: IAppProps): Rea
                     let active = "";
                     if(selectedTab) if(selectedTab.id === tab.id) active = "active";
                     return (
-                        <div className={`tab-option ${active}`} key={tab.id} onClick={() => {
+                        <div className={`tab-option ${active} font-size-responsive`} key={tab.id} onClick={() => {
                                 if(isNaN(parseInt(`${index}`))) setSelectedTab(tab);
                             }}>
                             {tab.title}

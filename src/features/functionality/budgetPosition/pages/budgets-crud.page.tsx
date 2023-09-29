@@ -9,7 +9,6 @@ import {
 import { EDirection } from "../../../../common/constants/input.enum";
 import { useBudgetsCrudData } from "../hooks/budgets-crud.hook";
 import { useParams } from "react-router-dom";
-import TableComponent from "../../../../common/components/table.component";
 import { Controller } from "react-hook-form";
 import BudgetViewPage from "./budget-view.page";
 
@@ -18,15 +17,14 @@ interface IAppProps {
 }
 
 function BudgetsForm({ action }: IAppProps) {
-  const { id: budgetsId } = useParams();
+  const { pospre: budgetsId } = useParams();
 
-  const {
-    vinculateActivities,
-  } = useVinculationMGAData(budgetsId);
+  const { vinculateActivities } = useVinculationMGAData(budgetsId);
   const {
     register,
     errors,
     entitiesData,
+    isBtnDisable,
     onSubmitEditBudgets,
     onSubmitNewBudgets,
     confirmClose,
@@ -170,7 +168,7 @@ function BudgetsForm({ action }: IAppProps) {
             </div>
             {
               action == 'edit' && 
-                <BudgetViewPage actions="edit"/>
+                <BudgetViewPage actions="edit" />
             }
             <div className="mobile-actions mobile">
               <span
@@ -181,7 +179,7 @@ function BudgetsForm({ action }: IAppProps) {
               >
                 Cancelar
               </span>
-              <ButtonComponent value="Guardar" type="submit" className="button-main huge" />
+              <ButtonComponent value="Guardar" type="submit" className="button-main huge" disabled={action == 'edit' && isBtnDisable} />
             </div>
           </FormComponent>
         </div>
@@ -201,6 +199,7 @@ function BudgetsForm({ action }: IAppProps) {
             value="Guardar"
             type="submit"
             form="budgets-form"
+            disabled={action == 'edit' && isBtnDisable}
           />
         </div>
       </div>

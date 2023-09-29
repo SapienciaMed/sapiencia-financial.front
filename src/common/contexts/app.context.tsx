@@ -26,6 +26,8 @@ interface IAppContext {
   setDataPasteRedux: Dispatch<SetStateAction<IDataPaste[]>>,
   detailTransferData: IPagingData<IobjectAddTransfer>,
   setDetailTransferData: Dispatch<SetStateAction<IPagingData<IobjectAddTransfer>>>;
+  isValue: boolean,
+  setIsValue: Dispatch<SetStateAction<boolean>>;
 }
 interface IProps {
   children: ReactElement | ReactElement[];
@@ -47,6 +49,8 @@ export const AppContext = createContext<IAppContext>({
   setDataPasteRedux: () => {},
   detailTransferData: {} as IPagingData<IobjectAddTransfer>,
   setDetailTransferData: () => {},
+  isValue: {} as boolean,
+  setIsValue: () => {}
 });
 
 export function AppContextProvider({ children }: IProps) {
@@ -60,6 +64,7 @@ export function AppContextProvider({ children }: IProps) {
   const [addTransferData, setAddTransferData] = useState<IPagingData<IobjectAddTransfer>>({} as IPagingData<IobjectAddTransfer>)
   const [dataPasteRedux, setDataPasteRedux] = useState<IDataPaste[]>({} as IDataPaste[])
   const [detailTransferData, setDetailTransferData] = useState<IPagingData<IobjectAddTransfer>>({} as IPagingData<IobjectAddTransfer>)
+  const [isValue, setIsValue] = useState<boolean>(null as boolean)
 
   // Metodo que verifica si el usuario posee permisos sobre un accion
   function validateActionAccess(indicator: string): boolean {
@@ -82,9 +87,11 @@ export function AppContextProvider({ children }: IProps) {
       dataPasteRedux,
       setDataPasteRedux,
       detailTransferData,
-      setDetailTransferData
+      setDetailTransferData,
+      isValue,
+      setIsValue
     };
-  }, [message, authorization, messageEdit, headTransferData, addTransferData, dataPasteRedux, detailTransferData]);
+  }, [message, authorization, messageEdit, headTransferData, addTransferData, dataPasteRedux, detailTransferData, isValue]);
 
   return <AppContext.Provider value={values}>{children}</AppContext.Provider>;
 }

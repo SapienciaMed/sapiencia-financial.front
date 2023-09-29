@@ -35,13 +35,14 @@ export const FunctionalityRoutes = () => {
 
         <Route path={"/posicion-presupuestaria/"} element={<BudgetsPage/>} />
         <Route path={"/posicion-presupuestaria/create"} element={<BudgetsCrud action="new"/>} />
-        <Route path={"/posicion-presupuestaria/edit/:id"} element={<BudgetsCrud action="edit"/>} />
+        <Route path={"/posicion-presupuestaria/edit/:pospre"} element={<BudgetsCrud action="edit"/>} />
+        <Route path={"/posicion-presupuestaria/edit/:pospre/pospre-sapiencia/edit/:id"} element={<PosPreSapienciaForm action="edit" location="origen"/>}  />
 
         <Route path={"/posicion-presupuestaria/vinculacion/:pospre"} element={<Link />} />
         <Route path={"/posicion-presupuestaria/vinculacion/:pospre/:option"} element={<Link />} />
 
-        <Route path={"/posicion-presupuestaria/vinculacion/:pospre/pospre-sapiencia/create"} element={<PosPreSapienciaForm action="new"/>} />
-        <Route path={"/posicion-presupuestaria/vinculacion/:pospre/pospre-sapiencia/edit/:id"} element={<PosPreSapienciaForm action="edit" />} />
+        <Route path={"/posicion-presupuestaria/vinculacion/:pospre/pospre-sapiencia/create"} element={<PosPreSapienciaForm action="new" location="pospre"/>} />
+        <Route path={"/posicion-presupuestaria/vinculacion/:pospre/pospre-sapiencia/edit/:id"} element={<PosPreSapienciaForm action="edit" location="pospre" />} />
         <Route path={"/posicion-presupuestaria/view/:id"} element={<BudgetsView/>} />
 
         <Route path={"/area-funcional/"} element={<FunctionalAreaPage/>} />

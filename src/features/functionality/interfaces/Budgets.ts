@@ -17,6 +17,7 @@ export interface IBudgets {
 }
 
 export interface IBudgetViewPage {
-  actions: "vinculation" | "edit" | "view"
+  actions: "vinculation" | "edit" | "view",
+  unlinkMGA?: (value: boolean) => void
 }
 

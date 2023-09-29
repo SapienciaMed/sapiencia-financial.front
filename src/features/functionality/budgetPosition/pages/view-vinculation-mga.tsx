@@ -3,9 +3,11 @@ import TableComponent from "../../../../common/components/table.component";
 import { useVinculationMGAData } from "../../hooks/vinculation-mga.hook";
 import { IBudgetViewPage } from "../../interfaces/Budgets";
 
-function ViewVinculationMGA( actions: IBudgetViewPage): React.JSX.Element {
+function ViewVinculationMGA( values: IBudgetViewPage): React.JSX.Element {
 
-    const { id: budgetsId } = useParams();
+    const { actions } = values;
+
+    const { pospre: budgetsId } = useParams();
     const { tableComponentRef, tableColumnsView, tableActionsView, tableColumnsEdit } = useVinculationMGAData(budgetsId);
 
     return(
@@ -13,7 +15,7 @@ function ViewVinculationMGA( actions: IBudgetViewPage): React.JSX.Element {
             <TableComponent
                 ref={tableComponentRef}
                 url={`${process.env.urlApiFinancial}/api/v1/vinculation-mga/get-detailed-activities-api-planning`}
-                columns={ actions.actions == 'view' ? tableColumnsView : tableColumnsEdit }
+                columns={ actions == 'view' ? tableColumnsView : tableColumnsEdit }
                 actions={ tableActionsView }
                 isShowModal={false}
             />
