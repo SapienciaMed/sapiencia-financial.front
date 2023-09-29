@@ -73,13 +73,14 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
     resolver,
   });
 
-  const [name, projectId, id, excercise] = watch(["name", "number", "id", "exercise"]);
+  //const [name, projectId, id, excercise,dateFrom] = watch(["name", "number", "id", "exercise", "dateFrom"]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     //(fundData && action == 'edit') && setIsBtnDisable(validateFieldEqualsEdition(fundData))
-    console.log({ name, projectId, id, excercise })
-
-  }, [name, projectId, id, excercise])
+    console.log({ name, projectId, id, excercise,dateFrom })
+    //setValueRegister("dateFrom", dateFrom);
+    //setValueRegister("dateTo", Object(projectOperationSt).dateTo);
+  }, [name, projectId, id, excercise]) */
 
 
   const validateButton = (values) => { return Object.values(values).every(campo => campo !== null && campo !== undefined && campo !== '') }
@@ -121,7 +122,6 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
 
 
   const messageConfirmSave = async (data: any) => {
-    console.log({data})
     const response = !data.id
     ? await createProjectOperation(data) 
     : await UpdateProjectOperation(data.id,data) 
