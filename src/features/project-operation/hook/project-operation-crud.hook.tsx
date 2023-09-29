@@ -32,7 +32,7 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
   useEffect(() => {
     setDateFromDefaultSt(`${exerciseSt ?? actualFullYear}-01-01`)
     setDateToDefaultSt(`${exerciseSt ?? actualFullYear}-12-31`)
-    if(Object(exerciseSt).length!<4){
+    if(Object(exerciseSt).length<4 || Object(exerciseSt).length>6){
       setValueRegister("dateFrom","");
       setValueRegister("dateTo","");
     }else{
