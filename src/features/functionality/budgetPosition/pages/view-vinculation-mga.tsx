@@ -5,19 +5,20 @@ import { IBudgetViewPage } from "../../interfaces/Budgets";
 
 function ViewVinculationMGA( values: IBudgetViewPage): React.JSX.Element {
 
-    const { actions } = values;
-
+    const { actions, upDateVinculationData } = values;
+    
     const { pospre: budgetsId } = useParams();
-    const { tableComponentRef, tableColumnsView, tableActionsView, tableColumnsEdit } = useVinculationMGAData(budgetsId);
+    const { tableComponentRef, tableColumnsView, tableActionsView, tableColumnsEdit } = useVinculationMGAData(budgetsId, { actions, upDateVinculationData } );
 
     return(
         <div className="card-form no-box-shadow">
             <TableComponent
                 ref={tableComponentRef}
-                url={`${process.env.urlApiFinancial}/api/v1/vinculation-mga/get-detailed-activities-api-planning`}
+                url={`${process.env.urlApiFinancial}/api/v1/vinculation-mga/get-detailed-activities-api-planning-yesuseonpospre/${budgetsId}`}
                 columns={ actions == 'view' ? tableColumnsView : tableColumnsEdit }
                 actions={ tableActionsView }
                 isShowModal={false}
+                secondaryTitle="Detalle vinculación MGA"
             />
         </div>
     )

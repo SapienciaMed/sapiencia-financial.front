@@ -63,20 +63,16 @@ export function usePospreSapienciaData({budgetsId, validateAction }: IPospreSapi
 
     const tableColumnsView: ITableElement<IPosPreSapiencia>[] = [
         {
-            fieldName: "budget.number",
-            header: "Pospre sapiencia",
-        },
-        {
             fieldName: "number",
             header: "Pospre sapiencia"
         },
         {
-            fieldName: "ejercise",
-            header: "Ejercicio"
+            fieldName: "description",
+            header: "Descripción pospre sapiencia"
         },
         {
-            fieldName: "description",
-            header: "Descripción"
+            fieldName: "ejercise",
+            header: "Ejercicio"
         },
     ];
 
@@ -121,37 +117,6 @@ export function usePospreSapienciaData({budgetsId, validateAction }: IPospreSapi
                 navigate(`./pospre-sapiencia/edit/${row.id}`);
             },
         },
-        {
-            icon: "Detail",
-            onClick: (row) => {
-                const rows = [
-                    {
-                        title: "Pospre origen",
-                        value: `${row.budget.number}`
-                    },
-                    {
-                        title: "Pospre sapiencia",
-                        value: `${row.number}`
-                    },
-                    {
-                        title: "Ejercicio",
-                        value: `${row.ejercise}`
-                    },
-                    {
-                        title: "Descripción",
-                        value: `${row.description}`
-                    },
-                ]
-
-                setMessage({
-                    title: "Detalle Vinculación MGA ",
-                    show: true,
-                    OkTitle: "Aceptar",
-                    description: <DetailsComponent rows={rows} />,
-                    background: true
-                })
-            },
-        }
     ]
 
     function loadTableData(searchCriteria?: object): void {

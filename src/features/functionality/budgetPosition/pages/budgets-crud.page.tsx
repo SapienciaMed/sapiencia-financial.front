@@ -19,7 +19,6 @@ interface IAppProps {
 function BudgetsForm({ action }: IAppProps) {
   const { pospre: budgetsId } = useParams();
 
-  const { vinculateActivities } = useVinculationMGAData(budgetsId);
   const {
     register,
     errors,
@@ -30,8 +29,10 @@ function BudgetsForm({ action }: IAppProps) {
     confirmClose,
     onCancelNew,
     onCancelEdit,
+    upDateVinculationData,
+    upDatePospreData,
     controlRegister,
-  } = useBudgetsCrudData(budgetsId, vinculateActivities );
+  } = useBudgetsCrudData(budgetsId);
   
   return (
     <div className="crud-page full-height">
@@ -168,7 +169,7 @@ function BudgetsForm({ action }: IAppProps) {
             </div>
             {
               action == 'edit' && 
-                <BudgetViewPage actions="edit" />
+                <BudgetViewPage actions="edit" upDatePospreData={upDatePospreData} upDateVinculationData={upDateVinculationData} />
             }
             <div className="mobile-actions mobile">
               <span

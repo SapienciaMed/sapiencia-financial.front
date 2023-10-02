@@ -44,7 +44,7 @@ export function useBudgetsData() {
             fieldName: "",
             header: "Vinculación MGA",
             renderCell: (row) => {
-                return (<>-</>)
+                return (<>{row.vinculationmga.length > 0 ? row.vinculationmga.length : '0'}</>)
             }
 
         },
@@ -52,7 +52,7 @@ export function useBudgetsData() {
             fieldName: "",
             header: "Pospre Sapiencia",
             renderCell: (row) => {
-                return (<>{row.pospresap.length > 0 ? row.pospresap.length : '-'}</>)
+                return (<>{row.pospresap.length > 0 ? row.pospresap.length : '0'}</>)
             }
         },
         

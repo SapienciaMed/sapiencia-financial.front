@@ -11,6 +11,7 @@ import { IBudgets } from "../../interfaces/Budgets";
 import { AppContext } from "../../../../common/contexts/app.context";
 import { budgetsCrudValidator } from "../../../../common/schemas/budgets-schemas";
 import { IMessage } from "../../../../common/interfaces/global.interface";
+import insterDataBudgetsUpdate from "../utils/insert-data-budgets-update";
 
 interface IBudgetsCrudForm {
     number: string;
@@ -20,11 +21,13 @@ interface IBudgetsCrudForm {
     description: string;
 }
 
-export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () => Promise<void> ) {
+export function useBudgetsCrudData(budgetsId: string ) {
     const [budgetsData, setBudgetsData] = useState<IBudgets>(null);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
     const [isBtnDisable, setIsBtnDisable] = useState(true)
     const [ isDifferentValues, setIsDifferentValues ] = useState(false)
+    const [ vinculationmgaData, setVinculationmgaData ] = useState([])
+    const [ pospreSapiData, setPospreSapiData ] = useState([])
 
     const resolver = useYupValidationResolver(budgetsCrudValidator);
     const { GetEntities } = useEntitiesService();
@@ -59,11 +62,11 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
                     OkTitle: "Aceptar",
                     onOk: () => {
                         setMessage({});
-                        // navigate("./../../");
+                        navigate("./../../");
                     },
                     onClose: () => {
                         setMessage({});
-                        // navigate("./../../");
+                        navigate("./../../");
                     },
                     background: true
                 });
@@ -95,7 +98,7 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
     
     useEffect(() => {
         if(watchData.description != '' && watchData.denomination != '' && ( budgetsData != null || budgetsData != undefined ) ) {
-            if((budgetsData.denomination.trim() != watchData.denomination.trim()) || (budgetsData.description.trim() != watchData.description.trim())){
+            if((budgetsData.denomination?.trim() != watchData.denomination?.trim()) || (budgetsData.description?.trim() != watchData.description?.trim())){
                 setIsDifferentValues(true)
             }else{
                 setIsDifferentValues(false)
@@ -118,7 +121,6 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
         }
 
         showModal({
-            //type?: EResponseCodes;
             title: "Crear posición presupuestal",
             description: "¿Estás segur@ de crear la posición presupuestal?",
             show: true,
@@ -132,7 +134,6 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
               setMessage({})
               onCancelNew()
             },
-            // onClickOutClose?: boolean;
             onClose: () => {
               setMessage({})
               onCancelNew()
@@ -184,8 +185,15 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
         })
     }
 
+    const upDateVinculationData = (vinculationmga: any) => setVinculationmgaData(vinculationmga)
+
+    const upDatePospreData = (pospreSapi: any) => {
+        const newData = [...pospreSapiData, pospreSapi];
+        setPospreSapiData(newData);
+    }
+
     const onSubmitEditBudgets = handleSubmit(async (data: IBudgetsCrudForm) => {
-        const insertData: IBudgets = {
+        const budgetsData: IBudgets = {
             entityId: data.entity,
             number: data.number,
             denomination: data.denomination,
@@ -193,6 +201,9 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
             userCreate: authorization.user.numberDocument,
             ejercise: parseInt(data.ejercise),
         }
+
+        const insertData = insterDataBudgetsUpdate(budgetsData, vinculationmgaData, authorization, budgetsId, pospreSapiData)
+ 
         setMessage({
             title: "Editar Posición presupuestal",
             description: "¿Estás segur@ de editar la posición presupuestal?",
@@ -200,35 +211,32 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
             OkTitle: "Aceptar",
             cancelTitle: "Cancelar",
             onOk: () => {
-                (vinculateActivities && isValue ) &&  vinculateActivities();
-                isDifferentValues && console.log("guardar cambios pospre origen ");
-                
-                // UpdateBudgets(parseInt(budgetsId), insertData).then(response => {
-                //     if (response.operation.code === EResponseCodes.OK) {
-                //         setMessage({
-                //             title: "Editar Pospre",
-                //             description: "Se ha editado el Pospre exitosamente",
-                //             show: true,
-                //             OkTitle: "Aceptar",
-                //             onOk: () => {
-                //                 onCancelEdit();
-                //                 setMessage({});
-                //             },
-                //             background: true
-                //         });
-                //     } else {
-                //         setMessage({
-                //             title: "Validacion de datos",
-                //             description: response.operation.message,
-                //             show: true,
-                //             OkTitle: "Aceptar",
-                //             onOk: () => {
-                //                 setMessage({});
-                //             },
-                //             background: true
-                //         });
-                //     }
-                // })
+                UpdateBudgets(insertData).then(response => {
+                    if (response.operation.code === EResponseCodes.OK) {
+                        setMessage({
+                            title: "Editar Pospre",
+                            description: "Se ha editado el Pospre exitosamente",
+                            show: true,
+                            OkTitle: "Aceptar",
+                            onOk: () => {
+                                onCancelEdit();
+                                setMessage({});
+                            },
+                            background: true
+                        });
+                    } else {
+                        setMessage({
+                            title: "Validacion de datos",
+                            description: response.operation.message,
+                            show: true,
+                            OkTitle: "Aceptar",
+                            onOk: () => {
+                                setMessage({});
+                            },
+                            background: true
+                        });
+                    }
+                })
             },
             onCancel: () => {
               setMessage({});
@@ -262,5 +270,5 @@ export function useBudgetsCrudData(budgetsId: string, vinculateActivities?: () =
     }
 
     return { register, errors, entitiesData, budgetsData, controlRegister, isBtnDisable, onSubmitNewBudgets, onSubmitEditBudgets, onCancelNew, 
-        onCancelEdit, confirmClose };
+        onCancelEdit, confirmClose, upDateVinculationData, upDatePospreData };
 }

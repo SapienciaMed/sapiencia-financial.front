@@ -18,6 +18,7 @@ function ViewPospreSapiencia( value: IBudgetViewPage ): React.JSX.Element {
                 columns={tableColumnsView}
                 actions={ actions == 'view' ? tableActionsView : tableActionEdit}
                 isShowModal={false}
+                secondaryTitle="Pospre sapiencia"
             />
         </div>
     )

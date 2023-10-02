@@ -5,10 +5,10 @@ import { IBudgetViewPage } from "../../interfaces/Budgets";
 
 function BudgetViewPage( values: IBudgetViewPage ) {
 
-    const { actions } = values;
+    const { actions, upDatePospreData, upDateVinculationData } = values;
     
     const { id, option } = useParams();
-    const { tabs, start } = useBudgetView(id, option, { actions } );
+    const { tabs, start } = useBudgetView(id, option, { actions, upDatePospreData, upDateVinculationData } );
    
     return (
         <div>

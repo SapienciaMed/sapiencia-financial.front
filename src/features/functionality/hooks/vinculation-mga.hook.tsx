@@ -6,24 +6,25 @@ import { AppContext } from "../../../common/contexts/app.context";
 import { useContext, useEffect, useRef, useState } from "react";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { useNavigate } from "react-router-dom";
-import { IActivityMGA, IApiPlanningDetailedActivitiesSpecify } from "../interfaces/VinculationMGAInterfaces";
+import { IActivityMGA, IApiPlanningDetailedActivitiesSpecify, ILastMoveEdit } from "../interfaces/VinculationMGAInterfaces";
 import { SwitchComponent } from "../../../common/components/Form";
 import {useVinculationService} from "../hooks/vinculation-mga-service.hook"
 import { EResponseCodes } from "../../../common/constants/api.enum";
+import { IBudgetViewPage } from "../interfaces/Budgets";
 
 interface IVinculationMGAFilters {
     inputCodigoMGA: string
 }
 
-export function useVinculationMGAData(pospre: string ) {
+export function useVinculationMGAData(pospre: string, values?: IBudgetViewPage ) {
     const navigate = useNavigate();
     const [ lastMove, setLastMove ] = useState([]);
-    const [ lastMoveEdit, setLastMoveEdit ] = useState([]);
+    const [ lastMoveEdit, setLastMoveEdit ] = useState<ILastMoveEdit[]>([]);
 
     const tableComponentRef = useRef(null);
     const { CreateVinculation, DeleteVinculation } = useVinculationService();
     const resolver = useYupValidationResolver(vinculationValidator);
-    const { setMessage, setIsValue, isValue } = useContext(AppContext);
+    const { setMessage, setIsValue } = useContext(AppContext);
     const [activitiesLink, setActivitiesLink] = useState<number[]>([]);
     const [activitiesUnLink, setActivitiesUnLink] = useState<number[]>([]);
     const [showTable, setShowTable] = useState(false);
@@ -103,7 +104,7 @@ export function useVinculationMGAData(pospre: string ) {
     const tableColumnsEdit: ITableElement<IApiPlanningDetailedActivitiesSpecify>[] = [
         {
             fieldName: "consecutiveActivityDetailed",
-            header: "Código producto MGA",
+            header: "Código",
         },
         {
             fieldName: "measurementActivityDetailed",
@@ -115,7 +116,7 @@ export function useVinculationMGAData(pospre: string ) {
         },
         {
             fieldName: "totalCostActivityDetailed",
-            header: "Costo total",
+            header: "Costo",
         },
         {
             fieldName: "id",
@@ -127,16 +128,13 @@ export function useVinculationMGAData(pospre: string ) {
                         value={ Object.keys(row).length > 0}
                         onChange={(value) => {
                             if (!value.value) { // Cuando se vaya a eliminar una vinculacion agregue en un estado, los objetos que se quieren desvincular
-                                setLastMoveEdit([ ...lastMoveEdit, { id:row } ]);
-
+                                setLastMoveEdit([ ...lastMoveEdit, { id: row } ]);
                             } else {
                                 //Cuando se vuelve a colocar el switch en encendido haga lo siguiente:
                                 const deleteLast = lastMoveEdit.filter((elemento) => {
                                     return elemento.id.activityDetailedId !== row.activityDetailedId;
                                 });
-
                                 setLastMoveEdit(deleteLast);
-
                             }
                             
                         }}
@@ -148,6 +146,17 @@ export function useVinculationMGAData(pospre: string ) {
 
     useEffect(() => {
         setIsValue(lastMoveEdit.length > 0)
+        if(lastMoveEdit.length > 0) {
+            const rowsData = lastMoveEdit.map(objeto => ({
+                id: objeto.id.idVinculation,
+                activityId: objeto.id.activityId,
+                consecutiveActivityDetailed: objeto.id.consecutiveActivityDetailed,
+                detailedActivityId: objeto.id.activityDetailedId ,
+            }))
+            values.upDateVinculationData(rowsData)
+        }else{
+            values?.upDateVinculationData && values.upDateVinculationData([]) 
+        }
     },[lastMoveEdit])
 
     const tableColumnsView: ITableElement<IApiPlanningDetailedActivitiesSpecify>[] = [
@@ -178,7 +187,7 @@ export function useVinculationMGAData(pospre: string ) {
             onClick: (row) => {
                 const rows = [
                     {
-                        title: "Código producto MGA",
+                        title: "Código",
                         value: `${row.consecutiveActivityDetailed}`
                     },
                     {
@@ -188,6 +197,10 @@ export function useVinculationMGAData(pospre: string ) {
                     {
                         title: "Cantidad",
                         value: `${row.amountActivityDetailed}`
+                    },
+                    {
+                        title: "Costo unitario",
+                        value: `$ ${row.unitCostActivityDetailed.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
                     },
                     {
                         title: "Costo Total",
@@ -223,9 +236,15 @@ export function useVinculationMGAData(pospre: string ) {
         }
     }
 
+    // useEffect(() => {
+    //     if(Number(pospre) ) loadTableData( { budgetId: Number(pospre), active:true} );
+    // }, [pospre])
+
     useEffect(() => {
-        if(Number(pospre)) loadTableData( { budgetId: Number(pospre), active:true} );
-    }, [pospre])
+        values && values.actions == 'view' && loadTableData( { budgetId: Number(pospre), active:true} );
+        values && values.actions == 'edit' && loadTableData();
+    },[])
+
 
     const onNew = () => {
         navigate("./../../../");
@@ -233,8 +252,7 @@ export function useVinculationMGAData(pospre: string ) {
 
     async function vinculateActivities(message?:boolean):Promise<void> {
         //Deberia enviar en la peticion. el cambio que se hagan en el mga cuando se desvincule un mga
-        console.log("guardar las vinculaciones MGA");
-        
+
         let status = true;
         // if(activitiesUnLink){
         //     const res = await DeleteVinculation(Number(pospre),activitiesUnLink);

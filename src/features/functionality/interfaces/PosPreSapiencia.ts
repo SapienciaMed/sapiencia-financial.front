@@ -25,5 +25,6 @@ export interface IFiltersPosPreSapiencia {
 export interface IPospreSapienciaData{
   budgetsId: string,
   validateAction?: "new" | "view" | "edit" | "delete",
-  budgetsData?: string
+  budgetsData?: string,
+  upDatePospreData?: (pospreSapi: any) => void,
 }
