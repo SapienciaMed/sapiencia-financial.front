@@ -179,7 +179,7 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
         <div className="card-user mt-14px">
             <div className="title-area">
                 <label className="text-black biggest"> Lista de {titleAdd} </label>
-                <div className='display-justify-flex-center p-rating'>
+                <div className='display-justify-flex-center-adicion p-rating'>
                     <div className="title-button text-three large" id='pages' onClick={onPaste}> Pegar <FaRegCopy /> </div>
                     <div className="title-button text-three large"
                         onClick={() => {
