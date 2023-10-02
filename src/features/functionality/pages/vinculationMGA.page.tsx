@@ -10,8 +10,8 @@ import { Controller } from "react-hook-form";
 function VinculationMGA(): React.JSX.Element {
     const { pospre } = useParams();
     const navigate = useNavigate();
-    const { register, reset, errors, tableComponentRef, tableColumns, control, loadTableData, onSubmit, 
-        tableActions, vinculateActivities} = useVinculationMGAData(pospre);
+    const { register, reset, errors, tableComponentRef, tableColumns, control, tableActionsView, loadTableData, onSubmit, 
+        vinculateActivities} = useVinculationMGAData(pospre);
     
      useEffect(() => {
          if(Number(pospre)) loadTableData({budgetId: Number(pospre)});
@@ -71,7 +71,7 @@ function VinculationMGA(): React.JSX.Element {
                         ref={tableComponentRef}
                         url={`${process.env.urlApiFinancial}/api/v1/vinculation-mga/get-paginated`}
                         columns={tableColumns}
-                        actions={tableActions} 
+                        actions={tableActionsView} 
                         isShowModal={false}
                         titleMessageModalNoResult='Vinculación MGA'
                     />

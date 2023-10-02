@@ -7,12 +7,13 @@ import { Controller } from "react-hook-form";
 
 interface IAppProps {
     action: "new" | "edit";
+    location: "origen" | "pospre"
 }
 
-function PosPreSapienciaForm({ action }: IAppProps) {
+function PosPreSapienciaForm({ action, location }: IAppProps) {
     const { pospre, id } = useParams();
     const { register, errors, control, onSubmitNewPosPreSapiencia, onSubmitEditPosPreSapiencia, onCancelNew, 
-        onCancelEdit, confirmClose, validatorNumber } = usePosPreSapienciaCrudData(pospre, id);
+        onCancelEdit, confirmClose, validatorNumber } = usePosPreSapienciaCrudData(pospre, id, location);
     return (
         <div className="crud-page full-height">
             <div className="main-page full-height">

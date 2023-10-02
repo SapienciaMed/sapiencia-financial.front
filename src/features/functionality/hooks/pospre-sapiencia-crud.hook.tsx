@@ -4,7 +4,7 @@ import useYupValidationResolver from "../../../common/hooks/form-validator.hook"
 import { pospreSapienciaCrudValidator } from "../../../common/schemas";
 import { useContext, useEffect } from "react";
 import { usePosPreSapienciaService } from "./pospre-sapiencia-service.hook";
-import { useBudgetsService } from "./budgets-service.hook";
+import { useBudgetsService } from "../budgetPosition/hooks/budgets-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import { AppContext } from "../../../common/contexts/app.context";
 import { IPosPreSapiencia } from "../interfaces/PosPreSapiencia";
@@ -17,7 +17,7 @@ interface IPosPreSapienciaCrudForm {
     assignedTo: string;
 }
 
-export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: string) {
+export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: string, location: "origen" | "pospre") {
     const resolver = useYupValidationResolver(pospreSapienciaCrudValidator);
     const { GetPosPreSapiencia, CreatePosPreSapiencia, UpdatePosPreSapiencia } = usePosPreSapienciaService();
     const { GetBudgets } = useBudgetsService();
@@ -163,8 +163,8 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
         navigate("./../");
     };
 
-    const onCancelEdit = () => {
-        navigate("./../../");
+    const onCancelEdit = () => { 
+        location == 'pospre' ? navigate("./../../") : navigate("./../../../")
     };
 
     const confirmClose = (callback) =>{
@@ -185,8 +185,7 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
     async function validatorNumber(e) {
         if (parseInt(e.target.value) < 0) {
             return e.target.value == '';
-        }
-        
+        }     
     }
 
     return { register, errors, control, onSubmitNewPosPreSapiencia, onSubmitEditPosPreSapiencia, onCancelNew, onCancelEdit, 
