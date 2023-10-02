@@ -2,6 +2,8 @@
   @include generate-button(0, #CC0100, transparent, transparent solid 1px);
   margin: 0.2em;
 
+  
+
   &.tiny {
     font-size: 0.6em;
   }
@@ -34,6 +36,12 @@
     font-size: 2em;
   }
 
+}
+
+@media(max-width: 500px) {
+  .button-delete{
+    align-self: flex-end;
+  }
 }
 
 .button-clean{

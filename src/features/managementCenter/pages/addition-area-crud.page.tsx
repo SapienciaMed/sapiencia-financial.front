@@ -75,7 +75,7 @@ function AdditionAreaCrud({ actionForm, typeMovement }: IAppProps) {
               tabSelected={tabSelected}
             />
           </FormComponent>
-          <section className="container-button-core mt-24px">
+          <section className="container-button-core-adicion mt-24px">
             <div className="display-align-flex-center">
               <ButtonComponent
                 form="useQueryForm"
