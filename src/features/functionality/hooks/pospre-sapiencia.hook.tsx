@@ -17,7 +17,7 @@ export function usePospreSapienciaData({budgetsId, validateAction }: IPospreSapi
     const navigate = useNavigate();
     const resolver = useYupValidationResolver(pospreSapienciaValidator);
     const { setMessage } = useContext(AppContext);
-    const [showTable, setShowTable] = useState(false);
+    const [showTable, setShowTable] = useState(true);
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
 
     const {
@@ -127,17 +127,22 @@ export function usePospreSapienciaData({budgetsId, validateAction }: IPospreSapi
 
     const onSubmitSearch = handleSubmit(async (data: IPospreSapienciaFilters) => {
         if(budgetsId){
-            setShowTable(true)
-            loadTableData({budgetId: budgetsId, number: data.inputPospreSapiencia});
+            loadTableData({ budgetNumberSapi: data.inputPospreSapiencia});
         } 
     });
+
+    const clearDat = () => {
+        if(showTable && inputValue[0] != '' )  {
+            reset();
+        }
+    }
     
     useEffect(() => {
         if(budgetsId && validateAction == 'new') loadTableData({ budgetId: budgetsId});
     }, []);
 
     useEffect(() => {
-        if (validateAction == 'view') loadTableData({  budgetIdOrig: budgetsId })
+        if (validateAction == 'view') loadTableData({ budgetIdOrig: budgetsId })
     },[])
 
     useEffect(() => {
@@ -146,5 +151,5 @@ export function usePospreSapienciaData({budgetsId, validateAction }: IPospreSapi
 
 
     return { register, reset, showTable, control, errors, tableComponentRef, tableColumns, tableActions, isBtnDisable, tableActionEdit,
-        tableColumnsView, tableActionsView, setShowTable, onSubmitSearch }
+        tableColumnsView, tableActionsView, setShowTable, onSubmitSearch, clearDat }
 } 

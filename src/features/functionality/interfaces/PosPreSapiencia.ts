@@ -3,18 +3,19 @@ import { IBudgets } from "./Budgets";
 
 export interface IPosPreSapiencia {
   id?: number;
-  number: string;
+  number?: string;
   budgetId: number;
   ejercise: number;
   description: string;
   consecutive: number;
   assignedTo: string;
   userModify?: string;
-  dateModify?: Date;
+  dateModify?: Date | string;
   userCreate?: string;
   dateCreate?: DateTime;
   budget?: IBudgets;
 }
+
 
 export interface IFiltersPosPreSapiencia {
   page: number;
