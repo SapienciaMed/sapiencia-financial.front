@@ -1,42 +1,39 @@
 import React from "react";
-import { useVinculationMGAData } from "../hooks/vinculation-mga.hook";
+import { useVinculationMGAData } from "../../hooks/vinculation-mga.hook";
 import {
   ButtonComponent,
   FormComponent,
   InputComponent,
   SelectComponent,
-} from "../../../common/components/Form";
-import { EDirection } from "../../../common/constants/input.enum";
+} from "../../../../common/components/Form";
+import { EDirection } from "../../../../common/constants/input.enum";
 import { useBudgetsCrudData } from "../hooks/budgets-crud.hook";
 import { useParams } from "react-router-dom";
-import TableComponent from "../../../common/components/table.component";
 import { Controller } from "react-hook-form";
+import BudgetViewPage from "./budget-view.page";
 
 interface IAppProps {
   action: "new" | "edit";
 }
 
 function BudgetsForm({ action }: IAppProps) {
-  const { id: budgetsId } = useParams();
+  const { pospre: budgetsId } = useParams();
 
-  const {
-    tableComponentRef,
-    tableColumns,
-    tableActions,
-    vinculateActivities,
-    loadTableData,
-  } = useVinculationMGAData(budgetsId);
   const {
     register,
     errors,
     entitiesData,
+    isBtnDisable,
     onSubmitEditBudgets,
     onSubmitNewBudgets,
     confirmClose,
     onCancelNew,
     onCancelEdit,
+    upDateVinculationData,
+    upDatePospreData,
     controlRegister,
-  } = useBudgetsCrudData(budgetsId, vinculateActivities, loadTableData);
+  } = useBudgetsCrudData(budgetsId);
+  
   return (
     <div className="crud-page full-height">
       <div className="main-page full-height">
@@ -170,39 +167,20 @@ function BudgetsForm({ action }: IAppProps) {
                 />
               </div>
             </div>
-            {action === "new" ? (
-              <></>
-            ) : (
-              <div>
-                <div className={`tabs-component`}>
-                  <div className="tabs-selection">
-                    <div className={`tab-option active`}>Vinculación MGA</div>
-                    <div className={`tab-option`}>ProspeSapiencia</div>
-                  </div>
-                </div>
-                <br />
-                <div className="card-form">
-                  <TableComponent
-                    ref={tableComponentRef}
-                    url={`${process.env.urlApiFinancial}/api/v1/vinculation-mga/get-paginated`}
-                    columns={tableColumns}
-                    actions={tableActions}
-                    isShowModal={false}
-                    secondaryTitle="Vinculación MGA"
-                  />
-                </div>
-              </div>
-            )}
+            {
+              action == 'edit' && 
+                <BudgetViewPage actions="edit" upDatePospreData={upDatePospreData} upDateVinculationData={upDateVinculationData} />
+            }
             <div className="mobile-actions mobile">
               <span
                 className="bold text-center button"
                 onClick={() => {
-                  confirmClose(action === "new" ? onCancelNew : onCancelEdit);
+                  confirmClose(action === "new" ? onCancelNew : onCancelEdit, action);
                 }}
               >
                 Cancelar
               </span>
-              <ButtonComponent value="Guardar" type="submit" className="button-main huge" />
+              <ButtonComponent value="Guardar" type="submit" className="button-main huge" disabled={action == 'edit' && isBtnDisable} />
             </div>
           </FormComponent>
         </div>
@@ -212,7 +190,7 @@ function BudgetsForm({ action }: IAppProps) {
           <span
             className="bold text-center button"
             onClick={() => {
-              confirmClose(action === "new" ? onCancelNew : onCancelEdit);
+              confirmClose(action === "new" ? onCancelNew : onCancelEdit, action);
             }}
           >
             Cancelar
@@ -222,6 +200,7 @@ function BudgetsForm({ action }: IAppProps) {
             value="Guardar"
             type="submit"
             form="budgets-form"
+            disabled={action == 'edit' && isBtnDisable}
           />
         </div>
       </div>

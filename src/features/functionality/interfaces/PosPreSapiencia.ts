@@ -21,3 +21,10 @@ export interface IFiltersPosPreSapiencia {
   perPage: number;
   budgetId: number;
 }
+
+export interface IPospreSapienciaData{
+  budgetsId: string,
+  validateAction?: "new" | "view" | "edit" | "delete",
+  budgetsData?: string,
+  upDatePospreData?: (pospreSapi: any) => void,
+}

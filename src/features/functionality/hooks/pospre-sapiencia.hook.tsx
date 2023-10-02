@@ -1,18 +1,22 @@
 import { useForm } from "react-hook-form";
 import { pospreSapienciaValidator } from "../../../common/schemas";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { useNavigate } from "react-router-dom";
+import { IPosPreSapiencia, IPospreSapienciaData } from "../interfaces/PosPreSapiencia";
+import { AppContext } from "../../../common/contexts/app.context";
+import DetailsComponent from "../../../common/components/details.component";
 
 interface IPospreSapienciaFilters {
     inputPospreSapiencia: string
 }
 
-export function usePospreSapienciaData(pospre: string) {
+export function usePospreSapienciaData({budgetsId, validateAction }: IPospreSapienciaData) {
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
     const resolver = useYupValidationResolver(pospreSapienciaValidator);
+    const { setMessage } = useContext(AppContext);
     const [showTable, setShowTable] = useState(false);
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
 
@@ -47,6 +51,7 @@ export function usePospreSapienciaData(pospre: string) {
             header: "Descripción"
         },
     ];
+
     const tableActions: ITableAction<any>[] = [
         {
             icon: "Edit",
@@ -56,6 +61,64 @@ export function usePospreSapienciaData(pospre: string) {
         }
     ];
 
+    const tableColumnsView: ITableElement<IPosPreSapiencia>[] = [
+        {
+            fieldName: "number",
+            header: "Pospre sapiencia"
+        },
+        {
+            fieldName: "description",
+            header: "Descripción pospre sapiencia"
+        },
+        {
+            fieldName: "ejercise",
+            header: "Ejercicio"
+        },
+    ];
+
+    const tableActionsView: ITableAction<IPosPreSapiencia>[] = [
+        {
+            icon: "Detail",
+            onClick: (row) => {
+                const rows = [
+                    {
+                        title: "Pospre origen",
+                        value: `${row.budget.number}`
+                    },
+                    {
+                        title: "Pospre sapiencia",
+                        value: `${row.number}`
+                    },
+                    {
+                        title: "Ejercicio",
+                        value: `${row.ejercise}`
+                    },
+                    {
+                        title: "Descripción",
+                        value: `${row.description}`
+                    },
+                ]
+
+                setMessage({
+                    title: "Detalle Vinculación MGA ",
+                    show: true,
+                    OkTitle: "Aceptar",
+                    description: <DetailsComponent rows={rows} />,
+                    background: true
+                })
+            },
+        }
+    ];
+
+    const tableActionEdit: ITableAction<any>[] = [
+        {
+            icon: "Edit",
+            onClick: (row) => {
+                navigate(`./pospre-sapiencia/edit/${row.id}`);
+            },
+        },
+    ]
+
     function loadTableData(searchCriteria?: object): void {
         if (tableComponentRef.current) {
             tableComponentRef.current.loadData(searchCriteria);
@@ -63,20 +126,25 @@ export function usePospreSapienciaData(pospre: string) {
     }
 
     const onSubmitSearch = handleSubmit(async (data: IPospreSapienciaFilters) => {
-        if(pospre){
+        if(budgetsId){
             setShowTable(true)
-            loadTableData({budgetId: pospre, number: data.inputPospreSapiencia});
+            loadTableData({budgetId: budgetsId, number: data.inputPospreSapiencia});
         } 
     });
     
     useEffect(() => {
-        if(pospre) loadTableData({budgetId: pospre});
-    }, [pospre]);
+        if(budgetsId && validateAction == 'new') loadTableData({ budgetId: budgetsId});
+    }, []);
+
+    useEffect(() => {
+        if (validateAction == 'view') loadTableData({  budgetIdOrig: budgetsId })
+    },[])
 
     useEffect(() => {
         setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
     },[inputValue])
 
 
-    return { register, reset, showTable, control, errors, tableComponentRef, tableColumns, tableActions, isBtnDisable, setShowTable, onSubmitSearch }
+    return { register, reset, showTable, control, errors, tableComponentRef, tableColumns, tableActions, isBtnDisable, tableActionEdit,
+        tableColumnsView, tableActionsView, setShowTable, onSubmitSearch }
 } 
