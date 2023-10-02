@@ -10,6 +10,10 @@ export interface IActivityMGA {
   vinculation:IVinculationMGA|null;
 }
 
+export interface IDataActivityMGA{
+  elementsDetail: IActivityMGA
+}
+
 export interface IVinculationMGA {
   id?: number;
   mgaId: number;

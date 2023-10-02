@@ -11,7 +11,7 @@ function PosPreSapienca(): React.JSX.Element {
     const { pospre } = useParams();
     const navigate = useNavigate();
     const { register, reset, errors, tableComponentRef, tableColumns, tableActions, control,
-        showTable, isBtnDisable, setShowTable, onSubmitSearch } = usePospreSapienciaData({budgetsId: pospre, validateAction: 'new'});
+        showTable, isBtnDisable, setShowTable, onSubmitSearch, clearDat } = usePospreSapienciaData({budgetsId: pospre, validateAction: 'view'});
 
     return (
         <div>
@@ -56,13 +56,7 @@ function PosPreSapienca(): React.JSX.Element {
                     </div>
                 </div>
                 <div className="funcionality-buttons-container">
-                    <span className="bold text-center button" onClick={() => {
-                        reset();
-                        if(showTable)  {
-                            tableComponentRef.current.emptyData();
-                            setShowTable(false)
-                        }
-                    }}>
+                    <span className="bold text-center button" onClick={clearDat}>
                         Limpiar campos
                     </span>
                     <ButtonComponent
@@ -73,20 +67,19 @@ function PosPreSapienca(): React.JSX.Element {
                     />
                 </div>
             </FormComponent>
-
-           
             {
                 showTable && 
                     <div className="card-form">
                         <TableComponent
                             ref={tableComponentRef}
-                            url={`${process.env.urlApiFinancial}/api/v1/pospre-sapiencia/get-paginated`}
+                            url={`${process.env.urlApiFinancial}/api/v1/pospre-sapiencia/get-list-pospresap-vinculation-paginated`}
                             columns={tableColumns}
                             actions={tableActions} 
                             isShowModal={true}
                             titleMessageModalNoResult='Pospre sapiencia'
                         />
                     </div>
+            
             }
         </div>
     )

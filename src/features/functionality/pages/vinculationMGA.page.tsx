@@ -10,7 +10,7 @@ import { Controller } from "react-hook-form";
 function VinculationMGA(): React.JSX.Element {
     const { pospre } = useParams();
     const navigate = useNavigate();
-    const { register, reset, errors, tableComponentRef, tableColumns, control, tableActionsView, loadTableData, onSubmit, 
+    const { register, reset, errors, tableComponentRef, tableColumns, control, tableActionsView, isBtnDisable, loadTableData, onSubmit, 
         vinculateActivities} = useVinculationMGAData(pospre);
     
      useEffect(() => {
@@ -69,7 +69,7 @@ function VinculationMGA(): React.JSX.Element {
                 <div className="card-form">
                     <TableComponent
                         ref={tableComponentRef}
-                        url={`${process.env.urlApiFinancial}/api/v1/vinculation-mga/get-paginated`}
+                        url={`${process.env.urlApiFinancial}/api/v1/vinculation-mga/get-detailed-activities-api-planning-nouseonpospre/${pospre}`}
                         columns={tableColumns}
                         actions={tableActionsView} 
                         isShowModal={false}
@@ -86,6 +86,7 @@ function VinculationMGA(): React.JSX.Element {
                             value="Guardar"
                             type="button"
                             action={()=>{vinculateActivities(true)}}
+                            disabled={!isBtnDisable}
                         />
                     </div>
                 </div>

@@ -42,29 +42,42 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
     }, [])
 
     useEffect(() => {
-        if(!pospreSapiencia) return;
-        GetPosPreSapiencia(Number(pospreSapiencia)).then(response => {
+        if(!pospreSapiencia) return;   
+        
+        const dataEditPospre = {
+            page: "1",
+            perPage: "10",
+            budgetIdSapi: pospreSapiencia
+        }
+        
+        GetPosPreSapiencia(dataEditPospre).then(response => {
             if(response.operation.code === EResponseCodes.OK) {
-                setValueRegister("number", response.data.number);
-                setValueRegister("ejercise", String(response.data.ejercise));
-                setValueRegister("description", response.data.description);
-                setValueRegister("consecutive", response.data.consecutive);
+                setValueRegister("ejercise", String(response.data.array[0].ejercise));
+                setValueRegister("description", response.data.array[0].description);
+                setValueRegister("consecutive", response.data.array[0].consecutive);
             } else {
-                navigate("./../");
+                navigate("./../../");
             }
         });
+
     }, [pospreSapiencia])
 
+
     const onSubmitNewPosPreSapiencia = handleSubmit(async (data: IPosPreSapienciaCrudForm) => {
+ 
         const insertData: IPosPreSapiencia = {
-            number: data.number,
+            number: data.assignedTo + data.consecutive,
             budgetId: Number(pospre),
             ejercise: parseInt(data.ejercise),
             description: data.description,
             consecutive: data.consecutive,
             assignedTo: data.assignedTo,
             userCreate: authorization.user.numberDocument,
+            userModify: authorization.user.userModify,
+            dateModify: new Date(authorization.user.dateModify).toISOString().split('T')[0],
+            dateCreate: new Date(authorization.user.dateCreate).toISOString().split('T')[0]
         };
+
         setMessage({
             title: "Guardar",
             description: "¿Estas segur@ de guardar la información en el sistema?",
@@ -109,14 +122,17 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
     
     const onSubmitEditPosPreSapiencia = handleSubmit(async (data: IPosPreSapienciaCrudForm) => {
         const insertData: IPosPreSapiencia = {
-            number: data.number,
+            number: data.assignedTo + data.consecutive,
             budgetId: Number(pospre),
             ejercise: parseInt(data.ejercise),
             description: data.description,
             consecutive: data.consecutive,
             assignedTo: data.assignedTo,
-            userModify: authorization.user.numberDocument,
+            userModify: authorization.user.userModify,
+            dateModify: new Date(authorization.user.dateModify).toISOString().split('T')[0],
+            dateCreate: new Date(authorization.user.dateCreate).toISOString().split('T')[0]
         };
+
         setMessage({
             title: "Guardar",
             description: "¿Estas segur@ de guardar la información en el sistema?",
