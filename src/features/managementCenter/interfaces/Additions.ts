@@ -45,16 +45,69 @@ export interface IAdditionsForm{
   gasto: IIncome[],
   actAdministrativeDistrict: string;
   actAdministrativeSapiencia: string;
-  typeMovement: string;
+  typeMovement: string;  
 }
 
 export interface IIncome{
   managerCenter: string;
-  projectId: string;
+  projectId: string | number;
   projectName:string;
-  functionalArea: string;
-  funds: string;
-  posPre: string;
+  functionalArea: string | number;
+  funds: string | number;
+  posPre: string | number;
   value: string;
   cardId:string;
+}
+
+
+export interface IData {
+  head:    Head[];
+  details: Detail[];
+  id: number
+}
+
+export interface Detail {
+  id:            number;
+  additionId:    number;
+  type:          string;
+  budgetRouteId: number;
+  value:         string;
+  budgetRoute:   BudgetRoute;
+}
+
+export interface BudgetRoute {
+  id:                   number;
+  managementCenter:     string;
+  div:                  string;
+  idProjectVinculation: number;
+  idFund:               number;
+  idBudget:             number;
+  idPospreSapiencia:    number;
+  budget:               Budget;
+  pospreSapiencia:      Budget;
+  fund:                 Budget;
+  projectVinculation:   ProjectVinculation;
+}
+
+export interface Budget {
+  id:            number;
+  number:        string;
+  ejercise?:     number;
+  denomination?: string;
+  description:   string;
+  consecutive?:  number;
+}
+
+export interface ProjectVinculation {
+  id:               number;
+  functionalAreaId: number;
+  projectId:        string;
+  conceptProject:   string;
+  areaFuntional:    Budget;
+}
+
+export interface Head {
+  id:                number;
+  actAdminDistrict:  string;
+  actAdminSapiencia: string;
 }

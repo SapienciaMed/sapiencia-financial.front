@@ -141,11 +141,38 @@ function TabManagerAdditionPage({
           })}
         </div>
         <div className="tabs-content">
-          {selectedTab ? tabList[`${selectedTab?.title}`].content : "no data"}
+          {/* {selectedTab ? tabList[`${selectedTab?.title}`].content : "no data"} */}
+          <div style={{ display: selectedTab?.id === "ingreso" ? "block" : "none" }}>
+            <AreaCreateAddition
+              titleAdd="ingreso"
+              controlRegister={controlRegister}
+              showModal={showModal}
+              getValues={getValues}
+              arrayDataSelect={arrayDataSelect}
+              register={register}
+              invalidCardsAdditionSt={invalidCardsAdditionSt}
+              setValue={setValue}
+              watch={watch}
+            />
+          </div>
+          <div style={{ display: selectedTab?.id === "gasto" ? "block" : "none" }}>
+            <AreaCreateExpense
+              titleAdd="gasto"
+              controlRegister={controlRegister}
+              showModal={showModal}
+              getValues={getValues}
+              arrayDataSelect={arrayDataSelect}
+              register={register}
+              invalidCardsAdditionSt={invalidCardsAdditionSt}
+              setValue={setValue}
+              watch={watch}
+            />
+          </div>
         </div>
       </div>
     </div>
-  );
+);
+
 }
 
 export default React.memo(TabManagerAdditionPage);
