@@ -16,11 +16,19 @@ export const projectOperationCrudValidator = yup.object({
         .matches(/^[0-9]+$/, "Solo se permiten numeros")
         .max(4, "Solo se permiten 4 caracteres")
         .min(4, "Ingrese al menos 4 caracteres")
-        .test('uniqueValues', 'Ingrese una vigencia mayor o igual al año actual', (value) => {
+        .test('uniqueValues', 'Ingrese una vigencia mayor o igual al año actual', function(value){
             const date = new Date();
             const year = date.getFullYear();
-            if (value && parseInt(value) >= year) return true;
-            else return false;
+            const id = this.parent.id;
+            console.log({id})
+            if (id==null && value && parseInt(value) >= year ) {
+                return true
+            }else if(id!=null && value && parseInt(value) >= year ){
+                return true
+            }else{
+                return false
+
+            } 
         }),
     isActivated: yup
         .string()
