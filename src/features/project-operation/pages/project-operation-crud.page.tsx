@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   ButtonComponent,
+  DatePickerComponent,
   FormComponent,
   InputComponent,
   SelectComponent,
@@ -19,28 +20,31 @@ function ProjectOperationCrud({ action }: IAppProps) {
   const { id: projectOperationalId } = useParams();
   const navigate = useNavigate();
   const [exerciseSt, setExerciseSt] = useState(null)
-  
-  const { errors, onSubmitTab, showModal, setMessage, register, isAllowSave, control, dateFromDefaultSt, dateToDefaultSt,actualFullYear } = useProjectOperationCrud(projectOperationalId, exerciseSt);
+
+  const { errors, onSubmitTab, showModal, setMessage, register, isAllowSave, control, dateFromDefaultSt, dateToDefaultSt, actualFullYear } = useProjectOperationCrud(projectOperationalId, exerciseSt);
 
   const [isModifyDateFrom, setIsModifyDateFrom] = useState(false)
   const [isModifyDateTo, setIsModifyDateTo] = useState(false)
 
   const [dateFromDefaultStValidateDate, setDateFromDefaultStValidateDate] = useState(dateFromDefaultSt)
   const [dateToDefaultStValidateDate, setDateToDefaultStValidateDate] = useState(dateToDefaultSt)
-  
+
   useEffect(() => {
     setIsModifyDateFrom(true)
   }, [dateFromDefaultSt, exerciseSt])
-  
+
   useEffect(() => {
     setIsModifyDateTo(true)
   }, [dateToDefaultSt, exerciseSt])
-  
+
 
   useEffect(() => {
-    if(exerciseSt=="" || !exerciseSt){
+    if (exerciseSt == "" || !exerciseSt || exerciseSt.length!=4) {
       setDateFromDefaultStValidateDate("")
       setDateToDefaultStValidateDate("")
+    }else{
+      setDateFromDefaultStValidateDate(dateFromDefaultSt)
+      setDateToDefaultStValidateDate(dateToDefaultSt)
     }
   }, [exerciseSt])
 
@@ -100,7 +104,7 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
                 errors={errors}
-                onChange={(e)=>setExerciseSt(e.target.value)}
+                onChange={(e) => setExerciseSt(e.target.value)}
                 min={actualFullYear}
                 disabled={action === "new" ? false : true}
               />
@@ -123,26 +127,31 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 errors={errors}
               />
 
+              <>{JSON.stringify(dateFromDefaultSt)}</>
               <InputComponent
                 idInput="dateFrom"
                 className="input-basic medium"
                 typeInput="date"
                 register={register}
-                value={!isModifyDateFrom ? null : dateFromDefaultSt}
-                onChange={(e)=>{setIsModifyDateFrom(false);setDateFromDefaultStValidateDate(e.target.value)}}
+                //value={!isModifyDateFrom ? undefined : dateFromDefaultSt}
+                value={!isModifyDateTo ? undefined : !exerciseSt || exerciseSt?.length==4 ? dateFromDefaultSt : undefined}
+                onChange={(e) => { setIsModifyDateFrom(false); setDateFromDefaultStValidateDate(e.target.value); }}
                 label="Validez desde"
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
                 errors={errors}
                 max={dateToDefaultStValidateDate}
               />
+
+
               <InputComponent
                 idInput="dateTo"
                 className="input-basic medium"
                 typeInput="date"
                 register={register}
-                value={!isModifyDateTo ? undefined : dateToDefaultSt}
-                onChange={(e)=>{setIsModifyDateTo(false);setDateToDefaultStValidateDate(e.target.value);}}
+                //value={!isModifyDateTo ? undefined : dateToDefaultSt}
+                value={!isModifyDateTo ? undefined : !exerciseSt || exerciseSt?.length==4 ? dateToDefaultSt : undefined}
+                onChange={(e) => { setIsModifyDateTo(false); setDateToDefaultStValidateDate(e.target.value); }}
                 label="Validez hasta"
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
@@ -164,9 +173,13 @@ function ProjectOperationCrud({ action }: IAppProps) {
                     description: "¿Está segur@ que desea cancelar el proyecto?",
                     show: true,
                     OkTitle: "Aceptar",
+                    cancelTitle: "Cancelar",
                     onOk: () => {
                       setMessage({});
                       navigate("/gestion-financiera/presupuesto/proyecto-funcionamiento");
+                    },
+                    onCancel() {
+                      setMessage({});
                     },
                   });
                 }}
