@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useForm, useFieldArray } from 'react-hook-form';
-import { IAdditionsForm } from "../interfaces/Additions";
+import { Detail, IAdditionsForm } from "../interfaces/Additions";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { fundsAdditionalValidation } from "../../../common/schemas";
 import { AppContext } from "../../../common/contexts/app.context";
@@ -494,8 +494,47 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
   }
 
   //Editar
-
   const { aditionData } = useAdditionAreaEdit();
+
+  useEffect(() => {
+    // ... (resto del código)
+  
+    function mapDetails(type) {
+      return aditionData?.details.map((item: Detail) => {
+        if (item.type == type) {
+          return {
+            managerCenter: item.budgetRoute.managementCenter,
+            projectId: item.budgetRoute.projectVinculation.id,
+            projectName: item.budgetRoute.projectVinculation.conceptProject,
+            functionalArea: item.budgetRoute.projectVinculation.areaFuntional.id,
+            funds: item.budgetRoute.fund.id,
+            posPre: item.budgetRoute.pospreSapiencia.id,
+            value: item.value,
+          };
+        }
+      }).filter(Boolean);
+    }
+  
+    function hasAnyChange(mappedData, formData) {
+      return Object.keys(mappedData?.[0] || {}).some(key => {
+        return mappedData?.[0]?.[key] !== formData?.[0]?.[key];
+      });
+    }
+  
+    const ingreso = mapDetails("Ingreso");
+    const gasto = mapDetails("Gasto");
+  
+    const hasAnyIngresoChange = hasAnyChange(ingreso, formData.ingreso);
+    const hasAnyGastoChange = hasAnyChange(gasto, formData.gasto);
+  
+    setIsAllowSave(hasAnyIngresoChange || hasAnyGastoChange);
+  
+  }, [aditionData, formData]);
+  
+
+
+
+
 
   useEffect(() => {
     if (aditionData) {
