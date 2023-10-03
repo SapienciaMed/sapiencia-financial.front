@@ -161,8 +161,8 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
       })
     } else {
       showModal({
-        title: "Validación de datos",
-        description: "Se generó un error inesperado, comuníquese con el administrador o intente mas tarde!",
+        title: "Error en la conexión",
+        description: "Error en la consulta de datos",
         show: true,
         OkTitle: "Aceptar",
         onOk: () => {
