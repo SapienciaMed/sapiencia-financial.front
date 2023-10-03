@@ -24,7 +24,6 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                     </p>
 
                     <section className="card-user">
-                        <FormComponent action={onSubmit} id="transfer-form" className="funds-form">
                             <div className="title-area"> 
                                 <label className="text-black biggest bold">
                                     Datos básicos
@@ -39,6 +38,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                                     <BiPlusCircle className={`${isAddBtnDisable && 'color-gray'}`}/>
                                 </div>
                             </div>
+                        <FormComponent action={onSubmit} id="transfer-form" className="funds-form">
                             <div className="funcionality-filters-container">
                                 <Controller
                                     control={control}
