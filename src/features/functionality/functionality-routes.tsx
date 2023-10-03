@@ -9,8 +9,8 @@ export const FunctionalityRoutes = () => {
     const FoundsPage =  lazy(() => import("./pages/funds.page"));
     const FundsCrud = lazy(() => import("./pages/funds-crud.page"));
     
-    const BudgetsPage = lazy(() => import("./pages/budgets.page"))
-    const BudgetsCrud = lazy(()  => import("./pages/budgets-crud.page"));
+    const BudgetsPage = lazy(() => import("./budgetPosition/pages/budgets.page"))
+    const BudgetsCrud = lazy(()  => import("./budgetPosition/pages/budgets-crud.page"));
     
     const Link = lazy(()  => import("./pages/link.page"));
     const ProjectsLinkPage = lazy(()  => import("./pages/projects-link.page"));
@@ -18,7 +18,7 @@ export const FunctionalityRoutes = () => {
     const FunctionalAreaPage = lazy(() => import ("./pages/functional-area.page"));
 
     const PosPreSapienciaForm = lazy(()  => import("./pages/pospre-sapiencia-crud.page"));
-    const BudgetsView = lazy(()  => import("./pages/budgets-view.page"));
+    const BudgetsView = lazy(()  => import("./budgetPosition/pages/budgets-view.page"));
 
   return (
     <Routes>
@@ -35,13 +35,14 @@ export const FunctionalityRoutes = () => {
 
         <Route path={"/posicion-presupuestaria/"} element={<BudgetsPage/>} />
         <Route path={"/posicion-presupuestaria/create"} element={<BudgetsCrud action="new"/>} />
-        <Route path={"/posicion-presupuestaria/edit/:id"} element={<BudgetsCrud action="edit"/>} />
+        <Route path={"/posicion-presupuestaria/edit/:pospre"} element={<BudgetsCrud action="edit"/>} />
+        <Route path={"/posicion-presupuestaria/edit/:pospre/pospre-sapiencia/edit/:id"} element={<PosPreSapienciaForm action="edit" location="origen"/>}  />
 
         <Route path={"/posicion-presupuestaria/vinculacion/:pospre"} element={<Link />} />
         <Route path={"/posicion-presupuestaria/vinculacion/:pospre/:option"} element={<Link />} />
 
-        <Route path={"/posicion-presupuestaria/vinculacion/:pospre/pospre-sapiencia/create"} element={<PosPreSapienciaForm action="new"/>} />
-        <Route path={"/posicion-presupuestaria/vinculacion/:pospre/pospre-sapiencia/edit/:id"} element={<PosPreSapienciaForm action="edit" />} />
+        <Route path={"/posicion-presupuestaria/vinculacion/:pospre/pospre-sapiencia/create"} element={<PosPreSapienciaForm action="new" location="pospre"/>} />
+        <Route path={"/posicion-presupuestaria/vinculacion/:pospre/pospre-sapiencia/edit/:id"} element={<PosPreSapienciaForm action="edit" location="pospre" />} />
         <Route path={"/posicion-presupuestaria/view/:id"} element={<BudgetsView/>} />
 
         <Route path={"/area-funcional/"} element={<FunctionalAreaPage/>} />

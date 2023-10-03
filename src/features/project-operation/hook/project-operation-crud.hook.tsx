@@ -8,20 +8,23 @@ import { IArrayDataSelect, IMessage } from "../../../common/interfaces/global.in
 import { useNavigate } from "react-router-dom";
 import { IProjectOperation } from "../interface/ProjectOperation";
 import { useProjectOperationService } from "./project-operation-service.hook";
+import { EResponseCodes } from "../../../common/constants/api.enum";
 
 
-export function useProjectOperationCrud(exerciseSt:number) {
+export function useProjectOperationCrud(projectOperationalId: string, exerciseSt: number) {
 
   const dateToday = new Date()
 
   const resolver = useYupValidationResolver(projectOperationCrudValidator);
   const { setMessage } = useContext(AppContext);
 
-  const { createProjectOperation } = useProjectOperationService()
+  const { createProjectOperation, GetProjectOperation, UpdateProjectOperation } = useProjectOperationService()
 
   const navigate = useNavigate();
 
   const actualFullYear = dateToday.getFullYear();
+
+
   let dateFromDefault = `${exerciseSt ?? actualFullYear}-01-01`
   let dateToDefault = `${exerciseSt ?? actualFullYear}-12-31`
 
@@ -29,26 +32,51 @@ export function useProjectOperationCrud(exerciseSt:number) {
   const [dateToDefaultSt, setDateToDefaultSt] = useState(dateToDefault)
 
   useEffect(() => {
-    setDateFromDefaultSt(`${exerciseSt ?? actualFullYear}-01-01`)
+    setValueRegister("dateFrom", "");
+    setValueRegister("dateTo", "");
+    if (!exerciseSt) {
+      setDateFromDefaultSt(`${actualFullYear}-01-01`)
+      setDateToDefaultSt(`${actualFullYear}-12-31`)
+      setValueRegister("dateFrom", dateFromDefaultSt);
+      setValueRegister("dateTo", dateToDefaultSt);
+    } else if (Object(exerciseSt).length == 4) {
+      setDateFromDefaultSt(`${exerciseSt}-01-01`)
+      setDateToDefaultSt(`${exerciseSt}-12-31`)
+      setValueRegister("dateFrom", `${exerciseSt}-01-01`);
+      setValueRegister("dateTo", `${exerciseSt}-12-31`);
+    } else {
+      setValueRegister("dateFrom", "");
+      setValueRegister("dateTo", "");
+    }
+
+    /* setDateFromDefaultSt(`${exerciseSt ?? actualFullYear}-01-01`)
     setDateToDefaultSt(`${exerciseSt ?? actualFullYear}-12-31`)
+    if(Object(exerciseSt)>= actualFullYear && Object(exerciseSt).length<4 || Object(exerciseSt).length>6){
+      setValueRegister("dateFrom","");
+      setValueRegister("dateTo","");
+    }else{
+      setValueRegister("dateFrom",dateFromDefaultSt);
+      setValueRegister("dateTo",dateToDefaultSt);
+
+    } */
   }, [exerciseSt])
-  
+
 
   const {
     handleSubmit,
     register,
     control,
     formState: { errors, defaultValues },
+    setValue: setValueRegister,
     watch,
     getValues,
-    setValue,
     getFieldState,
   } = useForm<IProjectOperation>({
     defaultValues: {
       id: null,
       entityId: 1,
       number: '1',
-      name: undefined,
+      name: "Funcionamiento",
       isActivated: 0,
       exercise: dateToday.getFullYear(),
       dateFrom: dateFromDefault,
@@ -64,17 +92,11 @@ export function useProjectOperationCrud(exerciseSt:number) {
     resolver,
   });
 
-  const [name, projectId, id, excercise ] = watch(["name","number","id","exercise"]);
 
-  useEffect(() => {
-    //(fundData && action == 'edit') && setIsBtnDisable(validateFieldEqualsEdition(fundData))
-    console.log({name, projectId, id, excercise})
-  
-  },[name, projectId, id, excercise])
 
 
   const validateButton = (values) => { return Object.values(values).every(campo => campo !== null && campo !== undefined && campo !== '') }
- 
+
   // Effect que activa el watch que detecta los cambios en todo el form
   React.useEffect(() => {
     const subscription = watch(() => { });
@@ -82,40 +104,42 @@ export function useProjectOperationCrud(exerciseSt:number) {
   }, [watch]);
 
   const onSubmitTab = handleSubmit(async (data: IProjectOperation) => {
-    data.userCreate="Usuario"
+    data.userCreate = "Usuario"
 
-      showModal({
-        //type?: EResponseCodes;
-        title: "Guardar",
-        description: "¿Está segur@ de guardar proyecto?",
-        show: true,
-        OkTitle: "Aceptar",
-        cancelTitle: "Cancelar",
-        onOk: () => {
-          setMessage({})
-          messageConfirmSave(data)
-        },
-        onCancel: () => {
-          setMessage({})
-          onCancelNew()
-        },
-        // onClickOutClose?: boolean;
-        onClose: () => {
-          setMessage({})
-          onCancelNew()
-        },
-        background: true
-      })
+    showModal({
+      //type?: EResponseCodes;
+      title: "Guardar",
+      description: "¿Está segur@ de guardar el proyecto?",
+      show: true,
+      OkTitle: "Aceptar",
+      cancelTitle: "Cancelar",
+      onOk: () => {
+        setMessage({})
+        messageConfirmSave(data)
+      },
+      onCancel: () => {
+        setMessage({})
+        onCancelNew()
+      },
+      // onClickOutClose?: boolean;
+      onClose: () => {
+        setMessage({})
+        onCancelNew()
+      },
+      background: true
+    })
 
-  
+
   });
 
 
   const messageConfirmSave = async (data: any) => {
-    
-    const response = await createProjectOperation(data)
-    console.log({response})
-    if(response.operation.code=="OK" && !Object(response).data.data.errno){
+    const response = !data.id
+      ? await createProjectOperation(data)
+      : await UpdateProjectOperation(data.id, data)
+
+    console.log({ response })
+    if (response.operation.code == "OK" && !Object(response).data.data?.errno) {
 
       showModal({
         //type?: EResponseCodes;
@@ -125,11 +149,11 @@ export function useProjectOperationCrud(exerciseSt:number) {
         OkTitle: "Aceptar",
         onOk: () => {
           setMessage({})
-          onCancelNew()
+          !data.id ? onCancelNew() : onCancelEdit()
         }
       })
 
-    }else if(response.operation.code=="OK" && Object(response).data.data.errno==1062){
+    } else if (response.operation.code == "OK" && Object(response).data.data.errno == 1062) {
       showModal({
         //type?: EResponseCodes;
         title: "Validación de datos",
@@ -141,7 +165,7 @@ export function useProjectOperationCrud(exerciseSt:number) {
           onCancelNew()
         }
       })
-    }else{
+    } else {
       showModal({
         //type?: EResponseCodes;
         title: "Validación de datos",
@@ -152,12 +176,15 @@ export function useProjectOperationCrud(exerciseSt:number) {
           setMessage({})
           onCancelNew()
         }
-      }) 
-    }    
+      })
+    }
   }
 
   const onCancelNew = () => {
     navigate("./../");
+  };
+  const onCancelEdit = () => {
+    navigate("./../../");
   };
 
   const showModal = (values: IMessage) => {
@@ -176,6 +203,30 @@ export function useProjectOperationCrud(exerciseSt:number) {
 
   const [isAllowSave, setIsAllowSave] = useState(true)
 
+  const [projectOperationSt, setProjectOperationSt] = useState()
+
+  useEffect(() => {
+    GetProjectOperation(parseInt(projectOperationalId)).then(response => {
+      if (response.operation.code === EResponseCodes.OK) {
+        setProjectOperationSt(response.data);
+      };
+    });
+
+  }, [projectOperationalId]);
+
+  useEffect(() => {
+    if (!projectOperationSt) return;
+    setValueRegister("id", Object(projectOperationSt).id);
+    setValueRegister("name", Object(projectOperationSt).name);
+    setValueRegister("exercise", Object(projectOperationSt).exercise);
+    setValueRegister("isActivated", Object(projectOperationSt).isActivated);
+    setValueRegister("dateFrom", Object(projectOperationSt).dateFrom);
+    setValueRegister("dateTo", Object(projectOperationSt).dateTo);
+  }, [projectOperationSt])
+
+
+
+
 
   return {
     control,
@@ -186,7 +237,6 @@ export function useProjectOperationCrud(exerciseSt:number) {
     showModal,
     setMessage,
     getValues,
-    setValue,
     isAllowSave,
     dateFromDefaultSt,
     dateToDefaultSt,

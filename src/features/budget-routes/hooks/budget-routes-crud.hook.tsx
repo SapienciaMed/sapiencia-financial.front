@@ -11,7 +11,7 @@ import { useProjectsLinkService } from "../../functionality/hooks/projects-link-
 import { IEntities } from "../../functionality/interfaces/Entities";
 import { IProjectsVinculation } from "../../functionality/interfaces/Projects";
 import { useFunctionalAreaService } from "../../functionality/hooks/functional-area-service.hook";
-import { useBudgetsService } from "../../functionality/hooks/budgets-service.hook";
+import { useBudgetsService } from "../../functionality/budgetPosition/hooks/budgets-service.hook";
 import { usePosPreSapienciaService } from "../../functionality/hooks/pospre-sapiencia-service.hook";
 import { useFundsService } from "../../functionality/hooks/funds-service.hook";
 import { useBudgetRoutesService } from "./budget-routes-service.hook";

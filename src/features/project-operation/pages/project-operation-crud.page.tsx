@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
   ButtonComponent,
+  DatePickerComponent,
   FormComponent,
   InputComponent,
   SelectComponent,
 } from "../../../common/components/Form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { EDirection } from "../../../common/constants/input.enum";
 import { useProjectOperationCrud } from "../hook/project-operation-crud.hook";
 import { InputNumberComponent } from "../../../common/components/Form/input-number.component";
@@ -16,25 +17,37 @@ interface IAppProps {
 }
 
 function ProjectOperationCrud({ action }: IAppProps) {
+  const { id: projectOperationalId } = useParams();
   const navigate = useNavigate();
   const [exerciseSt, setExerciseSt] = useState(null)
-  
-  const { errors, onSubmitTab, showModal, setMessage, register, isAllowSave, control, dateFromDefaultSt, dateToDefaultSt,actualFullYear } = useProjectOperationCrud(exerciseSt);
+
+  const { errors, onSubmitTab, showModal, setMessage, register, isAllowSave, control, dateFromDefaultSt, dateToDefaultSt, actualFullYear } = useProjectOperationCrud(projectOperationalId, exerciseSt);
 
   const [isModifyDateFrom, setIsModifyDateFrom] = useState(false)
   const [isModifyDateTo, setIsModifyDateTo] = useState(false)
 
   const [dateFromDefaultStValidateDate, setDateFromDefaultStValidateDate] = useState(dateFromDefaultSt)
   const [dateToDefaultStValidateDate, setDateToDefaultStValidateDate] = useState(dateToDefaultSt)
-  
+
   useEffect(() => {
     setIsModifyDateFrom(true)
-  }, [dateFromDefaultSt])
-  
+  }, [dateFromDefaultSt, exerciseSt])
+
   useEffect(() => {
     setIsModifyDateTo(true)
-  }, [dateToDefaultSt])
-  
+  }, [dateToDefaultSt, exerciseSt])
+
+
+  useEffect(() => {
+    if (exerciseSt == "" || !exerciseSt || exerciseSt.length!=4) {
+      setDateFromDefaultStValidateDate("")
+      setDateToDefaultStValidateDate("")
+    }else{
+      setDateFromDefaultStValidateDate(dateFromDefaultSt)
+      setDateToDefaultStValidateDate(dateToDefaultSt)
+    }
+  }, [exerciseSt])
+
 
   return (
     <div className="crud-page">
@@ -91,8 +104,9 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
                 errors={errors}
-                onChange={(e)=>setExerciseSt(e.target.value)}
+                onChange={(e) => setExerciseSt(e.target.value)}
                 min={actualFullYear}
+                disabled={action === "new" ? false : true}
               />
 
             </section>
@@ -103,36 +117,41 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 label='Estado'
                 className="select-basic medium"
                 classNameLabel="text-black big bold text-required"
-                placeholder={'Seleccionar'}
+                //placeholder={'Seleccionar'}
                 data={[
-                  { id: "1", name: "Activo", value: 1 },
-                  { id: "0", name: "Inactivo", value: 0 },
+                  { id: "1", name: "Activo", value: "1" },
+                  { id: "0", name: "Inactivo", value: "0" },
                 ]}
                 filter={true}
                 fieldArray={true}
                 errors={errors}
               />
 
+              <>{JSON.stringify(dateFromDefaultSt)}</>
               <InputComponent
                 idInput="dateFrom"
                 className="input-basic medium"
                 typeInput="date"
                 register={register}
-                value={!isModifyDateFrom ? undefined : dateFromDefaultSt}
-                onChange={(e)=>{setIsModifyDateFrom(false);setDateFromDefaultStValidateDate(e.target.value)}}
+                //value={!isModifyDateFrom ? undefined : dateFromDefaultSt}
+                value={!isModifyDateTo ? undefined : !exerciseSt || exerciseSt?.length==4 ? dateFromDefaultSt : undefined}
+                onChange={(e) => { setIsModifyDateFrom(false); setDateFromDefaultStValidateDate(e.target.value); }}
                 label="Validez desde"
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
                 errors={errors}
                 max={dateToDefaultStValidateDate}
               />
+
+
               <InputComponent
                 idInput="dateTo"
                 className="input-basic medium"
                 typeInput="date"
                 register={register}
-                value={!isModifyDateTo ? undefined : dateToDefaultSt}
-                onChange={(e)=>{setIsModifyDateTo(false);setDateToDefaultStValidateDate(e.target.value);}}
+                //value={!isModifyDateTo ? undefined : dateToDefaultSt}
+                value={!isModifyDateTo ? undefined : !exerciseSt || exerciseSt?.length==4 ? dateToDefaultSt : undefined}
+                onChange={(e) => { setIsModifyDateTo(false); setDateToDefaultStValidateDate(e.target.value); }}
                 label="Validez hasta"
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
@@ -154,9 +173,13 @@ function ProjectOperationCrud({ action }: IAppProps) {
                     description: "¿Está segur@ que desea cancelar el proyecto?",
                     show: true,
                     OkTitle: "Aceptar",
+                    cancelTitle: "Cancelar",
                     onOk: () => {
                       setMessage({});
                       navigate("/gestion-financiera/presupuesto/proyecto-funcionamiento");
+                    },
+                    onCancel() {
+                      setMessage({});
                     },
                   });
                 }}
