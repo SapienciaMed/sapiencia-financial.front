@@ -23,6 +23,8 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
   const navigate = useNavigate();
 
   const actualFullYear = dateToday.getFullYear();
+
+
   let dateFromDefault = `${exerciseSt ?? actualFullYear}-01-01`
   let dateToDefault = `${exerciseSt ?? actualFullYear}-12-31`
 
@@ -30,16 +32,33 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
   const [dateToDefaultSt, setDateToDefaultSt] = useState(dateToDefault)
 
   useEffect(() => {
-    setDateFromDefaultSt(`${exerciseSt ?? actualFullYear}-01-01`)
+    setValueRegister("dateFrom", "");
+    setValueRegister("dateTo", "");
+    if (!exerciseSt) {
+      setDateFromDefaultSt(`${actualFullYear}-01-01`)
+      setDateToDefaultSt(`${actualFullYear}-12-31`)
+      setValueRegister("dateFrom", dateFromDefaultSt);
+      setValueRegister("dateTo", dateToDefaultSt);
+    } else if (Object(exerciseSt).length == 4) {
+      setDateFromDefaultSt(`${exerciseSt}-01-01`)
+      setDateToDefaultSt(`${exerciseSt}-12-31`)
+      setValueRegister("dateFrom", `${exerciseSt}-01-01`);
+      setValueRegister("dateTo", `${exerciseSt}-12-31`);
+    } else {
+      setValueRegister("dateFrom", "");
+      setValueRegister("dateTo", "");
+    }
+
+    /* setDateFromDefaultSt(`${exerciseSt ?? actualFullYear}-01-01`)
     setDateToDefaultSt(`${exerciseSt ?? actualFullYear}-12-31`)
-    if(Object(exerciseSt).length<4 || Object(exerciseSt).length>6){
+    if(Object(exerciseSt)>= actualFullYear && Object(exerciseSt).length<4 || Object(exerciseSt).length>6){
       setValueRegister("dateFrom","");
       setValueRegister("dateTo","");
     }else{
       setValueRegister("dateFrom",dateFromDefaultSt);
       setValueRegister("dateTo",dateToDefaultSt);
 
-    }
+    } */
   }, [exerciseSt])
 
 
@@ -73,14 +92,7 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
     resolver,
   });
 
-  //const [name, projectId, id, excercise,dateFrom] = watch(["name", "number", "id", "exercise", "dateFrom"]);
 
-  /* useEffect(() => {
-    //(fundData && action == 'edit') && setIsBtnDisable(validateFieldEqualsEdition(fundData))
-    console.log({ name, projectId, id, excercise,dateFrom })
-    //setValueRegister("dateFrom", dateFrom);
-    //setValueRegister("dateTo", Object(projectOperationSt).dateTo);
-  }, [name, projectId, id, excercise]) */
 
 
   const validateButton = (values) => { return Object.values(values).every(campo => campo !== null && campo !== undefined && campo !== '') }
@@ -123,9 +135,9 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
 
   const messageConfirmSave = async (data: any) => {
     const response = !data.id
-    ? await createProjectOperation(data) 
-    : await UpdateProjectOperation(data.id,data) 
-     
+      ? await createProjectOperation(data)
+      : await UpdateProjectOperation(data.id, data)
+
     console.log({ response })
     if (response.operation.code == "OK" && !Object(response).data.data?.errno) {
 
