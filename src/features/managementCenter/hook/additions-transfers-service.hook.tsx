@@ -1,6 +1,7 @@
 
 import useCrudService from '../../../common/hooks/crud-service.hook';
 import { ApiResponse, IPagingData } from '../../../common/utils/api-response';
+import { IData } from "../interfaces/Additions";
 import { IAdditionsTransfersDistrictInterfaces, IAdditionsTransfersSapienciaInterfaces, IFundsAdditionList, IPosPreAddition, IPosPreSapienciaAdditionList, IProjectAdditionList } from '../../functionality/interfaces/AdditionsTransfersInterfaces';
 export const useAdditionsTransfersService = () => {
     const baseURL: string = process.env.urlApiFinancial;
@@ -45,6 +46,21 @@ export const useAdditionsTransfersService = () => {
         const endpoint: string = "/save-data";
         return post(`${roleUrl}${endpoint}`,data);
     }
+    
+    async function showAdition(id: string): Promise<ApiResponse<IData>> {
+        const endpoint: string = `/get-by-id/${id}`;
+        return get(`${roleUrl}${endpoint}`);
+    }    
 
-    return { GetAllAdditionsByDistrict, GetAllAdditionsBySapiencia, GetProjectsList, GetFundsList, GetPosPreList, GetPosPreSapienciaList, validateCreateAdition, createAdition }
+    async function validateEditAdition(id:string,data: Object): Promise<ApiResponse<IPagingData<IPosPreSapienciaAdditionList>>> {
+        const endpoint: string = `/update/${id}`;
+        return post(`${roleUrl}${endpoint}`,data);
+    }
+    
+    async function editAdition(id:string,data: Object): Promise<ApiResponse<IPagingData<IPosPreSapienciaAdditionList>>> {
+        const endpoint: string = `/update-save/${id}`;
+        return post(`${roleUrl}${endpoint}`,data);
+    }
+
+    return { GetAllAdditionsByDistrict, GetAllAdditionsBySapiencia, GetProjectsList, GetFundsList, GetPosPreList, GetPosPreSapienciaList, validateCreateAdition, createAdition,showAdition,validateEditAdition,editAdition }
 }

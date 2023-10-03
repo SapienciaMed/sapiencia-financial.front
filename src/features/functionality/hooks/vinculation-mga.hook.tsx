@@ -6,23 +6,25 @@ import { AppContext } from "../../../common/contexts/app.context";
 import { useContext, useEffect, useRef, useState } from "react";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { useNavigate } from "react-router-dom";
-import { IActivityMGA } from "../interfaces/VinculationMGAInterfaces";
+import { IApiPlanningDetailedActivitiesSpecify, ILastMoveEdit } from "../interfaces/VinculationMGAInterfaces";
 import { SwitchComponent } from "../../../common/components/Form";
 import {useVinculationService} from "../hooks/vinculation-mga-service.hook"
 import { EResponseCodes } from "../../../common/constants/api.enum";
+import { IBudgetViewPage } from "../interfaces/Budgets";
+
 interface IVinculationMGAFilters {
     inputCodigoMGA: string
 }
 
-export function useVinculationMGAData(pospre: string) {
+export function useVinculationMGAData(pospre: string, values?: IBudgetViewPage ) {
     const navigate = useNavigate();
-    const [lastMove,setLastMove] = useState([]);
+    const [ lastMove, setLastMove ] = useState([]);
+    const [ lastMoveEdit, setLastMoveEdit ] = useState<ILastMoveEdit[]>([]);
+
     const tableComponentRef = useRef(null);
-    const {CreateVinculation,DeleteVinculation} = useVinculationService();
+    const { CreateVinculation } = useVinculationService();
     const resolver = useYupValidationResolver(vinculationValidator);
-    const { setMessage } = useContext(AppContext);
-    const [activitiesLink, setActivitiesLink] = useState<number[]>([]);
-    const [activitiesUnLink, setActivitiesUnLink] = useState<number[]>([]);
+    const { setMessage, setIsValue, authorization } = useContext(AppContext);
     const [showTable, setShowTable] = useState(false);
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
 
@@ -37,120 +39,157 @@ export function useVinculationMGAData(pospre: string) {
 
     const inputValue =  watch(['inputCodigoMGA'])
 
-    const tableColumns: ITableElement<IActivityMGA>[] = [
+    const tableColumns: ITableElement<IApiPlanningDetailedActivitiesSpecify>[] = [
         {
-            fieldName: "id",
+            fieldName: "consecutiveActivityDetailed",
             header: "Codigo",
         },
         {
-            fieldName: "unit",
+            fieldName: "measurementActivityDetailed",
             header: "Unidad de medida"
         },
         {
-            fieldName: "quantity",
+            fieldName: "amountActivityDetailed",
             header: "Cantidad"
         },
         {
-            fieldName: "cost",
-            header: "Costo total"
+            fieldName: "totalCostActivityDetailed",
+            header: "Costo total",
         },
-        {   
+        {
             fieldName: "id",
             header: "Vincular",
             renderCell:(row) => {
-                return <SwitchComponent idInput={`checkRow${row.id}`} value={row.vinculation != null} onChange={(e) => {
-                    if(e.value === true) {
-                        setLastMove([...lastMove,{id:row}])
-                        const activityLink = activitiesLink.find(activity => activity == row.id)
-                        if(!activityLink){
-                           const array = activitiesLink;
-                           array.push(row.id)
-                           setActivitiesLink(array);
-                        }
-                        const activityUnLink = activitiesUnLink.find(activity => activity == row.id)
-                        if(activityUnLink){
-                           const array = activitiesUnLink.filter(item => item != row.id);
-                           setActivitiesUnLink(array);
-                        }
+                return <SwitchComponent idInput={String(row.activityDetailedId)} value={false} onChange={(value) => {
+                    if (!value.value) { 
+                        const deleteLast = lastMove.filter((elemento) => {
+                            return elemento.id.activityDetailedId !== row.activityDetailedId;
+                        });
+                        setLastMove(deleteLast);
                     } else {
-                        const auxLast = lastMove;
-                        if (auxLast.findIndex((value)=>{
-                            value.id == row.id;}))
-                        {
-                            auxLast.splice(auxLast.findIndex((value)=>{
-                                value.id == row.id;
-                            }),1)
-                            setLastMove(auxLast);
-                        }
-                        const activityUnLink = activitiesUnLink.find(activity => activity == row.id)
-                        if(!activityUnLink){
-                            const array = activitiesUnLink;
-                            array.push(row.id)
-                            setActivitiesUnLink(array);
-                        }
-                        const activityLink = activitiesLink.find(activity => activity == row.id)
-                        if(activityLink){
-                            const array = activitiesLink.filter(item => item != row.id);
-                            setActivitiesLink(array);
-                        }
+                        setLastMove([ ...lastMove, { id: row } ]);
                     }
-                }} /> 
+                }} />
             }
         },
     ];
 
-    const tableColumnsEdit: ITableElement<IActivityMGA>[] = [
+    const tableColumnsEdit: ITableElement<IApiPlanningDetailedActivitiesSpecify>[] = [
         {
-            fieldName: "id",
-            header: "Codigo",
+            fieldName: "consecutiveActivityDetailed",
+            header: "Código",
         },
         {
-            fieldName: "unit",
+            fieldName: "measurementActivityDetailed",
             header: "Unidad de medida"
         },
         {
-            fieldName: "quantity",
+            fieldName: "amountActivityDetailed",
             header: "Cantidad"
         },
         {
-            fieldName: "cost",
-            header: "Costo"
+            fieldName: "totalCostActivityDetailed",
+            header: "Costo",
+        },
+        {
+            fieldName: "id",
+            header: "Estado",
+            renderCell: (row) => {
+                return (
+                    <SwitchComponent
+                        idInput={ String(row.activityDetailedId)}
+                        value={ Object.keys(row).length > 0}
+                        onChange={(value) => {
+                            if (!value.value) { // Cuando se vaya a eliminar una vinculacion agregue en un estado, los objetos que se quieren desvincular
+                                setLastMoveEdit([ ...lastMoveEdit, { id: row } ]);
+                            } else {
+                                //Cuando se vuelve a colocar el switch en encendido haga lo siguiente:
+                                const deleteLast = lastMoveEdit.filter((elemento) => {
+                                    return elemento.id.activityDetailedId !== row.activityDetailedId;
+                                });
+                                setLastMoveEdit(deleteLast);
+                            }
+                            
+                        }}
+                    />
+                )
+            }
+        }
+    ];
+
+    useEffect(() => {
+        setIsValue(lastMoveEdit.length > 0)
+        if(lastMoveEdit.length > 0) {
+            const rowsData = lastMoveEdit.map(objeto => ({
+                id: objeto.id.idVinculation,
+                activityId: objeto.id.activityId,
+                consecutiveActivityDetailed: objeto.id.consecutiveActivityDetailed,
+                detailedActivityId: objeto.id.activityDetailedId ,
+            }))
+            values.upDateVinculationData(rowsData)
+        }else{
+            values?.upDateVinculationData && values.upDateVinculationData([]) 
+        }
+    },[lastMoveEdit])
+
+    const tableColumnsView: ITableElement<IApiPlanningDetailedActivitiesSpecify>[] = [
+        {
+            fieldName: "consecutiveActivityDetailed",
+            header: "Codigo",
+        },
+        {
+            fieldName: "measurementActivityDetailed",
+            header: "Unidad de medida"
+        },
+        {
+            fieldName: "amountActivityDetailed",
+            header: "Cantidad"
+        },
+        {
+            fieldName: "totalCostActivityDetailed",
+            header: "Costo",
+            renderCell(row) {
+                return <span> $ {row.totalCostActivityDetailed.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</span>
+            },
         },
     ];
-   
 
-    const tableActions: ITableAction<IActivityMGA>[] = [
+    const tableActionsView: ITableAction<IApiPlanningDetailedActivitiesSpecify>[] = [
         {
             icon: "Detail",
             onClick: (row) => {
                 const rows = [
                     {
                         title: "Código",
-                        value: `${row.id}`
+                        value: `${row.consecutiveActivityDetailed}`
                     },
                     {
                         title: "Unidad de medida",
-                        value: `${row.unit}`
+                        value: `${row.measurementActivityDetailed}`
                     },
                     {
                         title: "Cantidad",
-                        value: `${row.quantity}`
+                        value: `${row.amountActivityDetailed}`
                     },
                     {
-                        title: "Costo",
-                        value: `${row.cost}`
+                        title: "Costo unitario",
+                        value: `$ ${row.unitCostActivityDetailed.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
+                    },
+                    {
+                        title: "Costo Total",
+                        value: `$ ${row.totalCostActivityDetailed.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
                     },
                     {
                         title: "Producto MGA",
-                        value: `${row.description}`
+                        value: `${row.codeConsecutiveProductMga}`
                     },
                     {
                         title: "Actividad MGA",
-                        value: `${row.description}`
+                        value: `${row.codeMga}`
                     },
                     {
                         title: "Actividades detalladas",
-                        value: `${row.description}`
+                        value: `${row.detailActivityDetailed}`
                     }
                 ]
                 setMessage({
@@ -170,81 +209,83 @@ export function useVinculationMGAData(pospre: string) {
         }
     }
 
+    useEffect(() => {
+        values && values.actions == 'view' && loadTableData( { budgetId: Number(pospre), active:true} );
+        values && values.actions == 'edit' && loadTableData();
+    },[])
+
+
     const onNew = () => {
         navigate("./../../../");
     };
 
     async function vinculateActivities(message?:boolean):Promise<void> {
-
-        let status = true;
-        if(activitiesUnLink){
-            const res = await DeleteVinculation(Number(pospre),activitiesUnLink);
-            if(res.operation.code != EResponseCodes.OK){
-                    message && setMessage({
-                    title: "Validacion de datos",
-                    description: res.operation.message,
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        setMessage({});
-                    },
-                    background: true
-                });
-                status = false;
+        
+        const dataVinculate = () => {
+            const data  = lastMove.map(obje => ({
+                budgetId: Number(pospre),
+                activityId: obje.id.activityId,
+                consecutiveActivityDetailed: obje.id.consecutiveActivityDetailed,
+                detailedActivityId: obje.id.activityDetailedId,
+                userCreate: authorization.user.numberDocument,
+            }))
+            
+            return {
+                elementsDetail: data
             }
         }
-        if(status && activitiesLink){
-            const res = await CreateVinculation(Number(pospre), activitiesLink);
-            if(res.operation.code != EResponseCodes.OK){
-                message && setMessage({
-                    title: "Validacion de datos",
-                    description: res.operation.message,
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                        setMessage({});
-                    },
-                    background: true
-                });
-            } 
-        }
-        if (lastMove.length <= 0) {
-            
-            message && setMessage({
-                title: "Vinculación MGA",
-                description: "Se ha Eliminado la vinculación MGA exitosamente",
-                show: true,
-                OkTitle: "Aceptar",
-                onOk: () => {
-                    onNew();
-                    setMessage({});
-                },
-                background: true
-            });
-        } else {
-            message && setMessage({
-                title: "Vinculación MGA",
-                description: "Se ha creado la vinculación MGA exitosamente",
-                show: true,
-                OkTitle: "Aceptar",
-                onOk: () => {
-                    onNew();
-                    setMessage({});
-                },
-                background: true
-            });
-        }
+
+        setMessage({
+            title: "Vinculación MGA",
+            description: "¿Estás segur@ de Vinculaciar MGA",
+            show: true,
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
+            onOk: () => {
+                CreateVinculation(dataVinculate()).then(response => {
+                    if (response.operation.code === EResponseCodes.OK) {
+                        setMessage({
+                            title: "Editar Pospre",
+                            description: "Se ha editado el Pospre exitosamente",
+                            show: true,
+                            OkTitle: "Aceptar",
+                            onOk: () => {
+                                setMessage({});
+                            },
+                            background: true
+                        });
+                    } else {
+                        setMessage({
+                            title: "Validacion de datos",
+                            description: response.operation.message,
+                            show: true,
+                            OkTitle: "Aceptar",
+                            onOk: () => {
+                                setMessage({});
+                            },
+                            background: true
+                        });
+                    }
+                })
+                
+            },
+            onCancel: () => {
+              setMessage({});
+            },
+            background: true,
+        });
+     
     }
 
     const onSubmit = handleSubmit(async (data: IVinculationMGAFilters) => {
         setShowTable(true)
-        loadTableData({ budgetId: data.inputCodigoMGA, mgaId: pospre  });
+        loadTableData({ detail: data.inputCodigoMGA });
     });
 
     useEffect(() => {
-        setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
+        setIsBtnDisable(inputValue.some(value => value != '' && value != undefined) || lastMove.length > 0 )
     },[inputValue])
 
-    return { register, reset, errors, tableComponentRef, tableColumns, showTable, control, onSubmit, isBtnDisable,
-        tableActions,tableColumnsEdit, setShowTable, vinculateActivities,loadTableData }
-} 
+    return { register, reset, errors, tableComponentRef, tableColumns, showTable, control, onSubmit, isBtnDisable, 
+        tableActionsView, tableColumnsEdit, tableColumnsView, setShowTable, vinculateActivities, loadTableData }
+}

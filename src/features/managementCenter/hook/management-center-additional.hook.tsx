@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useEffect, useRef, useState } from "react";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
-import { fundsAdditional } from "../../../common/schemas";
+import { consultFundsAdditional } from "../../../common/schemas";
 import { useNavigate } from "react-router-dom";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { IAdditionsFilters, IAdditionsWithMovements } from "../interfaces/Additions";
@@ -10,7 +10,7 @@ export function useManagementCenterAdditional( typeMovement:string ){
  
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
-    const resolver = useYupValidationResolver(fundsAdditional);
+    const resolver = useYupValidationResolver(consultFundsAdditional);
 
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
     const [showTable, setShowTable] = useState(false);
@@ -57,7 +57,10 @@ export function useManagementCenterAdditional( typeMovement:string ){
         },
         {
             icon: "Edit",
-            onClick: (row) => {},
+            onClick: (row) => {                
+                navigate(`./edit/${row.id}`);
+            },
+            
         },
     ];
 

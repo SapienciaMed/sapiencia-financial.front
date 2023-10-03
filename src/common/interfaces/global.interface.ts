@@ -48,7 +48,7 @@ export interface IAdditionalField {
 
 export interface IArrayDataSelect{
   functionalArea: IDropdownProps[],
-  areas: IDropdownProps[],
+  areas?: IDropdownProps[],
   funds: IDropdownProps[],
   posPre: IDropdownProps[]
 }

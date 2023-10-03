@@ -34,7 +34,7 @@ export function useDataProjectOperation() {
     
     const inputValue =  watch(['entity','number', 'dateFrom', 'dateTo'])
 
-
+    
     const tableColumns: ITableElement<IProjectOperation>[] = [
         {
             fieldName: "entity.name",

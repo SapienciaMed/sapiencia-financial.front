@@ -1526,6 +1526,9 @@
 .p-rating {
   gap: 0.5rem;
 }
+
+
+
 .p-rating .p-rating-item .p-rating-icon {
   color: #495057;
   transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
@@ -6229,3 +6232,26 @@
 /* Customizations to the designer theme should be defined here */
 
 /*# sourceMappingURL=theme.css.map */
+@media (min-width: 400px) and (max-width: 500px) {
+  .p-rating {
+      gap: 5rem;
+  }
+}
+
+@media(max-width: 400) { 
+    
+    .p-rating {
+      gap: 1rem;  /* O cualquier unidad que desees */
+    }    
+  
+}
+@media (min-width:300px) and  (max-width: 399px) {
+  .p-rating {
+      gap: 3rem;  /* Ajusta este valor según lo que necesites */
+  }
+}
+@media (max-width: 299px) {
+  .p-rating {
+      gap: 1rem;  /* Ajusta este valor según lo que necesites */
+  }
+}

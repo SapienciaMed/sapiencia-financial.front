@@ -14,5 +14,13 @@ export interface IBudgets {
   dateCreate?: DateTime;
   entity?: IEntities,
   pospresap?: any[]
+  vinculationmga?: any[]
+}
+
+export interface IBudgetViewPage {
+  actions: "vinculation" | "edit" | "view",
+  unlinkMGA?: (value: boolean) => void,
+  upDatePospreData?: (pospreSapi: any) => void,
+  upDateVinculationData?: (vinculationmga: any[]) => void
 }
 
