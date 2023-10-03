@@ -110,4 +110,5 @@ export interface Head {
   id:                number;
   actAdminDistrict:  string;
   actAdminSapiencia: string;
+  typeMovement?: string;
 }
