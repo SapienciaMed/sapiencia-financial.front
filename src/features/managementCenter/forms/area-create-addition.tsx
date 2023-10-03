@@ -222,7 +222,7 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
             {
 
                 watchIncome.some(use => use.value != '') &&
-                <label className="text-black biggest ml-16px mt-14px"> Total {titleAdd.toLowerCase()}: $  {formatMoney(calculateTotal())} </label>
+                <label className="text-black biggest ml-16px mt-14px"> Total ingresos: $  {formatMoney(calculateTotal())} </label>
 
             }
         </div>
