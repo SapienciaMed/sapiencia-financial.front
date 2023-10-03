@@ -17,7 +17,7 @@ import { useAdditionsTransfersService } from '../hook/additions-transfers-servic
 import { useRef } from 'react';
 
 interface IAppProps {
-    titleAdd: string,
+    titleAdd: "ingreso" | "gasto",
     controlRegister: Control<IAdditionsForm, any>,
     arrayDataSelect: IArrayDataSelect,
     showModal: (values: IMessage) => void,
@@ -25,40 +25,17 @@ interface IAppProps {
     register: UseFormRegister<IAdditionsForm>,
     invalidCardsAdditionSt: any;
     setValue: any;
-    watch: any;
+    watch: any;  
 }
 
 function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getValues, showModal, register, invalidCardsAdditionSt, setValue, watch }: IAppProps) {
+    const [isLoading, setIsLoading] = useState(true);  
+    const { aditionData } = useAdditionAreaEdit()   
 
-    const { aditionData } = useAdditionAreaEdit()
-    //const [hasAppended, setHasAppended] = useState(false);
-
-   /*  useEffect(() => {        
-        if (!hasAppended && aditionData?.details.length > 0) {
-            aditionData?.details.filter(d => d.type == "Ingreso").map(
-                (item: Detail) => {
-                    append({
-                        managerCenter: item.budgetRoute.managementCenter,
-                        projectId: item.budgetRoute.projectVinculation.id,
-                        projectName: item.budgetRoute.projectVinculation.conceptProject,
-                        functionalArea: item.budgetRoute.projectVinculation.areaFuntional.id,
-                        funds: item.budgetRoute.fund.id,
-                        posPre: item.budgetRoute.pospreSapiencia.id,
-                        value: item.value,
-                        cardId: generarIdAleatorio(20)
-                    })
-                }
-            )
-            setHasAppended(true); 
-        }
-    }, [aditionData]); */    
-  
-   
     useEffect(() => {
-        if (aditionData) {
+        if (aditionData) {            
             aditionData.details.forEach((item: Detail) => {
                 if (item.type == "Ingreso") {
-                    if (item.budgetRoute && item.budgetRoute.projectVinculation && item.budgetRoute.projectVinculation.areaFuntional) {
                     append({
                         managerCenter: item.budgetRoute.managementCenter,
                         projectId: item.budgetRoute.projectVinculation.id,
@@ -68,38 +45,11 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
                         posPre: item.budgetRoute.pospreSapiencia.id,
                         value: item.value,
                         cardId: generarIdAleatorio(20) 
-                    });    
-                }            
+                    });
                 }                
-            });
-            
+            });           
         }
-    }, [aditionData]); 
-
-/* 
-    const processDetailItem = (item) => {
-        return {
-            managerCenter: item.budgetRoute.managementCenter,
-            projectId: item.budgetRoute.projectVinculation.id,
-            projectName: item.budgetRoute.projectVinculation.conceptProject,
-            functionalArea: item.budgetRoute.projectVinculation.areaFuntional.id,
-            funds: item.budgetRoute.fund.id,
-            posPre: item.budgetRoute.pospreSapiencia.id,
-            value: item.value,
-            cardId: generarIdAleatorio(20)
-        };
-    };
-
-    useEffect(() => {
-        if (aditionData) {
-            aditionData.details.forEach((item) => {
-                if (item.type === "Ingreso") {
-                    append(processDetailItem(item));
-                }
-            });            
-        }
-    }, [aditionData]); */
-
+    }, [aditionData]);
 
     const [isSearchByName, setIsSearchByName] = useState(false)
 
@@ -107,6 +57,7 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
         control: controlRegister,
         name: 'ingreso'
     });
+   
 
     const { errors, isValid, dirtyFields } = useFormState({
         control: controlRegister,
@@ -170,7 +121,7 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
                     cardId: generarIdAleatorio(20),
                     managerCenter: item.CENTROGESTOR,
                     projectId: (arrayDataSelect.functionalArea.find(e => e.name == item.PROYECTO)).id,
-                    functionalArea: Object(arrayDataSelect.functionalArea.filter(e => e.value != null).find((e: any) => e.area[0]?.name == item.ÁREAFUNCIONAL)).area[0]?.id,
+                    functionalArea: arrayDataSelect.functionalArea.filter(e => e.value != null && e.name == item.PROYECTO ).find(objeto => objeto.area.some(area => area.name == item.ÁREAFUNCIONAL))?.id,
                     funds: (arrayDataSelect.funds.filter(e => e.value != null).find(e => e.name == item.FONDO)).id,
                     posPre: (arrayDataSelect.posPre.filter(e => e.value != null).find(e => e.name == item.POSPRE))?.id,
                     value: item.VALOR.replaceAll('.', ''),
@@ -244,8 +195,8 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
                     > Añadir {titleAdd} <BiPlusCircle /> </div>
                 </div>
             </div>
-
             {
+                
                 visibleFields.map((field, index) => {
                     return (
                         <div key={field.id}>

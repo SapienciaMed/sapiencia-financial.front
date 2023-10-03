@@ -21,7 +21,7 @@ function AdditionAreaCrud({ actionForm, typeMovement }: IAppProps) {
   const tabSelected = (e) => {
     setTabId(e.id)
   }
-  const { control, arrayDataSelect, errors, onSubmitTab, showModal, setMessage, getValues, watch, register, invalidCardsAdditionSt, setValue, isAllowSave } = useAdditionAreaCrud(tabId, typeMovement,actionForm);
+  const { control, arrayDataSelect, errors, onSubmitTab, showModal, setMessage, getValues, watch, register, invalidCardsAdditionSt, setValue, isAllowSave,isfull } = useAdditionAreaCrud(tabId, typeMovement,actionForm);
   
 
   return (
@@ -62,7 +62,21 @@ function AdditionAreaCrud({ actionForm, typeMovement }: IAppProps) {
                 />
               </div>
             </div>
-            <TabManagerAdditionPage
+            {
+              (isfull && actionForm == "edit") ? 
+              <TabManagerAdditionPage
+                controlRegister={control}
+                watch={watch}
+                showModal={showModal}
+                onSubmitTab={onSubmitTab}
+                getValues={getValues}
+                arrayDataSelect={arrayDataSelect}
+                register={register}
+                invalidCardsAdditionSt={invalidCardsAdditionSt}
+                setValue={setValue}
+                tabSelected={tabSelected}
+              /> : actionForm == "new" && 
+              <TabManagerAdditionPage
               controlRegister={control}
               watch={watch}
               showModal={showModal}
@@ -73,7 +87,10 @@ function AdditionAreaCrud({ actionForm, typeMovement }: IAppProps) {
               invalidCardsAdditionSt={invalidCardsAdditionSt}
               setValue={setValue}
               tabSelected={tabSelected}
-            />
+            /> 
+
+             
+            }
           </FormComponent>
           <section className="container-button-core-adicion mt-24px">
             <div className="display-align-flex-center">

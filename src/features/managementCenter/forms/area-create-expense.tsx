@@ -13,7 +13,7 @@ import { generarIdAleatorio } from '../../../common/utils/randomGenerate';
 import { useAdditionAreaEdit } from '../hook/addition-area-edit.hook';
 
 interface IAppProps {
-    titleAdd: string,
+    titleAdd: "ingreso"|"gasto",
     controlRegister: Control<IAdditionsForm, any>,
     arrayDataSelect: IArrayDataSelect,
     showModal: (values: IMessage) => void,

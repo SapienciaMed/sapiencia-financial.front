@@ -15,16 +15,24 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
 
   const resolver = useYupValidationResolver(fundsAdditionalValidation);
   const { setMessage } = useContext(AppContext);
-  const { GetFundsList, GetProjectsList, GetPosPreSapienciaList, validateCreateAdition, createAdition,validateEditAdition,editAdition } = useAdditionsTransfersService()
+  const { GetFundsList, GetProjectsList, GetPosPreSapienciaList, validateCreateAdition, createAdition, validateEditAdition, editAdition } = useAdditionsTransfersService()
   const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
     functionalArea: [],
-    areas: [],
     funds: [],
     posPre: []
   })
   const navigate = useNavigate();
-  const { id: idMovement } = useParams();   
+  const { id: idMovement } = useParams();
   const [invalidCardsAdditionSt, setInvalidCardsAdditionSt] = useState([])
+  const [isfull, setIsFull] = useState(false);
+
+
+  useEffect(() => {
+    setIsFull(todosObjetosLlenos(arrayDataSelect))
+
+    
+
+  }, [arrayDataSelect]);
 
   const {
     handleSubmit,
@@ -47,13 +55,13 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
   });
 
   const validateButton = (values) => { return Object.values(values).every(campo => campo !== null && campo !== undefined && campo !== '') }
-  const fullFields = validateButton(defaultValues);
+  const fullFields = validateButton(defaultValues);  
 
   // Effect que activa el watch que detecta los cambios en todo el form
-  React.useEffect(() => {
+ /*  React.useEffect(() => {
     const subscription = watch(() => { });
     return () => subscription.unsubscribe();
-  }, [watch]);
+  }, [watch]); */ 
 
   const onSubmitTab = handleSubmit(async (data: IAdditionsForm) => {
     if (actionForm === "new") {
@@ -119,7 +127,7 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
           }
           // background?: boolean;
         })
-      //Editar
+        //Editar
       } else {
 
         showModal({
@@ -131,7 +139,7 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
           cancelTitle: "Cancelar",
           onOk: () => {
             setMessage({})
-            messageConfirmSave(addition, resValidate)            
+            messageConfirmSave(addition, resValidate)
           },
           onCancel: () => {
             setMessage({})
@@ -147,7 +155,7 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
         })
 
       }
-    } else if (actionForm === "edit") {    
+    } else if (actionForm === "edit") {
       const ingresoFixed = data.ingreso.map(outcome => ({
         idCard: outcome.cardId,
         type: 'Ingreso',
@@ -183,7 +191,7 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
         additionMove: ingresoFixed.concat(gastoFixed)
       }
 
-      let resValidate = await validateEditAdition(idMovement,addition)
+      let resValidate = await validateEditAdition(idMovement, addition)
 
       if (resValidate.operation.code == 'FAIL') {
         showModal({
@@ -259,7 +267,7 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
     })
   }
   const messageConfirmEdit = async (addition: any, resValidate: any) => {
-    let res = await editAdition(idMovement,addition)
+    let res = await editAdition(idMovement, addition)
     showModal({
       //type?: EResponseCodes;
       title: "Guardado",
@@ -270,9 +278,9 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
         setMessage({})
         onCancelNew()
         const route = typeMovement === "Adicion"
-            ? "/gestion-financiera/centro-gestor/adicion"
-            : "/gestion-financiera/centro-gestor/disminucion";
-            navigate(route);
+          ? "/gestion-financiera/centro-gestor/adicion"
+          : "/gestion-financiera/centro-gestor/disminucion";
+        navigate(route);
       }
     })
   }
@@ -319,6 +327,19 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
 
     });
   };
+
+
+  function todosObjetosLlenos(objeto) {
+    return Object.keys(objeto).every(propiedad => {
+      const valor = objeto[propiedad];
+
+      if (typeof valor === 'object' && valor !== null) {
+        return todosObjetosLlenos(valor);
+      } else {
+        return valor !== null && valor !== undefined;
+      }
+    });
+  }
 
   useEffect(() => {
     if (!arrayDataSelect.functionalArea.length && !arrayDataSelect.funds.length && !arrayDataSelect.posPre.length) {
@@ -404,6 +425,11 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
 
   let formData = watch()
 
+ /*  useEffect(() => {
+    console.log('form',formData.gasto)
+    console.log('formde',defaultValues)
+  }, [formData]) */
+
   const [isAllowSave, setIsAllowSave] = useState(false)
   /* const [tabIdSt, setTabIdSt] = useState(tabId)
   useEffect(() => {
@@ -467,8 +493,6 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
     return false; // El objeto no tiene ningún campo con valor
   }
 
-
-
   //Editar
 
   const { aditionData } = useAdditionAreaEdit();
@@ -493,7 +517,8 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
     getValues,
     invalidCardsAdditionSt,
     setValue,
-    isAllowSave
+    isAllowSave,
+    isfull
 
   };
 }

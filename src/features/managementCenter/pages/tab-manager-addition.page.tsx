@@ -17,7 +17,7 @@ interface IAppProps {
   getValues: UseFormGetValues<IAdditionsForm>;
   invalidCardsAdditionSt:any;
   setValue:any;
-  tabSelected?:any;
+  tabSelected?:any;  
 }
 
 function TabManagerAdditionPage({
@@ -30,7 +30,7 @@ function TabManagerAdditionPage({
   watch,
   invalidCardsAdditionSt,
   setValue,
-  tabSelected
+  tabSelected,  
 }: IAppProps) {
   const { option } = useParams();
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ function TabManagerAdditionPage({
       id: "ingreso",
       title: "Ingreso",
       content: (
-        <AreaCreateAddition
+        <AreaCreateAddition          
           titleAdd="ingreso"
           controlRegister={controlRegister}
           showModal={showModal}
@@ -143,7 +143,7 @@ function TabManagerAdditionPage({
         <div className="tabs-content">
           {/* {selectedTab ? tabList[`${selectedTab?.title}`].content : "no data"} */}
           <div style={{ display: selectedTab?.id === "ingreso" ? "block" : "none" }}>
-            <AreaCreateAddition
+            <AreaCreateAddition              
               titleAdd="ingreso"
               controlRegister={controlRegister}
               showModal={showModal}
