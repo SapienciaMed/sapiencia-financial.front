@@ -331,7 +331,7 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
 
   function todosObjetosLlenos(objeto) {
     return Object.keys(objeto).every(propiedad => {
-      const valor = objeto[propiedad];
+      const valor = objeto[propiedad];    
 
       if (typeof valor === 'object' && valor !== null) {
         return todosObjetosLlenos(valor);
