@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { EDirection } from "../../constants/input.enum";
 import { LabelComponent } from "./label.component";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
@@ -23,8 +23,8 @@ interface IInputProps<T> {
   id?: string;
   fieldArray?: boolean;
   optionsRegister?: {};
-  max?: number;
-  min?:number;
+  max?: number | string;
+  min?:number | string;
 }
 
 function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
@@ -57,7 +57,9 @@ function InputElement({
   
   return (
     <input
-      {...register(idInput)}
+      {...register(idInput,
+        { required: true, maxLength: 20 }
+      )}
       id={id}
       name={idInput}
       type={typeInput}

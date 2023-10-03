@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { ButtonComponent, InputComponent, SelectComponent } from "../../../common/components/Form";
 import { Control, Controller, FieldErrors, UseFormRegister, useFieldArray, useForm } from 'react-hook-form';
 import { IAdditionsForm } from "../interfaces/Additions";
-import { IArrayDataSelect } from "../../../common/interfaces/global.interface";
+import { IArrayDataSelect, IDropdownPropsFuctionalArea } from "../../../common/interfaces/global.interface";
 import { InputNumberComponent } from "../../../common/components/Form/input-number.component";
+import { useWatch } from 'react-hook-form';
+import { ICreateSourceForm } from "../transfer/interfaces/TransferAreaCrudInterface";
 
 interface IAppProps {
     controlRegister: Control<IAdditionsForm, any>,
-    titleAdd: string,
+    titleAdd: "ingreso" | "gasto",
     arrayDataSelect: IArrayDataSelect,
     count: number,
     errors: FieldErrors<IAdditionsForm>,
@@ -18,69 +20,58 @@ interface IAppProps {
     invalidCardsAdditionSt: any;
     setValue: any;
     watch: any;
+    
 }
 
 function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSelect, remove, titleAdd, register, cardId, invalidCardsAdditionSt, setValue, watch}: IAppProps) {
-    const { functionalArea, areas, funds, posPre, } = arrayDataSelect
+    const { functionalArea, areas, funds, posPre, } = arrayDataSelect;  
+   
+    const formOrigen = useWatch({ control:controlRegister, name: titleAdd })
 
-    const [areasByProjectSt, setAreasByProjectSt] = useState<any>()
-    const [projectName, setProjectName] = useState('')
-    const [projectIdSelectedSt, setProjectIdSelectedSt] = useState()
-    const [areaIdSelectedSt, setAreaIdSelectedSt] = useState()
-    const [cardIdSt, setcardIdSt] = useState("")
+    const [projectIdSelectedSt, setProjectIdSelectedSt] = useState<string>('')
+    const [areaIdSelectedSt, setAreaIdSelectedSt] = useState<number | string>()
+    const [areasByProjectSt, setAreasByProjectSt] = useState<IDropdownPropsFuctionalArea[]>(functionalArea)
+    const [projectName, setProjectName] = useState('')  
 
     useEffect(() => {
         if (projectName != "") {
             setValue(`${titleAdd.toLowerCase()}[${count}].cardId`, cardId)
-            setValue(`${titleAdd.toLowerCase()}[${count}].projectId`, projectIdSelectedSt)
-            setValue(`${titleAdd.toLowerCase()}[${count}].functionalArea`, (areasByProjectSt.filter(e => e.value != null)).id ?? areaIdSelectedSt)
+            setValue(`${titleAdd.toLowerCase()}[${count}].functionalArea`, (areasByProjectSt.find(e => e.value != null)).id ?? areaIdSelectedSt)
             setValue(`${titleAdd.toLowerCase()}[${count}].projectName`, projectName)
-            setcardIdSt(cardId)
         }
     }, [projectIdSelectedSt])
 
-
     useEffect(() => {
-        let proyId = watch(`${titleAdd.toLowerCase()}[${count}].projectId`)
-        const areaList = functionalArea.filter(e => e.value != null).map(e => {
-            Object(e).area[0]['projectId'] = e?.id
-            return Object(e).area
-        });
-        const areaListFlat = areaList.flat()
-        let area = areaListFlat.filter(e => e.projectId == proyId)
-        area = area.filter(e => e.value != null)
-        setProjectIdSelectedSt(proyId)
-        setAreaIdSelectedSt(area[0]?.id)
-        setAreasByProjectSt(area)
+        processFunctionalArea(formOrigen[count].projectId)
     }, [projectName])
-
 
     const optionSelected = (option: any) => {
         if (option) {
+            
             setProjectName(functionalArea.find(e => e.value == option)?.description)
-            const areaList = functionalArea.filter(e => e.value != null).map(e => {
-                Object(e).area[0]['projectId'] = e.id
-                return Object(e).area
-            });
-            const areaListFlat = areaList.flat()
-            let area = areaListFlat.filter(e => e.projectId == option)
-            area = area.filter(e => e.value != null)
-            setProjectIdSelectedSt(option)
-            setAreaIdSelectedSt(area[0]?.id)
-            setAreasByProjectSt(area)
-        }else if(!option){
-            setProjectName(undefined)
-            //setValue(`${titleAdd.toLowerCase()}[${count}].projectName`, undefined)
+           processFunctionalArea(option)
         }
     }
 
-    let invalidStyleCard = {
-        background: invalidCardsAdditionSt.find(e => e.idCard == watch(`${titleAdd.toLowerCase()}[${count}].cardId`)) ? 'rgba(255, 0, 0, 0.30)' : 'none',
-        border: invalidCardsAdditionSt.find(e => e.idCard == watch(`${titleAdd.toLowerCase()}[${count}].cardId`)) ? '1px solid #F00' : ''
+    const processFunctionalArea = (option: any) => {
+        const areaList: IDropdownPropsFuctionalArea[] = functionalArea.filter(props => props.value != null).map(propsFunctionalArea => {
+            Object(propsFunctionalArea).area[0]['projectId'] = propsFunctionalArea?.id
+            return Object(propsFunctionalArea).area
+        });
+
+        const area = areaList.flat().filter(propsAreaList => propsAreaList.projectId == option && propsAreaList.value !== null);       
+
+        setProjectIdSelectedSt(option)
+        setAreaIdSelectedSt(area[0]?.id)
+        setAreasByProjectSt(area)
     }
 
+    let invalidStyleCard = {
+        background: invalidCardsAdditionSt?.find(e => e?.idCard == watch(`${titleAdd.toLowerCase()}[${count}].cardId`)) ? 'rgba(255, 0, 0, 0.30)' : 'none',
+        border: invalidCardsAdditionSt?.find(e => e?.idCard == watch(`${titleAdd.toLowerCase()}[${count}].cardId`)) ? '1px solid #F00' : ''
+    }  
     return (
-        <>
+        <>    
             <div className='card-user mt-14px' style={invalidStyleCard}>
                 <div className="title-area">
                     <label className="text-black biggest"> {count + 1}. {titleAdd.charAt(0).toUpperCase() + titleAdd.slice(1)}</label>
@@ -192,7 +183,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                         />
                     </section>
                 </div>
-            </div>
+            </div>   
         </>
     );
 }

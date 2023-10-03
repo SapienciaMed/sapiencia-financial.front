@@ -7,12 +7,13 @@ import { Controller } from "react-hook-form";
 
 interface IAppProps {
     action: "new" | "edit";
+    location: "origen" | "pospre"
 }
 
-function PosPreSapienciaForm({ action }: IAppProps) {
+function PosPreSapienciaForm({ action, location }: IAppProps) {
     const { pospre, id } = useParams();
     const { register, errors, control, onSubmitNewPosPreSapiencia, onSubmitEditPosPreSapiencia, onCancelNew, 
-        onCancelEdit, confirmClose, validatorNumber } = usePosPreSapienciaCrudData(pospre, id);
+        onCancelEdit, confirmClose } = usePosPreSapienciaCrudData(pospre, id, location);
     return (
         <div className="crud-page full-height">
             <div className="main-page full-height">
@@ -25,29 +26,7 @@ function PosPreSapienciaForm({ action }: IAppProps) {
                         <div className="card-form">
                             <div className="pospre-sapiencia-data">
                                 <div className="pospre-sapiencia-basic">
-                                    <Controller
-                                        control={control}
-                                        name={"number"}
-                                        defaultValue=""
-                                        render={({ field }) => {
-                                            return (
-                                                <InputComponent
-                                                    id={field.name}
-                                                    idInput={field.name}
-                                                    value={`${field.value}`}
-                                                    className="input-basic"
-                                                    typeInput="text"
-                                                    register={register}
-                                                    label="Código pospre"
-                                                    classNameLabel="text-black biggest bold"
-                                                    direction={EDirection.column}
-                                                    errors={errors}
-                                                    onChange={field.onChange}
-                                                    disabled={action === "new" ? false : true}
-                                                /> 
-                                            )
-                                        }}
-                                    />
+                                    
                                     <Controller
                                         control={control}
                                         name={"ejercise"}
@@ -102,7 +81,16 @@ function PosPreSapienciaForm({ action }: IAppProps) {
                             <div className="title-area">
                                 <div className="text-black biggest bold">Asignar código pospre sapiencia</div>
                             </div>
-                            <div className="pospre-sapiencia-code">
+                            <div className="pospre-sapiencia-code">                               
+                                <InputComponent
+                                    idInput="assignedTo"
+                                    register={register}
+                                    typeInput="text"
+                                    errors={errors}
+                                    label="Asignar a"
+                                    classNameLabel="text-black biggest bold"
+                                    disabled
+                                />
                                 <Controller
                                     control={control}
                                     name={"consecutive"}
@@ -115,7 +103,7 @@ function PosPreSapienciaForm({ action }: IAppProps) {
                                                 className="input-basic"
                                                 typeInput="number"
                                                 register={register}
-                                                label="Pospre sapiencia"
+                                                label="Consecutivo Pospre sapiencia"
                                                 classNameLabel="text-black biggest bold"
                                                 direction={EDirection.column}
                                                 errors={errors}
@@ -126,14 +114,6 @@ function PosPreSapienciaForm({ action }: IAppProps) {
                                     }}
                                 />
 
-                                <InputComponent
-                                    idInput="assignedTo"
-                                    register={register}
-                                    typeInput="text"
-                                    errors={errors}
-                                    label="Asignar a"
-                                    classNameLabel="text-black biggest bold"
-                                />
                             </div>
                         </div>
 

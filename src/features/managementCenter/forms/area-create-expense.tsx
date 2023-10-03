@@ -3,16 +3,17 @@ import React, { useEffect, useState } from 'react'
 import { BiPlusCircle } from 'react-icons/bi'
 import { FaRegCopy } from 'react-icons/fa'
 import { UseFormGetValues, useFieldArray, useFormState, useWatch, Control, UseFormRegister } from 'react-hook-form';
-import { IAdditionsForm } from '../interfaces/Additions';
+import { Detail, IAdditionsForm } from '../interfaces/Additions';
 import { IArrayDataSelect, IMessage } from '../../../common/interfaces/global.interface';
 import { AddValidHeaders } from '../../../common/constants/doc.enum';
 import ScreenAddIncomePage from '../pages/screen-add-income.page';
 import { Paginator } from 'primereact/paginator';
 import { paginatorFooter } from '../../../common/components/table.component';
 import { generarIdAleatorio } from '../../../common/utils/randomGenerate';
+import { useAdditionAreaEdit } from '../hook/addition-area-edit.hook';
 
 interface IAppProps {
-    titleAdd: string,
+    titleAdd: "ingreso"|"gasto",
     controlRegister: Control<IAdditionsForm, any>,
     arrayDataSelect: IArrayDataSelect,
     showModal: (values: IMessage) => void,
@@ -24,6 +25,30 @@ interface IAppProps {
 }
 
 function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSelect, showModal, register, invalidCardsAdditionSt, setValue, watch }: IAppProps) {
+
+    const { aditionData } = useAdditionAreaEdit();
+   
+
+    useEffect(() => {
+        if (aditionData) {
+            aditionData.details.forEach((item: Detail) => {
+                if (item.type == "Gasto") {
+                    append({
+                        managerCenter: item.budgetRoute.managementCenter,
+                        projectId: item.budgetRoute.projectVinculation.id,
+                        projectName: item.budgetRoute.projectVinculation.conceptProject,
+                        functionalArea: item.budgetRoute.projectVinculation.areaFuntional.id,
+                        funds: item.budgetRoute.fund.id,
+                        posPre: item.budgetRoute.pospreSapiencia.id,
+                        value: item.value,
+                        cardId: generarIdAleatorio(20) 
+                    });
+                }                
+            });           
+        }
+    }, [aditionData]);
+    
+     
 
     const [isSearchByName, setIsSearchByName] = useState(false)
 
@@ -154,7 +179,7 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
         <div className="card-user mt-14px">
             <div className="title-area">
                 <label className="text-black biggest"> Lista de {titleAdd} </label>
-                <div className='display-justify-flex-center p-rating'>
+                <div className='display-justify-flex-center-adicion p-rating'>
                     <div className="title-button text-three large" id='pages' onClick={onPaste}> Pegar <FaRegCopy /> </div>
                     <div className="title-button text-three large"
                         onClick={() => {

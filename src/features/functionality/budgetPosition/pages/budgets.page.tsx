@@ -1,6 +1,6 @@
-import { FormComponent, InputComponent, ButtonComponent } from "../../../common/components/Form";
-import TableComponent from "../../../common/components/table.component";
-import { EDirection } from "../../../common/constants/input.enum";
+import { FormComponent, InputComponent, ButtonComponent } from "../../../../common/components/Form";
+import TableComponent from "../../../../common/components/table.component";
+import { EDirection } from "../../../../common/constants/input.enum";
 import { useBudgetsData } from "../hooks/budgets.hook";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { Controller } from "react-hook-form";

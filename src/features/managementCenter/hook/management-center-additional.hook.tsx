@@ -1,16 +1,16 @@
 import { useForm } from "react-hook-form";
 import { useEffect, useRef, useState } from "react";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
-import { fundsAdditional } from "../../../common/schemas";
+import { consultFundsAdditional } from "../../../common/schemas";
 import { useNavigate } from "react-router-dom";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { IAdditionsFilters, IAdditionsWithMovements } from "../interfaces/Additions";
 
-export function useManagementCenterAdditional(){
-
+export function useManagementCenterAdditional( typeMovement:string ){
+ 
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
-    const resolver = useYupValidationResolver(fundsAdditional);
+    const resolver = useYupValidationResolver(consultFundsAdditional);
 
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
     const [showTable, setShowTable] = useState(false);
@@ -35,7 +35,7 @@ export function useManagementCenterAdditional(){
         },
         {
             fieldName: "additionMove",
-            header: "Total adición",
+            header: typeMovement === 'Adicion' ? "Total adición" : typeMovement === 'Disminucion' ? "Total disminución" : "",
             renderCell: (row) => {
                 const { totalIncome, totalSpends } = row.additionMove.reduce(
                     (totals, move) => {
@@ -57,7 +57,10 @@ export function useManagementCenterAdditional(){
         },
         {
             icon: "Edit",
-            onClick: (row) => {},
+            onClick: (row) => {                
+                navigate(`./edit/${row.id}`);
+            },
+            
         },
     ];
 
@@ -77,9 +80,21 @@ export function useManagementCenterAdditional(){
         setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
     },[inputValue])
 
-    const onSubmit = handleSubmit(async (data: {actAdministrativeDistrict: string, actAdministrativeSapiencia: string}) => {
+    useEffect(() => {            
+        reset();
+        if(showTable)  {
+            tableComponentRef.current.emptyData();
+            setShowTable(false);
+        }
+    }, [typeMovement]); 
+
+    const onSubmit = handleSubmit(async (data: {actAdministrativeDistrict: string, actAdministrativeSapiencia: string, typeMovement:string}) => {
+        const searchData = {
+            ...data,
+            typeMovement  // Esto agregará typeMovement al objeto.
+        };
         setShowTable(true)
-        loadTableData(data);
+        loadTableData(searchData);
     });
 
     return{
