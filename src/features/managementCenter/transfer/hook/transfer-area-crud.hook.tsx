@@ -50,7 +50,7 @@ export function useTransferAreaCrudPage() {
     const inputValues = watch()
         
     useEffect(() => {
-        setIsBtnDisable(inputValue.every(value => value != '' && value != undefined) && addTransferData?.array?.length > 0 )
+        setIsBtnDisable(inputValue.some(value => value != '' && value != undefined)  )
     },[inputValue])
 
     useEffect(() => {
@@ -120,6 +120,16 @@ export function useTransferAreaCrudPage() {
                    
                 },
             });
+
+        (addTransferData?.array == undefined || addTransferData?.array.length == 0 ) && setMessage({
+                title: "Traslado",
+                description: "Añade un traslado",
+                show: true,
+                OkTitle: "Aceptar",
+                onOk: () => {
+                    setMessage({});
+                },
+            })
     }); 
 
     const handleTransfer = (transferData) => {
@@ -150,7 +160,6 @@ export function useTransferAreaCrudPage() {
         });
     };
       
-
     const tableColumns: ITableElement<IobjectAddTransfer>[] = [
         {
             fieldName: "project",

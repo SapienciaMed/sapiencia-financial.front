@@ -110,6 +110,18 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
 
     const isFullField = (objeto) => Object.values(objeto).every(value => value !== undefined && value != '' && value != null);
 
+    function findEmptyField(objeto) {
+        const camposVacios = objeto.flatMap(item =>
+            item.data.flatMap(dataItem =>
+                Object.entries(dataItem)
+                    .filter(([_, value]) => value === null || value === undefined || value === '')
+                    .map(([key]) => ({ id: item.id, campo: key }))
+            )
+        );
+    
+        return camposVacios.length > 0 ? camposVacios : null;
+    }
+
     try {    
         if ( output.length > 0 && dataMovementByTransfer.every(item => item.data.every(isFullField)) ) {      
             const mappedOutput = output.map((item) => mapOutputItem(item))
@@ -119,12 +131,16 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
             throw new Error("Los datos contienen campos vacíos o valores inválidos");
         }
     } catch (error) {
+        //Usar en una mejora o cambios y mostrar el mensaje mas detallado de que campo es =>  msError[0].campo
+        const msError = findEmptyField(dataMovementByTransfer)
+    
         setMessage({
             title: "Validación de datos",
             description: "Se ha encontrado un error en los datos, verifiqué que no tenga campos vacios o valores invalidos",
             show: true,
             OkTitle: "Aceptar",
         })
+       
     }
 
 }
