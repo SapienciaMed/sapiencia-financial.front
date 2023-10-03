@@ -4,7 +4,7 @@ import useYupValidationResolver from "../../../common/hooks/form-validator.hook"
 import { pospreSapienciaCrudValidator } from "../../../common/schemas";
 import { useContext, useEffect } from "react";
 import { usePosPreSapienciaService } from "./pospre-sapiencia-service.hook";
-import { useBudgetsService } from "./budgets-service.hook";
+import { useBudgetsService } from "../budgetPosition/hooks/budgets-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import { AppContext } from "../../../common/contexts/app.context";
 import { IPosPreSapiencia } from "../interfaces/PosPreSapiencia";
@@ -17,7 +17,7 @@ interface IPosPreSapienciaCrudForm {
     assignedTo: string;
 }
 
-export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: string) {
+export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: string, location: "origen" | "pospre") {
     const resolver = useYupValidationResolver(pospreSapienciaCrudValidator);
     const { GetPosPreSapiencia, CreatePosPreSapiencia, UpdatePosPreSapiencia } = usePosPreSapienciaService();
     const { GetBudgets } = useBudgetsService();
@@ -42,29 +42,42 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
     }, [])
 
     useEffect(() => {
-        if(!pospreSapiencia) return;
-        GetPosPreSapiencia(Number(pospreSapiencia)).then(response => {
+        if(!pospreSapiencia) return;   
+        
+        const dataEditPospre = {
+            page: "1",
+            perPage: "10",
+            budgetIdSapi: pospreSapiencia
+        }
+        
+        GetPosPreSapiencia(dataEditPospre).then(response => {
             if(response.operation.code === EResponseCodes.OK) {
-                setValueRegister("number", response.data.number);
-                setValueRegister("ejercise", String(response.data.ejercise));
-                setValueRegister("description", response.data.description);
-                setValueRegister("consecutive", response.data.consecutive);
+                setValueRegister("ejercise", String(response.data.array[0].ejercise));
+                setValueRegister("description", response.data.array[0].description);
+                setValueRegister("consecutive", response.data.array[0].consecutive);
             } else {
-                navigate("./../");
+                navigate("./../../");
             }
         });
+
     }, [pospreSapiencia])
 
+
     const onSubmitNewPosPreSapiencia = handleSubmit(async (data: IPosPreSapienciaCrudForm) => {
+ 
         const insertData: IPosPreSapiencia = {
-            number: data.number,
+            number: data.assignedTo + data.consecutive,
             budgetId: Number(pospre),
             ejercise: parseInt(data.ejercise),
             description: data.description,
             consecutive: data.consecutive,
             assignedTo: data.assignedTo,
             userCreate: authorization.user.numberDocument,
+            userModify: authorization.user.userModify,
+            dateModify: new Date(authorization.user.dateModify).toISOString().split('T')[0],
+            dateCreate: new Date(authorization.user.dateCreate).toISOString().split('T')[0]
         };
+
         setMessage({
             title: "Guardar",
             description: "¿Estas segur@ de guardar la información en el sistema?",
@@ -109,14 +122,17 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
     
     const onSubmitEditPosPreSapiencia = handleSubmit(async (data: IPosPreSapienciaCrudForm) => {
         const insertData: IPosPreSapiencia = {
-            number: data.number,
+            number: data.assignedTo + data.consecutive,
             budgetId: Number(pospre),
             ejercise: parseInt(data.ejercise),
             description: data.description,
             consecutive: data.consecutive,
             assignedTo: data.assignedTo,
-            userModify: authorization.user.numberDocument,
+            userModify: authorization.user.userModify,
+            dateModify: new Date(authorization.user.dateModify).toISOString().split('T')[0],
+            dateCreate: new Date(authorization.user.dateCreate).toISOString().split('T')[0]
         };
+
         setMessage({
             title: "Guardar",
             description: "¿Estas segur@ de guardar la información en el sistema?",
@@ -163,8 +179,8 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
         navigate("./../");
     };
 
-    const onCancelEdit = () => {
-        navigate("./../../");
+    const onCancelEdit = () => { 
+        location == 'pospre' ? navigate("./../../") : navigate("./../../../")
     };
 
     const confirmClose = (callback) =>{
@@ -185,8 +201,7 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
     async function validatorNumber(e) {
         if (parseInt(e.target.value) < 0) {
             return e.target.value == '';
-        }
-        
+        }     
     }
 
     return { register, errors, control, onSubmitNewPosPreSapiencia, onSubmitEditPosPreSapiencia, onCancelNew, onCancelEdit, 

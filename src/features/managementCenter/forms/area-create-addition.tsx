@@ -7,8 +7,14 @@ import { paginatorFooter } from '../../../common/components/table.component';
 import ScreenAddIncome from '../pages/screen-add-income.page';
 import { IArrayDataSelect, IMessage } from '../../../common/interfaces/global.interface';
 import { AddValidHeaders } from '../../../common/constants/doc.enum';
-import { IAdditionsForm } from '../interfaces/Additions';
+import { Detail, IAdditionsForm, IData } from '../interfaces/Additions';
 import { generarIdAleatorio } from '../../../common/utils/randomGenerate';
+import { useAdditionAreaEdit } from '../hook/addition-area-edit.hook';
+import { useNavigate, useParams } from 'react-router-dom';
+import { EResponseCodes } from '../../../common/constants/api.enum';
+import { useAdditionsTransfersService } from '../hook/additions-transfers-service.hook';
+
+import { useRef } from 'react';
 
 interface IAppProps {
     titleAdd: string,
@@ -23,6 +29,77 @@ interface IAppProps {
 }
 
 function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getValues, showModal, register, invalidCardsAdditionSt, setValue, watch }: IAppProps) {
+
+    const { aditionData } = useAdditionAreaEdit()
+    //const [hasAppended, setHasAppended] = useState(false);
+
+   /*  useEffect(() => {        
+        if (!hasAppended && aditionData?.details.length > 0) {
+            aditionData?.details.filter(d => d.type == "Ingreso").map(
+                (item: Detail) => {
+                    append({
+                        managerCenter: item.budgetRoute.managementCenter,
+                        projectId: item.budgetRoute.projectVinculation.id,
+                        projectName: item.budgetRoute.projectVinculation.conceptProject,
+                        functionalArea: item.budgetRoute.projectVinculation.areaFuntional.id,
+                        funds: item.budgetRoute.fund.id,
+                        posPre: item.budgetRoute.pospreSapiencia.id,
+                        value: item.value,
+                        cardId: generarIdAleatorio(20)
+                    })
+                }
+            )
+            setHasAppended(true); 
+        }
+    }, [aditionData]); */    
+  
+   
+    useEffect(() => {
+        if (aditionData) {
+            aditionData.details.forEach((item: Detail) => {
+                if (item.type == "Ingreso") {
+                    if (item.budgetRoute && item.budgetRoute.projectVinculation && item.budgetRoute.projectVinculation.areaFuntional) {
+                    append({
+                        managerCenter: item.budgetRoute.managementCenter,
+                        projectId: item.budgetRoute.projectVinculation.id,
+                        projectName: item.budgetRoute.projectVinculation.conceptProject,
+                        functionalArea: item.budgetRoute.projectVinculation.areaFuntional.id,
+                        funds: item.budgetRoute.fund.id,
+                        posPre: item.budgetRoute.pospreSapiencia.id,
+                        value: item.value,
+                        cardId: generarIdAleatorio(20) 
+                    });    
+                }            
+                }                
+            });
+            
+        }
+    }, [aditionData]); 
+
+/* 
+    const processDetailItem = (item) => {
+        return {
+            managerCenter: item.budgetRoute.managementCenter,
+            projectId: item.budgetRoute.projectVinculation.id,
+            projectName: item.budgetRoute.projectVinculation.conceptProject,
+            functionalArea: item.budgetRoute.projectVinculation.areaFuntional.id,
+            funds: item.budgetRoute.fund.id,
+            posPre: item.budgetRoute.pospreSapiencia.id,
+            value: item.value,
+            cardId: generarIdAleatorio(20)
+        };
+    };
+
+    useEffect(() => {
+        if (aditionData) {
+            aditionData.details.forEach((item) => {
+                if (item.type === "Ingreso") {
+                    append(processDetailItem(item));
+                }
+            });            
+        }
+    }, [aditionData]); */
+
 
     const [isSearchByName, setIsSearchByName] = useState(false)
 
@@ -149,7 +226,7 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
         <div className="card-user mt-14px">
             <div className="title-area">
                 <label className="text-black biggest"> Lista de {titleAdd} </label>
-                <div className='display-justify-flex-center p-rating'>
+                <div className='display-justify-flex-center-adicion p-rating'>
                     <div className="title-button text-three large" id='pages' onClick={onPaste}> Pegar <FaRegCopy /> </div>
                     <div className="title-button text-three large"
                         onClick={() => {

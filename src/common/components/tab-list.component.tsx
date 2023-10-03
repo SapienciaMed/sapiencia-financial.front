@@ -5,10 +5,11 @@ interface IAppProps {
     tabs: ITabsMenuTemplate[];
     start?: ITabsMenuTemplate;
     index?: number;
-    className?: string;
+    classNameProp?: string;
 }
 
-function TabListComponent({ tabs, className, start, index }: IAppProps): React.JSX.Element {
+function TabListComponent({ tabs, classNameProp, start, index }: IAppProps): React.JSX.Element {
+
     const tabList = {};
     tabs.forEach((tab) => tabList[`${tab.title}`] = {
         content: tab.content,
@@ -32,14 +33,15 @@ function TabListComponent({ tabs, className, start, index }: IAppProps): React.J
         if(selectedTab) if(selectedTab.action) selectedTab.action();
     }, [selectedTab])
 
+
     return (
-        <div className={`tabs-component ${className ? className : ""}`}>
+        <div className={`tabs-component ${classNameProp ? classNameProp : ""}`}>
             <div className="tabs-selection">
                 {tabs.map((tab) => {
                     let active = "";
                     if(selectedTab) if(selectedTab.id === tab.id) active = "active";
                     return (
-                        <div className={`tab-option ${active}`} key={tab.id} onClick={() => {
+                        <div className={`tab-option ${active} font-size-responsive`} key={tab.id} onClick={() => {
                                 if(isNaN(parseInt(`${index}`))) setSelectedTab(tab);
                             }}>
                             {tab.title}
