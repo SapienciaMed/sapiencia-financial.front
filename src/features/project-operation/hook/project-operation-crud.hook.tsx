@@ -96,7 +96,11 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
 
   
   // Effect que activa el watch que detecta los cambios en todo el form
+  const [isAllowSave, setIsAllowSave] = useState(false)
+  
   React.useEffect(() => {
+    
+
     const subscription = watch(() => { });
     return () => subscription.unsubscribe();
   }, [watch]);
@@ -192,9 +196,7 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
     });
   };
 
-
-
-  const [isAllowSave, setIsAllowSave] = useState(true)
+ 
 
   const [projectOperationSt, setProjectOperationSt] = useState()
 
@@ -215,6 +217,7 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
     setValueRegister("isActivated", Object(projectOperationSt).isActivated);
     setValueRegister("dateFrom", Object(projectOperationSt).dateFrom);
     setValueRegister("dateTo", Object(projectOperationSt).dateTo);
+    
   }, [projectOperationSt])
 
   return {

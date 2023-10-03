@@ -23,9 +23,22 @@ function ProjectOperationCrud({ action }: IAppProps) {
 
   const [isModifyDateFrom, setIsModifyDateFrom] = useState(false)
   const [isModifyDateTo, setIsModifyDateTo] = useState(false)
+  const [isBtnDisabled, setIsBtnDisabled] = useState(true)
 
+  
   const [dateFromDefaultStValidateDate, setDateFromDefaultStValidateDate] = useState(dateFromDefaultSt)
   const [dateToDefaultStValidateDate, setDateToDefaultStValidateDate] = useState(dateToDefaultSt)
+
+useEffect(() => {
+
+  if(action=="edit"){
+    setIsBtnDisabled(true)
+  }else{
+    setIsBtnDisabled(false)
+  }
+}, [])
+
+
 
   useEffect(() => {
     setIsModifyDateFrom(true)
@@ -87,6 +100,7 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 idInput="name"
                 className="input-basic medium"
                 typeInput="text"
+                onChange={()=>setIsBtnDisabled(false)}
                 register={register}
                 label="Denominación"
                 classNameLabel="text-black big bold text-required"
@@ -131,7 +145,7 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 typeInput="date"
                 register={register}
                 value={!isModifyDateFrom ? undefined : !exerciseSt || exerciseSt?.length==4 ? dateFromDefaultSt : undefined}
-                onChange={(e) => { setIsModifyDateFrom(false); setDateFromDefaultStValidateDate(e.target.value); }}
+                onChange={(e) => { setIsModifyDateFrom(false); setDateFromDefaultStValidateDate(e.target.value);;setIsBtnDisabled(false) }}
                 label="Validez desde"
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
@@ -145,7 +159,7 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 typeInput="date"
                 register={register}
                 value={!isModifyDateTo ? undefined : !exerciseSt || exerciseSt?.length==4 ? dateToDefaultSt : undefined}
-                onChange={(e) => { setIsModifyDateTo(false); setDateToDefaultStValidateDate(e.target.value); }}
+                onChange={(e) => { setIsModifyDateTo(false); setDateToDefaultStValidateDate(e.target.value);setIsBtnDisabled(false) }}
                 label="Validez hasta"
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
@@ -182,7 +196,7 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 value="Guardar"
                 type="submit"
                 form='form-acts'
-                disabled={!isAllowSave}
+                disabled={isBtnDisabled}
               />
             </div>
           </section>
