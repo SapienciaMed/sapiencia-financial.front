@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useForm, useFieldArray } from 'react-hook-form';
-import { IAdditionsForm } from "../interfaces/Additions";
+import { Detail, IAdditionsForm } from "../interfaces/Additions";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { fundsAdditionalValidation } from "../../../common/schemas";
 import { AppContext } from "../../../common/contexts/app.context";
@@ -30,7 +30,7 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
   useEffect(() => {
     setIsFull(todosObjetosLlenos(arrayDataSelect))
 
-    
+
 
   }, [arrayDataSelect]);
 
@@ -55,13 +55,13 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
   });
 
   const validateButton = (values) => { return Object.values(values).every(campo => campo !== null && campo !== undefined && campo !== '') }
-  const fullFields = validateButton(defaultValues);  
+  const fullFields = validateButton(defaultValues);
 
   // Effect que activa el watch que detecta los cambios en todo el form
- /*  React.useEffect(() => {
-    const subscription = watch(() => { });
-    return () => subscription.unsubscribe();
-  }, [watch]); */ 
+  /*  React.useEffect(() => {
+     const subscription = watch(() => { });
+     return () => subscription.unsubscribe();
+   }, [watch]); */
 
   const onSubmitTab = handleSubmit(async (data: IAdditionsForm) => {
     if (actionForm === "new") {
@@ -425,10 +425,10 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
 
   let formData = watch()
 
- /*  useEffect(() => {
-    console.log('form',formData.gasto)
-    console.log('formde',defaultValues)
-  }, [formData]) */
+  /*  useEffect(() => {
+     console.log('form',formData.gasto)
+     console.log('formde',defaultValues)
+   }, [formData]) */
 
   const [isAllowSave, setIsAllowSave] = useState(false)
   /* const [tabIdSt, setTabIdSt] = useState(tabId)
@@ -493,9 +493,47 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
     return false; // El objeto no tiene ningún campo con valor
   }
 
-  //Editar
-
+  //Editar validaciones
   const { aditionData } = useAdditionAreaEdit();
+
+  if (actionForm == "edit") {
+    useEffect(() => {
+      function mapDetails(type) {
+        return aditionData?.details.map((item: Detail) => {
+          if (item.type == type) {
+            return {
+              managerCenter: item.budgetRoute.managementCenter,
+              projectId: item.budgetRoute.projectVinculation.id,
+              projectName: item.budgetRoute.projectVinculation.conceptProject,
+              functionalArea: item.budgetRoute.projectVinculation.areaFuntional.id,
+              funds: item.budgetRoute.fund.id,
+              posPre: item.budgetRoute.pospreSapiencia.id,
+              value: item.value,
+            };
+          }
+        }).filter(Boolean);
+      }
+
+      function hasAnyChange(mappedData, formData) {
+        return Object.keys(mappedData?.[0] || {}).some(key => {
+          return mappedData?.[0]?.[key] !== formData?.[0]?.[key];
+        });
+      }
+
+      const ingreso = mapDetails("Ingreso");
+      const gasto = mapDetails("Gasto");
+
+      const hasAnyIngresoChange = hasAnyChange(ingreso, formData.ingreso);
+      const hasAnyGastoChange = hasAnyChange(gasto, formData.gasto);
+
+      setIsAllowSave(hasAnyIngresoChange || hasAnyGastoChange);
+
+    }, [aditionData, formData]);
+
+  }
+
+
+
 
   useEffect(() => {
     if (aditionData) {

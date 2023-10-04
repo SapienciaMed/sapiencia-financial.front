@@ -16,11 +16,17 @@ export const projectOperationCrudValidator = yup.object({
         .matches(/^[0-9]+$/, "Solo se permiten numeros")
         .max(4, "Solo se permiten 4 caracteres")
         .min(4, "Ingrese al menos 4 caracteres")
-        .test('uniqueValues', 'Ingrese una vigencia mayor o igual al año actual', (value) => {
+        .test('uniqueValues', 'Ingrese una vigencia mayor o igual al año actual', function(value){
             const date = new Date();
             const year = date.getFullYear();
-            if (value && parseInt(value) >= year) return true;
-            else return false;
+            const id = this.parent.id;
+            if (id==null && value && parseInt(value) >= year ) {
+                return true
+            }else if(id!=null ){
+                return true
+            }else{
+                return false
+            } 
         }),
     isActivated: yup
         .string()
@@ -28,11 +34,18 @@ export const projectOperationCrudValidator = yup.object({
     dateFrom: yup
         .string()
         .typeError("Fecha invalida")
-        .test('uniqueValues', 'Ingrese una fecha mayor o igual al año actual', (value) => {
+        .test('uniqueValues', 'Ingrese una fecha mayor o igual al año actual', function(value) {
             const date = new Date();
             const year = date.getFullYear();
-            if (value && parseInt(value) >= year-1) return true;
-            else return false;
+            const id = this.parent.id;
+
+            if (id==null && value && parseInt(value) >= year ) {
+                return true
+            }else if(id!=null ){
+                return true
+            }else{
+                return false
+            }
         })
         .required("Completa la información")
         .test('isDateFromBeforeOrEqualDateTo', 'La fecha inicial debe ser menor o igual a la fecha final', function (dateFrom) {

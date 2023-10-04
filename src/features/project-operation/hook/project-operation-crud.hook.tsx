@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useForm, useFieldArray } from 'react-hook-form';
-/* import { IAdditionsForm } from "../interfaces/Additions"; */
+import { useForm } from 'react-hook-form';
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { projectOperationCrudValidator } from "../../../common/schemas";
 import { AppContext } from "../../../common/contexts/app.context";
-import { IArrayDataSelect, IMessage } from "../../../common/interfaces/global.interface";
+import { IMessage } from "../../../common/interfaces/global.interface";
 import { useNavigate } from "react-router-dom";
 import { IProjectOperation } from "../interface/ProjectOperation";
 import { useProjectOperationService } from "./project-operation-service.hook";
@@ -34,31 +33,33 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
   useEffect(() => {
     setValueRegister("dateFrom", "");
     setValueRegister("dateTo", "");
-    if (!exerciseSt) {
-      setDateFromDefaultSt(`${actualFullYear}-01-01`)
-      setDateToDefaultSt(`${actualFullYear}-12-31`)
-      setValueRegister("dateFrom", dateFromDefaultSt);
-      setValueRegister("dateTo", dateToDefaultSt);
-    } else if (Object(exerciseSt).length == 4) {
+    if (Object(exerciseSt).length == 0) {
+
       setDateFromDefaultSt(`${exerciseSt}-01-01`)
       setDateToDefaultSt(`${exerciseSt}-12-31`)
       setValueRegister("dateFrom", `${exerciseSt}-01-01`);
       setValueRegister("dateTo", `${exerciseSt}-12-31`);
+
     } else {
-      setValueRegister("dateFrom", "");
-      setValueRegister("dateTo", "");
+
+      if (!exerciseSt && Object(exerciseSt).length != 0) {
+        setDateFromDefaultSt(`${actualFullYear}-01-01`)
+        setDateToDefaultSt(`${actualFullYear}-12-31`)
+        setValueRegister("dateFrom", dateFromDefaultSt);
+        setValueRegister("dateTo", dateToDefaultSt);
+      } else if (Object(exerciseSt).length == 4) {
+        setDateFromDefaultSt(`${exerciseSt}-01-01`)
+        setDateToDefaultSt(`${exerciseSt}-12-31`)
+        setValueRegister("dateFrom", `${exerciseSt}-01-01`);
+        setValueRegister("dateTo", `${exerciseSt}-12-31`);
+      } else {
+        setValueRegister("dateFrom", `${exerciseSt}-01-01`);
+        setValueRegister("dateTo", `${exerciseSt}-12-31`);
+        setValueRegister("dateFrom", "");
+        setValueRegister("dateTo", "");
+      }
     }
 
-    /* setDateFromDefaultSt(`${exerciseSt ?? actualFullYear}-01-01`)
-    setDateToDefaultSt(`${exerciseSt ?? actualFullYear}-12-31`)
-    if(Object(exerciseSt)>= actualFullYear && Object(exerciseSt).length<4 || Object(exerciseSt).length>6){
-      setValueRegister("dateFrom","");
-      setValueRegister("dateTo","");
-    }else{
-      setValueRegister("dateFrom",dateFromDefaultSt);
-      setValueRegister("dateTo",dateToDefaultSt);
-
-    } */
   }, [exerciseSt])
 
 
@@ -66,7 +67,7 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
     handleSubmit,
     register,
     control,
-    formState: { errors, defaultValues },
+    formState: { errors },
     setValue: setValueRegister,
     watch,
     getValues,
@@ -93,12 +94,13 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
   });
 
 
-
-
-  const validateButton = (values) => { return Object.values(values).every(campo => campo !== null && campo !== undefined && campo !== '') }
-
+  
   // Effect que activa el watch que detecta los cambios en todo el form
+  const [isAllowSave, setIsAllowSave] = useState(false)
+  
   React.useEffect(() => {
+    
+
     const subscription = watch(() => { });
     return () => subscription.unsubscribe();
   }, [watch]);
@@ -107,7 +109,6 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
     data.userCreate = "Usuario"
 
     showModal({
-      //type?: EResponseCodes;
       title: "Guardar",
       description: "¿Está segur@ de guardar el proyecto?",
       show: true,
@@ -121,7 +122,6 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
         setMessage({})
         onCancelNew()
       },
-      // onClickOutClose?: boolean;
       onClose: () => {
         setMessage({})
         onCancelNew()
@@ -142,7 +142,6 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
     if (response.operation.code == "OK" && !Object(response).data.data?.errno) {
 
       showModal({
-        //type?: EResponseCodes;
         title: "Guardado",
         description: response.operation.message,
         show: true,
@@ -155,7 +154,6 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
 
     } else if (response.operation.code == "OK" && Object(response).data.data.errno == 1062) {
       showModal({
-        //type?: EResponseCodes;
         title: "Validación de datos",
         description: "El proyecto ya existe",
         show: true,
@@ -167,9 +165,8 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
       })
     } else {
       showModal({
-        //type?: EResponseCodes;
-        title: "Validación de datos",
-        description: "Se generó un error inesperado, comuníquese con el administrador o intente mas tarde!",
+        title: "Error en la conexión",
+        description: "Error en la consulta de datos",
         show: true,
         OkTitle: "Aceptar",
         onOk: () => {
@@ -199,9 +196,7 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
     });
   };
 
-
-
-  const [isAllowSave, setIsAllowSave] = useState(true)
+ 
 
   const [projectOperationSt, setProjectOperationSt] = useState()
 
@@ -222,11 +217,8 @@ export function useProjectOperationCrud(projectOperationalId: string, exerciseSt
     setValueRegister("isActivated", Object(projectOperationSt).isActivated);
     setValueRegister("dateFrom", Object(projectOperationSt).dateFrom);
     setValueRegister("dateTo", Object(projectOperationSt).dateTo);
+    
   }, [projectOperationSt])
-
-
-
-
 
   return {
     control,

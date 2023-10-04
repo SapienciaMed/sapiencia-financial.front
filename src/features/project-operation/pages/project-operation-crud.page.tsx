@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   ButtonComponent,
-  DatePickerComponent,
   FormComponent,
   InputComponent,
   SelectComponent,
@@ -9,7 +8,6 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { EDirection } from "../../../common/constants/input.enum";
 import { useProjectOperationCrud } from "../hook/project-operation-crud.hook";
-import { InputNumberComponent } from "../../../common/components/Form/input-number.component";
 
 
 interface IAppProps {
@@ -25,17 +23,30 @@ function ProjectOperationCrud({ action }: IAppProps) {
 
   const [isModifyDateFrom, setIsModifyDateFrom] = useState(false)
   const [isModifyDateTo, setIsModifyDateTo] = useState(false)
+  const [isBtnDisabled, setIsBtnDisabled] = useState(true)
 
+  
   const [dateFromDefaultStValidateDate, setDateFromDefaultStValidateDate] = useState(dateFromDefaultSt)
   const [dateToDefaultStValidateDate, setDateToDefaultStValidateDate] = useState(dateToDefaultSt)
 
+useEffect(() => {
+
+  if(action=="edit"){
+    setIsBtnDisabled(true)
+  }else{
+    setIsBtnDisabled(false)
+  }
+}, [])
+
+
+
   useEffect(() => {
     setIsModifyDateFrom(true)
-  }, [dateFromDefaultSt, exerciseSt])
+  }, [ exerciseSt])
 
   useEffect(() => {
     setIsModifyDateTo(true)
-  }, [dateToDefaultSt, exerciseSt])
+  }, [ exerciseSt])
 
 
   useEffect(() => {
@@ -89,6 +100,7 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 idInput="name"
                 className="input-basic medium"
                 typeInput="text"
+                onChange={()=>setIsBtnDisabled(false)}
                 register={register}
                 label="Denominación"
                 classNameLabel="text-black big bold text-required"
@@ -127,20 +139,17 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 errors={errors}
               />
 
-              <>{JSON.stringify(dateFromDefaultSt)}</>
               <InputComponent
                 idInput="dateFrom"
                 className="input-basic medium"
                 typeInput="date"
                 register={register}
-                //value={!isModifyDateFrom ? undefined : dateFromDefaultSt}
-                value={!isModifyDateTo ? undefined : !exerciseSt || exerciseSt?.length==4 ? dateFromDefaultSt : undefined}
-                onChange={(e) => { setIsModifyDateFrom(false); setDateFromDefaultStValidateDate(e.target.value); }}
+                value={!isModifyDateFrom ? undefined : !exerciseSt || exerciseSt?.length==4 ? dateFromDefaultSt : undefined}
+                onChange={(e) => { setIsModifyDateFrom(false); setDateFromDefaultStValidateDate(e.target.value);;setIsBtnDisabled(false) }}
                 label="Validez desde"
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
                 errors={errors}
-                max={dateToDefaultStValidateDate}
               />
 
 
@@ -149,14 +158,12 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 className="input-basic medium"
                 typeInput="date"
                 register={register}
-                //value={!isModifyDateTo ? undefined : dateToDefaultSt}
                 value={!isModifyDateTo ? undefined : !exerciseSt || exerciseSt?.length==4 ? dateToDefaultSt : undefined}
-                onChange={(e) => { setIsModifyDateTo(false); setDateToDefaultStValidateDate(e.target.value); }}
+                onChange={(e) => { setIsModifyDateTo(false); setDateToDefaultStValidateDate(e.target.value);setIsBtnDisabled(false) }}
                 label="Validez hasta"
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
                 errors={errors}
-                min={dateFromDefaultStValidateDate}
               />
             </section>
           </FormComponent>
@@ -189,7 +196,7 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 value="Guardar"
                 type="submit"
                 form='form-acts'
-                disabled={!isAllowSave}
+                disabled={isBtnDisabled}
               />
             </div>
           </section>

@@ -5,10 +5,10 @@ import { generarIdAleatorio } from "./randomGenerate";
 export function filterElementsMeetConditions(arrayDataSelect: IArrayDataSelect, transferMovesGroups: ITransferMovesGroups[]): any[] {
 
   const functionalArea = (type) => {
-    const item = arrayDataSelect?.functionalArea.find(item => item.id == type);
+    const item = arrayDataSelect?.functionalArea?.find(item => item.id == type);
     if (item) {
-      const areaItem = item.area.find(area => area.projectId == type);
-      return areaItem ? areaItem.name : null;
+      const areaItem = item?.area?.find(area => area.projectId == type);
+      return areaItem ? areaItem?.name : null;
     }
     return null;
   }
@@ -18,13 +18,12 @@ export function filterElementsMeetConditions(arrayDataSelect: IArrayDataSelect, 
   }
 
   const namesMatchingPospre = (type) => {
-    return arrayDataSelect?.posPre.find(item1 => item1?.value == parseInt(type))?.name
+    return arrayDataSelect?.posPre?.find(item1 => item1?.value == parseInt(type))?.name
   }
 
   const namesMatchingProject = (type) => {
-    return arrayDataSelect?.functionalArea.find(item1 => item1?.value == parseInt(type))?.name
+    return arrayDataSelect?.functionalArea?.find(item1 => item1?.value == parseInt(type))?.name
   }
-
 
   const resultado = [
     ...transferMovesGroups.map((item) => ({
