@@ -18,7 +18,7 @@ function ViewVinculationMGA( values: IBudgetViewPage): React.JSX.Element {
                 columns={ actions == 'view' ? tableColumnsView : tableColumnsEdit }
                 actions={ tableActionsView }
                 isShowModal={false}
-                secondaryTitle="Detalle vinculación MGA"
+                secondaryTitle="Vinculación MGA"
             />
         </div>
     )
