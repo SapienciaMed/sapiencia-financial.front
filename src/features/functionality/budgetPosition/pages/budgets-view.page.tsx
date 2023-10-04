@@ -13,7 +13,7 @@ import BudgetViewPage from "./budget-view.page";
 
 function BudgetsForm() {
   const navigate = useNavigate();
-  const { id: budgetsId } = useParams();
+  const { pospre: budgetsId } = useParams();
 
   const { register, errors, entitiesData, budgetsData, controlRegister} = useBudgetsCrudData( budgetsId );
 

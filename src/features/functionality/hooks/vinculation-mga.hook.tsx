@@ -5,7 +5,6 @@ import useYupValidationResolver from "../../../common/hooks/form-validator.hook"
 import { AppContext } from "../../../common/contexts/app.context";
 import { useContext, useEffect, useRef, useState } from "react";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
-import { useNavigate } from "react-router-dom";
 import { IApiPlanningDetailedActivitiesSpecify, ILastMoveEdit } from "../interfaces/VinculationMGAInterfaces";
 import { SwitchComponent } from "../../../common/components/Form";
 import {useVinculationService} from "../hooks/vinculation-mga-service.hook"
@@ -17,7 +16,6 @@ interface IVinculationMGAFilters {
 }
 
 export function useVinculationMGAData(pospre: string, values?: IBudgetViewPage ) {
-    const navigate = useNavigate();
     const [ lastMove, setLastMove ] = useState([]);
     const [ lastMoveEdit, setLastMoveEdit ] = useState<ILastMoveEdit[]>([]);
 
@@ -210,14 +208,9 @@ export function useVinculationMGAData(pospre: string, values?: IBudgetViewPage )
     }
 
     useEffect(() => {
-        values && values.actions == 'view' && loadTableData( { budgetId: Number(pospre), active:true} );
+        values && values.actions == 'view' && loadTableData( { budgetId: Number(pospre) } );
         values && values.actions == 'edit' && loadTableData();
     },[])
-
-
-    const onNew = () => {
-        navigate("./../../../");
-    };
 
     async function vinculateActivities(message?:boolean):Promise<void> {
         
