@@ -1,4 +1,5 @@
 import { DateTime } from "luxon";
+import { IFunctionalArea } from "./Functional-Area";
 
 export interface IProject {
   id: string;
@@ -26,15 +27,6 @@ export interface IProjectsVinculation {
   dateCreate?: DateTime;
 }
 
-export interface IProjectsVinculationTable {
-  id?: number;
-  functionalAreaId?: number;
-  projectId: string;
-  budgetValue: number;
-  linked: number;
-  userCreate?: string;
-  dateCreate?: DateTime;
-}
 
 export interface IProjectsVinculate {
   idFunctionalArea: number;

@@ -3,7 +3,7 @@ import { AppContext } from "../../../common/contexts/app.context";
 import useCrudService from "../../../common/hooks/crud-service.hook";
 import { ApiResponse } from "../../../common/utils/api-response";
 import { IVinculationMGA } from "../interfaces/VinculationMGAInterfaces";
-import { IProjectsVinculation } from "../interfaces/Projects";
+import { IProject, IProjectsVinculation } from "../interfaces/Projects";
 
 
 export function useProjectsLinkService() {
@@ -13,11 +13,12 @@ export function useProjectsLinkService() {
     const { authorization } = useContext(AppContext);
 
 
-    async function CreateVinculation(id:number, projects: string[]): Promise<ApiResponse<IVinculationMGA[]>> {
+    async function CreateVinculation(id:number, projects: IProject[]): Promise<ApiResponse<IVinculationMGA[]>> {
         const endpoint: string = "/link/create";
         const projectsLinks = projects.map(project => {
             return {
-                id: project,
+                id: project.id,
+                type: project.type,
                 linked: true
             }
         })

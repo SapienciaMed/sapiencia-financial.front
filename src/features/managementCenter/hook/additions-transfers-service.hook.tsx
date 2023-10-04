@@ -19,7 +19,7 @@ export const useAdditionsTransfersService = () => {
     }
 
     async function GetProjectsList(): Promise<ApiResponse<IProjectAdditionList[]>> {
-        return post(`/api/v1/projects/get-all`);
+        return get(`/api/v1/projects/get-all`);
     }
 
     async function GetFundsList(data: Object): Promise<ApiResponse<IPagingData<IFundsAdditionList>>> {

@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon';
+import { IFunctionalArea } from './Functional-Area';
 export interface IAdditionsTransfersDistrictInterfaces {
     id: number | string;
     actAdminDistrict: string;
@@ -9,16 +10,22 @@ export interface IAdditionsTransfersSapienciaInterfaces {
     actAdminSapiencia: string;
 }
 
-export interface IProjectAdditionList {
-    id : number;
-    functionalAreaId : number;
-    projectId : string;
-    budgetValue : number;
-    linked : boolean;
-    areaFuntional?: IFunctionalAreaAddition
-    conceptProject?: string;
-    assignmentValue: number
-    type?: string;
+export interface IProjectAdditionList { // akive
+    id?: number;
+    functionalAreaId: number;
+    linked: boolean;
+    type: string;
+    investmentProjectId: number;
+    operationProjectId: number;
+    userCreate?: string;
+    dateCreate?: DateTime;
+  
+    areaFuntional?: IFunctionalArea
+  
+    projectId: string;
+    conceptProject: string;
+    plannedValue: number;
+    assignmentValue: number;
   }
   
 

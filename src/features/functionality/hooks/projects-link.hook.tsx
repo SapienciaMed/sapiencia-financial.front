@@ -9,7 +9,6 @@ import { IProject, IProjectFilters } from "../interfaces/Projects";
 import { SwitchComponent } from "../../../common/components/Form";
 import { useProjectsLinkService } from "./projects-link-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
-import { useAdditionsTransfersService } from "../../managementCenter/hook/additions-transfers-service.hook";
 
 export function useProjectsLinkData(functionalArea: string) {
   const tableComponentRef = useRef(null);
@@ -17,7 +16,6 @@ export function useProjectsLinkData(functionalArea: string) {
   const resolver = useYupValidationResolver(projects);
   const { setMessage } = useContext(AppContext);
   const { CreateVinculation } = useProjectsLinkService();
-  const { GetProjectsList } = useAdditionsTransfersService();
   const {
     handleSubmit,
     register,
@@ -25,8 +23,8 @@ export function useProjectsLinkData(functionalArea: string) {
     reset,
   } = useForm<IProjectFilters>({ resolver });
   const [lastMove, setLastMove] = useState([]);
-  const [projectsLink, setProjectsLink] = useState<string[]>([]);
-  const [projectsUnLink, setProjectsUnLink] = useState<string[]>([]);
+  const [projectsLink, setProjectsLink] = useState<IProject[]>([]);
+  const [projectsUnLink, setProjectsUnLink] = useState<IProject[]>([]);
   const [filterTable, setFilterTable] = useState(null);
 
   const tableColumns: ITableElement<IProject>[] = [
@@ -51,8 +49,8 @@ export function useProjectsLinkData(functionalArea: string) {
       header: "Vincular",
       renderCell: (row) => {
         let checked = false;
-        if (projectsLink.find((project) => project === row.id)) checked = true;
-        if (projectsUnLink.find((project) => project === row.id))
+        if (projectsLink.find((project) => project.id === row.id && project.type == row.type)) checked = true;
+        if (projectsUnLink.find((project) => project.id === row.id && project.type == row.type))
           checked = false;
         return (
           <SwitchComponent
@@ -62,18 +60,18 @@ export function useProjectsLinkData(functionalArea: string) {
               if (e.value === true) {
                 setLastMove([...lastMove, { id: row }]);
                 const projectLink = projectsLink.find(
-                  (project) => project == row.id
+                  (project) => project.id == row.id && project.type == row.type
                 );
                 if (!projectLink) {
                   const array = projectsLink;
-                  array.push(row.id);
+                  array.push(row);
                   setProjectsLink(array);
                 }
                 const projectUnLink = projectsUnLink.find(
-                  (project) => project == row.id
+                  (project) => project.id == row.id && project.type == row.type
                 );
                 if (projectUnLink) {
-                  const array = projectsUnLink.filter((item) => item != row.id);
+                  const array = projectsUnLink.filter((item) => item.id != row.id && item.type == row.type);
                   setProjectsUnLink(array);
                 }
               } else {
@@ -92,18 +90,18 @@ export function useProjectsLinkData(functionalArea: string) {
                   setLastMove(auxLast);
                 }
                 const projectUnLink = projectsUnLink.find(
-                  (project) => project == row.id
+                  (project) => project.id == row.id && project.type == row.type
                 );
                 if (!projectUnLink) {
                   const array = projectsUnLink;
-                  array.push(row.id);
+                  array.push(row);
                   setProjectsUnLink(array);
                 }
                 const activityLink = projectsLink.find(
-                  (activity) => activity == row.id
+                  (activity) => activity.id == row.id && activity.type == row.type
                 );
                 if (activityLink) {
-                  const array = projectsLink.filter((item) => item != row.id);
+                  const array = projectsLink.filter((item) => item.id != row.id  && item.type == row.type);
                   setProjectsLink(array);
                 }
               }
