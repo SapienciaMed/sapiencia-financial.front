@@ -9,7 +9,7 @@ import { IProject, IProjectsVinculation } from "../interfaces/Projects";
 export function useProjectsLinkService() {
     const baseURL: string = process.env.urlApiFinancial;
     const vinculationUrl: string = "/api/v1/functional-area";
-    const { post, get, deleted } = useCrudService( baseURL);
+    const { post, deleted } = useCrudService( baseURL);
     const { authorization } = useContext(AppContext);
 
 
@@ -62,10 +62,7 @@ export function useProjectsLinkService() {
         return post(`${vinculationUrl}${endpoint}`, data);
     }
 
-    async function getAllProjectsVinculations(): Promise<ApiResponse<IProjectsVinculation[]>> {
-        const endpoint: string = "/link/get-all";
-        return get(`${vinculationUrl}${endpoint}`);
-    }
+
 
     async function DeleteLinkVinculation(id: number): Promise<ApiResponse<boolean>>{
         const endpoint: string = `/link/delete/${id}`;
@@ -73,5 +70,5 @@ export function useProjectsLinkService() {
     }
 
 
-    return {  CreateVinculation, LinkVinculation, UnLinkVinculation, getAllProjectsVinculations, DeleteLinkVinculation }
+    return {  CreateVinculation, LinkVinculation, UnLinkVinculation, DeleteLinkVinculation }
 }

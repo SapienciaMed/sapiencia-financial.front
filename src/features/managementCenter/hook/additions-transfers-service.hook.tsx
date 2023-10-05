@@ -19,7 +19,8 @@ export const useAdditionsTransfersService = () => {
     }
 
     async function GetProjectsList(): Promise<ApiResponse<IProjectAdditionList[]>> {
-        return get(`/api/v1/projects/get-all`);
+        const res = await get<IProjectAdditionList[]>(`/api/v1/projects/get-all`);
+        return res
     }
 
     async function GetFundsList(data: Object): Promise<ApiResponse<IPagingData<IFundsAdditionList>>> {
