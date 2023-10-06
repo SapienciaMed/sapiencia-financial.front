@@ -1,21 +1,27 @@
-import React, { useState } from "react";
-import { useFieldArray, Control } from 'react-hook-form';
+import React, { useEffect, useState } from "react";
+import { useFieldArray, Control, FieldErrors, UseFormRegister, UseFormSetValue  } from 'react-hook-form';
 import { AiOutlinePlusCircle } from "react-icons/ai";
-import { useCreateFundTransferPac } from "../hook/create-fund-transfer-pac.hook";
-import FormTransferPac from "../../../managementCenter/transfer/forms/form-transfer-pac";
-import { IAddFundPac } from "../../../managementCenter/transfer/interfaces/TransferAreaCrudInterface";
+import FormTransferPac from "./form-transfer-pac";
+import { IAddFundPac, ICreateTransferPacForm } from "../../../managementCenter/transfer/interfaces/TransferAreaCrudInterface";
 import { useWidth } from "../../../../common/hooks/use-width";
+import { IArrayDataSelect } from "../../../../common/interfaces/global.interface";
 
 interface IProp {
     titleAdd: 'origen' | 'destino',
+    control: Control<ICreateTransferPacForm, any>
+    arrayDataSelect: IArrayDataSelect, 
+    errors: FieldErrors<ICreateTransferPacForm>, 
+    register: UseFormRegister<ICreateTransferPacForm>, 
+    setValue: UseFormSetValue<ICreateTransferPacForm>,
+    isdataReset: boolean,
+    pacTypeState: number
 }
 
-function CreateFundTransferPac({ titleAdd }:IProp ) {
+function CreateFundTransferPac({ titleAdd, arrayDataSelect,control, errors, pacTypeState, isdataReset, register, setValue }:IProp ) {
 
     const {width} = useWidth()
-    const { control, arrayDataSelect, errors, register, setValue } = useCreateFundTransferPac()
 
-    const { fields, append } = useFieldArray({
+    const { fields, append, remove } = useFieldArray({
         control,
         name: titleAdd  
     });
@@ -29,7 +35,7 @@ function CreateFundTransferPac({ titleAdd }:IProp ) {
         posPre: '',
         value: '',
         cardId: '',
-        result: {
+        collected: {
             january: '',
             february: '',
             march: '',
@@ -50,6 +56,10 @@ function CreateFundTransferPac({ titleAdd }:IProp ) {
     const itemsPerPage = 1;
     const startIndex = (currentPage - 1) * itemsPerPage;
     const visibleFields = fields.slice(startIndex, startIndex + itemsPerPage);
+
+    // useEffect(() => {
+    //     isdataReset && remove()
+    // },[isdataReset])
     
     return(
         <div className="display-flex-direction-column gap-1">
@@ -78,6 +88,7 @@ function CreateFundTransferPac({ titleAdd }:IProp ) {
                                 titleAdd={titleAdd}
                                 register={register}
                                 setValue={setValue}
+                                pacTypeState={pacTypeState}
                             />
 
                         </section>

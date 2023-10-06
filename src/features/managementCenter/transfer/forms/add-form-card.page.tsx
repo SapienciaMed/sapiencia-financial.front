@@ -1,11 +1,11 @@
 
 
 import React, { useEffect, useState } from 'react'
-import { ButtonComponent, InputComponent, SelectComponent } from './Form'
-import { InputNumberComponent } from './Form/input-number.component'
-import { IAddFormCard } from '../../features/managementCenter/transfer/interfaces/TransferAreaCrudInterface'
+import { ButtonComponent, InputComponent, SelectComponent } from '../../../../common/components/Form'
+import { InputNumberComponent } from '../../../../common/components/Form/input-number.component'
+import { IAddFormCard } from '../interfaces/TransferAreaCrudInterface'
 import { useWatch } from 'react-hook-form';
-import { IDropdownPropsFuctionalArea } from '../interfaces/global.interface';
+import { IDropdownPropsFuctionalArea } from '../../../../common/interfaces/global.interface';
 
 export const AddFormCardPage = ({arrayDataSelect, control, titleAdd, errors, count, cardId, titleLabelValue, register, removeCard, setValue, invalidCardsAdditionSt, watch}: IAddFormCard) => {
 

@@ -9,10 +9,13 @@ export interface ICreateSourceForm{
 export interface ICreateTransferPacForm{
     origen: IAddFundPac[];
     destino: IAddFundPac[]; 
+    pacType: number;
+    validity: number;
+    TypeResource: number
 }
 
 export interface IAddFundPac extends IAddFund{
-    result: IMonths
+    collected: IMonths
 }
 
 export interface IAddFund{
@@ -66,9 +69,17 @@ export interface IFormTransferPac {
     setValue: UseFormSetValue<any>;
     // removeCard: (index?: number | number[]) => void,
     register: UseFormRegister<ICreateTransferPacForm>,
-    // titleLabelValue: string,
     // invalidCardsAdditionSt:any;
     // watch:any;
+    pacTypeState: number,
+}
+
+export interface IFormPacmonths{
+    titleAdd?: 'origen' | 'destino',
+    control: Control<ICreateTransferPacForm, any>,
+    count: number,
+    pacTypeMonth: 'collected' | 'programmed' | 'both'
+    titleActive: string
 }
 
 export interface IMonths{

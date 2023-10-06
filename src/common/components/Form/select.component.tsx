@@ -23,6 +23,7 @@ interface ISelectProps<T> {
   emptyMessage?: string;
   optionSelected?:Function;
   isSearchByName?:boolean;
+  isValidateName?: boolean
 }
 
 function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
@@ -52,6 +53,7 @@ export function SelectComponent({
   filter,
   emptyMessage = "Sin resultados.",
   optionSelected,
+  isValidateName = true
 }: ISelectProps<any>): React.JSX.Element {
   if (data) {
     const seleccione: IDropdownProps = { name: "Seleccione", value: null };
@@ -96,7 +98,7 @@ export function SelectComponent({
           render={({ field }) => {
             return <Dropdown
               	id={field.name}
-              	value={data ? (data.find((row) => row.value == field.value)?.value || data.filter((row) => row.name != 'Seleccione' || row.value != undefined).find(value => value?.projectId == field?.value)?.value) : null}
+              	value={data ? (data.find((row) => row.value == field.value)?.value || (isValidateName && data.filter((row) => row.name != 'Seleccione' || row.value != undefined).find(value => value?.projectId == field?.value)?.value)) : null}
               	onChange={(e) => {field.onChange(e.value); optionSelected && optionSelected(e.value)}}
               	options={data}
               	optionLabel="name"

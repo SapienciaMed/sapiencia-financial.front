@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useFieldArray, useFormState, useWatch } from 'react-hook-form';
 import { IAddFunds } from '../interfaces/TransferAreaCrudInterface';
 import { BiPlusCircle } from 'react-icons/bi';
-import { AddFormCardPage } from '../../../../common/components/add-form-card.page';
+import { AddFormCardPage } from './add-form-card.page';
 import { Paginator } from 'primereact/paginator';
 import { paginatorFooter } from '../../../../common/components/table.component';
 import { AppContext } from '../../../../common/contexts/app.context';
