@@ -7,19 +7,16 @@ import { IDropdownProps } from "../../../common/interfaces/select.interface";
 import { AppContext } from "../../../common/contexts/app.context";
 import { IBudgetsRoutes, IBudgetsRoutesCrudForm } from "../interfaces/BudgetRoutesInterfaces";
 import { EResponseCodes } from "../../../common/constants/api.enum";
-import { useProjectsLinkService } from "../../functionality/hooks/projects-link-service.hook";
-import { IEntities } from "../../functionality/interfaces/Entities";
-import { IProjectsVinculation } from "../../functionality/interfaces/Projects";
 import { useFunctionalAreaService } from "../../functionality/hooks/functional-area-service.hook";
 import { useBudgetsService } from "../../functionality/budgetPosition/hooks/budgets-service.hook";
 import { usePosPreSapienciaService } from "../../functionality/hooks/pospre-sapiencia-service.hook";
 import { useFundsService } from "../../functionality/hooks/funds-service.hook";
 import { useBudgetRoutesService } from "./budget-routes-service.hook";
 import { useAdditionsTransfersService } from "../../managementCenter/hook/additions-transfers-service.hook";
+import { IProjectAdditionList } from "../../functionality/interfaces/AdditionsTransfersInterfaces";
 
 export function useBudgetRoutesCrudData(id: string) {
     const resolver = useYupValidationResolver(budgetRoutesCrudValidator);
-    const { getAllProjectsVinculations } = useProjectsLinkService();
     const { GetProjectsList } = useAdditionsTransfersService()
     const { GetAllFunctionalAreas } = useFunctionalAreaService();
     const { getAllBudgets } = useBudgetsService();
@@ -41,25 +38,23 @@ export function useBudgetRoutesCrudData(id: string) {
     const [budgetData, setBudgetData] = useState<IDropdownProps[]>([]);
     const [pospreSapienciaData, setPospreSapienciaData] = useState<IDropdownProps[]>([]);
     const [fundsData, setFundsData] = useState<IDropdownProps[]>([]);
-    const [projectsVinculateData, setProjectsVinculateData] = useState<IProjectsVinculation[]>(null);
+    const [projectsVinculateData, setProjectsVinculateData] = useState<IProjectAdditionList[]>(null);
 
     const budgetSelected = watch("idBudget");
     const projectVinculationSelected = watch("idProjectVinculation");
 
     async function loadInitList(): Promise<void> {
-        let projectsVinculate: IProjectsVinculation[];
-        const response = await getAllProjectsVinculations();
-        if (response.operation.code === EResponseCodes.OK) {
-            projectsVinculate = response.data;
-        }
-        const response2 = await GetProjectsList({ page: "1", perPage: "1" });
-        if (response2.operation.code === EResponseCodes.OK) {
-            const arrayProjects: IDropdownProps[] = projectsVinculate.map((projectVinculate) => {
-                const project = response2.data.array.find((data) => data.projectId === projectVinculate.projectId );
-                return { name: `${projectVinculate.projectId} - ${project?.conceptProject ? project.conceptProject : ''}`, value: projectVinculate.id }
+
+        const viculateProjects = await GetProjectsList();
+
+        if (viculateProjects.operation.code === EResponseCodes.OK) {
+            
+            const arrayProjects: IDropdownProps[] = viculateProjects.data.map((project) => {   
+                return { name: `${project.projectId} - ${project.conceptProject}`, value: project.id }
             });
 
             setProjectsData(arrayProjects);
+            setProjectsVinculateData(viculateProjects.data)
         }
         const response3 = await getAllBudgets();
         if (response3.operation.code === EResponseCodes.OK) {
@@ -75,7 +70,7 @@ export function useBudgetRoutesCrudData(id: string) {
             });
             setFundsData(arrayFunds);
         }
-        setProjectsVinculateData(projectsVinculate)
+
     }
 
     useEffect(() => {

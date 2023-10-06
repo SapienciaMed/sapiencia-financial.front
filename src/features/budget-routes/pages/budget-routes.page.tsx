@@ -10,7 +10,7 @@ interface IAppProps { }
 
 function BudgetRoutesPage(props: IAppProps): React.JSX.Element {
     const { navigate, tableComponentRef, control, isBtnDisable, showTable, setShowTable,
-        register, reset, onSubmit, tableColumns, tableActions } = useBudgetRoutesData();
+        register, reset, onSubmit, tableColumns, tableActions  } = useBudgetRoutesData();
     return (
         <div className='main-page'>
             <div className='card-table'>

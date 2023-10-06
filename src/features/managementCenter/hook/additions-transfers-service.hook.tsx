@@ -18,9 +18,9 @@ export const useAdditionsTransfersService = () => {
         return get(`${roleUrl}${endpoint}`);
     }
 
-    async function GetProjectsList(data: Object): Promise<ApiResponse<IPagingData<IProjectAdditionList>>> {
-        const endpoint: string = "/get-projects";
-        return post(`${roleUrl}${endpoint}`, data);
+    async function GetProjectsList(): Promise<ApiResponse<IProjectAdditionList[]>> {
+        const res = await get<IProjectAdditionList[]>(`/api/v1/projects/get-all`);
+        return res
     }
 
     async function GetFundsList(data: Object): Promise<ApiResponse<IPagingData<IFundsAdditionList>>> {
