@@ -2,9 +2,10 @@ import { SetStateAction } from "react";
 import { ApiResponse, IPagingData } from "./api-response";
 import { IMessage, IobjectAddTransfer } from "../interfaces/global.interface";
 import { cleanTransferContext } from "./clean-transfer-context";
+import { IProjectAdditionList } from "../../features/functionality/interfaces/AdditionsTransfersInterfaces";
 
 interface IHandleCommonError {
-    response: ApiResponse<IPagingData<any>>,
+    response: ApiResponse<any>,
     setMessage: (value: SetStateAction<IMessage>) => void,
     navigate: any,
     setAddTransferData: (value: SetStateAction<IPagingData<IobjectAddTransfer>>) => void,

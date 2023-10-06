@@ -68,9 +68,9 @@ export function useAddFundsCrud() {
 
   useEffect(() => {
     if (!arrayDataSelect.functionalArea.length && !arrayDataSelect.funds.length && !arrayDataSelect.posPre.length) {
-      GetProjectsList({ page: "1", perPage: "1" }).then(response => {
+      GetProjectsList().then(response => {
         if (response.operation.code === EResponseCodes.OK) {
-          const projectArray = response.data?.array || [];
+          const projectArray = response.data || [];
 
           const seenNames = new Set();
           const arrayEntitiesProject = projectArray.reduce((acc, item) => {

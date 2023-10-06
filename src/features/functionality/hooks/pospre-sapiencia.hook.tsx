@@ -100,7 +100,7 @@ export function usePospreSapienciaData({budgetsId, validateAction }: IPospreSapi
                 ]
 
                 setMessage({
-                    title: "Detalle Vinculación MGA ",
+                    title: "Detalle Pospre sapiencia",
                     show: true,
                     OkTitle: "Aceptar",
                     description: <DetailsComponent rows={rows} />,
