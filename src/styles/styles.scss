@@ -330,6 +330,45 @@ div[id="single-spa-application:@sapiencia/financial"] {
   box-shadow: none;
 }
 
+.width-50{
+  width: 100%;
+}
+
+.style-form-create{
+  border-radius: 14px;
+  border: 1px solid #DDD;
+  margin-top: 1rem;
+
+  .title-form{
+    position: relative;
+    width: 100%;
+    height: 33px;
+    bottom: 1rem;
+    display: flex;
+    justify-content: flex-start;
+    margin-left: 2rem;
+
+    .content-title-form{
+      border-radius: 8px;
+      border: 1px solid #DDD;
+      background: #E0E0E0;
+      bottom: 15px;
+      max-width: 160px;
+      width: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+      
+  }
+
+  .title-form-2{
+    @extend .title-form;
+  }
+
+}
+
 @media (min-width: 1024px) {
   div[id="single-spa-application:@sapiencia/financial"] {
     width: initial;
@@ -468,6 +507,17 @@ div[id="single-spa-application:@sapiencia/financial"] {
         text-align: end;
       }
     }
+  }
+
+  .width-50{
+    width: 50%;
+  }
+  .style-form-create{
+    .title-form-2{
+      justify-content: flex-end;
+      margin-left: -2rem;
+    }
+
   }
 }
 

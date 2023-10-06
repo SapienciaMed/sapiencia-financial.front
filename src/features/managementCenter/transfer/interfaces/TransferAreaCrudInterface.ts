@@ -6,6 +6,15 @@ export interface ICreateSourceForm{
     destino: IAddFund[];
 }
 
+export interface ICreateTransferPacForm{
+    origen: IAddFundPac[];
+    destino: IAddFundPac[]; 
+}
+
+export interface IAddFundPac extends IAddFund{
+    result: IMonths
+}
+
 export interface IAddFund{
     managerCenter: string;
     projectId: string;
@@ -13,7 +22,7 @@ export interface IAddFund{
     functionalArea: string;
     funds: string;
     posPre: string;
-    value: string;
+    value?: string;
     cardId?:string;
     typeTransfer?:string;
 }
@@ -45,4 +54,34 @@ export interface IAddFormCard {
     titleLabelValue: string,
     invalidCardsAdditionSt:any;
     watch:any;
+}
+
+export interface IFormTransferPac {
+    titleAdd?: 'origen' | 'destino',
+    control: Control<ICreateTransferPacForm, any>,
+    arrayDataSelect: IArrayDataSelect,
+    errors: FieldErrors<ICreateTransferPacForm>,
+    count: number,
+    cardId: string;
+    setValue: UseFormSetValue<any>;
+    // removeCard: (index?: number | number[]) => void,
+    register: UseFormRegister<ICreateTransferPacForm>,
+    // titleLabelValue: string,
+    // invalidCardsAdditionSt:any;
+    // watch:any;
+}
+
+export interface IMonths{
+    january: string | number,
+    february: string | number ,
+    march: string | number,
+    april: string | number,
+    may: string | number,
+    june: string | number,
+    july: string | number,
+    august: string | number,
+    september: string | number,
+    october: string | number,
+    november: string | number,
+    december: string | number
 }

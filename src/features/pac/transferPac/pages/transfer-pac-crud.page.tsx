@@ -1,18 +1,19 @@
 import { SelectComponent } from "../../../../common/components/Form";
 import { EDirection } from "../../../../common/constants/input.enum";
+import CreateFundTransferPac from "../forms/create-fund-transfer-pac";
 import { useTransferPacCrudData } from "../hook/transfer-pac-crud.hook";
 
-function TransferPacPage(): React.JSX.Element {
+function TransferPacCrud(): React.JSX.Element {
 
     const { control, errors } = useTransferPacCrudData()
     
-
     return(
         <div className="main-page">
-            <div className="card-table">
+            <div className="card-table display-flex-direction-column gap-1">
                 <section className="title-area">
                     <div className="text-black weight-500 extra-large">Traslados</div>
                 </section>
+
                 <section className="card-user">
                     <div className="funcionality-filters-container">
                         <SelectComponent
@@ -62,9 +63,24 @@ function TransferPacPage(): React.JSX.Element {
                         />
                     </div>
                 </section>
+
+                <section className="card-user">
+                    <div className="display-justify-space-between-pac gap-1">
+
+                        <section className="width-50">
+                            <CreateFundTransferPac titleAdd="origen"/>
+                        </section>
+
+                        <section className="width-50">
+                            <CreateFundTransferPac titleAdd="destino"/>
+                        </section>
+
+                    </div>
+                    
+                </section>
             </div>
         </div>
     )
 }
 
-export default TransferPacPage;
+export default TransferPacCrud;
