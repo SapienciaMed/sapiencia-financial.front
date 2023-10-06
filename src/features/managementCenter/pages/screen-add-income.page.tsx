@@ -103,8 +103,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             label={'Proyecto'}
                             className="select-basic medium"
                             classNameLabel="text-black big bold text-required"
-                            placeholder={'Seleccionar'}
-                            //data={projectIdName}        
+                            placeholder={'Seleccionar'}       
                             data={functionalArea}
                             filter={true}
                             fieldArray={true}

@@ -7,17 +7,13 @@ import { IBudgetsRoutesFilters, IBudgetsRoutes } from "../interfaces/BudgetRoute
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { AppContext } from "../../../common/contexts/app.context";
 import DetailsComponent from "../../../common/components/details.component";
-import { useFunctionalAreaService } from "../../functionality/hooks/functional-area-service.hook";
-import { IProject, IProjectsVinculation } from "../../functionality/interfaces/Projects";
 import { EResponseCodes } from "../../../common/constants/api.enum";
-import { useProjectsLinkService } from "../../functionality/hooks/projects-link-service.hook";
 import { useAdditionsTransfersService } from "../../managementCenter/hook/additions-transfers-service.hook";
 import { IProjectAdditionList } from "../../functionality/interfaces/AdditionsTransfersInterfaces";
 
 export function useBudgetRoutesData() {
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
-    const { getAllProjectsVinculations } = useProjectsLinkService();
     const { GetProjectsList } = useAdditionsTransfersService()
     const { setMessage } = useContext(AppContext);
     const resolver = useYupValidationResolver(budgetRoutesValidator);
@@ -29,8 +25,8 @@ export function useBudgetRoutesData() {
         control,
         watch
     } = useForm<IBudgetsRoutesFilters>({ resolver });
-    const [projects, setProjects] = useState<IProjectAdditionList[]>(null);
-    const [projectsVinculation, setProjectsVinculation] = useState<IProjectsVinculation[]>(null);
+
+    const [linkedProjects, setLinkedProjects] = useState<IProjectAdditionList[]>(null);
     const [showTable, setShowTable] = useState(false);
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
 
@@ -41,7 +37,7 @@ export function useBudgetRoutesData() {
             fieldName: "idProjectVinculation",
             header: "ID Proyecto",
             renderCell: (row) => {
-                const projectVinculate = projectsVinculation.find((item) => item.id === row.idProjectVinculation);
+                const projectVinculate = linkedProjects.find((item) => item.id === row.idProjectVinculation);
                 return <>{projectVinculate.projectId}</>
             }
         },
@@ -49,9 +45,8 @@ export function useBudgetRoutesData() {
             fieldName: "idProjectVinculation",
             header: "Nombre Proyecto",
             renderCell: (row) => {
-                const projectVinculate = projectsVinculation.find((item) => item.id === row.idProjectVinculation);
-                const project = projects.find((item) => item.projectId === projectVinculate.projectId);
-                return <>{project?.conceptProject}</>
+                const projectVinculate = linkedProjects.find((item) => item.id === row.idProjectVinculation);
+                return <>{projectVinculate.conceptProject}</>
             }
         },
         {
@@ -66,9 +61,9 @@ export function useBudgetRoutesData() {
             fieldName: "fuctionalArea",
             header: "Área funcional",
             renderCell: (row) => {
-                const projectVinculate = projectsVinculation.find((item) => item.id === row.idProjectVinculation);
-                const project = projects.find((item) => item.projectId === projectVinculate.projectId)
-                return <>{project.areaFuntional.number}</>
+                const projectVinculate = linkedProjects.find((item) => item.id === row.idProjectVinculation);
+                return <>{projectVinculate.areaFuntional.number }</>
+
             }
             
         }
@@ -77,16 +72,16 @@ export function useBudgetRoutesData() {
         {
             icon: "Detail",
             onClick: (row) => {
-                const projectVinculate = projectsVinculation.find((item) => item.id === row.idProjectVinculation);
-                const project = projects.find((item) => item?.projectId === projectVinculate.projectId);
+                const projectVinculate = linkedProjects.find((item) => item.id === row.idProjectVinculation);
+             
                 const rows = [
                     {
                         title: "ID proyecto",
-                        value: `${project.projectId}`
+                        value: `${projectVinculate.projectId}`
                     },
                     {
                         title: "Nombre proyecto",
-                        value: `${project?.conceptProject}`
+                        value: `${projectVinculate?.conceptProject}`
                     },
                     {
                         title: "Centro gestor",
@@ -110,7 +105,7 @@ export function useBudgetRoutesData() {
                     },
                     {
                         title: "Área funcional",
-                        value: `${project.areaFuntional.number}`
+                        value: `${projectVinculate.areaFuntional.number}`
                     }
                 ]
                 setMessage({
@@ -137,28 +132,23 @@ export function useBudgetRoutesData() {
     }
 
     const onSubmit = handleSubmit(async (data: IBudgetsRoutesFilters) => {
-        if(projects && projectsVinculation) {
+        if(linkedProjects) {
             setShowTable(true)
             loadTableData(data)
         };
     });
 
     useEffect(() => {
-        getAllProjectsVinculations().then(response => {
-            if(response.operation.code === EResponseCodes.OK) {
-                setProjectsVinculation(response.data);
-            }
-        });
-        GetProjectsList({ page: "1", perPage: "1" }).then(responseProjectList => {
+        GetProjectsList().then(responseProjectList => {
             if (responseProjectList.operation.code === EResponseCodes.OK) {
-                setProjects(responseProjectList.data.array);
+                setLinkedProjects(responseProjectList.data);
             }
         })
     }, [])
 
     useEffect(() => {
-        if(projects && projectsVinculation) loadTableData();
-    }, [projects, projectsVinculation])
+        if(linkedProjects) loadTableData();
+    }, [linkedProjects])
 
     useEffect(() => {
         setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
