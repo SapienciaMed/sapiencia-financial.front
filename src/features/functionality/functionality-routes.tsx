@@ -47,7 +47,7 @@ export const FunctionalityRoutes = () => {
 
         <Route path={"/posicion-presupuestaria/vinculacion/:pospre/pospre-sapiencia/create"} element={<PosPreSapienciaForm action="new" location="pospre"/>} />
         <Route path={"/posicion-presupuestaria/vinculacion/:pospre/pospre-sapiencia/edit/:id"} element={<PosPreSapienciaForm action="edit" location="pospre" />} />
-        <Route path={"/posicion-presupuestaria/view/:id"} element={<BudgetsView/>} />
+        <Route path={"/posicion-presupuestaria/view/:pospre"} element={<BudgetsView/>} />
 
         <Route path={"/area-funcional/"} element={<FunctionalAreaPage/>} />
         <Route path={"/area-funcional/create"} element={<FunctionalAreaCrudPage action="new"/>} />
