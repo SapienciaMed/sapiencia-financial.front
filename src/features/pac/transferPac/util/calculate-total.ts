@@ -25,7 +25,7 @@ export const calculateTotalOrigen = (watchAll: ICreateTransferPacForm) => {
     return acc + (isNaN(value) ? 0 : value);
   },0)
 
-    return total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    return total?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
   };
 
 export const calculateTotalDestino = (watchAll: ICreateTransferPacForm) => {
@@ -52,5 +52,5 @@ export const calculateTotalDestino = (watchAll: ICreateTransferPacForm) => {
         return acc + (isNaN(value) ? 0 : value);
     },0)
 
-    return total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    return total?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
 };

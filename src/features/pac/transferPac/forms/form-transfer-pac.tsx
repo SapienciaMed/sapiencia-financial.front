@@ -9,6 +9,7 @@ import FormPacmonths  from './form-months-pac'
 function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pacTypeState, register, setValue }: IFormTransferPac) {
 
     const {width} = useWidth()
+    //TODO: Validar si viene igual, con el nuevo servicio para traslado pac
     const { functionalArea, funds, posPre, } = arrayDataSelect
     const formOrigen = useWatch({ control, name: titleAdd })
 
@@ -123,7 +124,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     className="select-basic medium"
                     classNameLabel="text-black weight-500 big text-required"
                     placeholder={'Seleccionar'}   
-                    data={functionalArea}
+                    data={[]}
                     filter={true}
                     fieldArray={true}
                     errors={errors}
@@ -140,7 +141,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     placeholder={'Seleccionar'}
                     filter={true}
                     fieldArray={true}
-                    data={funds}
+                    data={[]}
                     errors={errors}
                 />
                 <SelectComponent
@@ -152,7 +153,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     placeholder={'Seleccionar'}
                     filter={true}
                     fieldArray={true}
-                    data={posPre}
+                    data={[]}
                     errors={errors}
                 />
 
@@ -165,7 +166,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     placeholder={'Seleccionar'}
                     filter={true}
                     fieldArray={true}
-                    data={areasByProjectSt}
+                    data={[]}
                     errors={errors}
                 />
 

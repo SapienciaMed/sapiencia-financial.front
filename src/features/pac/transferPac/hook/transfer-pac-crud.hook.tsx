@@ -8,16 +8,21 @@ import { AppContext } from '../../../../common/contexts/app.context';
 import { handleCommonError } from '../../../../common/utils/handle-common-error';
 import { useNavigate } from 'react-router-dom';
 import { validateTypePac } from '../util/validate-type-pac';
+import { calculateTotalDestino, calculateTotalOrigen } from '../util';
+import useYupValidationResolver from '../../../../common/hooks/form-validator.hook';
+import { validationTransferPac } from '../../../../common/schemas/transfer-schema';
 
 export function useTransferPacCrudData() {
 
   const navigate = useNavigate();
+  const resolver = useYupValidationResolver( validationTransferPac );
   const { GetFundsList, GetProjectsList, GetPosPreSapienciaList } = useAdditionsTransfersService()
   const { setMessage, setAddTransferData, setDetailTransferData } = useContext(AppContext);
   const [ pacTypeState, setPacTypeState ] = useState(1)
   const [ pacTypeState2, setPacTypeState2 ] = useState(4)
   const [ isActivityAdd, setIsActivityAdd ] = useState<boolean>(true)
   const [ isdataResetState, setIsdataResetState ] = useState<boolean>(false)
+  const [isBtnDisable, setIsBtnDisable] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 2;
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -37,13 +42,14 @@ export function useTransferPacCrudData() {
     handleSubmit,
     getValues,
     reset
-  } = useForm<ICreateTransferPacForm>();
+  } = useForm<ICreateTransferPacForm>({ resolver });
 
   const tipoPac = watch('pacType')
   const watchAll = watch()
 
   const { hasNonEmptyCollected, hasNonEmptyProgrammed, hasDataBeforeReset } = validateTypePac(watchAll, pacTypeState2 );
 
+  //Resetea el formulario, cuando se cambia de pac y algun valor del mes esta lleno
   useEffect(() => {
     if (pacTypeState == 2 && watchAll ) {
       pacTypeState2 != 4 ? setIsdataResetState(hasNonEmptyCollected)  : setIsdataResetState(true)
@@ -153,8 +159,26 @@ export function useTransferPacCrudData() {
     (tipoPac > 1 && tipoPac < 4) && setPacTypeState2(tipoPac)
   },[tipoPac])
 
+  //Valida que los totales sean iguales y habilita el boton guardar
+  useEffect(() => {
+    watchAll && setIsBtnDisable( calculateTotalOrigen(watchAll) != '0' && calculateTotalDestino(watchAll) != '0' && (calculateTotalOrigen(watchAll) == calculateTotalDestino(watchAll))  )
+  },[watchAll])
+
   const onSubmit = handleSubmit(async ( data: any) => {
-    console.log(data); 
+    setMessage({
+      title: "Guardar",
+      description: "¿Estás segur@ de guardar la información?",
+      OkTitle: "Aceptar",
+      cancelTitle: "Cancelar",
+      show: true,
+      onCancel: () => {
+        setMessage({});
+      },
+      onOk: () => {
+        setMessage({});
+      },
+      background: true,
+    });
   })
 
   const onCancelar = () => {
@@ -181,6 +205,7 @@ export function useTransferPacCrudData() {
     setCurrentPage(event.page + 1);
   };
 
+  //Valida que todos los campos del header esten llenos y habilite los botones de añadir
   const validateHeader = () => {
     const { TypeResource, validity, pacType } = watchAll;
     const isValid = TypeResource !== null && TypeResource !== undefined
@@ -201,6 +226,7 @@ export function useTransferPacCrudData() {
     itemsPerPage,
     watchAll,
     isActivityAdd,
+    isBtnDisable,
     register,
     setValue,
     onSubmit,

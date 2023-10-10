@@ -8,7 +8,7 @@ import { calculateTotalDestino, calculateTotalOrigen } from "../util";
 
 function TransferPacCrud(): React.JSX.Element {
 
-    const { control, arrayDataSelect, errors, pacTypeState, isdataResetState, startIndex, watchAll, itemsPerPage, isActivityAdd,
+    const { control, arrayDataSelect, errors, pacTypeState, isdataResetState, startIndex, watchAll, itemsPerPage, isActivityAdd, isBtnDisable,
         register, setValue, onSubmit, onPageChange, getValues, onCancelar } = useTransferPacCrudData()
  
     return(
@@ -160,6 +160,7 @@ function TransferPacCrud(): React.JSX.Element {
                         value="Guardar"
                         type="submit"
                         form="transfer-form"
+                        disabled={!isBtnDisable}
                     />
                 </div>
             </section>

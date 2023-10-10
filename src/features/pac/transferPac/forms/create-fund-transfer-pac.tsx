@@ -68,6 +68,7 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
                 className={`btn-rimless biggest ${titleAdd == 'origen' ? 'display-align-flex-end' : width < 1024 ? 'display-align-flex-end' : 'display-justify-flex-end'}  gap-0 pointer`}
                 onClick={() => { append(initialValue) }}
                 disabled={isActivityAdd}
+                form="none"
             >
                 Añadir {titleAdd} <AiOutlinePlusCircle />
             </button>
