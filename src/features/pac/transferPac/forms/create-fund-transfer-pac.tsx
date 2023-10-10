@@ -1,24 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { useFieldArray, Control, FieldErrors, UseFormRegister, UseFormSetValue  } from 'react-hook-form';
+import React, { useEffect } from "react";
+import { useFieldArray } from 'react-hook-form';
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import FormTransferPac from "./form-transfer-pac";
-import { IAddFundPac, ICreateTransferPacForm } from "../../../managementCenter/transfer/interfaces/TransferAreaCrudInterface";
+import { IAddFundPac } from "../../../managementCenter/transfer/interfaces/TransferAreaCrudInterface";
 import { useWidth } from "../../../../common/hooks/use-width";
-import { IArrayDataSelect } from "../../../../common/interfaces/global.interface";
+import { ICreateFundTransferPac } from "../interfaces/TypeTransferPac";
 
-interface IProp {
-    titleAdd: 'origen' | 'destino',
-    control: Control<ICreateTransferPacForm, any>
-    arrayDataSelect: IArrayDataSelect, 
-    errors: FieldErrors<ICreateTransferPacForm>, 
-    register: UseFormRegister<ICreateTransferPacForm>, 
-    setValue: UseFormSetValue<ICreateTransferPacForm>,
-    isdataReset: boolean,
-    pacTypeState: number
-}
-
-function CreateFundTransferPac({ titleAdd, arrayDataSelect,control, errors, pacTypeState, isdataReset, register, setValue }:IProp ) {
-
+function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pacTypeState, isdataReset, itemsPerPage,
+    startIndex, isActivityAdd, register, setValue }:ICreateFundTransferPac ) {
+   
     const {width} = useWidth()
 
     const { fields, append, remove } = useFieldArray({
@@ -31,11 +21,25 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect,control, errors, pacT
         projectId: '',
         projectName: '',
         functionalArea: '',
-        funds: '',
-        posPre: '',
         value: '',
         cardId: '',
+        fundsSapiencia: '',
+        pospreSapiencia: '',
         collected: {
+            january: '',
+            february: '',
+            march: '',
+            april: '',
+            may: '',
+            june: '',
+            july: '',
+            august: '',
+            september: '',
+            october: '',
+            november: '',
+            december: '',
+        },
+        programmed:  {
             january: '',
             february: '',
             march: '',
@@ -51,26 +55,22 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect,control, errors, pacT
         }
     }
 
-    //TODO: este paginado toca sacarlo, al componente superior
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 1;
-    const startIndex = (currentPage - 1) * itemsPerPage;
     const visibleFields = fields.slice(startIndex, startIndex + itemsPerPage);
 
-    // useEffect(() => {
-    //     isdataReset && remove()
-    // },[isdataReset])
-    
+    useEffect(() => {
+        isdataReset && remove()
+    },[isdataReset])
+
+
     return(
-        <div className="display-flex-direction-column gap-1">
-            <div 
-                className={`title-button text-main biggest ${titleAdd == 'origen' ? 'display-align-flex-end' : width < 1024 ? 'display-align-flex-end' : 'display-justify-flex-end '}  gap-0 ml-1rem small pointer`}
-                onClick={() => {
-                    append(initialValue)
-                }} 
+        <div className="display-flex-direction-column padding paddingBotom gap-1">
+            <button 
+                className={`btn-rimless biggest ${titleAdd == 'origen' ? 'display-align-flex-end' : width < 1024 ? 'display-align-flex-end' : 'display-justify-flex-end'}  gap-0 pointer`}
+                onClick={() => { append(initialValue) }}
+                disabled={isActivityAdd}
             >
                 Añadir {titleAdd} <AiOutlinePlusCircle />
-            </div>
+            </button>
 
             {
                 visibleFields.map((field, index) => {
@@ -95,7 +95,6 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect,control, errors, pacT
                     )
                 })
             }
-
 
         </div>
     )

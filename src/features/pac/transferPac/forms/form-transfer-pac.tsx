@@ -130,6 +130,32 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     optionSelected={optionSelected}
                 />
 
+              
+                <SelectComponent
+                    idInput={`${titleAdd}[${count}].fundsSapiencia`}
+                    control={control}
+                    label='Fondo Sapiencia'
+                    className="select-basic medium"
+                    classNameLabel="text-black weight-500 big text-required"
+                    placeholder={'Seleccionar'}
+                    filter={true}
+                    fieldArray={true}
+                    data={funds}
+                    errors={errors}
+                />
+                <SelectComponent
+                    idInput={`${titleAdd}[${count}].pospreSapiencia`}
+                    control={control}
+                    label='Fondo Sapiencia'
+                    className="select-basic medium"
+                    classNameLabel="text-black weight-500 big text-required"
+                    placeholder={'Seleccionar'}
+                    filter={true}
+                    fieldArray={true}
+                    data={posPre}
+                    errors={errors}
+                />
+
                 <SelectComponent
                     idInput={`${titleAdd}[${count}].functionalArea`}
                     control={control}
@@ -140,30 +166,6 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     filter={true}
                     fieldArray={true}
                     data={areasByProjectSt}
-                    errors={errors}
-                />
-                <SelectComponent
-                    idInput={`${titleAdd}[${count}].funds`}
-                    control={control}
-                    label='Fondo'
-                    className="select-basic medium"
-                    classNameLabel="text-black weight-500 big text-required"
-                    placeholder={'Seleccionar'}
-                    filter={true}
-                    fieldArray={true}
-                    data={funds}
-                    errors={errors}
-                />
-                <SelectComponent
-                    idInput={`${titleAdd}[${count}].posPre`}
-                    control={control}
-                    label='Pospre'
-                    className="select-basic medium"
-                    classNameLabel="text-black weight-500 big text-required"
-                    placeholder={'Seleccionar'}
-                    filter={true}
-                    fieldArray={true}
-                    data={posPre}
                     errors={errors}
                 />
 

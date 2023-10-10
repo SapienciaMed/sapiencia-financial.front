@@ -780,13 +780,13 @@
 .p-dropdown .p-dropdown-trigger {
   background: transparent;
   color: #495057;
-  width: 2.357rem;
+  width: 1.5rem;
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
 }
 .p-dropdown .p-dropdown-clear-icon {
   color: #495057;
-  right: 2.357rem;
+  right: 1.5rem;
 }
 .p-dropdown.p-invalid.p-component {
   /* border-color: #ced4da #ced4da #ced4da #e4677e; */

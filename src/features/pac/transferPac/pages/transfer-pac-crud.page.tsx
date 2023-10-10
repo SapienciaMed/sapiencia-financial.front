@@ -1,11 +1,15 @@
+import { Paginator } from "primereact/paginator";
 import { ButtonComponent, FormComponent, SelectComponent } from "../../../../common/components/Form";
 import { EDirection } from "../../../../common/constants/input.enum";
 import CreateFundTransferPac from "../forms/create-fund-transfer-pac";
 import { useTransferPacCrudData } from "../hook/transfer-pac-crud.hook";
+import { paginatorFooter } from "../../../managementCenter/components/table-detail.component";
+import { calculateTotalDestino, calculateTotalOrigen } from "../util";
 
 function TransferPacCrud(): React.JSX.Element {
 
-    const { control, arrayDataSelect, errors, pacTypeState, isdataResetState,  register, setValue, onSubmit } = useTransferPacCrudData()
+    const { control, arrayDataSelect, errors, pacTypeState, isdataResetState, startIndex, watchAll, itemsPerPage, isActivityAdd,
+        register, setValue, onSubmit, onPageChange, getValues, onCancelar } = useTransferPacCrudData()
  
     return(
         <div className="crud-page full-height">
@@ -44,9 +48,7 @@ function TransferPacCrud(): React.JSX.Element {
                                         direction={EDirection.column}
                                         data={[
                                             { id: '1', name: 'Seleccione', value: null},
-                                            { id: "2", name: "2022", value: "2022" },
-                                            { id: "3", name: "2023", value: "2023" },
-                                            { id: "4", name: "2024", value: "2024" },
+                                            { id: "2", name: "2023", value: "2023" },
                                         ]}
                                         control={control}
                                         isValidateName={false}
@@ -60,9 +62,8 @@ function TransferPacCrud(): React.JSX.Element {
                                         direction={EDirection.column}
                                         data={[
                                             { id: '1', name: 'Seleccione', value: null},
-                                            { id: "2", name: "Ejemplo1", value: "2" },
-                                            { id: "3", name: "Ejemplo2", value: "3" },
-                                            { id: "4", name: "Ejemplo3", value: "4" },
+                                            { id: "2", name: "Transferencias distritales", value: "Transferencias distritales" },
+                                            { id: "3", name: "Recursos propios", value: "Recursos propios" },
                                         ]}
                                         control={control}
                                         isValidateName={false}
@@ -83,7 +84,18 @@ function TransferPacCrud(): React.JSX.Element {
                                             setValue={setValue}
                                             pacTypeState={pacTypeState}
                                             isdataReset={isdataResetState}
+                                            itemsPerPage={itemsPerPage}
+                                            startIndex={startIndex}
+                                            isActivityAdd={isActivityAdd}
                                         />
+                                        {
+                                            watchAll?.origen?.some(use => Object.keys(use.programmed).length > 0 || Object.keys(use.collected).length > 0 ) &&
+                                            <div>
+                                                <label className="text-black biggest ml-16px mt-14px"> Total origen</label>
+                                                <label className="text-black biggest" style={{color: '#533893'}}> $ {calculateTotalOrigen(watchAll)} </label>
+                                            </div>
+
+                                        }
                                     </section>
 
                                     <section className="width-50">
@@ -96,10 +108,36 @@ function TransferPacCrud(): React.JSX.Element {
                                             setValue={setValue}
                                             pacTypeState={pacTypeState}
                                             isdataReset={isdataResetState}
+                                            itemsPerPage={itemsPerPage}
+                                            startIndex={startIndex}
+                                            isActivityAdd={isActivityAdd}
                                         />
+                                        {
+                                            watchAll?.destino?.some(use => Object.keys(use.programmed).length > 0 || Object.keys(use.collected).length > 0 ) &&
+                                            <div>
+                                                <label className="text-black biggest ml-16px mt-14px"> Total destino</label>
+                                                <label className="text-black biggest" style={{color: '#533893'}}> $ {calculateTotalDestino(watchAll)} </label>
+                                            </div>
+
+                                        }
                                     </section>
 
+
                                 </div>
+
+                                {
+                                   (getValues('origen')?.length > 2 || getValues('destino')?.length > 2 )&&
+                                    <div className="spc-common-table">
+                                        <Paginator
+                                            className="spc-table-paginator"
+                                            template={paginatorFooter}
+                                            first={startIndex}
+                                            rows={itemsPerPage}
+                                            totalRecords={getValues('origen')?.length || getValues('destino')?.length}
+                                            onPageChange={onPageChange}
+                                        />
+                                    </div>
+                                }
                                 
                             </section>
                         
@@ -113,7 +151,7 @@ function TransferPacCrud(): React.JSX.Element {
                 <div className="buttons-bot">
                     <span
                         className="bold text-center button"
-                        
+                        onClick={onCancelar}
                     >
                         Cancelar
                     </span>

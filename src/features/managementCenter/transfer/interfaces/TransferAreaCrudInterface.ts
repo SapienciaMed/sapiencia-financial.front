@@ -1,4 +1,4 @@
-import { Control, UseFormRegister, FieldErrors, UseFormSetValue, UseFormGetValues } from 'react-hook-form';
+import { Control, UseFormRegister, FieldErrors, UseFormSetValue, UseFormGetValues, UseFormResetField, UseFieldArrayRemove } from 'react-hook-form';
 import { IArrayDataSelect } from "../../../../common/interfaces/global.interface";
 
 export interface ICreateSourceForm{
@@ -15,7 +15,8 @@ export interface ICreateTransferPacForm{
 }
 
 export interface IAddFundPac extends IAddFund{
-    collected: IMonths
+    collected: IMonths,
+    programmed: IMonths
 }
 
 export interface IAddFund{
@@ -23,8 +24,10 @@ export interface IAddFund{
     projectId: string;
     projectName?: string;
     functionalArea: string;
-    funds: string;
-    posPre: string;
+    pospreSapiencia?: string;
+    funds?: string;
+    fundsSapiencia?: string;
+    posPre?: string;
     value?: string;
     cardId?:string;
     typeTransfer?:string;
@@ -67,10 +70,7 @@ export interface IFormTransferPac {
     count: number,
     cardId: string;
     setValue: UseFormSetValue<any>;
-    // removeCard: (index?: number | number[]) => void,
     register: UseFormRegister<ICreateTransferPacForm>,
-    // invalidCardsAdditionSt:any;
-    // watch:any;
     pacTypeState: number,
 }
 
@@ -83,16 +83,16 @@ export interface IFormPacmonths{
 }
 
 export interface IMonths{
-    january: string | number,
-    february: string | number ,
-    march: string | number,
-    april: string | number,
-    may: string | number,
-    june: string | number,
-    july: string | number,
-    august: string | number,
-    september: string | number,
-    october: string | number,
-    november: string | number,
-    december: string | number
+    january: string ,
+    february: string  ,
+    march: string ,
+    april: string ,
+    may: string ,
+    june: string ,
+    july: string ,
+    august: string ,
+    september: string ,
+    october: string ,
+    november: string ,
+    december: string 
 }

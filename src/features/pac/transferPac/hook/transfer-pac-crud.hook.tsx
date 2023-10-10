@@ -1,4 +1,4 @@
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { ICreateTransferPacForm } from '../../../managementCenter/transfer/interfaces/TransferAreaCrudInterface';
 import { useContext, useEffect, useState } from 'react';
 import { IArrayDataSelect } from '../../../../common/interfaces/global.interface';
@@ -7,153 +7,206 @@ import { EResponseCodes } from '../../../../common/constants/api.enum';
 import { AppContext } from '../../../../common/contexts/app.context';
 import { handleCommonError } from '../../../../common/utils/handle-common-error';
 import { useNavigate } from 'react-router-dom';
+import { validateTypePac } from '../util/validate-type-pac';
 
 export function useTransferPacCrudData() {
 
-    const navigate = useNavigate();
-    const { GetFundsList, GetProjectsList, GetPosPreSapienciaList } = useAdditionsTransfersService()
-    const { setMessage, setAddTransferData, setDetailTransferData } = useContext(AppContext);
-    const [ pacTypeState, setPacTypeState ] = useState(1) 
-    const [ isdataResetState, setIsdataResetState ] = useState<boolean>(false)
-    const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
-      functionalArea: [],
-      areas: [],
-      funds: [],
-      posPre: []
-    })
-  
-    const {
-      control,
-      formState: { errors, isValid },
-      register,
-      setValue,
-      watch,
-      handleSubmit
-    } = useForm<ICreateTransferPacForm>();
-  
-    const tipoPac = watch('pacType')
-    const formDestino = watch('destino')
-    const formOrigen = watch('origen')
-  
-    useEffect(() => {
-      if (!arrayDataSelect.functionalArea.length && !arrayDataSelect.funds.length && !arrayDataSelect.posPre.length) {
-        GetProjectsList().then(response => {
-          if (response.operation.code === EResponseCodes.OK) {
-            const projectArray = response?.data || [];
-  
-            const seenNames = new Set();
-            const arrayEntitiesProject = projectArray.reduce((acc, item) => {
-              const description = item.conceptProject;
-              const name = item.projectId;
-              const value = item.id;
-              const id = item.id;
-              const area = [{
-                name: item.areaFuntional.number,
-                value: item.areaFuntional.id,
-                id: item.areaFuntional.id
-              }]
-  
-              if (!seenNames.has(name)) {
-                seenNames.add(name);
-                acc.push({ name, value, id, area, description });
-              }
-  
-              return acc;
-            }, []);
-  
-            setArrayDataSelect(prevState => ({
-              ...prevState,
-              functionalArea: arrayEntitiesProject
-            }));
-          } else {
-            handleCommonError({ response, setMessage, navigate, setAddTransferData, setDetailTransferData})
-          }
-        }).catch((error) => console.log(error))
-  
-        GetFundsList({ page: "1", perPage: "1" }).then(response => {
-          if (response.operation.code === EResponseCodes.OK) {
-            const typeTransfersFunds = response.data?.array || [];
-  
-            const seenNames = new Set();
-            const arrayEntitiesFund = typeTransfersFunds.reduce((acc, item) => {
-              const name = item.number;
-              const value = item.id;
-              const id = item.id;
-  
-              if (!seenNames.has(name)) {
-                seenNames.add(name);
-                acc.push({ name, value, id });
-              }
-  
-              return acc;
-            }, []);
-  
-            setArrayDataSelect(prevState => ({ ...prevState, funds: arrayEntitiesFund }));
-  
-          } else {
-            handleCommonError({ response, setMessage,  navigate, setAddTransferData, setDetailTransferData})
-          }
-        }).catch((error) => console.log(error))
-  
-        GetPosPreSapienciaList().then(response => {
-          if (response.operation.code === EResponseCodes.OK) {
-            const posPresapientes = response.data?.array || [];
-  
-            const seenNames = new Set();
-            const arrayEntitiesPosPres = posPresapientes.reduce((acc, item) => {
-              const name = item.number;
-              const value = item.id;
-              const id = item.id;
-  
-              if (!seenNames.has(name)) {
-                seenNames.add(name);
-                acc.push({ name, value, id });
-              }
-  
-              return acc;
-            }, []);
-  
-            setArrayDataSelect(prevState => ({ ...prevState, posPre: arrayEntitiesPosPres }));
-          } else {
-            handleCommonError({ response, setMessage,  navigate, setAddTransferData, setDetailTransferData})
-          }
-        }).catch((error) => console.log(error))
-      }
-    
-    }, [arrayDataSelect])
-  
-    useEffect(() => {
+  const navigate = useNavigate();
+  const { GetFundsList, GetProjectsList, GetPosPreSapienciaList } = useAdditionsTransfersService()
+  const { setMessage, setAddTransferData, setDetailTransferData } = useContext(AppContext);
+  const [ pacTypeState, setPacTypeState ] = useState(1)
+  const [ pacTypeState2, setPacTypeState2 ] = useState(4)
+  const [ isActivityAdd, setIsActivityAdd ] = useState<boolean>(true)
+  const [ isdataResetState, setIsdataResetState ] = useState<boolean>(false)
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 2;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
+    functionalArea: [],
+    areas: [],
+    funds: [],
+    posPre: []
+  })
 
-        if (tipoPac > 0) {
-            setPacTypeState(tipoPac)
-        }
-        
-      
-    },[tipoPac])
+  const {
+    control,
+    formState: { errors, isValid },
+    register,
+    setValue,
+    watch,
+    handleSubmit,
+    getValues,
+    reset
+  } = useForm<ICreateTransferPacForm>();
 
-    useEffect(() => {
+  const tipoPac = watch('pacType')
+  const watchAll = watch()
 
-        // if (tipoPac ) {
-        //     console.log("entro", tipoPac != pacTypeState );
-            
-        //     setIsdataResetState(tipoPac != pacTypeState)
-        // }
+  const { hasNonEmptyCollected, hasNonEmptyProgrammed, hasDataBeforeReset } = validateTypePac(watchAll, pacTypeState2 );
 
-    },[pacTypeState])
-  
-    const onSubmit = handleSubmit(async ( data: any) => {
-      console.log(data); 
-    })
-      
-    return{
-      control,
-      arrayDataSelect,
-      errors,
-      pacTypeState,
-      isdataResetState,
-      register,
-      setValue,
-      onSubmit
+  useEffect(() => {
+    if (pacTypeState == 2 && watchAll ) {
+      pacTypeState2 != 4 ? setIsdataResetState(hasNonEmptyCollected)  : setIsdataResetState(true)
     }
+    
+    if (pacTypeState == 3 && watchAll ) {
+      pacTypeState2 != 4 ? setIsdataResetState(hasNonEmptyProgrammed) : setIsdataResetState(true)
+    }
+    
+    if (pacTypeState == 4 && watchAll) {
+      setPacTypeState2(4)
+      setIsdataResetState(hasDataBeforeReset)    
+    }
+    watchAll && validateHeader()
+  },[pacTypeState, watchAll])
+
+  useEffect(() => {
+    //TODO: Esta peticion se va cambiar.
+    if (!arrayDataSelect.functionalArea.length && !arrayDataSelect.funds.length && !arrayDataSelect.posPre.length) {
+      GetProjectsList().then(response => {
+        if (response.operation.code === EResponseCodes.OK) {
+          const projectArray = response?.data || [];
+
+          const seenNames = new Set();
+          const arrayEntitiesProject = projectArray.reduce((acc, item) => {
+            const description = item.conceptProject;
+            const name = item.projectId;
+            const value = item.id;
+            const id = item.id;
+            const area = [{
+              name: item.areaFuntional.number,
+              value: item.areaFuntional.id,
+              id: item.areaFuntional.id
+            }]
+
+            if (!seenNames.has(name)) {
+              seenNames.add(name);
+              acc.push({ name, value, id, area, description });
+            }
+
+            return acc;
+          }, []);
+
+          setArrayDataSelect(prevState => ({
+            ...prevState,
+            functionalArea: arrayEntitiesProject
+          }));
+        } else {
+          handleCommonError({ response, setMessage, navigate, setAddTransferData, setDetailTransferData})
+        }
+      }).catch((error) => console.log(error))
+
+      GetFundsList({ page: "1", perPage: "1" }).then(response => {
+        if (response.operation.code === EResponseCodes.OK) {
+          const typeTransfersFunds = response.data?.array || [];
+
+          const seenNames = new Set();
+          const arrayEntitiesFund = typeTransfersFunds.reduce((acc, item) => {
+            const name = item.number;
+            const value = item.id;
+            const id = item.id;
+
+            if (!seenNames.has(name)) {
+              seenNames.add(name);
+              acc.push({ name, value, id });
+            }
+
+            return acc;
+          }, []);
+
+          setArrayDataSelect(prevState => ({ ...prevState, funds: arrayEntitiesFund }));
+
+        } else {
+          handleCommonError({ response, setMessage,  navigate, setAddTransferData, setDetailTransferData})
+        }
+      }).catch((error) => console.log(error))
+
+      GetPosPreSapienciaList().then(response => {
+        if (response.operation.code === EResponseCodes.OK) {
+          const posPresapientes = response.data?.array || [];
+
+          const seenNames = new Set();
+          const arrayEntitiesPosPres = posPresapientes.reduce((acc, item) => {
+            const name = item.number;
+            const value = item.id;
+            const id = item.id;
+
+            if (!seenNames.has(name)) {
+              seenNames.add(name);
+              acc.push({ name, value, id });
+            }
+
+            return acc;
+          }, []);
+
+          setArrayDataSelect(prevState => ({ ...prevState, posPre: arrayEntitiesPosPres }));
+        } else {
+          handleCommonError({ response, setMessage,  navigate, setAddTransferData, setDetailTransferData})
+        }
+      }).catch((error) => console.log(error))
+    }
+  
+  }, [arrayDataSelect])
+
+  useEffect(() => {
+    tipoPac > 0 && setPacTypeState(tipoPac);
+    (tipoPac > 1 && tipoPac < 4) && setPacTypeState2(tipoPac)
+  },[tipoPac])
+
+  const onSubmit = handleSubmit(async ( data: any) => {
+    console.log(data); 
+  })
+
+  const onCancelar = () => {
+    setMessage({
+      title: 'Cancelar Traslado PAC',
+      show: true,
+      description: '¿Estás segur@ que desea cancelar el Traslado PAC?',
+      OkTitle: 'Aceptar',
+      background: true,
+      onOk: () => {
+        setIsdataResetState(true)
+        reset()
+        setMessage({});
+      },
+      onClose: () => {
+        setIsdataResetState(true)
+        reset()
+        setMessage({});
+      },
+  });
+  }
+
+  const onPageChange = event => {
+    setCurrentPage(event.page + 1);
+  };
+
+  const validateHeader = () => {
+    const { TypeResource, validity, pacType } = watchAll;
+    const isValid = TypeResource !== null && TypeResource !== undefined
+      && validity !== null && validity !== undefined
+      && pacType !== null && pacType !== undefined;
+  
+    setIsActivityAdd(!isValid);
+  }
+      
+  return{
+    control,
+    arrayDataSelect,
+    errors,
+    pacTypeState,
+    isdataResetState,
+    currentPage,
+    startIndex,
+    itemsPerPage,
+    watchAll,
+    isActivityAdd,
+    register,
+    setValue,
+    onSubmit,
+    onPageChange,
+    getValues,
+    onCancelar
+  }
 }
 
