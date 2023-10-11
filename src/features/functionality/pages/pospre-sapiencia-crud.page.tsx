@@ -12,8 +12,8 @@ interface IAppProps {
 
 function PosPreSapienciaForm({ action, location }: IAppProps) {
     const { pospre, id } = useParams();
-    const { register, errors, control, onSubmitNewPosPreSapiencia, onSubmitEditPosPreSapiencia, onCancelNew, 
-        onCancelEdit, confirmClose } = usePosPreSapienciaCrudData(pospre, id, location);
+    const { register, errors, control, isBtnDisable, onSubmitNewPosPreSapiencia, onSubmitEditPosPreSapiencia, onCancelNew, 
+        onCancelEdit, confirmClose } = usePosPreSapienciaCrudData(pospre, id, location, action);
     return (
         <div className="crud-page full-height">
             <div className="main-page full-height">
@@ -127,6 +127,7 @@ function PosPreSapienciaForm({ action, location }: IAppProps) {
                                 value="Guardar"
                                 type="submit"
                                 className="button-main huge"
+                                disabled={isBtnDisable}
                             />
                         </div>
                     </FormComponent>
@@ -145,6 +146,7 @@ function PosPreSapienciaForm({ action, location }: IAppProps) {
                         value="Guardar"
                         type="submit"
                         form="pospre-sapiencia-form"
+                        disabled={isBtnDisable}
                     />
                 </div>
             </div>
