@@ -6,6 +6,8 @@ export const FunctionalityRoutes = () => {
     const ProjectsOperationsPage =  lazy(() => import("../project-operation/pages/projects-operations.page"));
     const ProjectsOperationsCrud = lazy(() => import("../project-operation/pages/project-operation-crud.page"));
     
+    const PacCrud = lazy(() => import("../pac/createPac/page/pac-crud.page"));
+    
     const FoundsPage =  lazy(() => import("./pages/funds.page"));
     const FundsCrud = lazy(() => import("./pages/funds-crud.page"));
     
@@ -22,6 +24,7 @@ export const FunctionalityRoutes = () => {
 
   return (
     <Routes>
+
 
 
         <Route path={"/proyecto-funcionamiento"} element={<ProjectsOperationsPage/>} />
