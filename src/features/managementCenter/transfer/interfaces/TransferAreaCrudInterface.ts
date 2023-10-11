@@ -29,7 +29,7 @@ export interface IAddFund{
     fundsSapiencia?: string;
     posPre?: string;
     value?: string;
-    cardId?:string;
+    cardId:string;
     typeTransfer?:string;
 }
   
@@ -79,7 +79,8 @@ export interface IFormPacmonths{
     control: Control<ICreateTransferPacForm, any>,
     count: number,
     pacTypeMonth: 'collected' | 'programmed' | 'both'
-    titleActive: string
+    titleActive: string,
+    setValue: UseFormSetValue<any>;
 }
 
 export interface IMonths{

@@ -9,7 +9,7 @@ import { calculateTotalDestino, calculateTotalOrigen } from "../util";
 function TransferPacCrud(): React.JSX.Element {
 
     const { control, arrayDataSelect, errors, pacTypeState, isdataResetState, startIndex, watchAll, itemsPerPage, isActivityAdd, isBtnDisable,
-        register, setValue, onSubmit, onPageChange, getValues, onCancelar } = useTransferPacCrudData()
+        cardIdService, register, setValue, onSubmit, onPageChange, getValues, onCancelar } = useTransferPacCrudData()
  
     return(
         <div className="crud-page full-height">
@@ -87,6 +87,7 @@ function TransferPacCrud(): React.JSX.Element {
                                             itemsPerPage={itemsPerPage}
                                             startIndex={startIndex}
                                             isActivityAdd={isActivityAdd}
+                                            cardIdService={cardIdService}
                                         />
                                         {
                                             watchAll?.origen?.some(use => Object.keys(use.programmed).length > 0 || Object.keys(use.collected).length > 0 ) &&
@@ -111,6 +112,7 @@ function TransferPacCrud(): React.JSX.Element {
                                             itemsPerPage={itemsPerPage}
                                             startIndex={startIndex}
                                             isActivityAdd={isActivityAdd}
+                                            cardIdService={cardIdService}
                                         />
                                         {
                                             watchAll?.destino?.some(use => Object.keys(use.programmed).length > 0 || Object.keys(use.collected).length > 0 ) &&

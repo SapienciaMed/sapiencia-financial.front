@@ -6,7 +6,7 @@ import { useWatch } from "react-hook-form";
 import { IDropdownPropsFuctionalArea } from "../../../../common/interfaces/global.interface";
 import FormPacmonths  from './form-months-pac'
 
-function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pacTypeState, register, setValue }: IFormTransferPac) {
+function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pacTypeState, cardId, register, setValue }: IFormTransferPac) {
 
     const {width} = useWidth()
     //TODO: Validar si viene igual, con el nuevo servicio para traslado pac
@@ -19,6 +19,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
     const [projectName, setProjectName] = useState('')
 
     useEffect(() => {
+        setValue(`${titleAdd.toLowerCase()}[${count}].cardId`, cardId)
         if (projectName != "") {
             setValue(`${titleAdd.toLowerCase()}[${count}].functionalArea`, (areasByProjectSt.find(e => e.value != null)).id ?? areaIdSelectedSt)
             setValue(`${titleAdd.toLowerCase()}[${count}].projectName`, projectName)
@@ -57,6 +58,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                         pacTypeMonth="programmed"
                         titleAdd={titleAdd}
                         titleActive='Programado'
+                        setValue={setValue}
                     />
             )
         }
@@ -69,6 +71,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                         pacTypeMonth="collected"
                         titleAdd={titleAdd}
                         titleActive='Recaudado'
+                        setValue={setValue}
                     />
             )
         }
@@ -82,6 +85,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                         pacTypeMonth="programmed"
                         titleAdd={titleAdd}
                         titleActive='Programado'
+                        setValue={setValue}
                     />
 
                     <FormPacmonths
@@ -90,12 +94,11 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                         pacTypeMonth="collected"
                         titleAdd={titleAdd}
                         titleActive='Recaudado'
+                        setValue={setValue}
                     />  
                 </>
             )
         }
-
-
     }
 
     return(
@@ -124,7 +127,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     className="select-basic medium"
                     classNameLabel="text-black weight-500 big text-required"
                     placeholder={'Seleccionar'}   
-                    data={[]}
+                    data={functionalArea}
                     filter={true}
                     fieldArray={true}
                     errors={errors}
@@ -141,7 +144,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     placeholder={'Seleccionar'}
                     filter={true}
                     fieldArray={true}
-                    data={[]}
+                    data={funds}
                     errors={errors}
                 />
                 <SelectComponent
@@ -153,7 +156,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     placeholder={'Seleccionar'}
                     filter={true}
                     fieldArray={true}
-                    data={[]}
+                    data={posPre}
                     errors={errors}
                 />
 
@@ -166,7 +169,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     placeholder={'Seleccionar'}
                     filter={true}
                     fieldArray={true}
-                    data={[]}
+                    data={areasByProjectSt}
                     errors={errors}
                 />
 

@@ -30,12 +30,13 @@ export function useTransferPacCrudData() {
     functionalArea: [],
     areas: [],
     funds: [],
-    posPre: []
+    posPre: [],
   })
+  const [ cardIdService, setCardIdService] = useState('')
 
   const {
     control,
-    formState: { errors, isValid },
+    formState: { errors },
     register,
     setValue,
     watch,
@@ -162,6 +163,7 @@ export function useTransferPacCrudData() {
   //Valida que los totales sean iguales y habilita el boton guardar
   useEffect(() => {
     watchAll && setIsBtnDisable( calculateTotalOrigen(watchAll) != '0' && calculateTotalDestino(watchAll) != '0' && (calculateTotalOrigen(watchAll) == calculateTotalDestino(watchAll))  )
+    watchAll.origen?.length > 0 && isTheDataSelectorCompleteOrigen()
   },[watchAll])
 
   const onSubmit = handleSubmit(async ( data: any) => {
@@ -214,7 +216,23 @@ export function useTransferPacCrudData() {
   
     setIsActivityAdd(!isValid);
   }
-      
+  
+  const isTheDataSelectorCompleteOrigen = () => {
+    //Valida si todos los campos estan llenos. ( luego se tiene que enviar el cardId a la consulta)
+    const isComplete = watchAll.origen.some(data => {
+      return data.projectId && data.fundsSapiencia && data.pospreSapiencia
+    })
+
+    //Aca debe hacer una consulta: 
+
+    //------------------
+    const mockCardId = '243567869yugjfhdse2432675ituygjlh34'
+
+    //Luego de recibir una respuesta, capturo el cardId y junto con la data mes a mes se envia 
+    isComplete && setCardIdService(mockCardId)
+    
+  }
+  
   return{
     control,
     arrayDataSelect,
@@ -227,6 +245,7 @@ export function useTransferPacCrudData() {
     watchAll,
     isActivityAdd,
     isBtnDisable,
+    cardIdService,
     register,
     setValue,
     onSubmit,

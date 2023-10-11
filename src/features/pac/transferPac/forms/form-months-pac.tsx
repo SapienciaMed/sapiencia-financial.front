@@ -1,9 +1,14 @@
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { InputNumberComponent } from '../../../../common/components/Form/input-number.component';
 import { IFormPacmonths } from '../../../managementCenter/transfer/interfaces/TransferAreaCrudInterface';
 
-function FormPacmonths({ count, control, titleAdd, pacTypeMonth,titleActive }: IFormPacmonths) {
+function FormPacmonths({ count, control, titleAdd, pacTypeMonth, titleActive, setValue }: IFormPacmonths) {
+
+    //Valor para cuando viene del servicio
+    // useEffect(() => {
+    //     setValue(`${titleAdd}[${count}].${pacTypeMonth}.january`, '15000')
+    // },[])
 
     return(
         <section className="display-flex-direction-column gap-1 mt-3rem">

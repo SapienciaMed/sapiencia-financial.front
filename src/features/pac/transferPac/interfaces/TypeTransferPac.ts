@@ -13,5 +13,6 @@ export interface ICreateFundTransferPac {
     pacTypeState: number,
     itemsPerPage: number,
     startIndex: number,
-    isActivityAdd: boolean
+    isActivityAdd: boolean,
+    cardIdService: string
 }
