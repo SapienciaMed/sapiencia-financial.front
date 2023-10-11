@@ -2,21 +2,23 @@ import { useForm } from 'react-hook-form';
 import { ICreateTransferPacForm } from '../../../managementCenter/transfer/interfaces/TransferAreaCrudInterface';
 import { useContext, useEffect, useState } from 'react';
 import { IArrayDataSelect } from '../../../../common/interfaces/global.interface';
-import { useAdditionsTransfersService } from '../../../managementCenter/hook/additions-transfers-service.hook';
 import { EResponseCodes } from '../../../../common/constants/api.enum';
 import { AppContext } from '../../../../common/contexts/app.context';
 import { handleCommonError } from '../../../../common/utils/handle-common-error';
 import { useNavigate } from 'react-router-dom';
 import { validateTypePac } from '../util/validate-type-pac';
-import { calculateTotalDestino, calculateTotalOrigen } from '../util';
+import { calculateTotalDestino, calculateTotalOrigen, validateTypeResource } from '../util';
 import useYupValidationResolver from '../../../../common/hooks/form-validator.hook';
 import { validationTransferPac } from '../../../../common/schemas/transfer-schema';
+import { usePacTransfersService } from './pac-transfers-service.hook';
+import { IArrayDataSelectHead } from '../interfaces/TypeTransferPac';
+import { IDropdownProps } from '../../../../common/interfaces/select.interface';
 
 export function useTransferPacCrudData() {
 
   const navigate = useNavigate();
   const resolver = useYupValidationResolver( validationTransferPac );
-  const { GetFundsList, GetProjectsList, GetPosPreSapienciaList } = useAdditionsTransfersService()
+  const { ValidityList, ResourcesTypeList } = usePacTransfersService()
   const { setMessage, setAddTransferData, setDetailTransferData } = useContext(AppContext);
   const [ pacTypeState, setPacTypeState ] = useState(1)
   const [ pacTypeState2, setPacTypeState2 ] = useState(4)
@@ -32,6 +34,11 @@ export function useTransferPacCrudData() {
     funds: [],
     posPre: [],
   })
+  const [ arrayDataSelectHead, setArrayDataSelectHead ] = useState<IArrayDataSelectHead>({
+    typeResourceData: [],
+    validityData: [],
+    algo: []
+  })
   const [ cardIdService, setCardIdService] = useState('')
 
   const {
@@ -46,6 +53,8 @@ export function useTransferPacCrudData() {
   } = useForm<ICreateTransferPacForm>({ resolver });
 
   const tipoPac = watch('pacType')
+  const vigencia = watch('validity')
+  const tipoRecurso = watch('TypeResource')
   const watchAll = watch()
 
   const { hasNonEmptyCollected, hasNonEmptyProgrammed, hasDataBeforeReset } = validateTypePac(watchAll, pacTypeState2 );
@@ -67,93 +76,56 @@ export function useTransferPacCrudData() {
     watchAll && validateHeader()
   },[pacTypeState, watchAll])
 
+  //Realiza la peticion para los headear
   useEffect(() => {
-    //TODO: Esta peticion se va cambiar.
-    if (!arrayDataSelect.functionalArea.length && !arrayDataSelect.funds.length && !arrayDataSelect.posPre.length) {
-      GetProjectsList().then(response => {
+    if (arrayDataSelectHead.typeResourceData.length == 1 && arrayDataSelectHead.validityData.length == 1 ) {
+      ValidityList().then(response => {
         if (response.operation.code === EResponseCodes.OK) {
-          const projectArray = response?.data || [];
+          const validityDataServer = response?.data.array || []
 
-          const seenNames = new Set();
-          const arrayEntitiesProject = projectArray.reduce((acc, item) => {
-            const description = item.conceptProject;
-            const name = item.projectId;
-            const value = item.id;
-            const id = item.id;
-            const area = [{
-              name: item.areaFuntional.number,
-              value: item.areaFuntional.id,
-              id: item.areaFuntional.id
-            }]
+          const dataArray: IDropdownProps[] = validityDataServer.map((entity, index) => {
+            return { name: String(entity?.exercise), value: entity?.exercise, id: index +1};
+        });
 
-            if (!seenNames.has(name)) {
-              seenNames.add(name);
-              acc.push({ name, value, id, area, description });
-            }
-
-            return acc;
-          }, []);
-
-          setArrayDataSelect(prevState => ({
+          setArrayDataSelectHead(prevState => ({
             ...prevState,
-            functionalArea: arrayEntitiesProject
-          }));
-        } else {
-          handleCommonError({ response, setMessage, navigate, setAddTransferData, setDetailTransferData})
+            validityData: dataArray
+          }))
+          
         }
-      }).catch((error) => console.log(error))
+      })
+    }
 
-      GetFundsList({ page: "1", perPage: "1" }).then(response => {
+    //Valida si una vigencia se escogio y hace la validacion de los tipo de recursos
+    if (arrayDataSelectHead.validityData.length > 1 && arrayDataSelectHead.typeResourceData.length == 1 && vigencia) {
+
+      const data = { exercise: vigencia }
+ 
+      ResourcesTypeList(data).then(response => {
         if (response.operation.code === EResponseCodes.OK) {
-          const typeTransfersFunds = response.data?.array || [];
+          const validityDataServer = response?.data.array || []
+          const dataArray: IDropdownProps[] = validityDataServer.map((entity, index) => {
+            const sourType = validateTypeResource(entity?.sourceType)
 
-          const seenNames = new Set();
-          const arrayEntitiesFund = typeTransfersFunds.reduce((acc, item) => {
-            const name = item.number;
-            const value = item.id;
-            const id = item.id;
-
-            if (!seenNames.has(name)) {
-              seenNames.add(name);
-              acc.push({ name, value, id });
-            }
-
-            return acc;
-          }, []);
-
-          setArrayDataSelect(prevState => ({ ...prevState, funds: arrayEntitiesFund }));
-
-        } else {
-          handleCommonError({ response, setMessage,  navigate, setAddTransferData, setDetailTransferData})
+            return { name: sourType, value: sourType, id: index +1 };
+        });
+          setArrayDataSelectHead(prevState => ({
+            ...prevState,
+            typeResourceData: dataArray
+          }))
+          
         }
-      }).catch((error) => console.log(error))
-
-      GetPosPreSapienciaList().then(response => {
-        if (response.operation.code === EResponseCodes.OK) {
-          const posPresapientes = response.data?.array || [];
-
-          const seenNames = new Set();
-          const arrayEntitiesPosPres = posPresapientes.reduce((acc, item) => {
-            const name = item.number;
-            const value = item.id;
-            const id = item.id;
-
-            if (!seenNames.has(name)) {
-              seenNames.add(name);
-              acc.push({ name, value, id });
-            }
-
-            return acc;
-          }, []);
-
-          setArrayDataSelect(prevState => ({ ...prevState, posPre: arrayEntitiesPosPres }));
-        } else {
-          handleCommonError({ response, setMessage,  navigate, setAddTransferData, setDetailTransferData})
-        }
-      }).catch((error) => console.log(error))
+      })
     }
   
-  }, [arrayDataSelect])
+  }, [arrayDataSelectHead, vigencia])
+
+  //Realiza la peticion para LISTADOS DINÁMICOS DE PROYECTOS, POSPRE SAPI Y FONDOS
+  useEffect(() => {
+    if (!isActivityAdd) {
+
+    }
+  },[isActivityAdd])
 
   useEffect(() => {
     tipoPac > 0 && setPacTypeState(tipoPac);
@@ -246,6 +218,7 @@ export function useTransferPacCrudData() {
     isActivityAdd,
     isBtnDisable,
     cardIdService,
+    arrayDataSelectHead,
     register,
     setValue,
     onSubmit,

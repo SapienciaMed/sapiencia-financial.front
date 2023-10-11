@@ -2,21 +2,30 @@
 import React from 'react'
 import useCrudService from '../../../../common/hooks/crud-service.hook';
 import { ApiResponse } from '../../../../common/utils';
+import { IPacComplementary, IPacFilters } from '../../interface/Pac';
+import { IPagingData } from '../../../../common/utils/api-response';
+
 
 export const usePacTransfersService = () => {
     const baseURL: string = process.env.urlApiFinancial;
-    const roleUrl: string = "/api/v1/additions"; // posiblemente cambia....
+    const roleUrl: string = "/api/v1/pac"; // posiblemente cambia....
     const { get, post } = useCrudService( baseURL);
 
-    // posiblemente cambiar nombre (obtiene el encabezado)
-    async function GetAllPacTransfers(): Promise<ApiResponse<any[]>> { // cambiar el tipo any
-        const endpoint: string = "/algo-para-consultar-encabezado"; // cambia...
-        return get(`${roleUrl}${endpoint}`);
+    // obtiene vigencia
+    async function ValidityList(): Promise<ApiResponse<IPagingData<IPacFilters>>> {
+        const endpoint: string = "/validity-list"; 
+        return post(`${roleUrl}${endpoint}`);
     }
 
-    // posiblemente cambiar nombre(enviar los parametros para consultar cada ruta)
-    async function GetAllPacAssets(data: Object): Promise<ApiResponse<any[]>> { // cambiar el tipo any
-        const endpoint: string = "/algo-para-consultar-ruta"; // cambia...
+    //Obtiene tipo de recurso dependiendo de la vigencia
+    async function ResourcesTypeList(data: Object): Promise<ApiResponse<IPagingData<IPacFilters>>> { 
+        const endpoint: string = "/resources-type-list"; 
+        return post(`${roleUrl}${endpoint}`, data);
+    }
+
+    
+    async function ListDinamicsRoutes(data: Object): Promise<ApiResponse<IPacComplementary>> { // cambiar el tipo any
+        const endpoint: string = "/lists-dinamics-routes";
         return post(`${roleUrl}${endpoint}`, data);
     }
 
@@ -28,8 +37,9 @@ export const usePacTransfersService = () => {
     
 
     return {
-        GetAllPacTransfers,
-        GetAllPacAssets,
-        CreateTransferPac
+        ValidityList,
+        ListDinamicsRoutes,
+        CreateTransferPac,
+        ResourcesTypeList
     }
 }

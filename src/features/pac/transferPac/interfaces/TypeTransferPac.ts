@@ -1,6 +1,7 @@
 import { ICreateTransferPacForm } from "../../../managementCenter/transfer/interfaces/TransferAreaCrudInterface"
 import { UseFormSetValue, UseFormRegister, FieldErrors, Control } from 'react-hook-form';
 import { IArrayDataSelect } from '../../../../common/interfaces/global.interface';
+import { IDropdownProps } from "../../../../common/interfaces/select.interface";
 
 export interface ICreateFundTransferPac {
     titleAdd: 'origen' | 'destino',
@@ -15,4 +16,10 @@ export interface ICreateFundTransferPac {
     startIndex: number,
     isActivityAdd: boolean,
     cardIdService: string
+}
+
+export interface IArrayDataSelectHead {
+    typeResourceData: IDropdownProps[],
+    validityData: IDropdownProps[],
+    algo: IDropdownProps[],
 }

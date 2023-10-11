@@ -9,7 +9,7 @@ import { calculateTotalDestino, calculateTotalOrigen } from "../util";
 function TransferPacCrud(): React.JSX.Element {
 
     const { control, arrayDataSelect, errors, pacTypeState, isdataResetState, startIndex, watchAll, itemsPerPage, isActivityAdd, isBtnDisable,
-        cardIdService, register, setValue, onSubmit, onPageChange, getValues, onCancelar } = useTransferPacCrudData()
+        cardIdService, arrayDataSelectHead, register, setValue, onSubmit, onPageChange, getValues, onCancelar } = useTransferPacCrudData()
  
     return(
         <div className="crud-page full-height">
@@ -46,10 +46,7 @@ function TransferPacCrud(): React.JSX.Element {
                                         label="Vigencia"
                                         classNameLabel="text-black weight-500 biggest text-required"
                                         direction={EDirection.column}
-                                        data={[
-                                            { id: '1', name: 'Seleccione', value: null},
-                                            { id: "2", name: "2023", value: "2023" },
-                                        ]}
+                                        data={arrayDataSelectHead.validityData}
                                         control={control}
                                         isValidateName={false}
                                     />
@@ -60,11 +57,7 @@ function TransferPacCrud(): React.JSX.Element {
                                         label="Tipo de recurso"
                                         classNameLabel="text-black weight-500 biggest text-required"
                                         direction={EDirection.column}
-                                        data={[
-                                            { id: '1', name: 'Seleccione', value: null},
-                                            { id: "2", name: "Transferencias distritales", value: "Transferencias distritales" },
-                                            { id: "3", name: "Recursos propios", value: "Recursos propios" },
-                                        ]}
+                                        data={arrayDataSelectHead.typeResourceData}
                                         control={control}
                                         isValidateName={false}
                                     />
