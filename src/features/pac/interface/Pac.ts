@@ -15,3 +15,13 @@ export interface IPac {
     userCreate: string;
     dateCreate: string
 };
+
+
+export interface IHeadPac {
+    exercise:number;
+    typePac:string;
+    typeSource:string;
+    file:any;
+
+
+}
