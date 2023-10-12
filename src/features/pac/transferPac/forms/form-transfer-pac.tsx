@@ -9,8 +9,8 @@ import FormPacmonths  from './form-months-pac'
 function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pacTypeState, cardId, register, setValue }: IFormTransferPac) {
 
     const {width} = useWidth()
-    //TODO: Validar si viene igual, con el nuevo servicio para traslado pac
-    const { functionalArea, funds, posPre, } = arrayDataSelect
+    const { functionalArea, fundsSapiencia, pospreSapiencia, } = arrayDataSelect
+
     const formOrigen = useWatch({ control, name: titleAdd })
 
     const [projectIdSelectedSt, setProjectIdSelectedSt] = useState<string>('')
@@ -32,21 +32,22 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
 
     const optionSelected = (option: any) => {
         if (option) {
-            setProjectName(functionalArea.find(e => e.value == option)?.description)
+            setProjectName(functionalArea.find(e => e.value == option).nameProject)
            processFunctionalArea(option)
         }
     }
 
     const processFunctionalArea = (option: any) => {
-        const areaList = functionalArea.filter(props => props.value != null).map(propsFunctionalArea => {
-            Object(propsFunctionalArea).area[0]['projectId'] = propsFunctionalArea?.id
-            return Object(propsFunctionalArea).area
-        });
-        const area = areaList.flat().filter(propsAreaList => propsAreaList.projectId == option && propsAreaList.value !== null);
+        const areaList = functionalArea.filter(prop => prop.id == option && prop.value !== null).map(prop => ({
+            name: prop.numberFunctionalArea,
+            id: prop.idProjectPlanning,
+            value: prop.idProjectPlanning
+
+        }))
 
         setProjectIdSelectedSt(option)
-        setAreaIdSelectedSt(area[0]?.id)
-        setAreasByProjectSt(area)
+        setAreaIdSelectedSt(areaList[0]?.id)
+        setAreasByProjectSt(areaList)
     }
 
     const renderElement = () =>  {
@@ -133,8 +134,6 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     errors={errors}
                     optionSelected={optionSelected}
                 />
-
-              
                 <SelectComponent
                     idInput={`${titleAdd}[${count}].fundsSapiencia`}
                     control={control}
@@ -144,7 +143,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     placeholder={'Seleccionar'}
                     filter={true}
                     fieldArray={true}
-                    data={funds}
+                    data={fundsSapiencia}
                     errors={errors}
                 />
                 <SelectComponent
@@ -156,7 +155,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     placeholder={'Seleccionar'}
                     filter={true}
                     fieldArray={true}
-                    data={posPre}
+                    data={pospreSapiencia}
                     errors={errors}
                 />
 
@@ -177,8 +176,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     idInput={`${titleAdd}[${count}].projectName`}
                     label="Nombre proyecto"
                     typeInput="text"
-                    className="input-basic medium"
-                    placeholder={'Seleccionar'}
+                    className="input-basic medium"                     
                     classNameLabel="text-black weight-500 big text-required"
                     errors={errors}
                     register={register}

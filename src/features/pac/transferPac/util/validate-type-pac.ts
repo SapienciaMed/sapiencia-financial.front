@@ -1,25 +1,22 @@
 import { ICreateTransferPacForm } from "../../../managementCenter/transfer/interfaces/TransferAreaCrudInterface";
 
+export const validateTypePac = (watchAll: ICreateTransferPacForm) => {
 
-export const validateTypePac = (watchAll: ICreateTransferPacForm, pacTypeState2: number) => {
+    const hasNonEmptyAll = watchAll.origen?.concat(watchAll?.destino)?.some(item => {
+        return (item.managerCenter !='' && item.managerCenter != undefined) 
+            || (item.functionalArea !='' && item.functionalArea != undefined)
+            || (item?.funds !=''  && item?.funds != undefined)
+            || (item?.projectName !='' && item?.projectName != undefined)
+            || (item?.fundsSapiencia !='' && item?.fundsSapiencia != undefined)
+            || (item?.pospreSapiencia !='' && item?.pospreSapiencia != undefined)
+    });
 
-    const hasNonEmptyCollected = watchAll.origen?.concat(watchAll?.destino)?.some(item => {
-        const collectedValues = Object?.values(item?.collected);
-        return collectedValues?.some(value => value !== "");
-    });
-    
-    const hasNonEmptyProgrammed = watchAll.origen?.concat(watchAll?.destino).some(item => {
-        const programmedValues = Object.values(item.programmed);
-        return programmedValues.some(value => value !== "");
-    });
-    
     const hasDataBeforeReset: boolean = watchAll?.origen?.concat(watchAll.destino)?.some(item => {
         const collectedValues = Object.values(item.collected);
         const programmedValues= Object.values(item.programmed)
-
-        return pacTypeState2 < 4 ? collectedValues.some(value => value !== "") || programmedValues.some(value => value !== "") : false
+        return collectedValues.some(value => value !== "") || programmedValues.some(value => value !== "")
     });
 
-    return { hasNonEmptyCollected, hasNonEmptyProgrammed, hasDataBeforeReset };
+    return { hasDataBeforeReset, hasNonEmptyAll };
 }
 

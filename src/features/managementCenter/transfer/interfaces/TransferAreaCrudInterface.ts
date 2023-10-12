@@ -1,5 +1,6 @@
 import { Control, UseFormRegister, FieldErrors, UseFormSetValue, UseFormGetValues, UseFormResetField, UseFieldArrayRemove } from 'react-hook-form';
 import { IArrayDataSelect } from "../../../../common/interfaces/global.interface";
+import { IArrayDataSelectPac } from '../../../pac/transferPac/interfaces/TypeTransferPac';
 
 export interface ICreateSourceForm{
     origen: IAddFund[];
@@ -65,7 +66,7 @@ export interface IAddFormCard {
 export interface IFormTransferPac {
     titleAdd?: 'origen' | 'destino',
     control: Control<ICreateTransferPacForm, any>,
-    arrayDataSelect: IArrayDataSelect,
+    arrayDataSelect: IArrayDataSelectPac,
     errors: FieldErrors<ICreateTransferPacForm>,
     count: number,
     cardId: string;

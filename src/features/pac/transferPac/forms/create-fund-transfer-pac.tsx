@@ -7,7 +7,7 @@ import { useWidth } from "../../../../common/hooks/use-width";
 import { ICreateFundTransferPac } from "../interfaces/TypeTransferPac";
 
 function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pacTypeState, isdataReset, itemsPerPage,
-    startIndex, isActivityAdd, register, setValue }:ICreateFundTransferPac ) {
+    startIndex, isActivityAdd, register, setValue, setIsdataResetState }:ICreateFundTransferPac ) {
    
     const {width} = useWidth()
 
@@ -56,11 +56,15 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
     }
 
     const visibleFields = fields.slice(startIndex, startIndex + itemsPerPage);
-
+    
     useEffect(() => {
         isdataReset && remove()
     },[isdataReset])
-
+    
+    
+    useEffect(() => {
+        visibleFields.length == 0 && setIsdataResetState(false)
+    },[visibleFields])
 
     return(
         <div className="display-flex-direction-column padding paddingBotom gap-1">

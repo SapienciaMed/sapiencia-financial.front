@@ -24,7 +24,7 @@ export const usePacTransfersService = () => {
     }
 
     
-    async function ListDinamicsRoutes(data: Object): Promise<ApiResponse<IPacComplementary>> { // cambiar el tipo any
+    async function ListDinamicsRoutes(data: Object): Promise<ApiResponse<IPacComplementary>> {
         const endpoint: string = "/lists-dinamics-routes";
         return post(`${roleUrl}${endpoint}`, data);
     }

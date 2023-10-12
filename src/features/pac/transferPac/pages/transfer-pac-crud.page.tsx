@@ -9,7 +9,8 @@ import { calculateTotalDestino, calculateTotalOrigen } from "../util";
 function TransferPacCrud(): React.JSX.Element {
 
     const { control, arrayDataSelect, errors, pacTypeState, isdataResetState, startIndex, watchAll, itemsPerPage, isActivityAdd, isBtnDisable,
-        cardIdService, arrayDataSelectHead, register, setValue, onSubmit, onPageChange, getValues, onCancelar } = useTransferPacCrudData()
+        cardIdService, arrayDataSelectHead, register, setValue, onSubmit, onPageChange, getValues, 
+        onCancelar, setPacTypeState, setTypeValidityState, setIsdataResetState } = useTransferPacCrudData()
  
     return(
         <div className="crud-page full-height">
@@ -38,6 +39,7 @@ function TransferPacCrud(): React.JSX.Element {
                                         ]}
                                         control={control}
                                         isValidateName={false}
+                                        optionSelected={(valor) => setPacTypeState(valor)}
                                     />
                                     <SelectComponent
                                         idInput="validity"
@@ -49,6 +51,7 @@ function TransferPacCrud(): React.JSX.Element {
                                         data={arrayDataSelectHead.validityData}
                                         control={control}
                                         isValidateName={false}
+                                        optionSelected={(valueValidity) => setTypeValidityState(valueValidity)}
                                     />
                                     <SelectComponent
                                         idInput="TypeResource"
@@ -81,6 +84,7 @@ function TransferPacCrud(): React.JSX.Element {
                                             startIndex={startIndex}
                                             isActivityAdd={isActivityAdd}
                                             cardIdService={cardIdService}
+                                            setIsdataResetState={setIsdataResetState}
                                         />
                                         {
                                             watchAll?.origen?.some(use => Object.keys(use.programmed).length > 0 || Object.keys(use.collected).length > 0 ) &&
@@ -106,6 +110,7 @@ function TransferPacCrud(): React.JSX.Element {
                                             startIndex={startIndex}
                                             isActivityAdd={isActivityAdd}
                                             cardIdService={cardIdService}
+                                            setIsdataResetState={setIsdataResetState}
                                         />
                                         {
                                             watchAll?.destino?.some(use => Object.keys(use.programmed).length > 0 || Object.keys(use.collected).length > 0 ) &&

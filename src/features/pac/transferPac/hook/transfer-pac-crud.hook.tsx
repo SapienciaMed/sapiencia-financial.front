@@ -1,43 +1,41 @@
 import { useForm } from 'react-hook-form';
 import { ICreateTransferPacForm } from '../../../managementCenter/transfer/interfaces/TransferAreaCrudInterface';
 import { useContext, useEffect, useState } from 'react';
-import { IArrayDataSelect } from '../../../../common/interfaces/global.interface';
 import { EResponseCodes } from '../../../../common/constants/api.enum';
 import { AppContext } from '../../../../common/contexts/app.context';
 import { handleCommonError } from '../../../../common/utils/handle-common-error';
 import { useNavigate } from 'react-router-dom';
 import { validateTypePac } from '../util/validate-type-pac';
-import { calculateTotalDestino, calculateTotalOrigen, validateTypeResource } from '../util';
+import { calculateTotalDestino, calculateTotalOrigen, validateTypeResource, validateTypeResourceServices } from '../util';
 import useYupValidationResolver from '../../../../common/hooks/form-validator.hook';
 import { validationTransferPac } from '../../../../common/schemas/transfer-schema';
 import { usePacTransfersService } from './pac-transfers-service.hook';
-import { IArrayDataSelectHead } from '../interfaces/TypeTransferPac';
+import { IArrayDataSelectHead, IArrayDataSelectPac } from '../interfaces/TypeTransferPac';
 import { IDropdownProps } from '../../../../common/interfaces/select.interface';
 
 export function useTransferPacCrudData() {
 
   const navigate = useNavigate();
   const resolver = useYupValidationResolver( validationTransferPac );
-  const { ValidityList, ResourcesTypeList } = usePacTransfersService()
+  const { ValidityList, ResourcesTypeList, ListDinamicsRoutes } = usePacTransfersService()
   const { setMessage, setAddTransferData, setDetailTransferData } = useContext(AppContext);
   const [ pacTypeState, setPacTypeState ] = useState(1)
-  const [ pacTypeState2, setPacTypeState2 ] = useState(4)
+  const [ pacTypeState2, setPacTypeState2 ] = useState(1)
+  const [ typeValidityState, setTypeValidityState ] = useState(0)
   const [ isActivityAdd, setIsActivityAdd ] = useState<boolean>(true)
   const [ isdataResetState, setIsdataResetState ] = useState<boolean>(false)
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 2;
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
+  const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelectPac>({
     functionalArea: [],
-    areas: [],
-    funds: [],
-    posPre: [],
+    fundsSapiencia: [],
+    pospreSapiencia: [],
   })
   const [ arrayDataSelectHead, setArrayDataSelectHead ] = useState<IArrayDataSelectHead>({
     typeResourceData: [],
     validityData: [],
-    algo: []
   })
   const [ cardIdService, setCardIdService] = useState('')
 
@@ -57,50 +55,42 @@ export function useTransferPacCrudData() {
   const tipoRecurso = watch('TypeResource')
   const watchAll = watch()
 
-  const { hasNonEmptyCollected, hasNonEmptyProgrammed, hasDataBeforeReset } = validateTypePac(watchAll, pacTypeState2 );
-
-  //Resetea el formulario, cuando se cambia de pac y algun valor del mes esta lleno
+  const { hasDataBeforeReset, hasNonEmptyAll } = validateTypePac(watchAll);
+  
+  //Resetea el formulario, cuando se cambia de pac y algun valor del formulario este lleno
   useEffect(() => {
-    if (pacTypeState == 2 && watchAll ) {
-      pacTypeState2 != 4 ? setIsdataResetState(hasNonEmptyCollected)  : setIsdataResetState(true)
+    if (pacTypeState >= 2 && pacTypeState <= 4) {
+      if ((hasDataBeforeReset || hasNonEmptyAll) && pacTypeState2 !== pacTypeState) {
+        setIsdataResetState(true);
+      } else {
+        setPacTypeState2(pacTypeState);
+      }
     }
-    
-    if (pacTypeState == 3 && watchAll ) {
-      pacTypeState2 != 4 ? setIsdataResetState(hasNonEmptyProgrammed) : setIsdataResetState(true)
-    }
-    
-    if (pacTypeState == 4 && watchAll) {
-      setPacTypeState2(4)
-      setIsdataResetState(hasDataBeforeReset)    
-    }
-    watchAll && validateHeader()
-  },[pacTypeState, watchAll])
+  }, [pacTypeState, hasDataBeforeReset, hasNonEmptyAll, pacTypeState2]);
 
-  //Realiza la peticion para los headear
   useEffect(() => {
-    if (arrayDataSelectHead.typeResourceData.length == 1 && arrayDataSelectHead.validityData.length == 1 ) {
-      ValidityList().then(response => {
-        if (response.operation.code === EResponseCodes.OK) {
-          const validityDataServer = response?.data.array || []
+    ValidityList().then(response => {
+      if (response.operation.code === EResponseCodes.OK) {
+        const validityDataServer = response?.data.array || []
 
-          const dataArray: IDropdownProps[] = validityDataServer.map((entity, index) => {
-            return { name: String(entity?.exercise), value: entity?.exercise, id: index +1};
-        });
+        const dataArray: IDropdownProps[] = validityDataServer.map((entity, index) => {
+          return { name: String(entity?.exercise), value: entity?.exercise, id: index +1};
+      });
 
-          setArrayDataSelectHead(prevState => ({
-            ...prevState,
-            validityData: dataArray
-          }))
-          
-        }
-      })
-    }
+        setArrayDataSelectHead(prevState => ({
+          ...prevState,
+          validityData: dataArray
+        }))
+        
+      }
+    })
+  },[])
 
-    //Valida si una vigencia se escogio y hace la validacion de los tipo de recursos
-    if (arrayDataSelectHead.validityData.length > 1 && arrayDataSelectHead.typeResourceData.length == 1 && vigencia) {
-
+  useEffect(() => {
+    //Valida si una vigencia se escogio y hace la peticion de tipode recurso
+    if (typeValidityState > 1) {
       const data = { exercise: vigencia }
- 
+
       ResourcesTypeList(data).then(response => {
         if (response.operation.code === EResponseCodes.OK) {
           const validityDataServer = response?.data.array || []
@@ -117,25 +107,82 @@ export function useTransferPacCrudData() {
         }
       })
     }
-  
-  }, [arrayDataSelectHead, vigencia])
+  },[typeValidityState])
 
   //Realiza la peticion para LISTADOS DINÁMICOS DE PROYECTOS, POSPRE SAPI Y FONDOS
   useEffect(() => {
     if (!isActivityAdd) {
-
+      const dataListroute = {
+        page: '1',
+        perPage: '1000',
+        exercise: vigencia,
+        resourceType: validateTypeResourceServices(String(tipoRecurso)),
+        pacType: tipoPac
+      }
+    
+      ListDinamicsRoutes(dataListroute)
+        .then(response => {
+          if (response.operation.code === EResponseCodes.OK) {
+            const dinamicData = response?.data;
+    
+            const uniqueProjects = Array.from(new Set(dinamicData.listProjects.map(project => project.projectCode))).map(projectCode => {
+              const item = dinamicData.listProjects.find(project => project.projectCode === projectCode);
+              return {
+                name: item.projectCode,
+                value: item.idVinculation,
+                id: item.idVinculation,
+                nameProject: item.projectName,
+                functionalArea: item.numberFunctionalArea,
+                idProjectPlanning: item.idProjectPlanning,
+                numberFunctionalArea: item.numberFunctionalArea
+              };
+            });
+    
+            setArrayDataSelect(prevState => ({
+              ...prevState,
+              functionalArea: uniqueProjects
+            }));
+    
+            const uniqueFunds = Array.from(new Set(dinamicData.listFunds.map(fund => fund.fundCode))).map(fundCode => {
+              const item = dinamicData.listFunds.find(fund => fund.fundCode === fundCode);
+              return {
+                name: item.fundCode,
+                value: item.idFund,
+                id: item.idFund
+              };
+            });
+    
+            setArrayDataSelect(prevState => ({
+              ...prevState,
+              fundsSapiencia: uniqueFunds
+            }));
+    
+            const uniquePospreSapi = Array.from(new Set(dinamicData.listPospreSapi.map(pospreSapi => pospreSapi.idPosPreOrig))).map(idPosPreOrig => {
+              const item = dinamicData.listPospreSapi.find(pospreSapi => pospreSapi.idPosPreOrig === idPosPreOrig);
+              return {
+                name: item.numberCodeSapi,
+                value: item.idPosPreSapi,
+                id: item.idPosPreSapi,
+                descriptionSapi: item.descriptionSapi,
+                idPosPreOrig: item.idPosPreOrig,
+                numberCodeOrig: item.numberCodeOrig
+              };
+            });
+    
+            setArrayDataSelect(prevState => ({
+              ...prevState,
+              pospreSapiencia: uniquePospreSapi
+            }));
+          }
+        });
     }
   },[isActivityAdd])
-
-  useEffect(() => {
-    tipoPac > 0 && setPacTypeState(tipoPac);
-    (tipoPac > 1 && tipoPac < 4) && setPacTypeState2(tipoPac)
-  },[tipoPac])
 
   //Valida que los totales sean iguales y habilita el boton guardar
   useEffect(() => {
     watchAll && setIsBtnDisable( calculateTotalOrigen(watchAll) != '0' && calculateTotalDestino(watchAll) != '0' && (calculateTotalOrigen(watchAll) == calculateTotalDestino(watchAll))  )
     watchAll.origen?.length > 0 && isTheDataSelectorCompleteOrigen()
+    watchAll && validateHeader()
   },[watchAll])
 
   const onSubmit = handleSubmit(async ( data: any) => {
@@ -197,6 +244,9 @@ export function useTransferPacCrudData() {
 
     //Aca debe hacer una consulta: 
 
+    isComplete && console.log('consulta servicio para programdo o recaudado');
+    
+
     //------------------
     const mockCardId = '243567869yugjfhdse2432675ituygjlh34'
 
@@ -224,7 +274,10 @@ export function useTransferPacCrudData() {
     onSubmit,
     onPageChange,
     getValues,
-    onCancelar
+    onCancelar,
+    setPacTypeState,
+    setTypeValidityState,
+    setIsdataResetState
   }
 }
 
