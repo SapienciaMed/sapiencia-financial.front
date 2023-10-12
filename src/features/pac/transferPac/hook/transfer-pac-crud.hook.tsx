@@ -3,9 +3,7 @@ import { ICreateTransferPacForm } from '../../../managementCenter/transfer/inter
 import { useContext, useEffect, useState } from 'react';
 import { EResponseCodes } from '../../../../common/constants/api.enum';
 import { AppContext } from '../../../../common/contexts/app.context';
-import { handleCommonError } from '../../../../common/utils/handle-common-error';
-import { useNavigate } from 'react-router-dom';
-import { validateTypePac } from '../util/validate-type-pac';
+import { isvalidateTypePac } from '../util/is-validate-type-pac';
 import { calculateTotalDestino, calculateTotalOrigen, validateTypeResource, validateTypeResourceServices } from '../util';
 import useYupValidationResolver from '../../../../common/hooks/form-validator.hook';
 import { validationTransferPac } from '../../../../common/schemas/transfer-schema';
@@ -15,10 +13,9 @@ import { IDropdownProps } from '../../../../common/interfaces/select.interface';
 
 export function useTransferPacCrudData() {
 
-  const navigate = useNavigate();
   const resolver = useYupValidationResolver( validationTransferPac );
   const { ValidityList, ResourcesTypeList, ListDinamicsRoutes } = usePacTransfersService()
-  const { setMessage, setAddTransferData, setDetailTransferData } = useContext(AppContext);
+  const { setMessage } = useContext(AppContext);
   const [ pacTypeState, setPacTypeState ] = useState(1)
   const [ pacTypeState2, setPacTypeState2 ] = useState(1)
   const [ typeValidityState, setTypeValidityState ] = useState(0)
@@ -55,7 +52,7 @@ export function useTransferPacCrudData() {
   const tipoRecurso = watch('TypeResource')
   const watchAll = watch()
 
-  const { hasDataBeforeReset, hasNonEmptyAll } = validateTypePac(watchAll);
+  const { hasDataBeforeReset, hasNonEmptyAll } = isvalidateTypePac(watchAll);
   
   //Resetea el formulario, cuando se cambia de pac y algun valor del formulario este lleno
   useEffect(() => {
@@ -178,7 +175,6 @@ export function useTransferPacCrudData() {
     }
   },[isActivityAdd])
 
-  //Valida que los totales sean iguales y habilita el boton guardar
   useEffect(() => {
     watchAll && setIsBtnDisable( calculateTotalOrigen(watchAll) != '0' && calculateTotalDestino(watchAll) != '0' && (calculateTotalOrigen(watchAll) == calculateTotalDestino(watchAll))  )
     watchAll.origen?.length > 0 && isTheDataSelectorCompleteOrigen()
@@ -243,6 +239,19 @@ export function useTransferPacCrudData() {
     })
 
     //Aca debe hacer una consulta: 
+    const alg = {
+      page: 1,
+      perPage: 1000000,
+      pacType: "Ambos",
+      exercise: 2099,
+      resourceType: "Distrital",
+      managementCenter: "91500000",
+      idProjectVinculation: 12,
+      idBudget: 23,
+      idPospreSapiencia: 170,
+      idFund: 58,
+      idCardTemplate: "FDSAS-DSFJ342012-3"
+    }
 
     isComplete && console.log('consulta servicio para programdo o recaudado');
     

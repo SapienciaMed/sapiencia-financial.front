@@ -1,6 +1,6 @@
 import { ICreateTransferPacForm } from "../../../managementCenter/transfer/interfaces/TransferAreaCrudInterface";
 
-export const validateTypePac = (watchAll: ICreateTransferPacForm) => {
+export const isvalidateTypePac = (watchAll: ICreateTransferPacForm) => {
 
     const hasNonEmptyAll = watchAll.origen?.concat(watchAll?.destino)?.some(item => {
         return (item.managerCenter !='' && item.managerCenter != undefined) 
