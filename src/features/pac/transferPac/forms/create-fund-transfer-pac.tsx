@@ -6,14 +6,14 @@ import { IAddFundPac } from "../../../managementCenter/transfer/interfaces/Trans
 import { useWidth } from "../../../../common/hooks/use-width";
 import { ICreateFundTransferPac } from "../interfaces/TypeTransferPac";
 
-function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pacTypeState, isdataReset, itemsPerPage,
+function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pacTypeState, isdataReset, itemsPerPage, cardIdService,
     startIndex, isActivityAdd, register, setValue, setIsdataResetState }:ICreateFundTransferPac ) {
    
     const {width} = useWidth()
 
     const { fields, append, remove } = useFieldArray({
         control,
-        name: titleAdd  
+        name: titleAdd ,
     });
 
     const initialValue: IAddFundPac = {
@@ -66,6 +66,13 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
         visibleFields.length == 0 && setIsdataResetState(false)
     },[visibleFields])
 
+    useEffect(() => {
+        // console.log("encontro la card: ", fields.filter(us => us.id == cardIdService));
+
+        fields.map(us => console.log(us.id))
+        
+    },[fields, cardIdService])
+
     return(
         <div className="display-flex-direction-column padding paddingBotom gap-1">
             <button 
@@ -86,7 +93,7 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
                             </div>
                             <FormTransferPac
                                 arrayDataSelect={arrayDataSelect}
-                                cardId=""
+                                cardId={field.id}
                                 control={control}
                                 count={startIndex + index} 
                                 errors={errors}

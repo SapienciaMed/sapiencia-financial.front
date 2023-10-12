@@ -10,6 +10,7 @@ import { validationTransferPac } from '../../../../common/schemas/transfer-schem
 import { usePacTransfersService } from './pac-transfers-service.hook';
 import { IArrayDataSelectHead, IArrayDataSelectPac } from '../interfaces/TypeTransferPac';
 import { IDropdownProps } from '../../../../common/interfaces/select.interface';
+import { validateTypePac } from '../util/validate-type-pac';
 
 export function useTransferPacCrudData() {
 
@@ -235,29 +236,33 @@ export function useTransferPacCrudData() {
   const isTheDataSelectorCompleteOrigen = () => {
     //Valida si todos los campos estan llenos. ( luego se tiene que enviar el cardId a la consulta)
     const isComplete = watchAll.origen.some(data => {
-      return data.projectId && data.fundsSapiencia && data.pospreSapiencia
+      return data.projectId && data.fundsSapiencia && data.pospreSapiencia && data.managerCenter && data.projectName && data.functionalArea
     })
 
     //Aca debe hacer una consulta: 
-    const alg = {
-      page: 1,
-      perPage: 1000000,
-      pacType: "Ambos",
-      exercise: 2099,
-      resourceType: "Distrital",
-      managementCenter: "91500000",
-      idProjectVinculation: 12,
-      idBudget: 23,
-      idPospreSapiencia: 170,
-      idFund: 58,
-      idCardTemplate: "FDSAS-DSFJ342012-3"
+
+    if (isComplete) {
+      
+      const alg = watchAll?.origen?.map(use => {
+        return {
+          page: 1,
+          perPage: 1000000,
+          pacType: validateTypePac(watchAll.pacType),
+          exercise: vigencia,
+          resourceType: validateTypeResourceServices(String(tipoRecurso)),
+          managementCenter: use.managerCenter,
+          idProjectVinculation: use.functionalArea,
+          idBudget:  arrayDataSelect?.pospreSapiencia?.find(value => use.pospreSapiencia == value.id)?.idPosPreOrig,
+          idPospreSapiencia: use.pospreSapiencia,
+          idFund: use.fundsSapiencia,
+          idCardTemplate: use.cardId
+        }
+      })
+      // console.log('consulta servicio para programdo o recaudado', alg)
     }
 
-    isComplete && console.log('consulta servicio para programdo o recaudado');
-    
-
     //------------------
-    const mockCardId = '243567869yugjfhdse2432675ituygjlh34'
+    const mockCardId = '243567869yugjfhdse2432675ituygjlh341'
 
     //Luego de recibir una respuesta, capturo el cardId y junto con la data mes a mes se envia 
     isComplete && setCardIdService(mockCardId)

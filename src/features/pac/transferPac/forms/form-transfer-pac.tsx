@@ -19,7 +19,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
     const [projectName, setProjectName] = useState('')
 
     useEffect(() => {
-        setValue(`${titleAdd.toLowerCase()}[${count}].cardId`, cardId)
+        setValue(`${titleAdd.toLowerCase()}[${count}].cardId`, `243567869yugjfhdse2432675ituygjlh34${count}`) //cardId
         if (projectName != "") {
             setValue(`${titleAdd.toLowerCase()}[${count}].functionalArea`, (areasByProjectSt.find(e => e.value != null)).id ?? areaIdSelectedSt)
             setValue(`${titleAdd.toLowerCase()}[${count}].projectName`, projectName)
