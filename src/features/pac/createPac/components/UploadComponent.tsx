@@ -67,7 +67,7 @@ export const UploadComponent = (props: Atributos) => {
   const headerTemplate = (options) => {    
     
     const { className, chooseButton, uploadButton, cancelButton } = options;
-    const value = totalSize / 10000;
+    const value = totalSize / 100000;
     const formatedValue = fileUploadRef && fileUploadRef.current ? fileUploadRef.current.formatSize(totalSize) : "0 B";
 
     return (
@@ -76,7 +76,7 @@ export const UploadComponent = (props: Atributos) => {
         {uploadButton}
         {cancelButton}
         <div className="flex align-items-center gap-3 ml-auto">
-          <span>{formatedValue} / 1 MB</span>
+          <span>{formatedValue} / 10 MB</span>
           <ProgressBar value={value} showValue={false} style={{ width: "10rem", height: "12px" }}></ProgressBar>
         </div>
       </div>

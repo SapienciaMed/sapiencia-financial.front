@@ -22,6 +22,9 @@ export interface IHeadPac {
     typePac:string;
     typeSource:string;
     file:any;
-
-
 }
+
+export interface IErrorTablePac{
+    message:number;
+    error:string;
+} 
