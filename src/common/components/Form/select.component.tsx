@@ -96,7 +96,7 @@ export function SelectComponent({
           render={({ field }) => {
             return <Dropdown
               	id={field.name}
-              	value={data ? (data.find((row) => row.value == field.value)?.value || data.filter((row) => row.name != 'Seleccione' || row.value != undefined).find(value => value?.projectId == field?.value)?.value) : null}
+              	value={data && (data.find((row) => row.value == field.value)?.value || fieldArray && data.filter((row) => row.name != 'Seleccione' || row.value != undefined).find(value => value?.projectId == field?.value)?.value)}
               	onChange={(e) => {field.onChange(e.value); optionSelected && optionSelected(e.value)}}
               	options={data}
               	optionLabel="name"
