@@ -1,6 +1,7 @@
-import { Control, UseFormRegister, FieldErrors, UseFormSetValue, UseFormGetValues, UseFormResetField, UseFieldArrayRemove } from 'react-hook-form';
+import { Control, UseFormRegister, FieldErrors, UseFormSetValue, UseFormGetValues} from 'react-hook-form';
 import { IArrayDataSelect } from "../../../../common/interfaces/global.interface";
 import { IArrayDataSelectPac } from '../../../pac/transferPac/interfaces/TypeTransferPac';
+import { IAnnualRoute } from '../../../pac/interface/Pac';
 
 export interface ICreateSourceForm{
     origen: IAddFund[];
@@ -74,8 +75,9 @@ export interface IFormTransferPac {
     register: UseFormRegister<ICreateTransferPacForm>,
     pacTypeState: number,
     annualDataRoutes: {
-        annualRoute: any[]
+        annualRoute: IAnnualRoute[]
     }
+    changeValueOfSelect: (valor: any) => void
 }
 
 export interface IFormPacmonths{

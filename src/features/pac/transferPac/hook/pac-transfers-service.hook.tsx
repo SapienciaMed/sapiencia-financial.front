@@ -2,13 +2,13 @@
 import React from 'react'
 import useCrudService from '../../../../common/hooks/crud-service.hook';
 import { ApiResponse } from '../../../../common/utils';
-import { IPacAnnualAdapter, IPacComplementary, IPacFilters } from '../../interface/Pac';
+import { DataTransferPac, IPacAnnualAdapter, IPacComplementary, IPacFilters } from '../../interface/Pac';
 import { IPagingData } from '../../../../common/utils/api-response';
 
 
 export const usePacTransfersService = () => {
     const baseURL: string = process.env.urlApiFinancial;
-    const roleUrl: string = "/api/v1/pac"; // posiblemente cambia....
+    const roleUrl: string = "/api/v1/pac"; 
     const { get, post } = useCrudService( baseURL);
 
     // obtiene vigencia
@@ -34,17 +34,15 @@ export const usePacTransfersService = () => {
         return post(`${roleUrl}${endpoint}`, data);
     }
 
-    // posiblemente cambiar nombre(enviar los parametros para guardar cada ruta)
-    async function CreateTransferPac(data: Object): Promise<ApiResponse<any[]>> { // cambiar el tipo any
-        const endpoint: string = "/algo-para-gurdar"; // cambia...
+    async function TransfersOnPac(data: DataTransferPac): Promise<ApiResponse<any>> { // cambiar el tipo any
+        const endpoint: string = "/transfers-pac"; 
         return post(`${roleUrl}${endpoint}`,data);
     }
     
-
     return {
         ValidityList,
         ListDinamicsRoutes,
-        CreateTransferPac,
+        TransfersOnPac,
         ResourcesTypeList,
         SearchAnnualDataRoutes
     }

@@ -8,8 +8,8 @@ import { calculateTotalDestino, calculateTotalOrigen } from "../util";
 
 function TransferPacCrud(): React.JSX.Element {
 
-    const { control, arrayDataSelect, errors, pacTypeState, isdataResetState, startIndex, watchAll, itemsPerPage, isActivityAdd, isBtnDisable,
-        cardIdService, arrayDataSelectHead, annualDataRoutes, register, setValue, onSubmit, onPageChange, getValues, 
+    const { control, arrayDataSelect, errors, pacTypeState, isdataResetState, startIndex, watchAll, itemsPerPage, isActivityAdd, 
+        isBtnDisable, arrayDataSelectHead, register, setValue, onSubmit, onPageChange, getValues, 
         onCancelar, setPacTypeState, setTypeValidityState, setIsdataResetState } = useTransferPacCrudData()
  
     return(
@@ -83,9 +83,7 @@ function TransferPacCrud(): React.JSX.Element {
                                             itemsPerPage={itemsPerPage}
                                             startIndex={startIndex}
                                             isActivityAdd={isActivityAdd}
-                                            cardIdService={cardIdService}
                                             setIsdataResetState={setIsdataResetState}
-                                            annualDataRoutes={annualDataRoutes}
                                             
                                         />
                                         {
@@ -111,9 +109,7 @@ function TransferPacCrud(): React.JSX.Element {
                                             itemsPerPage={itemsPerPage}
                                             startIndex={startIndex}
                                             isActivityAdd={isActivityAdd}
-                                            cardIdService={cardIdService}
                                             setIsdataResetState={setIsdataResetState}
-                                            annualDataRoutes={annualDataRoutes}
                                         />
                                         {
                                             watchAll?.destino?.some(use => Object.keys(use.programmed).length > 0 || Object.keys(use.collected).length > 0 ) &&

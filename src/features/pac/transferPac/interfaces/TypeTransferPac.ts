@@ -16,11 +16,7 @@ export interface ICreateFundTransferPac {
     itemsPerPage: number,
     startIndex: number,
     isActivityAdd: boolean,
-    cardIdService: string,
     setIsdataResetState: Dispatch<SetStateAction<boolean>>,
-    annualDataRoutes: {
-      annualRoute: any[]
-    }
 }
 
 export interface IArrayDataSelectHead {

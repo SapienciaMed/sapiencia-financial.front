@@ -10,12 +10,11 @@ import { validationTransferPac } from '../../../../common/schemas/transfer-schem
 import { usePacTransfersService } from './pac-transfers-service.hook';
 import { IArrayDataSelectHead, IArrayDataSelectPac } from '../interfaces/TypeTransferPac';
 import { IDropdownProps } from '../../../../common/interfaces/select.interface';
-import { validateTypePac } from '../util/validate-type-pac';
 
 export function useTransferPacCrudData() {
 
   const resolver = useYupValidationResolver( validationTransferPac );
-  const { ValidityList, ResourcesTypeList, ListDinamicsRoutes, SearchAnnualDataRoutes } = usePacTransfersService()
+  const { ValidityList, ResourcesTypeList, ListDinamicsRoutes, TransfersOnPac } = usePacTransfersService()
   const { setMessage } = useContext(AppContext);
   const [ pacTypeState, setPacTypeState ] = useState(1)
   const [ pacTypeState2, setPacTypeState2 ] = useState(1)
@@ -24,9 +23,7 @@ export function useTransferPacCrudData() {
   const [ isdataResetState, setIsdataResetState ] = useState<boolean>(false)
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState(1);
-  const [ annualDataRoutes, setAnnualDataRoutes ] = useState({
-    annualRoute: []
-  })
+
   const itemsPerPage = 2;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelectPac>({
@@ -38,7 +35,6 @@ export function useTransferPacCrudData() {
     typeResourceData: [],
     validityData: [],
   })
-  const [ cardIdService, setCardIdService] = useState('')
 
   const {
     control,
@@ -185,22 +181,8 @@ export function useTransferPacCrudData() {
     watchAll && validateHeader()
   },[watchAll])
 
-  useEffect(() => {
-    //TODO: llega un arreglo con la card que esta llena y el cardId para luego haga la peticion.
-    const dataSelectOrigin = getValues('origen').map(obj => {
-      const {collected, programmed, value, ...rest} = obj
-      return {
-        isDataSelectComplete: Object.values(rest).every((value) => value !== "" ),
-        id: rest.cardId
-      }
-    })
-    
-    if (dataSelectOrigin.some(value => value.isDataSelectComplete) && annualDataRoutes.annualRoute.length === 0){
-      isTheDataSelectorCompleteOrigen(dataSelectOrigin)
-    }
-  },[arrayDataSelect, watchAll])
-
   const onSubmit = handleSubmit(async ( data: any) => {
+    console.log("🚀onSubmit ~ data:", data)
     setMessage({
       title: "Guardar",
       description: "¿Estás segur@ de guardar la información?",
@@ -251,64 +233,6 @@ export function useTransferPacCrudData() {
     setIsActivityAdd(!isValid);
   }
   
-  const isTheDataSelectorCompleteOrigen = (dataSelectOrigin: any[]) => {
-    //Aca debe hacer una consulta: 
-
-      const dataRoutes = watchAll?.origen?.map(use => {
-        return {
-          page: 1,
-          perPage: 1000000,
-          pacType: validateTypePac(watchAll.pacType),
-          exercise: vigencia,
-          resourceType: validateTypeResourceServices(String(tipoRecurso)),
-          managementCenter: use.managerCenter,
-          idProjectVinculation:  arrayDataSelect?.functionalArea.find(value => String(value.id) == use.functionalArea)?.id,
-          idBudget:  arrayDataSelect?.pospreSapiencia?.find(value => use.pospreSapiencia == value.id)?.idPosPreOrig,
-          idPospreSapiencia: use.pospreSapiencia,
-          idFund: use.fundsSapiencia,
-          idCardTemplate: use.cardId
-        }
-      })
-      
-      dataRoutes.length > 0 && SearchAnnualDataRoutes(dataRoutes).then(response => {
-        if (response.operation.code === EResponseCodes.OK) {
-          const annualDataRoutesResponse = response?.data;
-          
-        } else {
-          setAnnualDataRoutes({
-            annualRoute: [
-              {
-                id: 517,
-                pacId: 119,
-                type: "Programado",
-                jan: 23975516,
-                feb: 235267,
-                mar: 0,
-                abr: 720000000,
-                may: 0,
-                jun: 0,
-                jul: 0,
-                ago: 0,
-                sep: 0,
-                oct: 0,
-                nov: 0,
-                dec: 0,
-                cardId: '243567869yugjfhdse2432675ituygjlh341'
-              }
-            ]
-          })
-        }
-      })
-    
-
-    // !------------------ ¿Se necesita?
-    const mockCardId = '243567869yugjfhdse2432675ituygjlh341'
-
-    //Luego de recibir una respuesta, capturo el cardId y junto con la data mes a mes se envia 
-    setCardIdService(mockCardId)
-    
-  }
-  
   return{
     control,
     arrayDataSelect,
@@ -321,9 +245,7 @@ export function useTransferPacCrudData() {
     watchAll,
     isActivityAdd,
     isBtnDisable,
-    cardIdService,
     arrayDataSelectHead,
-    annualDataRoutes,
     register,
     setValue,
     onSubmit,
