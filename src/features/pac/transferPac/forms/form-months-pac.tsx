@@ -2,13 +2,25 @@
 import React, { useEffect } from 'react'
 import { InputNumberComponent } from '../../../../common/components/Form/input-number.component';
 import { IFormPacmonths } from '../../../managementCenter/transfer/interfaces/TransferAreaCrudInterface';
+import { validateTypePac } from '../util/validate-type-pac';
 
-function FormPacmonths({ count, control, titleAdd, pacTypeMonth, titleActive, setValue }: IFormPacmonths) {
+function FormPacmonths({ count, control, titleAdd, pacTypeMonth, titleActive, pacTypeState, annualDataRoutes, setValue }: IFormPacmonths) {
 
-    //Valor para cuando viene del servicio
-    // useEffect(() => {
-    //     setValue(`${titleAdd}[${count}].${pacTypeMonth}.january`, '15000')
-    // },[])
+    useEffect(() => {
+        setValue(`${titleAdd}[${count}].${pacTypeMonth}.january`, annualDataRoutes.jan)
+        setValue(`${titleAdd}[${count}].${pacTypeMonth}.february`, annualDataRoutes.feb)
+        setValue(`${titleAdd}[${count}].${pacTypeMonth}.march`, annualDataRoutes.mar)
+        setValue(`${titleAdd}[${count}].${pacTypeMonth}.april`, annualDataRoutes.abr)
+        setValue(`${titleAdd}[${count}].${pacTypeMonth}.may`, annualDataRoutes.may)
+        setValue(`${titleAdd}[${count}].${pacTypeMonth}.june`, annualDataRoutes.jun)
+        setValue(`${titleAdd}[${count}].${pacTypeMonth}.july`, annualDataRoutes.jul)
+        setValue(`${titleAdd}[${count}].${pacTypeMonth}.august`, annualDataRoutes.ago)
+        setValue(`${titleAdd}[${count}].${pacTypeMonth}.september`, annualDataRoutes.sep)
+        setValue(`${titleAdd}[${count}].${pacTypeMonth}.october`, annualDataRoutes.oct)
+        setValue(`${titleAdd}[${count}].${pacTypeMonth}.november`, annualDataRoutes.nov)
+        setValue(`${titleAdd}[${count}].${pacTypeMonth}.december`, annualDataRoutes.dec)
+    },[annualDataRoutes])
+
 
     return(
         <section className="display-flex-direction-column gap-1 mt-3rem">

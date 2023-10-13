@@ -12,3 +12,17 @@ export const validateTypePac = (valor: number) => {
     return pacType
 
 }
+
+export const validateTypePacservice = (valor: string) => {
+
+    let pacType: string
+
+    if(valor == 'Programado') pacType = ''
+
+    if(valor == 'Recaudado') pacType = ''
+
+    if(valor == 'Ambos') pacType = ''
+
+    return pacType
+
+}

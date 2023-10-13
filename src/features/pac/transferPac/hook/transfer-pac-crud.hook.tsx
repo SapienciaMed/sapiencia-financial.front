@@ -15,7 +15,7 @@ import { validateTypePac } from '../util/validate-type-pac';
 export function useTransferPacCrudData() {
 
   const resolver = useYupValidationResolver( validationTransferPac );
-  const { ValidityList, ResourcesTypeList, ListDinamicsRoutes } = usePacTransfersService()
+  const { ValidityList, ResourcesTypeList, ListDinamicsRoutes, SearchAnnualDataRoutes } = usePacTransfersService()
   const { setMessage } = useContext(AppContext);
   const [ pacTypeState, setPacTypeState ] = useState(1)
   const [ pacTypeState2, setPacTypeState2 ] = useState(1)
@@ -24,6 +24,9 @@ export function useTransferPacCrudData() {
   const [ isdataResetState, setIsdataResetState ] = useState<boolean>(false)
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState(1);
+  const [ annualDataRoutes, setAnnualDataRoutes ] = useState({
+    annualRoute: []
+  })
   const itemsPerPage = 2;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelectPac>({
@@ -85,12 +88,13 @@ export function useTransferPacCrudData() {
   },[])
 
   useEffect(() => {
-    //Valida si una vigencia se escogio y hace la peticion de tipode recurso
-    if (typeValidityState > 1) {
+    //Valida si una vigencia se escogio y hace la peticion de tipo de recurso
+    if (typeValidityState > 1 ) {
       const data = { exercise: vigencia }
-
+      setIsdataResetState(true);
       ResourcesTypeList(data).then(response => {
         if (response.operation.code === EResponseCodes.OK) {
+          setIsdataResetState(false);
           const validityDataServer = response?.data.array || []
           const dataArray: IDropdownProps[] = validityDataServer.map((entity, index) => {
             const sourType = validateTypeResource(entity?.sourceType)
@@ -109,7 +113,7 @@ export function useTransferPacCrudData() {
 
   //Realiza la peticion para LISTADOS DINÁMICOS DE PROYECTOS, POSPRE SAPI Y FONDOS
   useEffect(() => {
-    if (!isActivityAdd) {
+    if (!isActivityAdd || watchAll.TypeResource) {
       const dataListroute = {
         page: '1',
         perPage: '1000',
@@ -117,12 +121,12 @@ export function useTransferPacCrudData() {
         resourceType: validateTypeResourceServices(String(tipoRecurso)),
         pacType: tipoPac
       }
-    
+      setIsdataResetState(true);
       ListDinamicsRoutes(dataListroute)
         .then(response => {
           if (response.operation.code === EResponseCodes.OK) {
             const dinamicData = response?.data;
-    
+            setIsdataResetState(false);
             const uniqueProjects = Array.from(new Set(dinamicData.listProjects.map(project => project.projectCode))).map(projectCode => {
               const item = dinamicData.listProjects.find(project => project.projectCode === projectCode);
               return {
@@ -155,8 +159,8 @@ export function useTransferPacCrudData() {
               fundsSapiencia: uniqueFunds
             }));
     
-            const uniquePospreSapi = Array.from(new Set(dinamicData.listPospreSapi.map(pospreSapi => pospreSapi.idPosPreOrig))).map(idPosPreOrig => {
-              const item = dinamicData.listPospreSapi.find(pospreSapi => pospreSapi.idPosPreOrig === idPosPreOrig);
+            const uniquePospreSapi = Array.from(new Set(dinamicData.listPospreSapi.map(pospreSapi => pospreSapi.idPosPreSapi))).map(idPosPreSapi => {
+              const item = dinamicData.listPospreSapi.find(pospreSapi => pospreSapi.idPosPreSapi === idPosPreSapi);
               return {
                 name: item.numberCodeSapi,
                 value: item.idPosPreSapi,
@@ -174,13 +178,27 @@ export function useTransferPacCrudData() {
           }
         });
     }
-  },[isActivityAdd])
+  },[isActivityAdd, watchAll.TypeResource])
 
   useEffect(() => {
     watchAll && setIsBtnDisable( calculateTotalOrigen(watchAll) != '0' && calculateTotalDestino(watchAll) != '0' && (calculateTotalOrigen(watchAll) == calculateTotalDestino(watchAll))  )
-    watchAll.origen?.length > 0 && isTheDataSelectorCompleteOrigen()
     watchAll && validateHeader()
   },[watchAll])
+
+  useEffect(() => {
+    //TODO: llega un arreglo con la card que esta llena y el cardId para luego haga la peticion.
+    const dataSelectOrigin = getValues('origen').map(obj => {
+      const {collected, programmed, value, ...rest} = obj
+      return {
+        isDataSelectComplete: Object.values(rest).every((value) => value !== "" ),
+        id: rest.cardId
+      }
+    })
+    
+    if (dataSelectOrigin.some(value => value.isDataSelectComplete) && annualDataRoutes.annualRoute.length === 0){
+      isTheDataSelectorCompleteOrigen(dataSelectOrigin)
+    }
+  },[arrayDataSelect, watchAll])
 
   const onSubmit = handleSubmit(async ( data: any) => {
     setMessage({
@@ -233,17 +251,10 @@ export function useTransferPacCrudData() {
     setIsActivityAdd(!isValid);
   }
   
-  const isTheDataSelectorCompleteOrigen = () => {
-    //Valida si todos los campos estan llenos. ( luego se tiene que enviar el cardId a la consulta)
-    const isComplete = watchAll.origen.some(data => {
-      return data.projectId && data.fundsSapiencia && data.pospreSapiencia && data.managerCenter && data.projectName && data.functionalArea
-    })
-
+  const isTheDataSelectorCompleteOrigen = (dataSelectOrigin: any[]) => {
     //Aca debe hacer una consulta: 
 
-    if (isComplete) {
-      
-      const alg = watchAll?.origen?.map(use => {
+      const dataRoutes = watchAll?.origen?.map(use => {
         return {
           page: 1,
           perPage: 1000000,
@@ -251,21 +262,50 @@ export function useTransferPacCrudData() {
           exercise: vigencia,
           resourceType: validateTypeResourceServices(String(tipoRecurso)),
           managementCenter: use.managerCenter,
-          idProjectVinculation: use.functionalArea,
+          idProjectVinculation:  arrayDataSelect?.functionalArea.find(value => String(value.id) == use.functionalArea)?.id,
           idBudget:  arrayDataSelect?.pospreSapiencia?.find(value => use.pospreSapiencia == value.id)?.idPosPreOrig,
           idPospreSapiencia: use.pospreSapiencia,
           idFund: use.fundsSapiencia,
           idCardTemplate: use.cardId
         }
       })
-      // console.log('consulta servicio para programdo o recaudado', alg)
-    }
+      
+      dataRoutes.length > 0 && SearchAnnualDataRoutes(dataRoutes).then(response => {
+        if (response.operation.code === EResponseCodes.OK) {
+          const annualDataRoutesResponse = response?.data;
+          
+        } else {
+          setAnnualDataRoutes({
+            annualRoute: [
+              {
+                id: 517,
+                pacId: 119,
+                type: "Programado",
+                jan: 23975516,
+                feb: 235267,
+                mar: 0,
+                abr: 720000000,
+                may: 0,
+                jun: 0,
+                jul: 0,
+                ago: 0,
+                sep: 0,
+                oct: 0,
+                nov: 0,
+                dec: 0,
+                cardId: '243567869yugjfhdse2432675ituygjlh341'
+              }
+            ]
+          })
+        }
+      })
+    
 
-    //------------------
+    // !------------------ ¿Se necesita?
     const mockCardId = '243567869yugjfhdse2432675ituygjlh341'
 
     //Luego de recibir una respuesta, capturo el cardId y junto con la data mes a mes se envia 
-    isComplete && setCardIdService(mockCardId)
+    setCardIdService(mockCardId)
     
   }
   
@@ -283,6 +323,7 @@ export function useTransferPacCrudData() {
     isBtnDisable,
     cardIdService,
     arrayDataSelectHead,
+    annualDataRoutes,
     register,
     setValue,
     onSubmit,

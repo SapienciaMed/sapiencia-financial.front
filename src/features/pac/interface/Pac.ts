@@ -51,3 +51,20 @@ export interface IDinamicListForPospres {
     idPosPreOrig: number;
     numberCodeOrig: string;
 }
+
+export interface IPacAnnualAdapter {
+    pacType: string; 
+    exercise: number;
+    resourceType: string;
+  
+    managementCenter: string;
+    idProjectVinculation: number;
+    idBudget: number;
+    idPospreSapiencia: number;
+    idFund: number;
+    idCardTemplate: string;
+    numberFunctionalArea?: number;
+    projectName?: string;
+    idRouteComplete?: number;
+  
+  }

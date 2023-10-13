@@ -16,8 +16,8 @@ export interface ICreateTransferPacForm{
 }
 
 export interface IAddFundPac extends IAddFund{
-    collected: IMonths,
-    programmed: IMonths
+    collected?: IMonths,
+    programmed?: IMonths
 }
 
 export interface IAddFund{
@@ -73,6 +73,9 @@ export interface IFormTransferPac {
     setValue: UseFormSetValue<any>;
     register: UseFormRegister<ICreateTransferPacForm>,
     pacTypeState: number,
+    annualDataRoutes: {
+        annualRoute: any[]
+    }
 }
 
 export interface IFormPacmonths{
@@ -82,6 +85,8 @@ export interface IFormPacmonths{
     pacTypeMonth: 'collected' | 'programmed' | 'both'
     titleActive: string,
     setValue: UseFormSetValue<any>;
+    annualDataRoutes: any,
+    pacTypeState: number
 }
 
 export interface IMonths{

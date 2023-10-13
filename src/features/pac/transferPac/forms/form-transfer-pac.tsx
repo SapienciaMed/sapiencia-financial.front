@@ -6,7 +6,8 @@ import { useWatch } from "react-hook-form";
 import { IDropdownPropsFuctionalArea } from "../../../../common/interfaces/global.interface";
 import FormPacmonths  from './form-months-pac'
 
-function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pacTypeState, cardId, register, setValue }: IFormTransferPac) {
+function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pacTypeState, cardId, annualDataRoutes,
+     register, setValue }: IFormTransferPac) {
 
     const {width} = useWidth()
     const { functionalArea, fundsSapiencia, pospreSapiencia, } = arrayDataSelect
@@ -19,7 +20,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
     const [projectName, setProjectName] = useState('')
 
     useEffect(() => {
-        setValue(`${titleAdd.toLowerCase()}[${count}].cardId`, `243567869yugjfhdse2432675ituygjlh34${count}`) //cardId
+        setValue(`${titleAdd.toLowerCase()}[${count}].cardId`, `243567869yugjfhdse2432675ituygjlh34${count+1}`) //cardId
         if (projectName != "") {
             setValue(`${titleAdd.toLowerCase()}[${count}].functionalArea`, (areasByProjectSt.find(e => e.value != null)).id ?? areaIdSelectedSt)
             setValue(`${titleAdd.toLowerCase()}[${count}].projectName`, projectName)
@@ -40,8 +41,8 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
     const processFunctionalArea = (option: any) => {
         const areaList = functionalArea.filter(prop => prop.id == option && prop.value !== null).map(prop => ({
             name: prop.numberFunctionalArea,
-            id: prop.idProjectPlanning,
-            value: prop.idProjectPlanning
+            id: prop.id,
+            value: prop.id
 
         }))
 
@@ -51,55 +52,78 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
     }
 
     const renderElement = () =>  {
-        if(pacTypeState == 2){
+        const alg = annualDataRoutes?.annualRoute?.find(u => u.cardId == formOrigen[count].cardId )
+        if (alg?.type == 'Programado') {
             return (
                 <FormPacmonths
-                        control={control}
-                        count={count}
-                        pacTypeMonth="programmed"
-                        titleAdd={titleAdd}
-                        titleActive='Programado'
-                        setValue={setValue}
-                    />
+                    control={control}
+                    count={count}
+                    pacTypeMonth="programmed"
+                    titleAdd={titleAdd}
+                    titleActive='Programado'
+                    setValue={setValue}
+                    annualDataRoutes={alg}
+                    pacTypeState={pacTypeState}
+                />
             )
         }
+        // if(pacTypeState == 2 ){
+        //     return (
+        //         <FormPacmonths
+        //                 control={control}
+        //                 count={count}
+        //                 pacTypeMonth="programmed"
+        //                 titleAdd={titleAdd}
+        //                 titleActive='Programado'
+        //                 setValue={setValue}
+        //                 // annualDataRoutes={annualDataRoutes}
+        //                 pacTypeState={pacTypeState}
+        //             />
+        //     )
+        // }
 
-        if(pacTypeState == 3){
-            return (
-                <FormPacmonths
-                        control={control}
-                        count={count}
-                        pacTypeMonth="collected"
-                        titleAdd={titleAdd}
-                        titleActive='Recaudado'
-                        setValue={setValue}
-                    />
-            )
-        }
+        // if(pacTypeState == 3){
+        //     return (
+        //         <FormPacmonths
+        //                 control={control}
+        //                 count={count}
+        //                 pacTypeMonth="collected"
+        //                 titleAdd={titleAdd}
+        //                 titleActive='Recaudado'
+        //                 setValue={setValue}
+        //                 // annualDataRoutes={annualDataRoutes}
+        //                 pacTypeState={pacTypeState}
+        //             />
+        //     )
+        // }
 
-        if(pacTypeState == 4){
-            return (
-                <>
-                    <FormPacmonths
-                        control={control}
-                        count={count}
-                        pacTypeMonth="programmed"
-                        titleAdd={titleAdd}
-                        titleActive='Programado'
-                        setValue={setValue}
-                    />
+        // if(pacTypeState == 4){
+        //     return (
+        //         <>
+        //             <FormPacmonths
+        //                 control={control}
+        //                 count={count}
+        //                 pacTypeMonth="programmed"
+        //                 titleAdd={titleAdd}
+        //                 titleActive='Programado'
+        //                 setValue={setValue}
+        //                 // annualDataRoutes={annualDataRoutes}
+        //                 pacTypeState={pacTypeState}
+        //             />
 
-                    <FormPacmonths
-                        control={control}
-                        count={count}
-                        pacTypeMonth="collected"
-                        titleAdd={titleAdd}
-                        titleActive='Recaudado'
-                        setValue={setValue}
-                    />  
-                </>
-            )
-        }
+        //             <FormPacmonths
+        //                 control={control}
+        //                 count={count}
+        //                 pacTypeMonth="collected"
+        //                 titleAdd={titleAdd}
+        //                 titleActive='Recaudado'
+        //                 setValue={setValue}
+        //                 // annualDataRoutes={annualDataRoutes}
+        //                 pacTypeState={pacTypeState}
+        //             />  
+        //         </>
+        //     )
+        // }
     }
 
     return(
@@ -149,7 +173,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                 <SelectComponent
                     idInput={`${titleAdd}[${count}].pospreSapiencia`}
                     control={control}
-                    label='Fondo Sapiencia'
+                    label='Pospre Sapiencia'
                     className="select-basic medium"
                     classNameLabel="text-black weight-500 big text-required"
                     placeholder={'Seleccionar'}

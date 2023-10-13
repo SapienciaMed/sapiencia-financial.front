@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { useFieldArray } from 'react-hook-form';
+import React, { useEffect, useState } from "react";
+import { useFieldArray, useWatch } from 'react-hook-form';
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import FormTransferPac from "./form-transfer-pac";
 import { IAddFundPac } from "../../../managementCenter/transfer/interfaces/TransferAreaCrudInterface";
@@ -7,14 +7,21 @@ import { useWidth } from "../../../../common/hooks/use-width";
 import { ICreateFundTransferPac } from "../interfaces/TypeTransferPac";
 
 function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pacTypeState, isdataReset, itemsPerPage, cardIdService,
-    startIndex, isActivityAdd, register, setValue, setIsdataResetState }:ICreateFundTransferPac ) {
+    startIndex, isActivityAdd, annualDataRoutes, register, setValue, setIsdataResetState }:ICreateFundTransferPac ) {
    
+    const [dataCardId, setDataCardId] = useState('')
+
     const {width} = useWidth()
 
     const { fields, append, remove } = useFieldArray({
         control,
         name: titleAdd ,
     });
+
+    const watchCardId = useWatch({
+        control,
+        name: titleAdd,
+    })
 
     const initialValue: IAddFundPac = {
         managerCenter: '',
@@ -66,12 +73,17 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
         visibleFields.length == 0 && setIsdataResetState(false)
     },[visibleFields])
 
-    useEffect(() => {
-        // console.log("encontro la card: ", fields.filter(us => us.id == cardIdService));
+    // useEffect(() => { 
+    //     console.log("encontro la card: ", visibleFields.filter(us => us.id));
+    // },[visibleFields])
 
-        fields.map(us => console.log(us.id))
-        
-    },[fields, cardIdService])
+    useEffect(() => {
+        watchCardId?.every(us => us.cardId == cardIdService ) && setDataCardId(cardIdService)
+    },[cardIdService])
+
+    useEffect(() => {
+        console.log("🚀 cardIdService:", cardIdService)
+    },[cardIdService])
 
     return(
         <div className="display-flex-direction-column padding paddingBotom gap-1">
@@ -101,6 +113,7 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
                                 register={register}
                                 setValue={setValue}
                                 pacTypeState={pacTypeState}
+                                annualDataRoutes={annualDataRoutes}
                             />
 
                         </section>
