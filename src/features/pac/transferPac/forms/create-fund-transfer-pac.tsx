@@ -106,62 +106,81 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
      
     },[watchCardId])
 
-    const changeValueOfSelect = (valor: any) => {
+    const changeValueOfSelect = (valor: any, idCard: string) => {
+        console.log("🚀 idCard:", idCard)
         if (annualDataRoutes.annualRoute.length > 0) {
-            dataSelectorComplete()
+            dataSelectorComplete(idCard)
         }
-
     }
 
-    const dataSelectorComplete = () => {
-        //Aca debe hacer una consulta:    
-          const dataRoutes = watchCardId?.map(use => {
-            return {
-              page: 1,
-              perPage: 1000000,
-              pacType: validateTypePac(pacTypeState),
-              exercise: vigencia,
-              resourceType: validateTypeResourceServices(String(tipoRecurso)),
-              managementCenter: use.managerCenter,
-              idProjectVinculation:  arrayDataSelect?.functionalArea.find(value => String(value.id) == use.functionalArea)?.id,
-              idBudget:  arrayDataSelect?.pospreSapiencia?.find(value => use.pospreSapiencia == value.id)?.idPosPreOrig,
-              idPospreSapiencia: use.pospreSapiencia,
-              idFund: use.fundsSapiencia,
-              idCardTemplate: use.cardId
-            }
-          })
-          console.log("🚀  dataRoutes:", dataRoutes)
-          
-          dataRoutes.length > 11110 && SearchAnnualDataRoutes(dataRoutes).then(response => {
+    const dataSelectorComplete = (idCard?: string) => {   
+        
+        let dataRoutes
+
+        if (idCard != '') {
+            dataRoutes = watchCardId?.filter(use => use.cardId == idCard).map(val => {
+                return {
+                    page: 1,
+                    perPage: 1000000,
+                    pacType: validateTypePac(pacTypeState),
+                    exercise: vigencia,
+                    resourceType: validateTypeResourceServices(String(tipoRecurso)),
+                    managementCenter: val.managerCenter,
+                    idProjectVinculation:  arrayDataSelect?.functionalArea.find(value => String(value.id) == val.functionalArea)?.id,
+                    idBudget:  arrayDataSelect?.pospreSapiencia?.find(value => val.pospreSapiencia == value.id)?.idPosPreOrig,
+                    idPospreSapiencia: val.pospreSapiencia,
+                    idFund: val.fundsSapiencia,
+                    idCardTemplate: val.cardId
+                  }
+            })
+        } else {
+            dataRoutes = watchCardId?.map(use => {
+                return {
+                  page: 1,
+                  perPage: 1000000,
+                  pacType: validateTypePac(pacTypeState),
+                  exercise: vigencia,
+                  resourceType: validateTypeResourceServices(String(tipoRecurso)),
+                  managementCenter: use.managerCenter,
+                  idProjectVinculation:  arrayDataSelect?.functionalArea.find(value => String(value.id) == use.functionalArea)?.id,
+                  idBudget:  arrayDataSelect?.pospreSapiencia?.find(value => use.pospreSapiencia == value.id)?.idPosPreOrig,
+                  idPospreSapiencia: use.pospreSapiencia,
+                  idFund: use.fundsSapiencia,
+                  idCardTemplate: use.cardId
+                }
+              })
+        }
+
+        console.log("🚀  dataRoutes:", dataRoutes)
+
+        SearchAnnualDataRoutes(dataRoutes[0]).then(response => {
             if (response.operation.code === EResponseCodes.OK) {
               const annualDataRoutesResponse = response?.data;
-              //TODO: IMPLEMNTAR LO QUE VIENE DEL SERVICIO
-            } else {
-                // setAnnualDataRoutes({
-                //     annualRoute: [
-                //       {
-                //         id: 517,
-                //         pacId: 119,
-                //         type: "Programado",
-                //         jan: 23975516,
-                //         feb: 235267,
-                //         mar: 0,
-                //         abr: 720000000,
-                //         may: 0,
-                //         jun: 0,
-                //         jul: 0,
-                //         ago: 0,
-                //         sep: 0,
-                //         oct: 0,
-                //         nov: 0,
-                //         dec: 0,
-                //         cardId: '243567869yugjfhdse2432675ituygjlh341'
-                //       }
-                //     ]
-                //   })
-                
-            }
-          })
+              const annualRouteService = annualDataRoutesResponse.annualRoute.map(use => {
+                return {
+                    id: use.id,
+                    pacId: use.pacId,
+                    type: use.type,
+                    jan: use.jan,
+                    feb: use.feb,
+                    mar: use.mar,
+                    abr: use.abr,
+                    may: use.may,
+                    jun: use.jun,
+                    jul: use.jul,
+                    ago: use.ago,
+                    sep: use.sep,
+                    oct: use.oct,
+                    nov: use.nov,
+                    dec: use.dec,
+                    cardId: annualDataRoutesResponse.headerResult.idCardTemplate
+                }
+              })
+              setAnnualDataRoutes({
+                annualRoute: annualRouteService
+              })
+            } 
+        }).catch(err => console.log(err))
       }
 
     return(

@@ -7,8 +7,9 @@ import { IDropdownPropsFuctionalArea } from "../../../../common/interfaces/globa
 import FormPacmonths  from './form-months-pac'
 
 function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pacTypeState, cardId, annualDataRoutes,
-     register, setValue, changeValueOfSelect }: IFormTransferPac) {
-
+    register, setValue, changeValueOfSelect }: IFormTransferPac) {
+        
+    // console.log("🚀 annualDataRoutes:", annualDataRoutes)
     const {width} = useWidth()
     const { functionalArea, fundsSapiencia, pospreSapiencia, } = arrayDataSelect
 
@@ -22,7 +23,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
     useEffect(() => {
         setValue(`${titleAdd.toLowerCase()}[${count}].cardId`, cardId)
         if (projectName != "") {
-            setValue(`${titleAdd.toLowerCase()}[${count}].functionalArea`, (areasByProjectSt.find(e => e.value != null)).id ?? areaIdSelectedSt)
+            setValue(`${titleAdd.toLowerCase()}[${count}].functionalArea`, (areasByProjectSt.find(e => e.value != null))?.id ?? areaIdSelectedSt)
             setValue(`${titleAdd.toLowerCase()}[${count}].projectName`, projectName)
         }
     }, [projectIdSelectedSt])
@@ -32,10 +33,10 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
     }, [projectName])
 
     const optionSelected = (option: any) => {
-        changeValueOfSelect(option)
+        changeValueOfSelect(option, formArray[count].cardId )
         if (option) {
-            setProjectName(functionalArea.find(e => e.value == option).nameProject)
-           processFunctionalArea(option)
+            setProjectName(functionalArea.find(e => e.value == option)?.nameProject)
+            processFunctionalArea(option)
         }
     }
 
@@ -52,10 +53,10 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
         setAreasByProjectSt(areaList)
     }
 
-  
-
     const renderElement = () =>  {
         const obj = annualDataRoutes?.annualRoute?.find(u => u.cardId === formArray[count].cardId )
+        // console.log("🚀 ormArray[count].cardId :", formArray[count].cardId )
+        // console.log("🚀  ~ obj:", obj)
 
         if (obj != undefined) {
             if (obj?.type == 'Programado' && annualDataRoutes.annualRoute.length == 1) {
@@ -161,6 +162,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     fieldArray={true}
                     data={fundsSapiencia}
                     errors={errors}
+                    optionSelected={(option) =>  changeValueOfSelect(option, formArray[count].cardId )}
                 />
                 <SelectComponent
                     idInput={`${titleAdd}[${count}].pospreSapiencia`}
@@ -173,6 +175,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     fieldArray={true}
                     data={pospreSapiencia}
                     errors={errors}
+                    optionSelected={(option) =>  changeValueOfSelect(option, formArray[count].cardId )}
                 />
 
                 <SelectComponent

@@ -2,7 +2,7 @@
 import React from 'react'
 import useCrudService from '../../../../common/hooks/crud-service.hook';
 import { ApiResponse } from '../../../../common/utils';
-import { DataTransferPac, IPacAnnualAdapter, IPacComplementary, IPacFilters } from '../../interface/Pac';
+import { DataTransferPac, IPacAnnualAdapter, IPacComplementary, IPacFilters, IResultSearchAnnualizationByRoute } from '../../interface/Pac';
 import { IPagingData } from '../../../../common/utils/api-response';
 
 
@@ -29,7 +29,7 @@ export const usePacTransfersService = () => {
         return post(`${roleUrl}${endpoint}`, data);
     }
 
-    async function SearchAnnualDataRoutes(data: Object):  Promise<ApiResponse<IPacAnnualAdapter>> {
+    async function SearchAnnualDataRoutes(data: Object):  Promise<ApiResponse<IResultSearchAnnualizationByRoute>> {
         const endpoint: string = "/search-annualdata-routes";
         return post(`${roleUrl}${endpoint}`, data);
     }

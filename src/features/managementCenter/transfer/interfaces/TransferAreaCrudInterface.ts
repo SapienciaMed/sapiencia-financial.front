@@ -77,7 +77,7 @@ export interface IFormTransferPac {
     annualDataRoutes: {
         annualRoute: IAnnualRoute[]
     }
-    changeValueOfSelect: (valor: any) => void
+    changeValueOfSelect: (valor: any, cardId: string) => void
 }
 
 export interface IFormPacmonths{

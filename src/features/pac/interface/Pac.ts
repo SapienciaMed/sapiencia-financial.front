@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 
 export interface IPac {
     id?: number;
@@ -20,6 +21,12 @@ export interface IPacFilters {
     pacType?: string;
     exercise?: number;
     sourceType?: string;
+    managementCenter?: string;
+    idProjectVinculation?: number;
+    idBudget?: number;
+    idPospreSapiencia?: number;
+    idFund?: number;
+    idCardTemplate?: string;
 }
 
 export interface IPacComplementary {
@@ -113,4 +120,24 @@ export interface IAnnualRoute {
     dateModify?: null;
     dateCreate?: null;
     cardId?: string
+}
+
+export interface IResultSearchAnnualizationByRoute {
+    headerResult: IPacFilters;
+    routeResult: IBudgetsRoutesSimple;
+    annualRoute: IAnnualRoute[];
+}
+
+export interface IBudgetsRoutesSimple {
+    id?: number;
+    idProjectVinculation?:number;
+    managementCenter?:string;
+    div?:string;
+    idBudget?:number;
+    idPospreSapiencia?:number;
+    idFund?:number;
+    userModify?: string;
+    dateModify?: Date;
+    userCreate?: string;
+    dateCreate?: DateTime;
 }

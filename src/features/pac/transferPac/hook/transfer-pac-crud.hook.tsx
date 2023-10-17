@@ -10,6 +10,7 @@ import { validationTransferPac } from '../../../../common/schemas/transfer-schem
 import { usePacTransfersService } from './pac-transfers-service.hook';
 import { IArrayDataSelectHead, IArrayDataSelectPac } from '../interfaces/TypeTransferPac';
 import { IDropdownProps } from '../../../../common/interfaces/select.interface';
+import { validateTypePac } from '../util/validate-type-pac';
 
 export function useTransferPacCrudData() {
 
@@ -182,7 +183,43 @@ export function useTransferPacCrudData() {
   },[watchAll])
 
   const onSubmit = handleSubmit(async ( data: any) => {
-    console.log("🚀onSubmit ~ data:", data)
+    console.log("🚀 data:", data)
+
+    function filtrarPropiedades(objeto) {
+      const nuevoObjeto = { ...objeto }; 
+
+      if (nuevoObjeto.destino) {
+          nuevoObjeto.destino = nuevoObjeto.destino.map(item => {
+            const { collected, programmed, ...rest } = item;
+            if (collected && Object.values(collected).some(value => value !== "")) {
+              return item;
+            }
+            if (programmed && Object.values(programmed).some(value => value !== "")) {
+              return item;
+            }
+            return rest;
+          });
+      }
+
+      if (nuevoObjeto.origen) {
+          nuevoObjeto.origen = nuevoObjeto.origen.map(item => {
+            const { programmed, collected, ...rest } = item;
+            if (collected && Object.values(collected).some(value => value !== "")) {
+              return item;
+            }
+            if (programmed && Object.values(programmed).some(value => value !== "")) {
+              return item;
+            }
+            return rest;
+          });
+      }
+  
+      return nuevoObjeto;
+  }
+  
+  const nuevoObjeto = filtrarPropiedades(data);
+  console.log("🚀  nuevoObjeto:", nuevoObjeto)
+
     setMessage({
       title: "Guardar",
       description: "¿Estás segur@ de guardar la información?",
@@ -193,7 +230,21 @@ export function useTransferPacCrudData() {
         setMessage({});
       },
       onOk: () => {
-        setMessage({});
+
+        const dataTransferpac = {
+          headTransfer: {
+            pacType: validateTypePac(data.pacType),
+            exercise: data.validity,
+            resourceType: validateTypeResourceServices(data.TypeResource)
+          },
+          transferTransaction: {
+
+          }
+        }
+
+        // TransfersOnPac().then(response => {
+
+        // })
       },
       background: true,
     });
@@ -227,9 +278,9 @@ export function useTransferPacCrudData() {
   const validateHeader = () => {
     const { TypeResource, validity, pacType } = watchAll;
     const isValid = TypeResource !== null && TypeResource !== undefined
-      && validity !== null && validity !== undefined
-      && pacType !== null && pacType !== undefined;
-  
+    && validity !== null && validity !== undefined
+    && pacType !== null && pacType !== undefined;
+
     setIsActivityAdd(!isValid);
   }
   
@@ -254,7 +305,7 @@ export function useTransferPacCrudData() {
     onCancelar,
     setPacTypeState,
     setTypeValidityState,
-    setIsdataResetState
+    setIsdataResetState,
   }
 }
 
