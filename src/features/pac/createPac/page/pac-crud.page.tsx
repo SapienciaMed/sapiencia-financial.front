@@ -120,7 +120,7 @@ function PacCrud() {
                 </div>
 
                 {
-                  errorsPac?.length == 0 && (
+                  errorsPac?.length > 0 && (
                     <ButtonComponent
                       //className="button-main huge hover-three"
                       className="button-clean-fields"
