@@ -35,7 +35,7 @@ function PacCrud() {
     return file;
   }
 
-
+  
   const [dataTableSt, setDataTableSt] = useState<any>()
 
   useEffect(() => {
@@ -50,10 +50,8 @@ function PacCrud() {
           Cargar archivo
         </p>
         <div className="card-user" >
-
           <FormComponent action={onSubmitPac} id="form-pac" className="form-pac">
             <section className="grid-form-2-container-reverse grid-column-e-proj-operation mt-5px">
-
               <InputComponent
                 idInput="exercise"
                 className="input-basic medium"
@@ -123,7 +121,7 @@ function PacCrud() {
                   errorsPac?.length > 0 && (
                     <ButtonComponent
                       //className="button-main huge hover-three"
-                      className="button-clean-fields"
+                      className="button-clean-fields button-border"
                       value="Validación"
                       type="button"
                       action={() => setIsVisibleErrors(!isVisibleErrors)}
@@ -206,6 +204,7 @@ function PacCrud() {
               form="funds-form"
               disabled={true}
             /> */}
+            
           <ButtonLoadingComponent
             className="button-main huge hover-three"
             value="Guardar"
