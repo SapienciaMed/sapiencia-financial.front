@@ -103,7 +103,6 @@ function PacCrud() {
                 direction={EDirection.column}
               />
 
-              <>{JSON.stringify(errors)}</>
             </section>
 
             {/* <div className="title-button text-three large" style={{marginTop:'10px'}} onClick={()=>uploadFileRef.current?.click()}> Seleccionar archivo <BiPlusCircle /> </div>
@@ -112,20 +111,28 @@ function PacCrud() {
             <div className="div-upload">
               <br />
               <br />
-              <label className="upload-label" style={{ display: 'flex', alignItems: 'center' }} htmlFor="modal">Seleccionar archivo <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.00008 5.83331V11.1666" stroke="#533893" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10.6666 8.50002H5.33325" stroke="#533893" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.5V14.5C4.686 14.5 2 11.814 2 8.5V8.5C2 5.186 4.686 2.5 8 2.5V2.5C11.314 2.5 14 5.186 14 8.5V8.5C14 11.814 11.314 14.5 8 14.5Z" stroke="#533893" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></label>
-              {file != undefined ? (<label className='text-red-500'>{file.name}</label>) : (<></>)}
-              <Button label="Show" type="button" style={{ display: 'none' }} name='modal' id='modal' onClick={() => setVisible(true)} />
 
-              {
-                errorsPac?.length > 0 && (
-                  <ButtonComponent
-                    className="button-main huge hover-three"
-                    value="Validación"
-                    type="button"
-                    action={() => setIsVisibleErrors(!isVisibleErrors)}
-                  />
-                )
-              }
+              <div className="display-align-flex-center">
+                <div>
+                  <label className="upload-label" style={{ display: 'flex', alignItems: 'center' }} htmlFor="modal">Seleccionar archivo <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.00008 5.83331V11.1666" stroke="#533893" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10.6666 8.50002H5.33325" stroke="#533893" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.5V14.5C4.686 14.5 2 11.814 2 8.5V8.5C2 5.186 4.686 2.5 8 2.5V2.5C11.314 2.5 14 5.186 14 8.5V8.5C14 11.814 11.314 14.5 8 14.5Z" stroke="#533893" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></label>
+                  {file != undefined ? (<label className='text-red-500'>{file.name}</label>) : (<></>)}
+                  <Button label="Show" type="button" style={{ display: 'none' }} name='modal' id='modal' onClick={() => setVisible(true)} />
+                </div>
+
+                {
+                  errorsPac?.length == 0 && (
+                    <ButtonComponent
+                      //className="button-main huge hover-three"
+                      className="button-clean-fields"
+                      value="Validación"
+                      type="button"
+                      action={() => setIsVisibleErrors(!isVisibleErrors)}
+                    />
+                  )
+                }
+
+              </div>
+
 
               <Dialog
                 header="Si tienes más de un documento, se deben unir en un solo archivo para ser cargados"
@@ -149,7 +156,10 @@ function PacCrud() {
                     </>
                   )}
                 />
-                <Button className='mt-8' type="button" style={{ backgroundColor: '533893' }} onClick={() => setVisible(false)} label="Cancelar" rounded />
+                <div style={{padding:'1rem'}}>
+                  <Button className='mt-8' type="button" style={{ backgroundColor: '533893' }} onClick={() => setVisible(false)} label="Cancelar" rounded />
+
+                </div>
               </Dialog>
             </div>
             <input type="submit" style={{ display: 'none' }} ref={btnUploadFileRef} />
