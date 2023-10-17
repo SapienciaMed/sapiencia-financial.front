@@ -24,7 +24,7 @@ export const pacCrudValidator = yup.object({
     typeSource: yup
         .string()
         .required("Completa la información"),
-    file: yup
+    /* file: yup
         .string()
-        .required("Completa la información"),
+        .required("Completa la información"), */
 })

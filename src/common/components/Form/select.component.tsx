@@ -62,13 +62,10 @@ export function SelectComponent({
   }
 
   const messageError = () => {
-    console.log("---------------------------")
     const keysError = idInput.split(".");
     let errs = errors;
-    console.log({errs})
     if (fieldArray) {
       const errorKey = `${keysError[0]}.${keysError[1]}`;
-      console.log({errs2:errors[errorKey]})
       return errors[errorKey]?.message;
     } else {
       for (let key of keysError) {

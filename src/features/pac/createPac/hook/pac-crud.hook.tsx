@@ -93,12 +93,14 @@ export function usePacCrud() {
   }, [watch]);
 
   const onSubmitPac = handleSubmit(async (data: IHeadPac) => {
+    
+    console.log("*********************+en submit: ",JSON.stringify(data.file))
     let formData = new FormData()
     formData.append('exercise', `${data.exercise}`)
     formData.append('typePac', data.typePac)
     formData.append('typeSource', data.typeSource)
     formData.append('file', data.file)
-
+    console.log({file:data.file})
     showModal({
       title: "Guardar",
       description: "¿Está segur@ de guardar el proyecto?",
@@ -129,7 +131,7 @@ export function usePacCrud() {
 const [errorsPac, setErrorsPac] = useState<any[]>([])
   const messageConfirmSave = async (data: any) => {
     const response = await uploadPac(data)
-    console.log({response:response.data})
+    console.log({response:response})
     if (response.operation.code == "OK" && !Object(response).data.data?.errno) {
 
       showModal({
