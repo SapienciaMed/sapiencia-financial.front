@@ -43,7 +43,7 @@ export function useVinculationMGAData(pospre: string, values?: IBudgetViewPage )
             header: "Codigo",
         },
         {
-            fieldName: "measurementActivityDetailed",
+            fieldName: "measurementActivityDetailedName",
             header: "Unidad de medida"
         },
         {
@@ -78,7 +78,7 @@ export function useVinculationMGAData(pospre: string, values?: IBudgetViewPage )
             header: "Código",
         },
         {
-            fieldName: "measurementActivityDetailed",
+            fieldName: "measurementActivityDetailedName",
             header: "Unidad de medida"
         },
         {
@@ -119,7 +119,7 @@ export function useVinculationMGAData(pospre: string, values?: IBudgetViewPage )
         setIsValue(lastMoveEdit.length > 0)
         if(lastMoveEdit.length > 0) {
             const rowsData = lastMoveEdit.map(objeto => ({
-                id: objeto.id.idVinculation,
+                id: objeto.id.id,
                 activityId: objeto.id.activityId,
                 consecutiveActivityDetailed: objeto.id.consecutiveActivityDetailed,
                 detailedActivityId: objeto.id.activityDetailedId ,
@@ -136,7 +136,7 @@ export function useVinculationMGAData(pospre: string, values?: IBudgetViewPage )
             header: "Codigo",
         },
         {
-            fieldName: "measurementActivityDetailed",
+            fieldName: "measurementActivityDetailedName",
             header: "Unidad de medida"
         },
         {
@@ -163,7 +163,7 @@ export function useVinculationMGAData(pospre: string, values?: IBudgetViewPage )
                     },
                     {
                         title: "Unidad de medida",
-                        value: `${row.measurementActivityDetailed}`
+                        value: `${row?.measurementActivityDetailedName || ''}`
                     },
                     {
                         title: "Cantidad",
