@@ -1,4 +1,4 @@
-import { Control, UseFormRegister, FieldErrors, UseFormSetValue, UseFormGetValues} from 'react-hook-form';
+import { Control, UseFormRegister, FieldErrors, UseFormSetValue, UseFormGetValues, UseFormWatch } from 'react-hook-form';
 import { IArrayDataSelect } from "../../../../common/interfaces/global.interface";
 import { IArrayDataSelectPac } from '../../../pac/transferPac/interfaces/TypeTransferPac';
 import { IAnnualRoute } from '../../../pac/interface/Pac';
@@ -73,11 +73,12 @@ export interface IFormTransferPac {
     cardId: string;
     setValue: UseFormSetValue<any>;
     register: UseFormRegister<ICreateTransferPacForm>,
-    pacTypeState: number,
     annualDataRoutes: {
-        annualRoute: IAnnualRoute[]
-    }
-    changeValueOfSelect: (valor: any, cardId: string) => void
+        annualRouteService: IAnnualRoute[];
+    }[]
+    changeValueOfSelect: (valor: any, typeSelect: string, cardId: string) => void,
+    setIdCarsSelect: React.Dispatch<React.SetStateAction<string>>
+    
 }
 
 export interface IFormPacmonths{
@@ -88,7 +89,7 @@ export interface IFormPacmonths{
     titleActive: string,
     setValue: UseFormSetValue<any>;
     annualDataRoutes: any,
-    pacTypeState: number
+    isBoth: boolean
 }
 
 export interface IMonths{

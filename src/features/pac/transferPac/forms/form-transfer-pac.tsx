@@ -5,11 +5,12 @@ import { useWidth } from "../../../../common/hooks/use-width";
 import { useWatch } from "react-hook-form";
 import { IDropdownPropsFuctionalArea } from "../../../../common/interfaces/global.interface";
 import FormPacmonths  from './form-months-pac'
+import FormElementPac from './render-element-pac'
+import FormElementPacBoth from './render-element-pac-both'
 
-function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pacTypeState, cardId, annualDataRoutes,
-    register, setValue, changeValueOfSelect }: IFormTransferPac) {
-        
-    // console.log("🚀 annualDataRoutes:", annualDataRoutes)
+function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, cardId, annualDataRoutes,
+    register, setValue, changeValueOfSelect, setIdCarsSelect }: IFormTransferPac) {
+
     const {width} = useWidth()
     const { functionalArea, fundsSapiencia, pospreSapiencia, } = arrayDataSelect
 
@@ -21,7 +22,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
     const [projectName, setProjectName] = useState('')
 
     useEffect(() => {
-        setValue(`${titleAdd.toLowerCase()}[${count}].cardId`, cardId)
+        // setValue(`${titleAdd.toLowerCase()}[${count}].cardId`, cardId)
         if (projectName != "") {
             setValue(`${titleAdd.toLowerCase()}[${count}].functionalArea`, (areasByProjectSt.find(e => e.value != null))?.id ?? areaIdSelectedSt)
             setValue(`${titleAdd.toLowerCase()}[${count}].projectName`, projectName)
@@ -33,7 +34,10 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
     }, [projectName])
 
     const optionSelected = (option: any) => {
-        changeValueOfSelect(option, formArray[count].cardId )
+        changeValueOfSelect({
+            projectId: true,
+        }, 'projectId', formArray[count].cardId )
+        setIdCarsSelect(formArray[count].cardId)
         if (option) {
             setProjectName(functionalArea.find(e => e.value == option)?.nameProject)
             processFunctionalArea(option)
@@ -51,72 +55,6 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
         setProjectIdSelectedSt(option)
         setAreaIdSelectedSt(areaList[0]?.id)
         setAreasByProjectSt(areaList)
-    }
-
-    const renderElement = () =>  {
-        const obj = annualDataRoutes?.annualRoute?.find(u => u.cardId === formArray[count].cardId )
-        // console.log("🚀 ormArray[count].cardId :", formArray[count].cardId )
-        // console.log("🚀  ~ obj:", obj)
-
-        if (obj != undefined) {
-            if (obj?.type == 'Programado' && annualDataRoutes.annualRoute.length == 1) {
-                return (
-                    <FormPacmonths
-                        control={control}
-                        count={count}
-                        pacTypeMonth="programmed"
-                        titleAdd={titleAdd}
-                        titleActive='Programado'
-                        setValue={setValue}
-                        annualDataRoutes={obj}
-                        pacTypeState={pacTypeState}
-                    />
-                )
-            }
-            if (obj?.type == 'Recaudado' && annualDataRoutes.annualRoute.length == 1) {
-                return (
-                    <FormPacmonths
-                        control={control}
-                        count={count}
-                        pacTypeMonth="collected"
-                        titleAdd={titleAdd}
-                        titleActive='Recaudado'
-                        setValue={setValue}
-                        annualDataRoutes={obj}
-                        pacTypeState={pacTypeState}
-                    />
-                )
-            }
-    
-            if(annualDataRoutes.annualRoute.length == 2 ){
-                return (
-                    <>
-                        <FormPacmonths
-                            control={control}
-                            count={count}
-                            pacTypeMonth="programmed"
-                            titleAdd={titleAdd}
-                            titleActive='Programado'
-                            setValue={setValue}
-                            annualDataRoutes={annualDataRoutes.annualRoute}
-                            pacTypeState={pacTypeState}
-                        />
-    
-                        <FormPacmonths
-                            control={control}
-                            count={count}
-                            pacTypeMonth="collected"
-                            titleAdd={titleAdd}
-                            titleActive='Recaudado'
-                            setValue={setValue}
-                            annualDataRoutes={annualDataRoutes.annualRoute}
-                            pacTypeState={pacTypeState}
-                        />  
-                        
-                    </>
-                )
-            }    
-        }
     }
 
     return(
@@ -137,6 +75,9 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     filter={true}
                     fieldArray={true}
                     errors={errors}
+                    optionSelected={(option) =>  changeValueOfSelect({
+                        managerCenter: true
+                    }, 'managerCenter', formArray[count].cardId)}
                 />
                  <SelectComponent
                     idInput={`${titleAdd}[${count}].projectId`}
@@ -162,7 +103,9 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     fieldArray={true}
                     data={fundsSapiencia}
                     errors={errors}
-                    optionSelected={(option) =>  changeValueOfSelect(option, formArray[count].cardId )}
+                    optionSelected={(option) =>  changeValueOfSelect({
+                        fundsSapiencia: true
+                    }, 'fundsSapiencia', formArray[count].cardId)}
                 />
                 <SelectComponent
                     idInput={`${titleAdd}[${count}].pospreSapiencia`}
@@ -175,7 +118,10 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                     fieldArray={true}
                     data={pospreSapiencia}
                     errors={errors}
-                    optionSelected={(option) =>  changeValueOfSelect(option, formArray[count].cardId )}
+                    optionSelected={(option) =>  changeValueOfSelect({
+                        pospreSapiencia: true
+                    }, 'pospreSapiencia', formArray[count].cardId)}
+                    
                 />
 
                 <SelectComponent
@@ -203,7 +149,29 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, pa
                 />
             </section>
 
-            { renderElement() }
+            {
+                annualDataRoutes[count+1]?.annualRouteService !== undefined && annualDataRoutes[count+1]?.annualRouteService.length == 1 ? (
+                    <FormElementPac 
+                        control={control} 
+                        count={count} 
+                        titleAdd={titleAdd} 
+                        annualDataRoutes={annualDataRoutes} 
+                        setValue={setValue} 
+                    />
+                )
+                : 
+                annualDataRoutes[count+1]?.annualRouteService !== undefined && annualDataRoutes[count+1]?.annualRouteService.length == 2 && (
+                    <FormElementPacBoth 
+                        control={control} 
+                        count={count} 
+                        titleAdd={titleAdd} 
+                        annualDataRoutes={annualDataRoutes} 
+                        setValue={setValue} 
+                    />
+                )
+            }
+
+            
             
        </div>
     )

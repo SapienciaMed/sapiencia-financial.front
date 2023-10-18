@@ -5,10 +5,11 @@ import CreateFundTransferPac from "../forms/create-fund-transfer-pac";
 import { useTransferPacCrudData } from "../hook/transfer-pac-crud.hook";
 import { paginatorFooter } from "../../../managementCenter/components/table-detail.component";
 import { calculateTotalDestino, calculateTotalOrigen } from "../util";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 function TransferPacCrud(): React.JSX.Element {
 
-    const { control, arrayDataSelect, errors, pacTypeState, isdataResetState, startIndex, watchAll, itemsPerPage, isActivityAdd, 
+    const { control, arrayDataSelect, errors, pacTypeState, isdataResetState, startIndex, watchAll, itemsPerPage, disableBtnAdd, showSpinner,
         isBtnDisable, arrayDataSelectHead, register, setValue, onSubmit, onPageChange, getValues, 
         onCancelar, setPacTypeState, setTypeValidityState, setIsdataResetState } = useTransferPacCrudData()
  
@@ -68,6 +69,13 @@ function TransferPacCrud(): React.JSX.Element {
                             </section>
 
                             <section className="card-user">
+                                {
+                                    showSpinner && (
+                                        <ProgressSpinner style={{width: '20px', height: '20px'}}  animationDuration=".5s" />
+
+                                    )
+                    
+                                }
                                 <div className="display-justify-space-between-pac gap-1">
 
                                     <section className="width-50">
@@ -82,9 +90,8 @@ function TransferPacCrud(): React.JSX.Element {
                                             isdataReset={isdataResetState}
                                             itemsPerPage={itemsPerPage}
                                             startIndex={startIndex}
-                                            isActivityAdd={isActivityAdd}
+                                            disableBtnAdd={disableBtnAdd}
                                             setIsdataResetState={setIsdataResetState}
-                                            
                                         />
                                         {
                                             watchAll?.origen?.some(use => Object.keys(use.programmed).length > 0 || Object.keys(use.collected).length > 0 ) &&
@@ -108,7 +115,7 @@ function TransferPacCrud(): React.JSX.Element {
                                             isdataReset={isdataResetState}
                                             itemsPerPage={itemsPerPage}
                                             startIndex={startIndex}
-                                            isActivityAdd={isActivityAdd}
+                                            disableBtnAdd={disableBtnAdd}
                                             setIsdataResetState={setIsdataResetState}
                                         />
                                         {

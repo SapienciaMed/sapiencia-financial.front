@@ -22,8 +22,10 @@ export function useTransferPacCrudData() {
   const [ typeValidityState, setTypeValidityState ] = useState(0)
   const [ isActivityAdd, setIsActivityAdd ] = useState<boolean>(true)
   const [ isdataResetState, setIsdataResetState ] = useState<boolean>(false)
-  const [isBtnDisable, setIsBtnDisable] = useState<boolean>(true)
+  const [ isBtnDisable, setIsBtnDisable] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState(1);
+  const [ showSpinner, setShowSpinner ] = useState(false)
+  const [ disableBtnAdd, setDisableBtnAdd ] = useState(true)
 
   const itemsPerPage = 2;
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -119,8 +121,11 @@ export function useTransferPacCrudData() {
         pacType: tipoPac
       }
       setIsdataResetState(true);
+      setShowSpinner(true)
       ListDinamicsRoutes(dataListroute)
         .then(response => {
+          setShowSpinner(false)
+          setDisableBtnAdd(false)
           if (response.operation.code === EResponseCodes.OK) {
             const dinamicData = response?.data;
             setIsdataResetState(false);
@@ -294,9 +299,10 @@ export function useTransferPacCrudData() {
     startIndex,
     itemsPerPage,
     watchAll,
-    isActivityAdd,
     isBtnDisable,
     arrayDataSelectHead,
+    showSpinner,
+    disableBtnAdd,
     register,
     setValue,
     onSubmit,

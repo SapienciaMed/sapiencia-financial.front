@@ -3,10 +3,10 @@ import React, { useEffect } from 'react'
 import { InputNumberComponent } from '../../../../common/components/Form/input-number.component';
 import { IFormPacmonths } from '../../../managementCenter/transfer/interfaces/TransferAreaCrudInterface';
 
-function FormPacmonths({ count, control, titleAdd, pacTypeMonth, titleActive, pacTypeState, annualDataRoutes, setValue }: IFormPacmonths) {
-    
+function FormPacmonths({ count, control, titleAdd, pacTypeMonth, titleActive, annualDataRoutes, isBoth , setValue }: IFormPacmonths) {
+
     useEffect(() => {
-        if (annualDataRoutes.length == 2) {
+        if (annualDataRoutes && !isBoth) {
             annualDataRoutes.map(value => {
                 setValue(`${titleAdd}[${count}].${pacTypeMonth}.january`,value.jan)
                 setValue(`${titleAdd}[${count}].${pacTypeMonth}.february`,value.feb)
@@ -21,7 +21,9 @@ function FormPacmonths({ count, control, titleAdd, pacTypeMonth, titleActive, pa
                 setValue(`${titleAdd}[${count}].${pacTypeMonth}.november`,value.nov)
                 setValue(`${titleAdd}[${count}].${pacTypeMonth}.december`,value.dec)
             })
-        }else {
+        }
+
+        if (annualDataRoutes && isBoth) {
             setValue(`${titleAdd}[${count}].${pacTypeMonth}.january`, annualDataRoutes.jan)
             setValue(`${titleAdd}[${count}].${pacTypeMonth}.february`, annualDataRoutes.feb)
             setValue(`${titleAdd}[${count}].${pacTypeMonth}.march`, annualDataRoutes.mar)

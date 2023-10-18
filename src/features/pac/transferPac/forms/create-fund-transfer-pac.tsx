@@ -12,12 +12,20 @@ import { validateTypeResourceServices } from "../util";
 import { IAnnualRoute } from "../../interface/Pac";
 
 function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pacTypeState, isdataReset, itemsPerPage,
-    startIndex, isActivityAdd, register, setValue, setIsdataResetState }:ICreateFundTransferPac ) {
+    startIndex, disableBtnAdd, register, setValue, setIsdataResetState }:ICreateFundTransferPac ) {
 
     const { SearchAnnualDataRoutes } = usePacTransfersService()
-    const [ annualDataRoutes, setAnnualDataRoutes ] = useState({
-        annualRoute: [] as IAnnualRoute[]
-      })
+    const [ idCardSelect, setIdCarsSelect] = useState('')
+    const [ dataSelectElements, setDataSelectElements] = useState({
+        fundsSapiencia: false,
+        pospreSapiencia: false,
+        projectId: false,
+        managerCenter: false
+    })
+    const [ annualDataRoutes, setAnnualDataRoutes ] = useState([{
+        annualRouteService: [] as IAnnualRoute[]
+    }])
+    
 
     const {width} = useWidth()
 
@@ -88,72 +96,42 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
     useEffect(() => {
         visibleFields.length == 0 && setIsdataResetState(false)
     },[visibleFields])
-    
+
     useEffect(() => {
-        if (watchCardId?.length > 0) {
-            const dataSelectElement = watchCardId?.map(obj => {
-                const {collected, programmed, value, typeTransfer, ...rest} = obj
-                return {
-                    isDataSelectComplete: Object.values(rest).every((value) => value !== "" ),
-                    id: rest.cardId
-                }
-            })
-            if (dataSelectElement?.every(value => value.isDataSelectComplete) && annualDataRoutes.annualRoute.length == 0){  
-                dataSelectorComplete()
-            }  
 
-        }
-     
-    },[watchCardId])
+        const allElementFull = Object.values(dataSelectElements).every(value => value)
 
-    const changeValueOfSelect = (valor: any, idCard: string) => {
-        console.log("🚀 idCard:", idCard)
-        if (annualDataRoutes.annualRoute.length > 0) {
-            dataSelectorComplete(idCard)
-        }
+        allElementFull &&  dataSelectorComplete(idCardSelect)
+        
+
+    },[dataSelectElements])
+
+    const changeValueOfSelect = (valor: any, typeSelect: string, idCard: string) => {  
+        setDataSelectElements({
+            ...dataSelectElements,
+            [typeSelect]: valor
+        })
     }
 
-    const dataSelectorComplete = (idCard?: string) => {   
-        
-        let dataRoutes
+    const dataSelectorComplete = (idCard: string) => {   
 
-        if (idCard != '') {
-            dataRoutes = watchCardId?.filter(use => use.cardId == idCard).map(val => {
-                return {
-                    page: 1,
-                    perPage: 1000000,
-                    pacType: validateTypePac(pacTypeState),
-                    exercise: vigencia,
-                    resourceType: validateTypeResourceServices(String(tipoRecurso)),
-                    managementCenter: val.managerCenter,
-                    idProjectVinculation:  arrayDataSelect?.functionalArea.find(value => String(value.id) == val.functionalArea)?.id,
-                    idBudget:  arrayDataSelect?.pospreSapiencia?.find(value => val.pospreSapiencia == value.id)?.idPosPreOrig,
-                    idPospreSapiencia: val.pospreSapiencia,
-                    idFund: val.fundsSapiencia,
-                    idCardTemplate: val.cardId
-                  }
-            })
-        } else {
-            dataRoutes = watchCardId?.map(use => {
-                return {
-                  page: 1,
-                  perPage: 1000000,
-                  pacType: validateTypePac(pacTypeState),
-                  exercise: vigencia,
-                  resourceType: validateTypeResourceServices(String(tipoRecurso)),
-                  managementCenter: use.managerCenter,
-                  idProjectVinculation:  arrayDataSelect?.functionalArea.find(value => String(value.id) == use.functionalArea)?.id,
-                  idBudget:  arrayDataSelect?.pospreSapiencia?.find(value => use.pospreSapiencia == value.id)?.idPosPreOrig,
-                  idPospreSapiencia: use.pospreSapiencia,
-                  idFund: use.fundsSapiencia,
-                  idCardTemplate: use.cardId
-                }
-              })
-        }
+        const dataRoutes = watchCardId.filter(use => use.cardId == idCard).map(val => {
+            return {
+                page: 1,
+                perPage: 1000000,
+                pacType: validateTypePac(pacTypeState),
+                exercise: vigencia,
+                resourceType: validateTypeResourceServices(String(tipoRecurso)),
+                managementCenter: val.managerCenter,
+                idProjectVinculation:  arrayDataSelect?.functionalArea.find(value => String(value.id) == val.functionalArea)?.id,
+                idBudget:  arrayDataSelect?.pospreSapiencia?.find(value => val.pospreSapiencia == value.id)?.idPosPreOrig,
+                idPospreSapiencia: val.pospreSapiencia,
+                idFund: val.fundsSapiencia,
+                idCardTemplate: val.cardId
+              }
+        })
 
-        console.log("🚀  dataRoutes:", dataRoutes)
-
-        SearchAnnualDataRoutes(dataRoutes[0]).then(response => {
+        dataRoutes.length > 0 && SearchAnnualDataRoutes(dataRoutes[0]).then(response => {
             if (response.operation.code === EResponseCodes.OK) {
               const annualDataRoutesResponse = response?.data;
               const annualRouteService = annualDataRoutesResponse.annualRoute.map(use => {
@@ -176,27 +154,36 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
                     cardId: annualDataRoutesResponse.headerResult.idCardTemplate
                 }
               })
-              setAnnualDataRoutes({
-                annualRoute: annualRouteService
-              })
+              
+              setAnnualDataRoutes([
+                ...annualDataRoutes,
+                    {
+                        annualRouteService
+                    }
+              ])
+              
             } 
         }).catch(err => console.log(err))
-      }
+    }
 
     return(
         <div className="display-flex-direction-column padding paddingBotom gap-1">
             <button 
                 className={`btn-rimless biggest ${titleAdd == 'origen' ? 'display-align-flex-end' : width < 1024 ? 'display-align-flex-end' : 'display-justify-flex-end'}  gap-0 pointer`}
                 onClick={() => { 
-                    annualDataRoutes.annualRoute.length > 0 && setAnnualDataRoutes({annualRoute: []})
+                    setDataSelectElements({
+                        fundsSapiencia: false,
+                        pospreSapiencia: false,
+                        projectId: false,
+                        managerCenter: false
+                    })
                     append(initialValue) 
                 }}
-                disabled={isActivityAdd}
+                disabled={disableBtnAdd}
                 form="none"
             >
                 Añadir {titleAdd} <AiOutlinePlusCircle />
             </button>
-
             {
                 visibleFields.map((field, index) => {
                     return(
@@ -213,9 +200,9 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
                                 titleAdd={titleAdd}
                                 register={register}
                                 setValue={setValue}
-                                pacTypeState={pacTypeState}
                                 annualDataRoutes={annualDataRoutes}
                                 changeValueOfSelect={changeValueOfSelect}
+                                setIdCarsSelect={setIdCarsSelect}
                             />
 
                         </section>
