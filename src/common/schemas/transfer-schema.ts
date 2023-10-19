@@ -72,5 +72,71 @@ export const validationFieldsCreatefunds = yup.object({
                 .required("Completar información del campo"),
         })),
         
+})
+
+export const validationTransferPac = yup.object({
+    pacType: yup
+        .string()
+        .required("Completa este campo")
+        .max(50, 'Solo se permiten 50 caracteres'),
+    validity: yup 
+        .string()
+        .required("Completa este campo")
+        .max(10, 'Solo se permiten 10 caracteres'),
+    TypeResource: yup 
+        .string()
+        .required("Completa este campo")
+        .max(50, 'Solo se permiten 50 caracteres'),
+
+    origen: yup.array()
+        .of(yup.object().shape({
+            managerCenter : yup 
+                .string()
+                .required("Completar información del campo"),
+            projectId: yup 
+                .string()
+                .max(20, 'Solo se permiten 20 caracteres')
+                .required("Completar información del campo"),
+            functionalArea: yup 
+                .string()
+                .max(16, 'Solo se permiten 16 caracteres')
+                .required("Completar información del campo"),
+            fundsSapiencia: yup 
+                .string()
+                .max(9, 'Solo se permiten 9 caracteres')
+                .required("Completar información del campo"),
+            pospreSapiencia:  yup 
+                .string()
+                .max(30, 'Solo se permiten 30 caracteres')
+                .required("Completar información del campo"),
+            projectName: yup
+                .string()
+                .required("Completar información del campo"),
+        })),
+    destino: yup.array()
+        .of(yup.object().shape({
+            managerCenter : yup 
+                .string()
+                .required("Completar información del campo"),
+            projectId: yup 
+                .string()
+                .max(20, 'Solo se permiten 20 caracteres')
+                .required("Completar información del campo"),
+            functionalArea: yup 
+                .string()
+                .max(16, 'Solo se permiten 16 caracteres')
+                .required("Completar información del campo"),
+            fundsSapiencia: yup 
+                .string()
+                .max(9, 'Solo se permiten 9 caracteres')
+                .required("Completar información del campo"),
+            pospreSapiencia:  yup 
+                .string()
+                .max(30, 'Solo se permiten 30 caracteres')
+                .required("Completar información del campo"),
+            projectName: yup
+                .string()
+                .required("Completar información del campo"),
+        })),
 
 })
