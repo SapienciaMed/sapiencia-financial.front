@@ -165,6 +165,7 @@ export function usePacCrud() {
       })
     
     }else {
+      console.log("==>><",response.data)
       showModal({
         title: "Carga de archivo",
         description: response.operation.message,
