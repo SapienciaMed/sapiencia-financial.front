@@ -27,15 +27,22 @@ function PacCrud() {
   const [visible, setVisible] = useState<boolean>(false);
   const [file, setfile] = useState<File>(null);
   const [isVisibleErrors, setIsVisibleErrors] = useState(false)
-
+  const [isUploadFileSt, setIsUploadFileSt] = useState(false)
 
   const getFile = (file: File) => {
     setfile(file)
-
     return file;
   }
 
-  
+  const prueba = (file: any) => {
+    if (file.name) {
+      setIsUploadFileSt(true)
+    } else {
+      setIsUploadFileSt(false)
+    }
+  }
+
+
   const [dataTableSt, setDataTableSt] = useState<any>()
 
   useEffect(() => {
@@ -63,9 +70,8 @@ function PacCrud() {
                 errors={errors}
               />
 
-
               <SelectComponent
-                idInput={`typeSource`}
+                idInput='typeSource'
                 control={control}
                 label='Tipo de recurso'
                 className="select-basic medium"
@@ -76,10 +82,11 @@ function PacCrud() {
                   { id: 2, name: "Recursos propios", value: "Propio" }
                 ]}
                 filter={true}
-                fieldArray={true}
                 errors={errors}
                 direction={EDirection.column}
               />
+
+
               <SelectComponent
                 idInput={`typePac`}
                 control={control}
@@ -94,17 +101,11 @@ function PacCrud() {
                   { id: "4", name: "Recaudo", value: "Recaudo" },
                   { id: "5", name: "Nueva versión", value: "Nueva versión" }
                 ]}
-
                 filter={true}
-                fieldArray={true}
                 errors={errors}
                 direction={EDirection.column}
               />
-
             </section>
-
-            {/* <div className="title-button text-three large" style={{marginTop:'10px'}} onClick={()=>uploadFileRef.current?.click()}> Seleccionar archivo <BiPlusCircle /> </div>
-            <input ref={uploadFileRef} type="file" style={{display:'none'}}/> */}
 
             <div className="div-upload">
               <br />
@@ -120,7 +121,6 @@ function PacCrud() {
                 {
                   errorsPac?.length > 0 && (
                     <ButtonComponent
-                      //className="button-main huge hover-three"
                       className="button-clean-fields button-border"
                       value="Validación"
                       type="button"
@@ -148,13 +148,13 @@ function PacCrud() {
                     <>
                       <UploadComponent
                         id={field.name}
-                        dataArchivo={(e: File) => field.onChange(getFile(e))}
+                        dataArchivo={(e: File) => { field.onChange(getFile(e)); prueba(e) }}
                         showModal={(e: boolean) => field.onChange(setVisible(e))}
                       />
                     </>
                   )}
                 />
-                <div style={{padding:'1rem'}}>
+                <div style={{ padding: '1rem' }}>
                   <Button className='mt-8' type="button" style={{ backgroundColor: '533893' }} onClick={() => setVisible(false)} label="Cancelar" rounded />
 
                 </div>
@@ -204,14 +204,17 @@ function PacCrud() {
               form="funds-form"
               disabled={true}
             /> */}
-            
+
           <ButtonLoadingComponent
             className="button-main huge hover-three"
             value="Guardar"
             form="form-pac"
             type="button"
-            action={() => btnUploadFileRef.current.click()}
-            disabled={!isAllowSave}
+            action={() => {
+              btnUploadFileRef.current.click();
+              /* setIsUploadFileSt(false) */
+            }}
+            disabled={!isUploadFileSt}
             isLoading={isLoading}
           />
         </div>
