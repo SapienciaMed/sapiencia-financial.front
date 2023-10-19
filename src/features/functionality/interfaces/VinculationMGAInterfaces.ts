@@ -50,6 +50,7 @@ export interface IApiPlanningDetailedActivitiesSpecify {
   detailActivityDetailed: string;       
   amountActivityDetailed: number;       
   measurementActivityDetailed: number;  
+  measurementActivityDetailedName: string,
   unitCostActivityDetailed: number;     
   totalCostActivityDetailed: number;    
   activityId: number;                   
@@ -58,6 +59,7 @@ export interface IApiPlanningDetailedActivitiesSpecify {
   productDescriptionMGA: string;        
   codeConsecutiveActivityMga: string;   
   activityDescriptionMGA: string;
-  idVinculation: number      
+  idVinculation: number,
+  id: number      
 }
 
