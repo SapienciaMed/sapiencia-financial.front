@@ -3,8 +3,8 @@ import { ICreateTransferPacForm } from "../../../managementCenter/transfer/inter
 export const isvalidateTypePac = (watchAll: ICreateTransferPacForm) => {
 
     const hasNonEmptyAll = watchAll.origen?.concat(watchAll?.destino)?.some(item => {
-        return (item.managerCenter !='' && item.managerCenter != undefined) 
-            || (item.functionalArea !='' && item.functionalArea != undefined)
+        return (item?.managerCenter !='' && item?.managerCenter != undefined) 
+            || (item?.functionalArea !='' && item?.functionalArea != undefined)
             || (item?.funds !=''  && item?.funds != undefined)
             || (item?.projectName !='' && item?.projectName != undefined)
             || (item?.fundsSapiencia !='' && item?.fundsSapiencia != undefined)

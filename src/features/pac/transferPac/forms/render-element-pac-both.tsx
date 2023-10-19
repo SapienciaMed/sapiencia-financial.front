@@ -19,7 +19,7 @@ function FormElementPacBoth({ control, count, titleAdd, annualDataRoutes, setVal
     name: `${titleAdd}`
   });
 
-  if (!data[count].functionalArea || !data[count].fundsSapiencia || !data[count].pospreSapiencia || !data[count].managerCenter) return null;
+  if (!data[count]?.functionalArea || !data[count]?.fundsSapiencia || !data[count]?.pospreSapiencia || !data[count]?.managerCenter) return null;
 
   const pacType = (us) => {
     if (us.type === 'Programado') {

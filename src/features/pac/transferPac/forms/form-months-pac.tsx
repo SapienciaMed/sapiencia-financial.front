@@ -20,10 +20,14 @@ function FormPacmonths({ count, control, titleAdd, pacTypeMonth, titleActive, an
                 setValue(`${titleAdd}[${count}].${pacTypeMonth}.october`,value.oct)
                 setValue(`${titleAdd}[${count}].${pacTypeMonth}.november`,value.nov)
                 setValue(`${titleAdd}[${count}].${pacTypeMonth}.december`,value.dec)
+                setValue(`${titleAdd}[${count}].${pacTypeMonth}.id`, value.id)
+                setValue(`${titleAdd}[${count}].${pacTypeMonth}.pacId`, value.pacId)
             })
         }
 
         if (annualDataRoutes && isBoth) {
+            setValue(`${titleAdd}[${count}].${pacTypeMonth}.id`, annualDataRoutes.id)
+            setValue(`${titleAdd}[${count}].${pacTypeMonth}.pacId`, annualDataRoutes.pacId)
             setValue(`${titleAdd}[${count}].${pacTypeMonth}.january`, annualDataRoutes.jan)
             setValue(`${titleAdd}[${count}].${pacTypeMonth}.february`, annualDataRoutes.feb)
             setValue(`${titleAdd}[${count}].${pacTypeMonth}.march`, annualDataRoutes.mar)

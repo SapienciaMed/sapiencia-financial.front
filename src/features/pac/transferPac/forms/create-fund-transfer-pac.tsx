@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useFieldArray, useWatch } from 'react-hook-form';
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import FormTransferPac from "./form-transfer-pac";
@@ -10,11 +10,13 @@ import { EResponseCodes } from "../../../../common/constants/api.enum";
 import { validateTypePac } from "../util/validate-type-pac";
 import { validateTypeResourceServices } from "../util";
 import { IAnnualRoute } from "../../interface/Pac";
+import { AppContext } from "../../../../common/contexts/app.context";
 
 function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pacTypeState, isdataReset, itemsPerPage,
     startIndex, disableBtnAdd, register, setValue, setIsdataResetState }:ICreateFundTransferPac ) {
 
     const { SearchAnnualDataRoutes } = usePacTransfersService()
+    const { setMessage } = useContext(AppContext);
     const [ idCardSelect, setIdCarsSelect] = useState('')
     const [ dataSelectElements, setDataSelectElements] = useState({
         fundsSapiencia: false,
@@ -25,7 +27,7 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
     const [ annualDataRoutes, setAnnualDataRoutes ] = useState([{
         annualRouteService: [] as IAnnualRoute[]
     }])
-    
+    console.log("🚀 annualDataRoutes:", annualDataRoutes)
 
     const {width} = useWidth()
 
@@ -70,6 +72,8 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
             october: '',
             november: '',
             december: '',
+            id: '',
+            pacId: '',
         },
         programmed:  {
             january: '',
@@ -84,13 +88,28 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
             october: '',
             november: '',
             december: '',
+            id: '',
+            pacId: '',
         }
     }
 
     const visibleFields = fields.slice(startIndex, startIndex + itemsPerPage);
     
     useEffect(() => {
-        isdataReset && remove()
+        if(isdataReset){
+            remove()
+            setAnnualDataRoutes(
+                [{
+                    annualRouteService: [] as IAnnualRoute[]
+                }]
+            )
+            setDataSelectElements({
+                fundsSapiencia: false,
+                pospreSapiencia: false,
+                projectId: false,
+                managerCenter: false
+            })
+        }  
     },[isdataReset])
 
     useEffect(() => {
@@ -98,12 +117,8 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
     },[visibleFields])
 
     useEffect(() => {
-
         const allElementFull = Object.values(dataSelectElements).every(value => value)
-
         allElementFull &&  dataSelectorComplete(idCardSelect)
-        
-
     },[dataSelectElements])
 
     const changeValueOfSelect = (valor: any, typeSelect: string, idCard: string) => {  
@@ -154,15 +169,38 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
                     cardId: annualDataRoutesResponse.headerResult.idCardTemplate
                 }
               })
+
+              const existingIndex = annualDataRoutes.findIndex(
+                (item) => item.annualRouteService[0]?.cardId === annualRouteService[0]?.cardId
+              );
+            
+              if (existingIndex !== -1) {
+                // Si el cardId ya existe, actualiza el elemento existente
+                const updatedAnnualDataRoutes = [...annualDataRoutes];
+                updatedAnnualDataRoutes[existingIndex].annualRouteService[0] = annualRouteService[0];
+                setAnnualDataRoutes(updatedAnnualDataRoutes);
+              } else {
+                // Si el cardId no existe, agrega un nuevo elemento
+                setAnnualDataRoutes([...annualDataRoutes, { annualRouteService }]);
+              }
               
-              setAnnualDataRoutes([
-                ...annualDataRoutes,
-                    {
-                        annualRouteService
-                    }
-              ])
-              
-            } 
+            }else{
+                setMessage({
+                    title: "Validación de datos",
+                    description: response.operation.message,
+                    show: true,
+                    OkTitle: "Aceptar",
+                    onOk: () => {
+                      setMessage({});
+                      
+                    },
+                    background: true,
+                    onClose: () => {
+                      setMessage({});
+                
+                    },
+                });
+            }
         }).catch(err => console.log(err))
     }
 
@@ -185,6 +223,7 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
                 Añadir {titleAdd} <AiOutlinePlusCircle />
             </button>
             {
+                !isdataReset &&
                 visibleFields.map((field, index) => {
                     return(
                         <section className="style-form-create" key={field.id}>

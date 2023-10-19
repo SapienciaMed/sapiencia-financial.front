@@ -104,5 +104,7 @@ export interface IMonths{
     september: string ,
     october: string ,
     november: string ,
-    december: string 
+    december: string,
+    id: string,
+	pacId: string,
 }

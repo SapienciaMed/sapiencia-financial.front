@@ -21,12 +21,10 @@ function FormElementPac({ control, count, titleAdd, annualDataRoutes, setValue }
         name: `${titleAdd}`
     });
 
-    if (!data[count].functionalArea || !data[count].fundsSapiencia || !data[count].pospreSapiencia || !data[count].managerCenter) return null;
+    if (!data[count]?.functionalArea || !data[count]?.fundsSapiencia || !data[count]?.pospreSapiencia || !data[count]?.managerCenter) return null;
 
     const typeRoute = annualDataRoutes[count + 1]?.annualRouteService.find(u => u?.type )?.type
-    console.log("🚀 ~ file: render-element-pac.tsx:27 ~ FormElementPac ~ typeRoute:", typeRoute)
-    console.log("🚀 ~ file: render-element-pac.tsx:33 ~ FormElementPac ~ annualDataRoutes[count+1]?.annualRouteService:", annualDataRoutes[count+1]?.annualRouteService)
-
+    
     return (
         <>
            {
