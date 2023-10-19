@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { pospreSapienciaCrudValidator } from "../../../common/schemas";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { usePosPreSapienciaService } from "./pospre-sapiencia-service.hook";
 import { useBudgetsService } from "../budgetPosition/hooks/budgets-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
@@ -17,7 +17,7 @@ interface IPosPreSapienciaCrudForm {
     assignedTo: string;
 }
 
-export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: string, location: "origen" | "pospre") {
+export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: string, location: "origen" | "pospre", action: "new" | "edit") {
     const resolver = useYupValidationResolver(pospreSapienciaCrudValidator);
     const { GetPosPreSapiencia, CreatePosPreSapiencia, UpdatePosPreSapiencia } = usePosPreSapienciaService();
     const { GetBudgets } = useBudgetsService();
@@ -26,10 +26,14 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
         register,
         formState: { errors },
         setValue: setValueRegister,
-        control
+        control,
+        watch
     } = useForm<IPosPreSapienciaCrudForm>({ resolver });
     const navigate = useNavigate();
     const { setMessage, authorization } = useContext(AppContext);
+    const [ dataPospre, setDataPospre ] = useState<IPosPreSapiencia[]>([])
+    
+    const [isBtnDisable, setIsBtnDisable] = useState<boolean>(true)
 
     useEffect(() => {
         GetBudgets(Number(pospre)).then(response => {
@@ -52,6 +56,7 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
         
         GetPosPreSapiencia(dataEditPospre).then(response => {
             if(response.operation.code === EResponseCodes.OK) {
+                setDataPospre(response.data.array)
                 setValueRegister("ejercise", String(response.data.array[0].ejercise));
                 setValueRegister("description", response.data.array[0].description);
                 setValueRegister("consecutive", response.data.array[0].consecutive);
@@ -62,6 +67,19 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
 
     }, [pospreSapiencia])
 
+    const watchPospre = watch()
+
+    useEffect(() => {
+        if (action === 'edit' && dataPospre.length > 0) {
+            const firstDataPospre = dataPospre[0];
+            const propsToCompare = ["ejercise", "description", "consecutive"];
+            const isPropsEqual = propsToCompare.every(prop => watchPospre[prop] == firstDataPospre[prop]);
+    
+            setIsBtnDisable(isPropsEqual);
+        } else {
+            setIsBtnDisable(false);
+        }
+    },[watchPospre, dataPospre])
 
     const onSubmitNewPosPreSapiencia = handleSubmit(async (data: IPosPreSapienciaCrudForm) => {
  
@@ -204,6 +222,6 @@ export function usePosPreSapienciaCrudData(pospre: string, pospreSapiencia: stri
         }     
     }
 
-    return { register, errors, control, onSubmitNewPosPreSapiencia, onSubmitEditPosPreSapiencia, onCancelNew, onCancelEdit, 
+    return { register, errors, control, isBtnDisable, onSubmitNewPosPreSapiencia, onSubmitEditPosPreSapiencia, onCancelNew, onCancelEdit, 
         confirmClose, validatorNumber };
 }

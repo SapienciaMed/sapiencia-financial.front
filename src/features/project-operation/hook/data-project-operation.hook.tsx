@@ -20,7 +20,7 @@ export function useDataProjectOperation() {
     const resolver = useYupValidationResolver(fundsValidator);
     const { setMessage } = useContext(AppContext);
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
-    const [isVisibleTable, setIsVisibleTable] = useState<Boolean>(false);
+    const [isVisibleTable, setIsVisibleTable] = useState<boolean>(false);
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
 
     const {

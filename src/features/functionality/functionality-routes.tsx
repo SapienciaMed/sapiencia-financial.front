@@ -28,8 +28,7 @@ export const FunctionalityRoutes = () => {
 
 
         <Route path={"/proyecto-funcionamiento"} element={<ProjectsOperationsPage/>} />
-        {/* <Route path={"/proyecto-funcionamiento/create"} element={<ProjectsOperationsCrud action="new"/>} /> */}
-        <Route path={"/proyecto-funcionamiento/create"} element={<PacCrud action="new"/>} />
+        <Route path={"/proyecto-funcionamiento/create"} element={<ProjectsOperationsCrud action="new"/>} />
         <Route path={"/proyecto-funcionamiento/edit/:id"} element={<ProjectsOperationsCrud action="edit"/>} />
         
         <Route path={"/fondos"} element={<FoundsPage/>} />

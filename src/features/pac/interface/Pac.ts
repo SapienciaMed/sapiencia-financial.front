@@ -141,3 +141,15 @@ export interface IBudgetsRoutesSimple {
     userCreate?: string;
     dateCreate?: DateTime;
 }
+
+export interface IHeadPac {
+    exercise:number;
+    typePac:string;
+    typeSource:string;
+    file:any;
+}
+
+export interface IErrorTablePac{
+    message:number;
+    error:string;
+} 

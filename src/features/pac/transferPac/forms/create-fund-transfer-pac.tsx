@@ -27,7 +27,6 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
     const [ annualDataRoutes, setAnnualDataRoutes ] = useState([{
         annualRouteService: [] as IAnnualRoute[]
     }])
-    console.log("🚀 annualDataRoutes:", annualDataRoutes)
 
     const {width} = useWidth()
 
