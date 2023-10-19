@@ -25,7 +25,6 @@ export const UploadComponent = (props: Atributos) => {
   const fileUploadRef = useRef(null);
 
   const onTemplateSelect = (e) => {
-    console.log("template - select")  
     let _totalSize = totalSize;
     let files = e.files;
 
@@ -54,7 +53,6 @@ export const UploadComponent = (props: Atributos) => {
   };
 
   const onTemplateClear = () => {
-    console.log('--4');
     setVisible(true);
     setTotalSize(0);
   };
@@ -85,7 +83,6 @@ export const UploadComponent = (props: Atributos) => {
 
   const itemTemplate = (inFile: object, props: ItemTemplateOptions) => {
     const file = inFile as File;
-    console.log(file);
     
     const extencion = file.name.split(".");
 
@@ -93,7 +90,6 @@ export const UploadComponent = (props: Atributos) => {
       onTemplateRemove(file, props.onRemove);
       return;
     }
-
     dataArchivo(inFile);
 
     const footerContent = (
