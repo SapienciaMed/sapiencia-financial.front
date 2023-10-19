@@ -23,6 +23,7 @@ interface ISelectProps<T> {
   emptyMessage?: string;
   optionSelected?:Function;
   isSearchByName?:boolean;
+  isValidateName?: boolean
 }
 
 function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
@@ -52,6 +53,7 @@ export function SelectComponent({
   filter,
   emptyMessage = "Sin resultados.",
   optionSelected,
+  isValidateName = true
 }: ISelectProps<any>): React.JSX.Element {
   if (data) {
     const seleccione: IDropdownProps = { name: "Seleccione", value: null };
