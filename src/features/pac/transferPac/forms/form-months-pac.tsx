@@ -4,7 +4,6 @@ import { InputNumberComponent } from '../../../../common/components/Form/input-n
 import { IFormPacmonths } from '../../../managementCenter/transfer/interfaces/TransferAreaCrudInterface';
 
 function FormPacmonths({ count, control, titleAdd, pacTypeMonth, titleActive, annualDataRoutes, isBoth , setValue }: IFormPacmonths) {
-
     useEffect(() => {
         if (annualDataRoutes && !isBoth) {
             annualDataRoutes.map(value => {
@@ -41,7 +40,7 @@ function FormPacmonths({ count, control, titleAdd, pacTypeMonth, titleActive, an
             setValue(`${titleAdd}[${count}].${pacTypeMonth}.november`, annualDataRoutes.nov)
             setValue(`${titleAdd}[${count}].${pacTypeMonth}.december`, annualDataRoutes.dec)
         }
-    },[annualDataRoutes])
+    },[JSON.stringify(annualDataRoutes)])
 
 
     return(
@@ -233,4 +232,4 @@ function FormPacmonths({ count, control, titleAdd, pacTypeMonth, titleActive, an
     
 }
 
-export default React.memo(FormPacmonths);
+export default FormPacmonths;

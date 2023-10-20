@@ -11,6 +11,7 @@ import { usePacTransfersService } from './pac-transfers-service.hook';
 import { IArrayDataSelectHead, IArrayDataSelectPac } from '../interfaces/TypeTransferPac';
 import { IDropdownProps } from '../../../../common/interfaces/select.interface';
 import { validateTypePac } from '../util/validate-type-pac';
+import { IAnnualRoute } from '../../interface/Pac';
 
 export function useTransferPacCrudData() {
 
@@ -26,6 +27,11 @@ export function useTransferPacCrudData() {
   const [currentPage, setCurrentPage] = useState(1);
   const [ showSpinner,   setShowSpinner ] = useState(false)
   const [ disableBtnAdd, setDisableBtnAdd ] = useState(true)
+  const [ currentTotal, setCurrentTotal ] = useState(0)
+  const [ originalOriginDestination, setOriginalOriginDestination ] = useState<any>()
+  const [ annualDataRoutesOriginal, setAnnualDataRoutesOriginal ] = useState([{
+    annualRouteService: [] as IAnnualRoute[]
+  }])
 
   const itemsPerPage = 2;
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -54,8 +60,48 @@ export function useTransferPacCrudData() {
   const vigencia = watch('validity')
   const tipoRecurso = watch('TypeResource')
   const watchAll = watch()
-
+  
   const { hasDataBeforeReset, hasNonEmptyAll } = isvalidateTypePac(watchAll);
+  
+  useEffect(() => {
+    if (annualDataRoutesOriginal.length > 1) {
+      const totalOginal = annualDataRoutesOriginal
+        .flatMap(item => item.annualRouteService.map(service => {
+          const { id, pacId, type, cardId, ...values } = service;
+          return values;
+        }))
+        .reduce((acc, service) => {
+          for (const key in service) {
+            if (service.hasOwnProperty(key)) {
+              acc[key] = (acc[key] || 0) + service[key];
+            }
+          }
+          return acc;
+      },  {} as Record<string, number> );
+
+      const totalAmount = Object.values(totalOginal).reduce((total, value) => total + value, 0);
+      setCurrentTotal(totalAmount)
+
+      /*Determina que cadId del servicio es igual al annualDataRoutesOriginal.annualRouteService cadId y le agrega una prop nueva al arreglo llamado ubicacion 
+        con el fin de determinar que la suma original del origen o del destino sigan iguales sin sufrir cambios.
+      */
+      const originalDataAnnualRouteswithLocations = annualDataRoutesOriginal.map(item => {
+        const annualRouteService = item.annualRouteService;
+        const origenMatch = watchAll.origen.some(origen => annualRouteService.some(routeService => routeService.cardId === origen.cardId));
+        const destinoMatch = watchAll.destino.some(destino => annualRouteService.some(routeService => routeService.cardId === destino.cardId));
+        
+        if (origenMatch) {
+            return { ...item, ubicacion: "origen" };
+        } else if (destinoMatch) {
+            return { ...item, ubicacion: "destino" };
+        } else {
+            return item;
+        }
+      });
+
+      setOriginalOriginDestination(originalDataAnnualRouteswithLocations)
+    }
+  },[annualDataRoutesOriginal])
 
   //Resetea el formulario, cuando se cambia de pac y algun valor del formulario este lleno
   useEffect(() => {
@@ -66,6 +112,7 @@ export function useTransferPacCrudData() {
         reset()
         setShowSpinner(false)
         setDisableBtnAdd(true)
+        setCurrentTotal(0)
       } else {
         setPacTypeState2(pacTypeState);
       }
@@ -187,11 +234,12 @@ export function useTransferPacCrudData() {
   },[isActivityAdd, watchAll.TypeResource])
 
   useEffect(() => {
-    watchAll && setIsBtnDisable( calculateTotalOrigen(watchAll) != '0' && calculateTotalDestino(watchAll) != '0' && (calculateTotalOrigen(watchAll) == calculateTotalDestino(watchAll))  )
+    watchAll && setIsBtnDisable( calculateTotalOrigen(watchAll) != 0 && calculateTotalDestino(watchAll) != 0 /*&& (calculateTotalOrigen(watchAll) == calculateTotalDestino(watchAll))*/  )
     watchAll && validateHeader()
   },[watchAll])
 
   const onSubmit = handleSubmit(async ( data: any) => {
+    
     function removeEmptyFields(obj) {
       for (var key in obj) {
         if (obj[key] === '' || obj[key] === undefined || obj[key] === null) {
@@ -202,176 +250,189 @@ export function useTransferPacCrudData() {
       }
       return obj;
     }
-  
-  const nuevoObjeto = removeEmptyFields(data);
-    setMessage({
-      title: "Guardar",
-      description: "¿Estás segur@ de guardar la información?",
-      OkTitle: "Aceptar",
-      cancelTitle: "Cancelar",
-      show: true,
-      onCancel: () => {
-        setMessage({});
-      },
-      onOk: () => {
 
-        const transformData = (ob, type, authorization) => {
-          return {
-            type,
-            jan: ob?.january,
-            feb: ob?.february,
-            mar: ob?.march,
-            abr: ob?.april,
-            may: ob?.may,
-            jun: ob?.june,
-            jul: ob?.july,
-            ago: ob?.august,
-            sep: ob?.september,
-            oct: ob?.october,
-            nov: ob?.november,
-            dec: ob?.december,
-            id: ob?.id,
-            pacId: ob?.pacId,
-            dateModify: new Date(authorization.user.dateModify).toISOString().split('T')[0],
-            dateCreate: new Date(authorization.user.dateCreate).toISOString().split('T')[0]
-          };
-        };
+    if(currentTotal != (calculateTotalOrigen(watchAll) + calculateTotalDestino(watchAll))){
+      setMessage({
+        title: 'Validación',
+        show: true,
+        description: 'La sumatoria de valor actual y La sumatoria del valor nuevo debe coincidir',
+        OkTitle: 'Aceptar',
+        background: true,
+        onOk: () => {
+          setMessage({});
+        },
+        onClose: () => {
+          setMessage({});
+        },
+      });
+    }else{
+      const nuevoObjeto = removeEmptyFields(data);
 
-        const dataTransferpac = {
-          headTransfer: {
-            pacType: validateTypePac(data.pacType),
-            exercise: data.validity,
-            resourceType: validateTypeResourceServices(data.TypeResource)
+      setMessage({
+          title: "Guardar",
+          description: "¿Estás segur@ de guardar la información?",
+          OkTitle: "Aceptar",
+          cancelTitle: "Cancelar",
+          show: true,
+          onCancel: () => {
+            setMessage({});
           },
-          transferTransaction: {
-            origins:  nuevoObjeto.origen.map(use => {
-              const newArray = [];
-              if (use.hasOwnProperty("collected")) {
-                newArray.push({
-                  collected: use?.collected
-                });
-              }
-              if (use.hasOwnProperty("programmed")) {
-                newArray.push({
-                  programmed: use?.programmed
-                });
-              }
+          onOk: () => {
+  
+            const transformData = (ob, type, authorization) => {
               return {
-                managementCenter: use.managerCenter,
-                idProjectVinculation: use.projectId,
-                idBudget: use.projectId,
-                idPospreSapiencia: use.pospreSapiencia,
-                idFund: use.fundsSapiencia,
-                idCardTemplate: use.cardId,
-                annualRoute:  newArray.filter(obj => {
-                  return Object.values(obj).some(value => {
-                      if (typeof value === 'object') {
-                          return Object.values(value).some(subValue => subValue !== 0);
-                      }
-                      return false;
-                  })
-                }).map(ob => {
-                  if (ob.hasOwnProperty("collected") && !ob.hasOwnProperty("programmed")) {
-                    return transformData(ob.collected, "Recaudado", authorization);
-                  } else if (ob.hasOwnProperty("programmed") && !ob.hasOwnProperty("collected")) {
-                    return transformData(ob.programmed, "Programado", authorization);
-                  } else if (ob.hasOwnProperty("collected") && ob.hasOwnProperty("programmed")) {
-                    const collectedData = transformData(ob.collected, "Recaudado", authorization);
-                    const programmedData = transformData(ob.programmed, "Programado", authorization);
-                    return [collectedData, programmedData];
+                type,
+                jan: ob?.january,
+                feb: ob?.february,
+                mar: ob?.march,
+                abr: ob?.april,
+                may: ob?.may,
+                jun: ob?.june,
+                jul: ob?.july,
+                ago: ob?.august,
+                sep: ob?.september,
+                oct: ob?.october,
+                nov: ob?.november,
+                dec: ob?.december,
+                id: ob?.id,
+                pacId: ob?.pacId,
+                dateModify: new Date(authorization.user.dateModify).toISOString().split('T')[0],
+                dateCreate: new Date(authorization.user.dateCreate).toISOString().split('T')[0]
+              };
+            };
+  
+            const dataTransferpac = {
+              headTransfer: {
+                pacType: validateTypePac(data.pacType),
+                exercise: parseInt(data.validity),
+                resourceType: validateTypeResourceServices(data.TypeResource)
+              },
+              transferTransaction: {
+                origins:  nuevoObjeto.origen.map(use => {
+                  const newArray = [];
+                  if (use.hasOwnProperty("collected")) {
+                    newArray.push({
+                      collected: use?.collected
+                    });
                   }
-                })
-              }
-            }),
-            destinities: nuevoObjeto.destino.map(use => {
-              const newArray = [];
-              if (use.hasOwnProperty("collected")) {
-                newArray.push({
-                  collected: use?.collected
-                });
-              }
-              if (use.hasOwnProperty("programmed")) {
-                newArray.push({
-                  programmed: use?.programmed
-                });
-              }
-              return {
-                managementCenter: use.managerCenter,
-                idProjectVinculation: use.projectId,
-                idBudget: use.projectId,
-                idPospreSapiencia: use.pospreSapiencia,
-                idFund: use.fundsSapiencia,
-                idCardTemplate: use.cardId,
-                annualRoute:  newArray.filter(obj => {
-                  return Object.values(obj).some(value => {
-                      if (typeof value === 'object') {
-                          return Object.values(value).some(subValue => subValue !== 0);
-                      }
-                      return false;
-                  })
-                }).map(ob => {
-                  if (ob.hasOwnProperty("collected") && !ob.hasOwnProperty("programmed")) {
-                    return transformData(ob.collected, "Recaudado", authorization);
-                  } else if (ob.hasOwnProperty("programmed") && !ob.hasOwnProperty("collected")) {
-                    return transformData(ob.programmed, "Programado", authorization);
-                  } else if (ob.hasOwnProperty("collected") && ob.hasOwnProperty("programmed")) {
-                    const collectedData = transformData(ob.collected, "Recaudado", authorization);
-                    const programmedData = transformData(ob.programmed, "Programado", authorization);
-                    return [collectedData, programmedData];
+                  if (use.hasOwnProperty("programmed")) {
+                    newArray.push({
+                      programmed: use?.programmed
+                    });
                   }
-                })
+                  return {
+                    managementCenter: use.managerCenter,
+                    idProjectVinculation: parseInt(use.projectId),
+                    idBudget: arrayDataSelect?.pospreSapiencia?.find(value => use.pospreSapiencia == value.id)?.idPosPreOrig,
+                    idPospreSapiencia: parseInt(use.pospreSapiencia),
+                    idFund: parseInt(use.fundsSapiencia),
+                    idCardTemplate: use.cardId,
+                    annualRoute:  newArray.filter(obj => {
+                      return Object.values(obj).some(value => {
+                          if (typeof value === 'object') {
+                              return Object.values(value).some(subValue => subValue !== 0);
+                          }
+                          return false;
+                      })
+                    }).map(ob => {
+                      if (ob.hasOwnProperty("collected") && !ob.hasOwnProperty("programmed")) {
+                        return transformData(ob.collected, "Recaudado", authorization);
+                      } else if (ob.hasOwnProperty("programmed") && !ob.hasOwnProperty("collected")) {
+                        return transformData(ob.programmed, "Programado", authorization);
+                      } else if (ob.hasOwnProperty("collected") && ob.hasOwnProperty("programmed")) {
+                        const collectedData = transformData(ob.collected, "Recaudado", authorization);
+                        const programmedData = transformData(ob.programmed, "Programado", authorization);
+                        return [collectedData, programmedData];
+                      }
+                    })
+                  }
+                }),
+                destinities: nuevoObjeto.destino.map(use => {
+                  const newArray = [];
+                  if (use.hasOwnProperty("collected")) {
+                    newArray.push({
+                      collected: use?.collected
+                    });
+                  }
+                  if (use.hasOwnProperty("programmed")) {
+                    newArray.push({
+                      programmed: use?.programmed
+                    });
+                  }
+                  return {
+                    managementCenter: use.managerCenter,
+                    idProjectVinculation: parseInt(use.projectId),
+                    idBudget: arrayDataSelect?.pospreSapiencia?.find(value => use.pospreSapiencia == value.id)?.idPosPreOrig,
+                    idPospreSapiencia: parseInt(use.pospreSapiencia),
+                    idFund: parseInt(use.fundsSapiencia),
+                    idCardTemplate: use.cardId,
+                    annualRoute:  newArray.filter(obj => {
+                      return Object.values(obj).some(value => {
+                          if (typeof value === 'object') {
+                              return Object.values(value).some(subValue => subValue !== 0);
+                          }
+                          return false;
+                      })
+                    }).map(ob => {
+                      if (ob.hasOwnProperty("collected") && !ob.hasOwnProperty("programmed")) {
+                        return transformData(ob.collected, "Recaudado", authorization);
+                      } else if (ob.hasOwnProperty("programmed") && !ob.hasOwnProperty("collected")) {
+                        return transformData(ob.programmed, "Programado", authorization);
+                      } else if (ob.hasOwnProperty("collected") && ob.hasOwnProperty("programmed")) {
+                        const collectedData = transformData(ob.collected, "Recaudado", authorization);
+                        const programmedData = transformData(ob.programmed, "Programado", authorization);
+                        return [collectedData, programmedData];
+                      }
+                    })
+                  }
+                }),
               }
-            }),
-          }
-        }
+            }
+  
+            dataTransferpac && TransfersOnPac(dataTransferpac).then(response => {
+              if (response.operation.code === EResponseCodes.OK) {
+                setMessage({
+                    title: "Confirmación",
+                    description: "¡Guardado exitosamente!",
+                    show: true,
+                    OkTitle: "Aceptar",
+                    onOk: () => {
+                      setMessage({});
+                      setIsdataResetState(true)
+                      setDisableBtnAdd(true)
+                      reset()
+                    },
+                    background: true,
+                    onClose: () => {
+                      setMessage({});
+                      setIsdataResetState(true)
+                      setDisableBtnAdd(true)
+                      reset()
+                    },
+                });
+            } else {
+                setMessage({
+                    title: "Validación de datos",
+                    description: response.operation.message,
+                    show: true,
+                    OkTitle: "Aceptar",
+                    onOk: () => {
+                      setMessage({});
+                    },
+                    background: true,
+                    onClose: () => {
+                      setMessage({});
+                    },
+                });
+            }
+  
+            })
+          },
+          background: true,
+      });
 
-        dataTransferpac && TransfersOnPac(dataTransferpac).then(response => {
-          if (response.operation.code === EResponseCodes.OK) {
-            setMessage({
-                title: "Confirmación",
-                description: "¡Guardado exitosamente!",
-                show: true,
-                OkTitle: "Aceptar",
-                onOk: () => {
-                  setMessage({});
-                  setIsdataResetState(true)
-                  setDisableBtnAdd(true)
-                  reset()
-                },
-                background: true,
-                onClose: () => {
-                  setMessage({});
-                  setIsdataResetState(true)
-                  setDisableBtnAdd(true)
-                  reset()
-                },
-            });
-        } else {
-            setMessage({
-                title: "Validación de datos",
-                description: response.operation.message,
-                show: true,
-                OkTitle: "Aceptar",
-                onOk: () => {
-                  setMessage({});
-                  setIsdataResetState(true)
-                  setDisableBtnAdd(true)
-                  reset()
-                },
-                background: true,
-                onClose: () => {
-                  setMessage({});
-                  setIsdataResetState(true)
-                  setDisableBtnAdd(true)
-                  reset()
-                },
-            });
-        }
+    }
 
-        })
-      },
-      background: true,
-    });
   })
 
   const onCancelar = () => {
@@ -386,14 +447,16 @@ export function useTransferPacCrudData() {
         setDisableBtnAdd(true)
         reset()
         setMessage({});
+        setCurrentTotal(0)
       },
       onClose: () => {
         setIsdataResetState(true)
         setDisableBtnAdd(true)
         reset()
         setMessage({});
+        setCurrentTotal(0)
       },
-  });
+    });
   }
 
   const onPageChange = event => {
@@ -424,6 +487,9 @@ export function useTransferPacCrudData() {
     arrayDataSelectHead,
     showSpinner,
     disableBtnAdd,
+    annualDataRoutesOriginal,
+    currentTotal,
+    originalOriginDestination,
     register,
     setValue,
     onSubmit,
@@ -433,6 +499,7 @@ export function useTransferPacCrudData() {
     setPacTypeState,
     setTypeValidityState,
     setIsdataResetState,
+    setAnnualDataRoutesOriginal
   }
 }
 
