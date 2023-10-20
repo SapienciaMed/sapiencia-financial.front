@@ -12,8 +12,8 @@ import { validateTypeResourceServices } from "../util";
 import { IAnnualRoute } from "../../interface/Pac";
 import { AppContext } from "../../../../common/contexts/app.context";
 
-function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pacTypeState, isdataReset, itemsPerPage,
-    startIndex, disableBtnAdd, register, setValue, setIsdataResetState }:ICreateFundTransferPac ) {
+function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pacTypeState, isdataReset, itemsPerPage, annualDataRoutesOriginal,
+    startIndex, disableBtnAdd, register, setValue, setIsdataResetState, setAnnualDataRoutesOriginal }:ICreateFundTransferPac ) {
 
     const { SearchAnnualDataRoutes } = usePacTransfersService()
     const { setMessage } = useContext(AppContext);
@@ -108,6 +108,11 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
                 projectId: false,
                 managerCenter: false
             })
+            setAnnualDataRoutesOriginal(
+                [{
+                    annualRouteService: [] as IAnnualRoute[]
+                }]
+            )
         }  
     },[isdataReset])
 
@@ -128,7 +133,6 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
     }
 
     const dataSelectorComplete = (idCard: string) => {   
-
         const dataRoutes = watchCardId.filter(use => use.cardId == idCard).map(val => {
             return {
                 page: 1,
@@ -178,9 +182,11 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
                 const updatedAnnualDataRoutes = [...annualDataRoutes];
                 updatedAnnualDataRoutes[existingIndex].annualRouteService[0] = annualRouteService[0];
                 setAnnualDataRoutes(updatedAnnualDataRoutes);
+                setAnnualDataRoutesOriginal(updatedAnnualDataRoutes)
               } else {
                 // Si el cardId no existe, agrega un nuevo elemento
                 setAnnualDataRoutes([...annualDataRoutes, { annualRouteService }]);
+                setAnnualDataRoutesOriginal([...annualDataRoutesOriginal, { annualRouteService }])
               }
               
             }else{
