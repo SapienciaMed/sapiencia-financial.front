@@ -130,9 +130,15 @@ export function usePacCrud() {
         onOk: () => {
           setMessage({})
           !data.id ? onCancelNew() : onCancelEdit()
-          setErrorsPac(Object(response).data.errors)
+          //setErrorsPac(Object(response).data.errors)
+          setErrorsPac([])
           setIsLoading(false)
-          reset();
+          //setValueRegister('exercise', data.exercise)
+          //setValueRegister('typePac', null)
+          //setValueRegister('typeSource', null)
+          //setValueRegister('file', null)
+          this.reset();
+          
           //setIsAllowSave(false)
         }
       })
@@ -165,7 +171,6 @@ export function usePacCrud() {
       })
     
     }else {
-      console.log("==>><",response.data)
       showModal({
         title: "Carga de archivo",
         description: response.operation.message,
