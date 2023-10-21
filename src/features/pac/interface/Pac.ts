@@ -153,3 +153,12 @@ export interface IErrorTablePac{
     message:number;
     error:string;
 } 
+
+export interface IPacSearch {
+    validity: string,
+    pacType: string,
+    version: string,
+    projectId: number,
+    fundsSapiencia: number,
+    pospreSapiencia: number
+}
