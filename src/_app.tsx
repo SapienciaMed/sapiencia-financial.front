@@ -43,6 +43,7 @@ function App() {
               <Route path={"/gestion-financiera/ruta-presupuestal"} element={<BudgetRoutes/>} />
               <Route path={"/gestion-financiera/ruta-presupuestal/create"} element={<BudgetRoutesCrudPage action="new"/>} />
               <Route path={"/gestion-financiera/ruta-presupuestal/edit/:id"} element={<BudgetRoutesCrudPage action="edit"/>} />
+              <Route path={"/gestion-financiera/cdp"} element={<>CDP</>} />
             </Routes>
           </Suspense>
         </Router>
