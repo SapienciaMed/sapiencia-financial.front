@@ -8,6 +8,7 @@ import { usePacServices } from './pac-services.hook';
 import { validateTypeResourceServices } from '../transferPac/util';
 import { EResponseCodes } from '../../../common/constants/api.enum';
 import { AppContext } from '../../../common/contexts/app.context';
+import { ITableElement } from '../../../common/interfaces/table.interfaces';
 export function usePacData() {
 
     const navigate = useNavigate();
@@ -105,7 +106,7 @@ export function usePacData() {
         const searchCriteriaData = {
             ...dataFiltered,
             exercise: parseInt(dataFiltered?.exercise),
-            resourceType: validateTypeResourceServices(dataFiltered?.resourceType),
+            resourceType: validateTypeResourceServices(dataFiltered?.resourceType) || dataFiltered?.resourceType,
             version: parseInt(dataFiltered.version),
             idBunget: arrayDataSelect?.listPospreSapi?.find(e => e?.id == dataFiltered?.idPospreSapiencia)?.projectId
         }
@@ -120,30 +121,49 @@ export function usePacData() {
         }
     }
 
-    const tableColumns: any[] = [
+    const tableColumns: ITableElement<any>[] = [
         {
             fieldName: "proyect",
             header: "Proyecto",
+            renderCell(row) {
+                return <>{row.dataCondensed.projectName}</>
+            },
         },
         {
             fieldName: "fund",
-            header: "Fondo"
+            header: "Fondo",
+            renderCell(row) {
+                return <>{row.dataCondensed.numberFund}</>
+            },
         },
         {
             fieldName: "pospre",
-            header: "Pospre"
+            header: "Pospre",
+            renderCell(row) {
+                return <>{row.dataCondensed.posPreOrig}</>
+            },
         },
         {
-            fieldName: "pospreSapi",
+            fieldName: "listPospreSapi",
             header: "Pospre Sapiencia",
+            renderCell(row) {
+                return <>{row.dataCondensed.budgetSapi}</>
+            },
+            
         },
         {
             fieldName: "presupuestoSapi",
-            header: "Presupuesto Sapiencia"
+            header: "Presupuesto Sapiencia",
+            renderCell(row) {
+                return <>{row.dataCondensed.posPreSapi}</>
+            },
         },
         {
             fieldName: "porcentajeEje",
-            header: "Porcentaje ejecución"
+            header: "Porcentaje ejecución",
+            renderCell(row) {
+                return <>{row.dataCondensed.percentExecute}</>
+            },
         },
         
     ];
