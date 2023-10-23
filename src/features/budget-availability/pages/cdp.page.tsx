@@ -172,6 +172,7 @@ const CdpPage = () => {
                 dateFormat="dd/mm/yy"
               />
             </div>
+            <div className="funcionality-filters-container"></div>
             <div className="funcionality-buttons-container">
               <ButtonComponent
                 form="useQueryForm"
