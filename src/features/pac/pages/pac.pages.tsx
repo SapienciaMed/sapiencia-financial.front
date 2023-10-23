@@ -13,8 +13,9 @@ import { ProgressSpinner } from "primereact/progressspinner";
 function PacPages() {
     const {width} = useWidth()
 
-    const {control, errors, isBtnDisable, showTable, tableComponentRef, tableActions, showSpinner,
-        tableColumns, navigate, setShowTable, register, onSubmit, reset} = usePacData()
+    const {control, errors, isBtnDisable, showTable, tableComponentRef, tableActions, showSpinner, arrayDataSelect,
+        tableColumns, navigate, setShowTable, register, onSubmit, reset, handleChangeExercise,
+        handleChangeVersion} = usePacData()
     
     return (
         <div className='main-page'>
@@ -51,8 +52,8 @@ function PacPages() {
                         <div className="funcionality-filters-container">
                             <Controller
                                 control={control}
-                                name={"validity"}
-                                defaultValue={String(new Date().getFullYear())} 
+                                name={"exercise"}
+                                defaultValue='' 
                                 render={({ field }) => {
                                     return(
                                         <InputComponent
@@ -64,14 +65,18 @@ function PacPages() {
                                             label="Vigencia"
                                             classNameLabel="text-black weight-500 biggest text-required"
                                             direction={EDirection.column}
-                                            onChange={field.onChange}
+                                            onChange={(value) => {
+                                                field.onChange(value);
+                                                handleChangeExercise(value)
+                                            }}
                                             errors={errors}
+
                                     />
                                     )
                                 }}
                             />
                             <SelectComponent
-                                idInput="pacType"
+                                idInput="resourceType"
                                 className="select-basic"
                                 errors={errors}
                                 label="Tipo de recurso"
@@ -102,56 +107,60 @@ function PacPages() {
                                             classNameLabel="text-black weight-500 biggest text-required"
                                             direction={EDirection.column}
                                             errors={errors}
-                                            onChange={field.onChange}
+                                            onChange={(value) => {
+                                                field.onChange(value);
+                                                handleChangeVersion(value)
+                                            }}
                                         />
                                     )
                                 }}
                             />
                         </div>
+                        {
+                            showSpinner && (
+                                <ProgressSpinner style={{width: '20px', height: '20px'}}  animationDuration=".5s" />
+
+                            )              
+                        }
                         <div className="funcionality-filters-container">
                             <SelectComponent
-                                idInput='projectId'
+                                idInput='idProjectVinculation'
                                 control={control}
                                 className="select-basic"
                                 label='Proyecto'
-                                classNameLabel="text-black weight-500 big"
+                                classNameLabel="text-black weight-500 biggest"
                                 placeholder={'Seleccionar'}   
-                                data={[]}
+                                data={arrayDataSelect?.listProjects}
                                 filter={true}
                                 isValidateName={false}
                                 errors={errors} 
                             />
                             <SelectComponent
-                                idInput='fundsSapiencia'
+                                idInput='idFund'
                                 control={control}
                                 label='Fondo Sapiencia'
                                 className="select-basic"
-                                classNameLabel="text-black weight-500 big"
+                                classNameLabel="text-black weight-500 biggest"
                                 placeholder={'Seleccionar'}
                                 filter={true}
                                 isValidateName={false}
-                                data={[]}
+                                data={arrayDataSelect?.listFunds}
                                 errors={errors}
                             />
                             <SelectComponent
-                                idInput='pospreSapiencia'
+                                idInput='idPospreSapiencia'
                                 control={control}
                                 label='Pospre Sapiencia'
                                 className="select-basic"
-                                classNameLabel="text-black weight-500 big"
+                                classNameLabel="text-black weight-500 biggest"
                                 placeholder={'Seleccionar'}
                                 filter={true}
                                 isValidateName={false}
-                                data={[]}
+                                data={arrayDataSelect?.listPospreSapi}
                                 errors={errors}
                             />
                         </div>
-                            {
-                                showSpinner && (
-                                    <ProgressSpinner style={{width: '20px', height: '20px'}}  animationDuration=".5s" />
-
-                                )              
-                            }
+                           
                         <div className="funcionality-buttons-container">
                             <ButtonComponent
                                 form='useQueryForm'
@@ -182,7 +191,7 @@ function PacPages() {
                         <div className="card-user mt-2rem">
                             <TableComponent
                                 ref={tableComponentRef}
-                                url={`${process.env.urlApiFinancial}/api/v1/tran`}
+                                url={`${process.env.urlApiFinancial}/api/v1/pac/search-pacs`}
                                 columns={tableColumns}
                                 actions={tableActions}
                                 isShowModal={true}

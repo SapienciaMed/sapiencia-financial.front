@@ -30,7 +30,7 @@ export const pacCrudValidator = yup.object({
 })
 
 export const pacSearch =  yup.object({
-    validity:  yup
+    exercise:  yup
         .string()
         .matches(/^[0-9]+$/, "Solo se permiten numeros")
         .required("Este campo es obligatorio")
@@ -48,7 +48,7 @@ export const pacSearch =  yup.object({
                 return false
             }
         }),
-    pacType: yup 
+    resourceType: yup 
         .string()
         .required("Este campo es obligatorio"),
     version: yup 
@@ -56,13 +56,13 @@ export const pacSearch =  yup.object({
         .matches(/^[0-9]+$/, "Solo se permiten numeros")
         .required("Este campo es obligatorio")
         .max(9, "Solo se permiten 9 caracteres"),
-    // projectId: yup
+    // idProjectVinculation: yup
     //     .string()
     //     .required("Este campo es obligatorio"),
-    // fundsSapiencia:yup
+    // idFund:yup
     //     .string()
     //     .required("Este campo es obligatorio"),
-    // pospreSapiencia: yup
+    // idPospreSapiencia: yup
     //     .string()
     //     .required("Este campo es obligatorio"),
 })

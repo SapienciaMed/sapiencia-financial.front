@@ -9,19 +9,9 @@ export const PacRoutes = () => {
 
     return (
         <Routes>
-
-            <Route path='/traslado' element={<TransferPacPage/>}/>
-            <Route path={"/cargar"} element={<PacCrud/>} />
             <Route path={'/creacion-modificacion'} element={<PacPages/>} />
-
-        {/* 
-         TODO:
-            Implementar cuando se entrege Consultar PAC
             <Route path={'/creacion-modificacion/traslado'} element={<TransferPacPage/>} />
             <Route path={'/creacion-modificacion/cargar'} element={<PacCrud/>} /> 
-            
-        */}
-
         </Routes>
   )
 }

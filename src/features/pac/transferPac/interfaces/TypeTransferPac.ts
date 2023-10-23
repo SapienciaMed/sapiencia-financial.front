@@ -33,7 +33,8 @@ export interface IArrayDataSelectHead {
 export interface IArrayDataSelectPac{
   functionalArea: IDropdownPropsPac[],
   fundsSapiencia: IDropdownPropsPac[],
-  pospreSapiencia: IDropdownPropsPac[]
+  pospreSapiencia: IDropdownPropsPac[],
+  listProjects?:  IDropdownPropsPac[]
 }
   
   export interface IDropdownPropsPac {

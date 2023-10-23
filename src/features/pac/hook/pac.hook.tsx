@@ -1,116 +1,124 @@
 import { useForm } from 'react-hook-form';
 import useYupValidationResolver from '../../../common/hooks/form-validator.hook';
 import { pacSearch } from '../../../common/schemas/pac';
-import { IPacSearch } from '../interface/Pac';
+import { IArrayDataSelectPacComplementary, IPacSearch } from '../interface/Pac';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePacServices } from './pac-services.hook';
 import { validateTypeResourceServices } from '../transferPac/util';
 import { EResponseCodes } from '../../../common/constants/api.enum';
 import { AppContext } from '../../../common/contexts/app.context';
-import { IArrayDataSelectPac } from '../transferPac/interfaces/TypeTransferPac';
 export function usePacData() {
 
+    const navigate = useNavigate();
     const tableComponentRef = useRef(null);
-    const { GetRoutesByValidity } = usePacServices()
-    const { setMessage, authorization } = useContext(AppContext);
+    const { GetRoutesByValidity, GetUltimateVersion } = usePacServices()
+    const { setMessage } = useContext(AppContext);
     const resolver = useYupValidationResolver(pacSearch);
     const [ isBtnDisable, setIsBtnDisable ] = useState<boolean>(false)
     const [ areTheFieldsFull, setAreTheFieldsFull ] = useState<boolean>(false)
     const [showTable, setShowTable] = useState(false);
-    const navigate = useNavigate();
-    const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelectPac>({
-        functionalArea: [],
-        fundsSapiencia: [],
-        pospreSapiencia: [],
-    })
     const [ showSpinner, setShowSpinner ] = useState(false)
+    const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+    const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelectPacComplementary>({
+        listProjects: [],
+        listFunds: [],
+        listPospreSapi: []
+    })
+    
     const {
         handleSubmit,
         register,
-        formState: { errors, isValid },
+        formState: { errors },
         reset,
         watch,
-        control
+        control,
+        setValue
     } = useForm<IPacSearch>({
         resolver,
         mode: 'all'
     })
 
-    const inputValue =  watch(['pacType', 'validity', 'version'])
-    const type = watch('pacType')
-
-    const dataRoutesValidity = {
-        page : 1,
-        perPage : 10000000,
-        exercise : inputValue[1],
-        version: inputValue[2],
-        resourceType: validateTypeResourceServices(type) || type 
-    }
+    const inputValue =  watch(['resourceType', 'exercise', 'version'])
+    const type = watch('resourceType')
 
     useEffect(() => {
         setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
-        setAreTheFieldsFull(inputValue.every(value => value != '' && value != undefined))
+        setAreTheFieldsFull(inputValue.every(value => value != '' && value != undefined))        
     },[inputValue])
 
     useEffect(() => {
-       if (type != undefined && areTheFieldsFull) {
-        GetRoutesByValidity(dataRoutesValidity).then((response) => {
-            if (response.operation.code === EResponseCodes.OK) {
+        setValue('exercise', String(new Date().getFullYear()))
 
-            }else {
-                setMessage({
-                    title: "Validación de datos",
-                    description: response.operation.message,
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                      setMessage({});
-                    },
-                    background: true,
-                    onClose: () => {
-                      setMessage({});
-                    },
-                });
+        GetUltimateVersion().then(response => {
+            if(response.operation.code === EResponseCodes.OK){
+                setValue('version', response.data.version)
             }
-        }).catch((error) => {
-           
-        })
-       }
-    },[type])
+        }).catch(error => console.log(error))
+    },[])
 
     useEffect(() => {
-        //valida si los campos de 'pacType', 'validity', 'version' estan llenos haga una peticion 
-        if(areTheFieldsFull){           
-            GetRoutesByValidity(dataRoutesValidity).then((response) => {
-                if (response.operation.code === EResponseCodes.OK) {
-                    const dinamicData = response?.data;
-
-                }else {
-                    setMessage({
-                        title: "Validación de datos",
-                        description: response.operation.message,
-                        show: true,
-                        OkTitle: "Aceptar",
-                        onOk: () => {
-                          setMessage({});
-                        },
-                        background: true,
-                        onClose: () => {
-                          setMessage({});
-                        },
-                    });
-                }
-            }).catch((error) => {
-               
-            })
+        //valida si los campos de 'pacType', 'validity', 'version' estan llenos haga una peticion para llenar los campos complementarios de los select(Proyecto, Fondo Sapiencia, Pospre Sapiencia) 
+        if(areTheFieldsFull && type != undefined && inputValue[1].length == 4){   
+            setArrayDataSelect({})   
+            setShowSpinner(true)     
+            QueryGetRoutesByValidity(inputValue[1], inputValue[2])
         }
-    },[areTheFieldsFull])
+    },[areTheFieldsFull, type ])
 
+    //Cuando detecta que se dejo de escribir haga la peticion.
+    const handleChangeExercise = (exercise: any) => {
+        timer &&  clearTimeout(timer);  
+        const newTimer =  setTimeout(() => {
+            if(exercise.target.value.length == 4 && areTheFieldsFull){
+                setArrayDataSelect({})   
+                setShowSpinner(true)     
+                QueryGetRoutesByValidity(exercise.target.value, inputValue[2])
+            }           
+        }, 800);
+
+        setTimer(newTimer);
+    };
+
+    //Cuando detecta que se dejo de escribir haga la peticion.
+    const handleChangeVersion = (version: any) => {
+        timer &&  clearTimeout(timer);  
+        const newTimer =  setTimeout(() => {
+            if (areTheFieldsFull && version.target.value != undefined && version.target.value.length > 0) {
+                setArrayDataSelect({})   
+                setShowSpinner(true)     
+                QueryGetRoutesByValidity(inputValue[1], version.target.value)            
+            }
+        }, 800);
+            
+        setTimer(newTimer);
+    };
 
     const onSubmit = handleSubmit(async (data: IPacSearch) => {
-        console.log("🚀 ~ file: pac.hook.tsx:22 ~ onSubmit ~ data:", data)
+        const dataFiltered: IPacSearch = Object.keys(data).reduce((object, key) => {
+            if (data[key] !== undefined) {
+              object[key] = data[key];
+            }
+            return object;
+        }, {} as IPacSearch);
+
+        const searchCriteriaData = {
+            ...dataFiltered,
+            exercise: parseInt(dataFiltered?.exercise),
+            resourceType: validateTypeResourceServices(dataFiltered?.resourceType),
+            version: parseInt(dataFiltered.version),
+            idBunget: arrayDataSelect?.listPospreSapi?.find(e => e?.id == dataFiltered?.idPospreSapiencia)?.projectId
+        }
+
+        setShowTable(true);
+        loadTableData(searchCriteriaData);
     });
+
+    function loadTableData(searchCriteria?: object): void {
+        if (tableComponentRef.current) {
+            tableComponentRef.current.loadData(searchCriteria);
+        }
+    }
 
     const tableColumns: any[] = [
         {
@@ -139,6 +147,7 @@ export function usePacData() {
         },
         
     ];
+
     const tableActions: any[] = [
         {
             icon: "Detail",
@@ -154,7 +163,86 @@ export function usePacData() {
         }
     ];
 
-    
+    const QueryGetRoutesByValidity = (exercice: string, version: string) => {
+        const dataRoutesValidity = {
+            page: 1,
+            perPage: 10000000,
+            exercise: exercice,
+            version: version,
+            resourceType: validateTypeResourceServices(type) || type 
+        }
+
+        GetRoutesByValidity(dataRoutesValidity).then((response) => {
+            setShowSpinner(false)
+            if (response.operation.code === EResponseCodes.OK) {
+                const dinamicData = response?.data;
+
+                const uniqueProjects = Array.from(new Set(dinamicData.listProjects.map(project => project.projectCode))).map(projectCode => {
+                    const item = dinamicData.listProjects.find(project => project.projectCode === projectCode);
+                    return {
+                      name: item.projectCode,
+                      value: item.idVinculation,
+                      id: item.idVinculation,
+                    };
+                });
+
+                setArrayDataSelect(prevState => ({
+                    ...prevState,
+                    listProjects: uniqueProjects
+                }));
+
+                const uniqueFunds = Array.from(new Set(dinamicData.listFunds.map(fund => fund.fundCode))).map(fundCode => {
+                    const item = dinamicData.listFunds.find(fund => fund.fundCode === fundCode);
+                    return {
+                      name: item.fundCode,
+                      value: item.idFund,
+                      id: item.idFund
+                    };
+                });
+          
+                setArrayDataSelect(prevState => ({
+                    ...prevState,
+                    listFunds: uniqueFunds
+                }));
+
+                const uniquePospreSapi = Array.from(new Set(dinamicData.listPospreSapi.map(pospreSapi => pospreSapi.idPosPreSapi))).map(idPosPreSapi => {
+                    const item = dinamicData.listPospreSapi.find(pospreSapi => pospreSapi.idPosPreSapi === idPosPreSapi);
+                    return {
+                      name: item.numberCodeSapi,
+                      value: item.idPosPreSapi,
+                      id: item.idPosPreSapi,
+                      projectId: item.idPosPreOrig
+                    };
+                });
+
+                setArrayDataSelect(prevState => ({
+                    ...prevState,
+                    listPospreSapi: uniquePospreSapi
+                }));
+
+
+            }else {
+                setMessage({
+                    title: "Validación de datos",
+                    description: response.operation.message,
+                    show: true,
+                    OkTitle: "Aceptar",
+                    onOk: () => {
+                      setMessage({});
+                    },
+                    background: true,
+                    onClose: () => {
+                      setMessage({});
+                    },
+                });
+            }
+        }).catch((error) => {
+            setShowSpinner(false)
+            console.log(error);
+            
+        })
+    } 
+
 
     return {
         control,
@@ -165,11 +253,14 @@ export function usePacData() {
         tableActions,
         tableColumns,
         showSpinner,
+        arrayDataSelect,
         navigate,
         setShowTable,
         register,
         onSubmit,
-        reset
+        reset,
+        handleChangeExercise,
+        handleChangeVersion
     }
     
 }
