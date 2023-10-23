@@ -11,6 +11,7 @@ import {
 import { Controller } from "react-hook-form";
 import { useSearchCdp } from "../hooks/useSearchCdp";
 import { EDirection } from "../../../common/constants/input.enum";
+import TableComponent from "../../../common/components/table.component";
 
 const CdpPage = () => {
   const { width } = useWidth();
@@ -24,6 +25,8 @@ const CdpPage = () => {
     showTable,
     setShowTable,
     tableComponentRef,
+    tableActionsCdp,
+    tableColumnsCdp,
   } = useSearchCdp();
 
   return (
@@ -49,7 +52,7 @@ const CdpPage = () => {
             <div className="funcionality-filters-container">
               <Controller
                 control={control}
-                name={"validity"}
+                name={"dateOfCdp"}
                 defaultValue={String(new Date().getFullYear())}
                 render={({ field }) => {
                   return (
@@ -157,7 +160,6 @@ const CdpPage = () => {
                 className="dataPicker-basic"
                 placeholder="DD/MM/YYYY"
                 dateFormat="dd/mm/yy"
-
               />
               <DatePickerComponent
                 idInput="endDate"
@@ -193,6 +195,19 @@ const CdpPage = () => {
             </div>
           </FormComponent>
         </section>
+        {showTable && (
+          <div className="card-user mt-2rem">
+            <TableComponent
+              ref={tableComponentRef}
+              url={`${process.env.urlApiFinancial}/api/v1/cdp/search-cdps`}
+              columns={tableColumnsCdp}
+              actions={tableActionsCdp}
+              isShowModal={true}
+              titleMessageModalNoResult="No hay resultados"
+              secondaryTitle="CDP"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
