@@ -4,15 +4,11 @@ import useYupValidationResolver from "../../../common/hooks/form-validator.hook"
 import { budgetAvailabilityValidator } from "../../../common/schemas/budget-availability-schemas";
 import { IBudgetsAvailabilityFilters } from "../interfaces/budgetAvailabilityInterfaces";
 import { tableColumnsCdp, tableActionsCdp } from "../constants";
-
-const clearRequestFilters = (data: any) => {
-  //limpiar objeto con datos undefined o vacios
-  Object.keys(data).forEach((key) => {
-    if (!data[key] || data[key].length === 0) delete data[key];
-  });
-};
+import { useCdpServices } from "./useCdpServices";
+import { clearRequestFilters, filterDataSelect } from "../utils/filtersSearch";
 
 export const useSearchCdp = () => {
+  const { GetRoutesByValidity } = useCdpServices();
   const resolver = useYupValidationResolver(budgetAvailabilityValidator);
   const tableComponentRef = useRef(null);
   const {
@@ -30,6 +26,7 @@ export const useSearchCdp = () => {
 
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
+  const [arraySelect, setArraySelect] = useState<any>({});
 
   useEffect(() => {
     setIsBtnDisable(
@@ -43,18 +40,37 @@ export const useSearchCdp = () => {
     }
   }
 
-  const onSubmit = handleSubmit(async (data: any) => {
+  const onSubmit = handleSubmit(async (data: { dateOfCdp: string }) => {
     clearRequestFilters(data);
-    console.log({ dataOnSubmit: data });
-    loadTableData(data);
-    setShowTable(true);
+    if (data.dateOfCdp) {
+      setShowTable(true);
+      loadTableData(data);
+    }
   });
 
   useEffect(() => {
-    return () => {
-      loadTableData();
+    const queryGetDataFilters = async () => {
+      if (inputValue !== undefined && control._formValues.dateOfCdp) {
+        const dataFilters = {
+          dateOfCdp: control._formValues.dateOfCdp,
+          page: 1,
+          perPage: 10000,
+        };
+        try {
+          const response = await GetRoutesByValidity(dataFilters);
+          const responseFilterDataSelects = filterDataSelect(
+            response.data.array
+          );
+          setArraySelect(responseFilterDataSelects);
+        } catch (error) {
+          console.log({ queryGetDataFilters: error });
+        }
+      } else {
+        setArraySelect({});
+      }
     };
-  }, []);
+    queryGetDataFilters();
+  }, [control._formValues.dateOfCdp]);
 
   return {
     control,
@@ -69,5 +85,6 @@ export const useSearchCdp = () => {
     tableComponentRef,
     tableColumnsCdp,
     tableActionsCdp,
+    arraySelect,
   };
 };
