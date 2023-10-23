@@ -32,7 +32,7 @@ interface IProps<T> {
   url: string;
   emptyMessage?: string;
   title?: string;
-  secondaryTitle?:string;
+  secondaryTitle?: string;
   columns: ITableElement<T>[];
   actions?: ITableAction<T>[];
   searchItems?: object;
@@ -45,6 +45,7 @@ interface IRef {
 }
 
 const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
+  console.log("...");
   const {
     title,
     secondaryTitle,
@@ -66,10 +67,9 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
   const [searchCriteria, setSearchCriteria] = useState<object>();
   const { width } = useWidth();
   const { setMessage } = useContext(AppContext);
-  
 
   // Declaraciones
-  const { post } = useCrudService( url);
+  const { post } = useCrudService(url);
   useImperativeHandle(ref, () => ({
     loadData: loadData,
   }));
@@ -89,7 +89,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
       page: currentPage || 1,
       perPage: perPage,
     });
-    
+
     if (res.operation.code === EResponseCodes.OK) {
       setResultData(res.data);
 
@@ -126,10 +126,12 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
   }
 
   useEffect(() => {
+    console.log({ charged });
     if (charged) loadData(undefined, page + 1);
   }, [perPage, first, page]);
 
   useEffect(() => {
+    console.log(".....");
     setCharged(true);
 
     return () => {
@@ -156,14 +158,16 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
           })}
         </div>
         <div className="card-footer">
-          <section className="position-absolute top text-black bold text-center"> Acciones </section>
+          <section className="position-absolute top text-black bold text-center">
+            {" "}
+            Acciones{" "}
+          </section>
           <section className="section-action">
             {actions?.map((action) => (
               <div key={action.icon} onClick={() => action.onClick(item)}>
                 {getIconElement(action.icon, "src")}
               </div>
             ))}
-
           </section>
         </div>
       </div>
@@ -194,7 +198,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
         onPageChange={onPageChange}
         leftContent={
           <p className="header-information text-black bold biggest">
-            { secondaryTitle ?? 'Resultados de búsqueda'}
+            {secondaryTitle ?? "Resultados de búsqueda"}
           </p>
         }
       />
