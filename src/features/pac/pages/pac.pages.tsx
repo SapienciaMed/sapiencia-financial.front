@@ -197,6 +197,7 @@ function PacPages() {
                                 isShowModal={true}
                                 titleMessageModalNoResult="No hay resultados"
                                 secondaryTitle="PAC"
+                                classSizeTable='size-table-wd-150'
                             />
                         </div>
                     )
