@@ -4,6 +4,7 @@ import useYupValidationResolver from "../../../common/hooks/form-validator.hook"
 import { budgetAvailabilityValidator } from "../../../common/schemas/budget-availability-schemas";
 import { IBudgetsAvailabilityFilters } from "../interfaces/budgetAvailabilityInterfaces";
 import { tableColumnsCdp, tableActionsCdp } from "../constants";
+import { useNavigate } from "react-router-dom";
 
 const clearRequestFilters = (data: any) => {
   //limpiar objeto con datos undefined o vacios
@@ -15,6 +16,8 @@ const clearRequestFilters = (data: any) => {
 export const useSearchCdp = () => {
   const resolver = useYupValidationResolver(budgetAvailabilityValidator);
   const tableComponentRef = useRef(null);
+  const navigate = useNavigate();
+  
   const {
     handleSubmit,
     register,
@@ -69,5 +72,6 @@ export const useSearchCdp = () => {
     tableComponentRef,
     tableColumnsCdp,
     tableActionsCdp,
+    navigate
   };
 };
