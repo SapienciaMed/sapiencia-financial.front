@@ -33,7 +33,8 @@ export const useSearchCdp = () => {
 
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
-  const [arraySelect, setArraySelect] = useState<IFiltersSelect>(initialFiltersSelect);
+  const [arraySelect, setArraySelect] =
+    useState<IFiltersSelect>(initialFiltersSelect);
 
   useEffect(() => {
     setIsBtnDisable(
