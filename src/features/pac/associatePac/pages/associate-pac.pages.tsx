@@ -1,18 +1,15 @@
 import React from 'react'
 import { ButtonComponent, FormComponent, SelectComponent } from '../../../../common/components/Form';
-import { useForm, Controller } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { InputComponent } from '../../../../../../sapiencia-payroll.front/src/common/components/Form/input.component';
 import { EDirection } from '../../../../common/constants/input.enum';
+import { useAssociatePac } from '../hook/associate-pac-pages.hook';
+import ProgramedMoths from './programed-moths';
+import { InputNumberComponent } from '../../../../common/components/Form/input-number.component';
 
 function AssociatePacPages() {
 
-    const {
-        control,
-        register,
-        handleSubmit,
-        formState: { errors },
-        reset
-    } = useForm()
+    const {control, errors, programmed, isBtnDisable, onSubmit, register, handleChangeExercise, confirmClose} = useAssociatePac()
     
     return(
         <div className='main-page'>
@@ -21,11 +18,11 @@ function AssociatePacPages() {
                     <div className="text-black weight-500 extra-large">Asociar al PAC</div>
                 </section>
 
-                <section className="card-user">
+                <FormComponent action={onSubmit}>
+                    <section className="card-user">
                     <section className="title-area">
                         <div className="text-black weight-500 large">Ruta presupuestal</div>
                     </section>
-                    <FormComponent action={() => {}}>
                         <div className="funcionality-filters-container">
                             <Controller
                                 control={control}
@@ -44,7 +41,7 @@ function AssociatePacPages() {
                                             direction={EDirection.column}
                                             onChange={(value) => {
                                                 field.onChange(value);
-                                               
+                                                handleChangeExercise(value)
                                             }}
                                             errors={errors}
 
@@ -67,34 +64,22 @@ function AssociatePacPages() {
                                 control={control}
                                 isValidateName={false}
                             />
-                             <Controller
-                                control={control}
-                                name={"version"}
-                                defaultValue=''
-                                render={({ field }) => {
-                                    return(
-                                        <InputComponent
-                                            id={field.name}
-                                            idInput={field.name}
-                                            className="input-basic"
-                                            typeInput="number"
-                                            register={register}
-                                            label="Versión"
-                                            classNameLabel="text-black weight-500 biggest text-required"
-                                            direction={EDirection.column}
-                                            errors={errors}
-                                            onChange={(value) => {
-                                                field.onChange(value);
-                                            }}
-                                        />
-                                    )
-                                }}
-                            />
+                              <SelectComponent
+                                    idInput='managerCenter'
+                                    control={control}
+                                    label='Centro gestor'
+                                    className="select-basic"
+                                    classNameLabel="text-black weight-500 biggest text-required"
+                                    placeholder={'Seleccionar'}
+                                    filter={true}
+                                    data={[{ id: "91500000", name: "91500000", value: "91500000" }]}
+                                    errors={errors}
+                                />
                         </div>
 
                         <div className="funcionality-filters-container">
                             <SelectComponent
-                                idInput='idProjectVinculation'
+                                idInput='projectId'
                                 control={control}
                                 className="select-basic"
                                 label='Proyecto'
@@ -106,7 +91,7 @@ function AssociatePacPages() {
                                 errors={errors} 
                             />
                             <SelectComponent
-                                idInput='idFund'
+                                idInput='fundsSapiencia'
                                 control={control}
                                 label='Fondo Sapiencia'
                                 className="select-basic"
@@ -118,7 +103,7 @@ function AssociatePacPages() {
                                 errors={errors}
                             />
                             <SelectComponent
-                                idInput='idPospreSapiencia'
+                                idInput='pospreSapiencia'
                                 control={control}
                                 label='Pospre Sapiencia'
                                 className="select-basic"
@@ -131,111 +116,112 @@ function AssociatePacPages() {
                             />
                         </div>
 
-                        <div className="funcionality-filters-container">
-                            <SelectComponent
-                                idInput='functionalArea'
-                                control={control}
-                                label='Área funcional'
-                                className="select-basic"
-                                classNameLabel="text-black weight-500 biggest text-required"
-                                placeholder={'Seleccionar'}
-                                filter={true}
-                                fieldArray={true}
-                                data={[]}
-                                errors={errors}
-                            />
-                        </div>
-                        <div className="funcionality-filters-container">
-                            <InputComponent
-                                idInput='projectName'
-                                label="Nombre proyecto"
-                                typeInput="text"
-                                className="input-basic"                     
-                                classNameLabel="text-black weight-500 biggest text-required"
-                                errors={errors}
-                                register={register}
-                                fieldArray={true}
-                            />
+                        <div className="funds-form mt-5px">
+                            <div className='fund-denomination-container'>
+                                <SelectComponent
+                                    idInput='functionalArea'
+                                    control={control}
+                                    label='Área funcional'
+                                    className="select-basic"
+                                    classNameLabel="text-black weight-500 biggest text-required"
+                                    placeholder={'Seleccionar'}
+                                    filter={true}
+                                    data={[]}
+                                    errors={errors}
+                                />
+                                <InputComponent
+                                    idInput='projectName'
+                                    label="Nombre proyecto"
+                                    typeInput="text"
+                                    className="input-basic"                     
+                                    classNameLabel="text-black weight-500 biggest text-required"
+                                    errors={errors}
+                                    register={register}
+                                />
 
+                            </div>
                         </div>
 
-                        <section className="title-area">
-                            <div className="text-black weight-500 large">Presupuesto</div>
+                        <section className='mt-16px'>
+                            <div className="title-area">
+                                <div className="text-black weight-500 large">Presupuesto</div>
+                            </div>
+
+                            <div className="funcionality-filters-container">
+                                <InputNumberComponent
+                                    control={control}
+                                    idInput="sapienciaBudget"
+                                    label="Presupuesto Sapiencia"
+                                    className="inputNumber-basic medium"
+                                    classNameLabel="text-black big bold "
+                                    mode="currency"
+                                    currency="COP"
+                                    locale="es-CO"
+                                    fieldArray={true}
+                                    minFractionDigits={0}
+                                    maxFractionDigits={0}
+                                />
+                                 <InputNumberComponent
+                                    control={control}
+                                    idInput="totalProgrammed"
+                                    label="Total programado"
+                                    className="inputNumber-basic medium"
+                                    classNameLabel="text-black big bold "
+                                    mode="currency"
+                                    currency="COP"
+                                    locale="es-CO"
+                                    fieldArray={true}
+                                    minFractionDigits={0}
+                                    maxFractionDigits={0}
+                                    disabled
+                                />
+                            </div>
+
                         </section>
+                           
+                    </section>
 
-                        <div className="funcionality-filters-container">
-                            <Controller
-                                control={control}
-                                name={"sapienciaBudget"}
-                                defaultValue='' 
-                                render={({ field }) => {
-                                    return(
-                                        <InputComponent
-                                            id={field.name}
-                                            idInput={field.name}
-                                            className="input-basic color-default-value"
-                                            typeInput="number"
-                                            register={register}
-                                            label="Presupuesto Sapiencia"
-                                            classNameLabel="text-black weight-500 biggest text-required"
-                                            direction={EDirection.column}
-                                            onChange={(value) => {
-                                                field.onChange(value);
-                                               
-                                            }}
-                                            errors={errors}
+                    <section className="card-user mt-14px">
+                        <div className="title-area">
+                            <div className="text-black weight-500 large">Programado</div>
+                        </div>
 
-                                    />
-                                    )
-                                }}
-                            />
-                             <Controller
-                                control={control}
-                                name={"totalProgrammed"}
-                                defaultValue='0'
-                                render={({ field }) => {
-                                    return(
-                                        <InputComponent
-                                            id={field.name}
-                                            idInput={field.name}
-                                            className="input-basic"
-                                            typeInput="number"
+                        <div className="grid-form-3-container-area grid-column-repet">
+                            {
+                        
+                                Object.keys(programmed[0]).map((monthKey, index) => {
+                                    return (
+                                        <ProgramedMoths
+                                            key={index}
+                                            monthKey={monthKey}
+                                            labelProgrammed={programmed[0][monthKey]}
+                                            control={control}
                                             register={register}
-                                            label="Total programado"
-                                            classNameLabel="text-black weight-500 biggest text-required"
-                                            direction={EDirection.column}
-                                            errors={errors}
-                                            onChange={(value) => {
-                                                field.onChange(value);
-                                            }}
-                                            disabled
                                         />
                                     )
-                                }}
-                            />
+                                })
+                            }
+                              
                         </div>
-                           
-                        <div className="funcionality-buttons-container">
-                            <ButtonComponent
-                                form='useQueryForm'
-                                value="Limpiar campos"
-                                type="button"
-                                className="button-clean-fields bold"
-                                action={() => { 
-                                    reset() 
-                                    
-                                }}
-                            />
-                            <ButtonComponent
-                                className="button-main huge hover-three"
-                                value="Buscar"
-                                type="submit"
-                                // disabled={!isBtnDisable}
-                            />
-                        </div>
+                    </section>
 
-                    </FormComponent>
-                </section>
+                    <div className="funcionality-buttons-container">
+                        <ButtonComponent
+                            form='useQueryForm'
+                            value="Cancelar"
+                            type="button"
+                            className="button-clean-fields bold"
+                            action={confirmClose}
+                        />
+                        <ButtonComponent
+                            className="button-main huge hover-three"
+                            value="Guardar"
+                            type="submit"
+                            disabled={!isBtnDisable}
+                        />
+                    </div>
+                </FormComponent>
+
             </div>
         </div>
     )
