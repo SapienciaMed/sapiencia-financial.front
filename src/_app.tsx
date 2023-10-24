@@ -10,10 +10,12 @@ import useAppCominicator from "./common/hooks/app-communicator.hook";
 import { ManagementCenterRoutes } from "./features/managementCenter/management-center-routes";
 import { FunctionalityRoutes } from "./features/functionality/functionality-routes";
 import { PacRoutes } from "./features/pac/pac-routes";
+import { HomeCdp } from "./features/budget-availability/pages";
 
 const Home = lazy(() => import("./features/home/pages/home.page"));
 const BudgetRoutes = lazy(()  => import("./features/budget-routes/pages/budget-routes.page"));
 const BudgetRoutesCrudPage = lazy(()  => import("./features/budget-routes/pages/budget-routes-crud.page"));
+const BudgetAvailabilityRoutes = lazy(()  => import("./features/budget-availability/budget-availability-routes"));
 
 function App() {
   const { publish } = useAppCominicator();
@@ -39,10 +41,12 @@ function App() {
               <Route path={"/gestion-financiera/presupuesto/*"} element={<FunctionalityRoutes/>} />
               <Route path={'/gestion-financiera/pac/*'} element={<PacRoutes/>} />
               <Route path={"/gestion-financiera/centro-gestor/*"} element={<ManagementCenterRoutes/>} />
+              <Route path={"/gestion-financiera/cdp/*"} element={<BudgetAvailabilityRoutes/>} />
 
               <Route path={"/gestion-financiera/ruta-presupuestal"} element={<BudgetRoutes/>} />
               <Route path={"/gestion-financiera/ruta-presupuestal/create"} element={<BudgetRoutesCrudPage action="new"/>} />
               <Route path={"/gestion-financiera/ruta-presupuestal/edit/:id"} element={<BudgetRoutesCrudPage action="edit"/>} />
+              <Route path={"/gestion-financiera/cdp"} element={HomeCdp} />
             </Routes>
           </Suspense>
         </Router>
