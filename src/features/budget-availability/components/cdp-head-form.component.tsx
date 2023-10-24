@@ -2,13 +2,15 @@ import { Controller } from "react-hook-form";
 import { DatePickerComponent, InputComponent, SelectComponent, TextAreaComponent } from "../../../common/components/Form";
 import { useCdpCrud } from "../hooks/use-cdp";
 import { EDirection } from "../../../common/constants/input.enum";
+import { IBudgetAvalaibility } from "../interfaces/budgetAvailabilityInterfaces";
 
 interface Props{
     isDisabled:boolean;
+    detail:IBudgetAvalaibility;
 }
 
-function CdpHeadFormComponent({isDisabled}:Props) {
-
+function CdpHeadFormComponent(props:Props) {
+    const { detail, isDisabled } = props;
     const { control, register, errors } = useCdpCrud();
 
     return (
@@ -16,13 +18,14 @@ function CdpHeadFormComponent({isDisabled}:Props) {
             <section className='grid-form-3-container-area mt-5px'>
                 <Controller
                     control={control}
-                    name={"dateOfCdp"}
+                    name={"exercise"}
                     defaultValue={String(new Date().getFullYear())}
                     render={({ field }) => {
                         return (
                             <InputComponent
                                 id={field.name}
                                 idInput={field.name}
+                                value={''}
                                 className="input-basic medium"
                                 typeInput="number"
                                 register={register}
@@ -31,7 +34,7 @@ function CdpHeadFormComponent({isDisabled}:Props) {
                                 direction={EDirection.column}
                                 onChange={field.onChange}
                                 errors={errors}
-                                disabled={true}
+                                disabled={isDisabled}
                             />
                         );
                     }}
@@ -40,7 +43,7 @@ function CdpHeadFormComponent({isDisabled}:Props) {
 
                 <Controller
                     control={control}
-                    name={"consecutiveSap"}
+                    name={"sapConsecutive"}
                     render={({ field }) => {
                         return (
                             <InputComponent
@@ -54,7 +57,7 @@ function CdpHeadFormComponent({isDisabled}:Props) {
                                 direction={EDirection.column}
                                 onChange={field.onChange}
                                 errors={errors}
-                                disabled={true}
+                                disabled={isDisabled}
                             />
                         );
                     }}
@@ -62,7 +65,7 @@ function CdpHeadFormComponent({isDisabled}:Props) {
 
                 <Controller
                     control={control}
-                    name={"consecutiveAurora"}
+                    name={"consecutive"}
                     render={({ field }) => {
                         return (
                             <InputComponent
@@ -76,7 +79,7 @@ function CdpHeadFormComponent({isDisabled}:Props) {
                                 direction={EDirection.column}
                                 onChange={field.onChange}
                                 errors={errors}
-                                disabled={true}
+                                disabled={isDisabled}
                             />
                         );
                     }}
@@ -84,7 +87,7 @@ function CdpHeadFormComponent({isDisabled}:Props) {
             </section>
             <section className='grid-form-3-container-area mt-5px'>
                 <DatePickerComponent
-                    idInput="initialDate"
+                    idInput="date"
                     control={control}
                     label={"Fecha documento"}
                     errors={errors}
@@ -92,13 +95,13 @@ function CdpHeadFormComponent({isDisabled}:Props) {
                     className="dataPicker-basic medium"
                     placeholder="DD/MM/YYYY"
                     dateFormat="dd/mm/yy"
-                    disabled={true}
+                    disabled={isDisabled}
                 />
 
 
                 <Controller
                     control={control}
-                    name={"consecutiveSap"}
+                    name={"sapConsecutive"}
                     render={({ field }) => {
                         return (
                             <InputComponent
@@ -112,7 +115,7 @@ function CdpHeadFormComponent({isDisabled}:Props) {
                                 direction={EDirection.column}
                                 onChange={field.onChange}
                                 errors={errors}
-                                disabled={true}
+                                disabled={isDisabled}
                             />
                         );
                     }}
@@ -122,9 +125,8 @@ function CdpHeadFormComponent({isDisabled}:Props) {
             </section>
 
             <TextAreaComponent
-                id={'field.name'}
-                idInput={'field.name'}
-                //value={`${'field.value'}`}
+                id={'contractObject'}
+                idInput={'contractObject'}
                 className="text-area-basic"
                 register={register}
                 label="Objeto contractual"
@@ -132,7 +134,7 @@ function CdpHeadFormComponent({isDisabled}:Props) {
                 direction={EDirection.column}
                 errors={errors}
                 rows={2}
-                //onChange={field.onChange}
+                disabled={isDisabled}
             />
 
 

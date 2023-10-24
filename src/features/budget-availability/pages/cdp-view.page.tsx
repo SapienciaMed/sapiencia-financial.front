@@ -3,18 +3,14 @@ import TableDataPropComponent from "../../../common/components/tableDataProp.com
 import { useWidth } from "../../../common/hooks/use-width";
 import CdpHeadFormComponent from "../components/cdp-head-form.component";
 import { useCdpCrud } from "../hooks/use-cdp";
+import { IBudgetAvalaibility } from "../interfaces/budgetAvailabilityInterfaces";
 
 
 const CdpViewPage = () => {
     const { width } = useWidth();
-    const { control, register, tableComponentRef, tableColumns } = useCdpCrud();
+    const { control, register, tableComponentRef, tableColumns,tableActions, cdpFoundSt } = useCdpCrud();
 
-    const [dataTableSt, setDataTableSt] = useState<any[]>([])
-
-    useEffect(() => {
-        setDataTableSt([])
-    }, [])
-
+    
     return (
         <div className="main-page">
             <div className="card-table gap-0">
@@ -22,7 +18,7 @@ const CdpViewPage = () => {
                     <div className="text-black weight-500 extra-large">Visualizar CDP</div>
                 </section>
                 <section className="card-user">
-                    <CdpHeadFormComponent isDisabled={true}/>
+                    <CdpHeadFormComponent isDisabled={true} detail={cdpFoundSt} />
                 </section>
             </div>
             <br />
@@ -30,9 +26,10 @@ const CdpViewPage = () => {
 
                 <TableDataPropComponent
                     ref={tableComponentRef}
-                    dataTable={dataTableSt}
+                    dataTable={Object(cdpFoundSt).amounts}
                     columns={tableColumns}
-                    isShowModal={false}
+                    actions={tableActions}
+                    isShowModal={true}
                     titleMessageModalNoResult={"No se encontraron registros"}
                     secondaryTitle="CDP"
                 />
