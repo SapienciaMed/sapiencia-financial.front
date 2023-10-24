@@ -6,19 +6,22 @@ export const tableColumnsCdp: any[] = [
     header: "No. CDP Aurora",
   },
   {
-    fieldName: "consecutiveSap",
+    fieldName: "sapConsecutive",
     header: "No. CDP SAP",
   },
   {
     fieldName: "date",
     header: "Fecha documento",
     renderCell: (row) => {
-        return <>{DateTime.fromISO(row.date).toLocaleString()}</>;
-    }
+      return <>{DateTime.fromISO(row.date).toLocaleString()}</>;
+    },
   },
   {
     fieldName: "countRpp",
     header: "No. de rutas del CDP",
+    renderCell: (row) => {
+      return <>{row.amounts.length}</>;
+    },
   },
   {
     fieldName: "partnersRp",
@@ -37,6 +40,14 @@ export const tableActionsCdp: any[] = [
   },
   {
     icon: "Edit",
+    onClick: (row) => {},
+  },
+  {
+    icon: "Add",
+    onClick: (row) => {},
+  },
+  {
+    icon: "Rp",
     onClick: (row) => {},
   },
 ];

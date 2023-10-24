@@ -9,4 +9,5 @@ export interface IBudgetsAvailabilityFilters {
   pospreId?: string;
   initialDate?: string;
   endDate?: string;
+  contractObject?: string;
 }

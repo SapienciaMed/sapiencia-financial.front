@@ -45,7 +45,6 @@ interface IRef {
 }
 
 const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
-  console.log("...");
   const {
     title,
     secondaryTitle,
@@ -126,12 +125,10 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
   }
 
   useEffect(() => {
-    console.log({ charged });
     if (charged) loadData(undefined, page + 1);
   }, [perPage, first, page]);
 
   useEffect(() => {
-    console.log(".....");
     setCharged(true);
 
     return () => {
@@ -278,6 +275,18 @@ function getIconElement(icon: string, element: "name" | "src") {
         "Vincular"
       ) : (
         <Icons.FaLink className="button grid-button button-link" />
+      );
+    case "Add":
+      return element == "name" ? (
+        "Agregar"
+      ) : (
+        <Icons.FaPlus className="button grid-button button-add" />
+      );
+    case "Rp":
+      return element == "name" ? (
+        "Rp"
+      ) : (
+        <Icons.FaRegistered className="button grid-button button-add" />
       );
     default:
       return "";
