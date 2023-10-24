@@ -2,8 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { budgetAvailabilityValidator } from "../../../common/schemas/budget-availability-schemas";
-import { IBudgetsAvailabilityFilters } from "../interfaces/budgetAvailabilityInterfaces";
-import { tableColumnsCdp, tableActionsCdp } from "../constants";
+import {
+  IBudgetsAvailabilityFilters,
+  IFiltersSelect,
+} from "../interfaces/budgetAvailabilityInterfaces";
+import {
+  tableColumnsCdp,
+  tableActionsCdp,
+  initialFiltersSelect,
+} from "../constants";
 import { useCdpServices } from "./useCdpServices";
 import { clearRequestFilters, filterDataSelect } from "../utils/filtersSearch";
 
@@ -26,7 +33,7 @@ export const useSearchCdp = () => {
 
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
-  const [arraySelect, setArraySelect] = useState<any>({});
+  const [arraySelect, setArraySelect] = useState<IFiltersSelect>(initialFiltersSelect);
 
   useEffect(() => {
     setIsBtnDisable(
@@ -66,7 +73,7 @@ export const useSearchCdp = () => {
           console.log({ queryGetDataFilters: error });
         }
       } else {
-        setArraySelect({});
+        setArraySelect(initialFiltersSelect);
       }
     };
     queryGetDataFilters();

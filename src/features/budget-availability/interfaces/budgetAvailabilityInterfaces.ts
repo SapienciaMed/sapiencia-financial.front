@@ -11,3 +11,9 @@ export interface IBudgetsAvailabilityFilters {
   endDate?: string;
   contractObject?: string;
 }
+
+export interface IFiltersSelect {
+  pospreId: any[];
+  fundId: any[];
+  projectId: any[];
+}

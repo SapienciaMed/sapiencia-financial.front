@@ -51,3 +51,9 @@ export const tableActionsCdp: any[] = [
     onClick: (row) => {},
   },
 ];
+
+export const initialFiltersSelect = {
+  pospreId: [],
+  fundId: [],
+  projectId: [],
+};
