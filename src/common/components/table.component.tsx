@@ -38,6 +38,7 @@ interface IProps<T> {
   searchItems?: object;
   isShowModal: boolean;
   titleMessageModalNoResult?: string;
+  classSizeTable?: 'size-table-wd-150'
 }
 
 interface IRef {
@@ -54,6 +55,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
     titleMessageModalNoResult,
     isShowModal,
     emptyMessage = "No hay resultados.",
+    classSizeTable
   } = props;
 
   // States
@@ -202,7 +204,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
 
       {width > 830 ? (
         <DataTable
-          className="spc-table full-height"
+          className={`spc-table full-height ${classSizeTable && 'size-table-wd-150'}`}
           value={resultData?.array || []}
           loading={loading}
           scrollable={true}

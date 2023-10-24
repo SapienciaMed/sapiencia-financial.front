@@ -40,18 +40,10 @@ export function usePacCrud() {
       fieldName: "message",
       header: "Validación",
     },
-    
+
   ];
 
 
-  /* {
-    "message": "No coincide valor programado con valor presupuesto sapiencia",
-    "error": true,
-    "rowError": 1,
-    "columnError": null
-  } */
-
-  
   function loadTableData(searchCriteria?: object): void {
     if (tableComponentRef.current) {
       tableComponentRef.current.loadData(searchCriteria);
@@ -61,7 +53,7 @@ export function usePacCrud() {
   useEffect(() => {
     loadTableData();
   }, [])
-  
+
 
   const {
     handleSubmit,
@@ -79,7 +71,7 @@ export function usePacCrud() {
       typeSource: "",
       file: {}
     },
-    mode: 'onChange',
+    mode: 'onSubmit',
     resolver,
   });
 
@@ -87,20 +79,17 @@ export function usePacCrud() {
   const [isAllowSave, setIsAllowSave] = useState(true)
 
   React.useEffect(() => {
-
     const subscription = watch(() => { });
     return () => subscription.unsubscribe();
   }, [watch]);
 
   const onSubmitPac = handleSubmit(async (data: IHeadPac) => {
-    
-    console.log("*********************+en submit: ",JSON.stringify(data.file))
+
     let formData = new FormData()
     formData.append('exercise', `${data.exercise}`)
     formData.append('typePac', data.typePac)
     formData.append('typeSource', data.typeSource)
     formData.append('file', data.file)
-    console.log({file:data.file})
     showModal({
       title: "Guardar",
       description: "¿Está segur@ de guardar el proyecto?",
@@ -128,10 +117,9 @@ export function usePacCrud() {
 
   });
 
-const [errorsPac, setErrorsPac] = useState<any[]>([])
+  const [errorsPac, setErrorsPac] = useState<any[]>([])
   const messageConfirmSave = async (data: any) => {
     const response = await uploadPac(data)
-    console.log({response:response})
     if (response.operation.code == "OK" && !Object(response).data.data?.errno) {
 
       showModal({
@@ -142,9 +130,16 @@ const [errorsPac, setErrorsPac] = useState<any[]>([])
         onOk: () => {
           setMessage({})
           !data.id ? onCancelNew() : onCancelEdit()
-          setErrorsPac(Object(response).data.errors)
+          //setErrorsPac(Object(response).data.errors)
+          setErrorsPac([])
           setIsLoading(false)
-          setIsAllowSave(false)
+          //setValueRegister('exercise', data.exercise)
+          //setValueRegister('typePac', null)
+          //setValueRegister('typeSource', null)
+          //setValueRegister('file', null)
+          this.reset();
+          
+          //setIsAllowSave(false)
         }
       })
 
@@ -158,9 +153,10 @@ const [errorsPac, setErrorsPac] = useState<any[]>([])
           setMessage({})
           onCancelNew()
           setIsLoading(false)
+          setErrorsPac(Object(response).data.errors)
         }
       })
-    } else {
+    } if(response.operation.code == "WARN"){
       showModal({
         title: "Carga de archivo",
         description: response.operation.message,
@@ -170,6 +166,21 @@ const [errorsPac, setErrorsPac] = useState<any[]>([])
           setMessage({})
           onCancelNew()
           setIsLoading(false)
+          setErrorsPac(Object(response).data.errors)
+        }
+      })
+    
+    }else {
+      showModal({
+        title: "Carga de archivo",
+        description: response.operation.message,
+        show: true,
+        OkTitle: "Aceptar",
+        onOk: () => {
+          setMessage({})
+          onCancelNew()
+          setIsLoading(false)
+          setErrorsPac(Object(response).data.errors)
         }
       })
     }
@@ -177,6 +188,7 @@ const [errorsPac, setErrorsPac] = useState<any[]>([])
 
   const onCancelNew = () => {
     navigate("./../cargar");
+
   };
   const onCancelEdit = () => {
     navigate("./../../");
@@ -193,8 +205,6 @@ const [errorsPac, setErrorsPac] = useState<any[]>([])
 
     });
   };
-
-
 
   return {
     control,

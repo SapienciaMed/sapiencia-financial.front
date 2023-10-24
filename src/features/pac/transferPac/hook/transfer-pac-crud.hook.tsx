@@ -12,9 +12,11 @@ import { IArrayDataSelectHead, IArrayDataSelectPac } from '../interfaces/TypeTra
 import { IDropdownProps } from '../../../../common/interfaces/select.interface';
 import { validateTypePac } from '../util/validate-type-pac';
 import { IAnnualRoute } from '../../interface/Pac';
+import { useNavigate } from 'react-router-dom';
 
 export function useTransferPacCrudData() {
 
+  const navigate = useNavigate();
   const resolver = useYupValidationResolver( validationTransferPac );
   const { ValidityList, ResourcesTypeList, ListDinamicsRoutes, TransfersOnPac } = usePacTransfersService()
   const { setMessage, authorization } = useContext(AppContext);
@@ -448,6 +450,7 @@ export function useTransferPacCrudData() {
         reset()
         setMessage({});
         setCurrentTotal(0)
+        navigate(-1)
       },
       onClose: () => {
         setIsdataResetState(true)
@@ -455,6 +458,7 @@ export function useTransferPacCrudData() {
         reset()
         setMessage({});
         setCurrentTotal(0)
+        navigate(-1)
       },
     });
   }

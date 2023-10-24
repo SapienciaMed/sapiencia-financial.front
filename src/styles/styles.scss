@@ -387,10 +387,12 @@ div[id="single-spa-application:@sapiencia/financial"] {
   border: none;
   font-family: $font-family-main;
   color: $main-color;
+
   &:disabled {
     color: gray;
     cursor: auto;
   }
+
   &.tiny {
     font-size: 0.6em;
   }
@@ -641,6 +643,14 @@ div[id="single-spa-application:@sapiencia/financial"] {
       width: 100%;
     }
   }
+}
+
+.button-border {
+  border: 1px solid #533893;
+  color: #533893;
+  padding: 8px;
+  border-radius: 15px;
+  margin-left: 10px;
 }
 
 @media (max-width: 250px) {
