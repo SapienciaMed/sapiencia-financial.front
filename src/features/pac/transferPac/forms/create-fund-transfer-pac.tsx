@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useFieldArray, useWatch } from 'react-hook-form';
+import { useFieldArray, useWatch, } from 'react-hook-form';
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import FormTransferPac from "./form-transfer-pac";
 import { IAddFundPac } from "../../../managementCenter/transfer/interfaces/TransferAreaCrudInterface";
@@ -121,15 +121,31 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
     },[visibleFields])
 
     useEffect(() => {
-        const allElementFull = Object.values(dataSelectElements).every(value => value)
+        const allElementFull = Object.values(dataSelectElements).every(value => value && value != null && value != undefined)
         allElementFull &&  dataSelectorComplete(idCardSelect)
     },[dataSelectElements])
 
-    const changeValueOfSelect = (valor: any, typeSelect: string, idCard: string) => {  
-        setDataSelectElements({
-            ...dataSelectElements,
-            [typeSelect]: valor
-        })
+    const changeValueOfSelect = (valor: any, typeSelect: string, option: string) => {  
+        if(option != null && option != '' && option != undefined) {
+            setDataSelectElements({
+                ...dataSelectElements,
+                [typeSelect]: valor
+            })
+        }
+
+        if (option == null) {
+            const existingIndex = annualDataRoutes.findIndex(
+                (item) => item.annualRouteService[0]?.cardId === idCardSelect
+            );
+            if (existingIndex !== -1) {
+                // Si el cardId ya existe, borre el elemento que coincida 
+                const updatedAnnualDataRoutes = [...annualDataRoutes];
+                updatedAnnualDataRoutes.splice(existingIndex, 1);
+                setAnnualDataRoutes(updatedAnnualDataRoutes);
+                titleAdd == 'destino' && setValue('totalDestinoActual', 0)
+                titleAdd == 'origen' && setValue('totalOrigenActual', 0)
+            }
+        }
     }
 
     const dataSelectorComplete = (idCard: string) => {   
@@ -188,7 +204,7 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
                 setAnnualDataRoutes([...annualDataRoutes, { annualRouteService }]);
                 setAnnualDataRoutesOriginal([...annualDataRoutesOriginal, { annualRouteService }])
               }
-              
+          
             }else{
                 setMessage({
                     title: "Validación de datos",

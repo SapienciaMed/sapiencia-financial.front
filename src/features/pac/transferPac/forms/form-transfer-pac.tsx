@@ -36,7 +36,7 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, ca
     const optionSelected = (option: any) => {
         changeValueOfSelect({
             projectId: true,
-        }, 'projectId', formArray[count].cardId )
+        }, 'projectId', option)
         setIdCarsSelect(formArray[count].cardId)
         if (option) {
             setProjectName(functionalArea.find(e => e.value == option)?.nameProject)
@@ -73,11 +73,10 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, ca
                     placeholder={'Seleccionar'}
                     data={[{ id: "91500000", name: "91500000", value: "91500000" }]}
                     filter={true}
-                    fieldArray={true}
                     errors={errors}
                     optionSelected={(option) =>  changeValueOfSelect({
                         managerCenter: true
-                    }, 'managerCenter', formArray[count].cardId)}
+                    }, 'managerCenter', option)}
                 />
                  <SelectComponent
                     idInput={`${titleAdd}[${count}].projectId`}
@@ -88,7 +87,6 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, ca
                     placeholder={'Seleccionar'}   
                     data={functionalArea}
                     filter={true}
-                    fieldArray={true}
                     errors={errors}
                     optionSelected={optionSelected}
                 />
@@ -100,12 +98,11 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, ca
                     classNameLabel="text-black weight-500 big text-required"
                     placeholder={'Seleccionar'}
                     filter={true}
-                    fieldArray={true}
                     data={fundsSapiencia}
                     errors={errors}
                     optionSelected={(option) =>  changeValueOfSelect({
                         fundsSapiencia: true
-                    }, 'fundsSapiencia', formArray[count].cardId)}
+                    }, 'fundsSapiencia', option )}
                 />
                 <SelectComponent
                     idInput={`${titleAdd}[${count}].pospreSapiencia`}
@@ -115,12 +112,11 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, ca
                     classNameLabel="text-black weight-500 big text-required"
                     placeholder={'Seleccionar'}
                     filter={true}
-                    fieldArray={true}
                     data={pospreSapiencia}
                     errors={errors}
                     optionSelected={(option) =>  changeValueOfSelect({
                         pospreSapiencia: true
-                    }, 'pospreSapiencia', formArray[count].cardId)}
+                    }, 'pospreSapiencia', option )}
                     
                 />
 
@@ -132,7 +128,6 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, ca
                     classNameLabel="text-black weight-500 big text-required"
                     placeholder={'Seleccionar'}
                     filter={true}
-                    fieldArray={true}
                     data={areasByProjectSt}
                     errors={errors}
                 />
@@ -145,7 +140,6 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, ca
                     classNameLabel="text-black weight-500 big text-required"
                     errors={errors}
                     register={register}
-                    fieldArray={true}
                 />
             </section>
 
