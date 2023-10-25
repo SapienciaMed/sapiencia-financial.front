@@ -1,0 +1,196 @@
+.container-principal {
+    width: 97%;
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+
+    .agregar-ruta {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-top: 20px;
+        width: 150px;
+        background-color: transparent;
+        border: none;
+        color: var(--button-text-text-text, #533893);
+        text-align: center;
+        font-family: Rubik;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 120%;
+      
+        &:hover {
+          cursor: pointer;
+        }
+      
+        .button-content {
+          display: flex;
+          justify-content: space-between;
+          width: 100%;
+          align-items: center;
+        }
+      }
+      
+
+}
+
+.componente-principal {
+
+    margin-bottom: 20px;
+    width: 100%;
+    border: solid 1px #f3f2f2;
+
+    .agregar-btn {
+
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-bottom: 20px;
+
+        &:hover {
+            background-color: #45a049;
+        }
+    }
+
+    .h3-style {
+        color: var(--text-primario, #000);
+        /* Font/Heading 6/Medium */
+        font-family: Rubik;
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 120%;
+    }
+}
+
+.component-container-create {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+
+    .btn-guardar {
+        display: flex;
+        padding: 12px 16px;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        border-radius: 100px;
+        background: #533893;
+        color: #ffffff;
+        font-family: Rubik;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 120%;
+
+        &:hover {
+            background-color: #a392ca;
+            cursor: pointer;
+        }
+    }
+
+    .cancel-btn {
+        color: #000;
+        text-align: center;
+        font-family: Rubik;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 120%;
+        margin-left: 10px;
+        background-color: transparent;
+        border: none;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}
+
+
+.containerOne {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.formulario {
+    margin-bottom: 20px;
+    width: 100%;
+    border: solid 2px #f3f2f2;
+    margin-top: 30px;
+    border-radius: 15px;
+    padding: 20px;
+
+    .bgSecondary {
+        background-color: #E2E2E2;
+    }
+
+    .grid-form {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr); // Ajusta esto para permitir solo 12 columnas
+        grid-gap: 20px;
+        align-items: center;
+
+        h2,
+        h3 {
+            grid-column: 1 / -1;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .col-4 {
+            grid-column: span 4;
+        }
+
+        .col-8 {
+            grid-column: span 8;
+        }
+
+        .col-3 {
+            grid-column: span 3;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .agregar-btn,
+        .eliminar-btn {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+
+            &:hover {
+                background-color: #45a049;
+            }
+        }
+
+        .eliminar-btn {
+            background-color: #f44336;
+
+            &:hover {
+                background-color: #e53935;
+            }
+        }
+    }
+}
