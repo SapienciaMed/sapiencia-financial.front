@@ -16,9 +16,15 @@ export function useCdpService() {
         const endpoint: string = "/upload-pac";
         return postFormData(`${roleUrl}${endpoint}`,data);
     }
+
+    async function cancelAmount(data: Object): Promise<ApiResponse<any[]>> {
+        const endpoint: string = "/cancel-amount";
+        return postFormData(`${roleUrl}${endpoint}`,data);
+    }
     
     return { 
         createCdp,
-        getCdpById
+        getCdpById,
+        cancelAmount
      }
 }

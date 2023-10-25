@@ -10,17 +10,25 @@ import { useNavigate } from "react-router-dom";
 import { Checkbox } from 'primereact/checkbox';
 import { TextAreaComponent } from "../../../common/components/Form";
 import { EDirection } from "../../../common/constants/input.enum";
+import { InputTextarea } from "primereact/inputtextarea";
+interface Props {
+    cdpId?: any
+}
 
-
-export function useCdpCrud() {
+export function useCdpCrud(cdpId?: string) {
     const resolver = useYupValidationResolver(cdpCrudValidator);
     const { setMessage } = useContext(AppContext);
     const navigate = useNavigate();
-    const { getCdpById } = useCdpService()
+    const { getCdpById, cancelAmount } = useCdpService()
 
     const [cdpFoundSt, setCdpFoundSt] = useState<IBudgetAvalaibility>()
-    
+    const [reasonCancelSt, setReasonCancelSt] = useState('')
     const tableComponentRef = useRef(null);
+
+
+    const reasonCancelFn  = (e)=>{
+        setReasonCancelSt(e.target.value)
+    }
 
     const tableColumns: ITableElement<any>[] = [
         {
@@ -53,21 +61,44 @@ export function useCdpCrud() {
                             title: "Observación anulado",
                             show: true,
                             OkTitle: "Guardar",
-                            description: <div style={{width:'100%'}}>
+                            onOk: () => {
+                                cancelAmount({
+                                    id: row.id,
+                                    reasonCancellation: 'Esta es la cancelación'
+                                })
+                                getCdpById(cdpId).then(res => {
+                                    setCdpFoundSt(res.data[0])
+                                })
+                                setReasonCancelSt('')
+                                setMessage({})
+                            },
+                            onClose() {
+                                setReasonCancelSt('')
+                                setMessage({})
+                            },
+                            description: <div style={{ width: '100%' }}>
                                 <label>Digite el motivo de la anulación</label>
-                                <TextAreaComponent
-                                    id={'field.name'}
-                                    idInput={'field.name'}
-                                    //value={`${'field.value'}`}
+                                <div className="card" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'start' }}>
+                                    <label>Motivo</label>
+                                    <InputTextarea onChange={(e)=>reasonCancelFn(e)} rows={3} maxLength={500} />
+                                </div>
+                                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                                    <div className="title-button font-big">
+                                        Max. 500 caracteres
+                                    </div>
+                                </div>
+                                {/* <TextAreaComponent
+                                    id={'reasonCancel'}
+                                    idInput={'reasonCancel'}
                                     className="text-area-basic"
                                     register={register}
                                     label="Motivo"
                                     classNameLabel="text-black biggest"
                                     direction={EDirection.column}
                                     errors={errors}
+                                    //onChange={(e)=>setReasonCancelSt(e.target.value)}
                                     rows={2}
-                                //onChange={field.onChange}
-                                />
+                                /> */}
                             </div>,
                             background: true
                         })} />
@@ -135,24 +166,33 @@ export function useCdpCrud() {
         watch,
         getValues
     } = useForm<IBudgetAvalaibility>({
+        /* defaultValues:{
+            exercise:Object(cdpFoundSt).exercise,
+            consecutive:Object(cdpFoundSt).consecutive,
+        }, */
         mode: 'onChange',
         resolver,
     });
 
     useEffect(() => {
-        getCdpById('1').then(res => setCdpFoundSt(res.data[0]))
-        
+        cdpId && getCdpById(cdpId).then(res => {
+            setCdpFoundSt(res.data[0])
+        })
+
     }, [])
-    
+
     useEffect(() => {
-        setValueRegister('id',Object(cdpFoundSt).id)
-        setValueRegister('exercise','2023')
-        setValueRegister('consecutive',Object(cdpFoundSt).consecutive)
-        setValueRegister('sapConsecutive',Object(cdpFoundSt).sapConsecutive)
-        setValueRegister('date',Object(cdpFoundSt).date)
-        setValueRegister('contractObject',Object(cdpFoundSt).contractObject)
+        if (!cdpFoundSt) return;
+        //setValueRegister('id', Object(cdpFoundSt).id)
+        console.log({ cdpFoundSt })
+        setValueRegister('exercise', Object(cdpFoundSt).exercise)
+        setValueRegister('consecutive', 1)
+        setValueRegister('sapConsecutive', Object(cdpFoundSt).sapConsecutive)
+        setValueRegister('date', Object(cdpFoundSt).date)
+        setValueRegister('contractObject', Object(cdpFoundSt).contractObject)
+
     }, [cdpFoundSt])
-    
+
 
 
     return {

@@ -6,12 +6,12 @@ import { IBudgetAvalaibility } from "../interfaces/budgetAvailabilityInterfaces"
 
 interface Props{
     isDisabled:boolean;
-    detail:IBudgetAvalaibility;
+    cdpId?:string;
 }
 
 function CdpHeadFormComponent(props:Props) {
-    const { detail, isDisabled } = props;
-    const { control, register, errors } = useCdpCrud();
+    const { isDisabled, cdpId } = props;
+    const { control, register, errors } = useCdpCrud(cdpId);
 
     return (
         <>
@@ -19,20 +19,19 @@ function CdpHeadFormComponent(props:Props) {
                 <Controller
                     control={control}
                     name={"exercise"}
-                    defaultValue={String(new Date().getFullYear())}
                     render={({ field }) => {
                         return (
                             <InputComponent
                                 id={field.name}
                                 idInput={field.name}
-                                value={''}
                                 className="input-basic medium"
                                 typeInput="number"
                                 register={register}
                                 label="Vigencia"
                                 classNameLabel="text-black weight-500 biggest"
                                 direction={EDirection.column}
-                                onChange={field.onChange}
+                                fieldArray={false}
+                                //onChange={field.onChange}
                                 errors={errors}
                                 disabled={isDisabled}
                             />
