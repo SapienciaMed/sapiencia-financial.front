@@ -3,13 +3,15 @@ import { ButtonComponent, FormComponent, SelectComponent } from '../../../../com
 import { Controller } from 'react-hook-form';
 import { InputComponent } from '../../../../../../sapiencia-payroll.front/src/common/components/Form/input.component';
 import { EDirection } from '../../../../common/constants/input.enum';
-import { useAssociatePac } from '../hook/associate-pac-pages.hook';
+import { useAssociatePac } from '../hook/associate-pac.hook';
 import ProgramedMoths from './programed-moths';
 import { InputNumberComponent } from '../../../../common/components/Form/input-number.component';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 function AssociatePacPages() {
 
-    const {control, errors, programmed, isBtnDisable, onSubmit, register, handleChangeExercise, confirmClose} = useAssociatePac()
+    const {control, errors, programmed, isBtnDisable, showSpinner, arrayDataSelect, areasByProjectSt, 
+        onSubmit, register, handleChangeExercise, confirmClose, optionSelected} = useAssociatePac()
     
     return(
         <div className='main-page'>
@@ -76,7 +78,12 @@ function AssociatePacPages() {
                                     errors={errors}
                                 />
                         </div>
+                            {
+                                showSpinner && (
+                                    <ProgressSpinner style={{width: '20px', height: '20px'}}  animationDuration=".5s" />
 
+                                )              
+                            }
                         <div className="funcionality-filters-container">
                             <SelectComponent
                                 idInput='projectId'
@@ -85,10 +92,12 @@ function AssociatePacPages() {
                                 label='Proyecto'
                                 classNameLabel="text-black weight-500 biggest text-required"
                                 placeholder={'Seleccionar'}   
-                                data={[]}
+                                data={arrayDataSelect.listProjects}
                                 filter={true}
                                 isValidateName={false}
                                 errors={errors} 
+                                optionSelected={optionSelected}
+                                disabled={showSpinner}
                             />
                             <SelectComponent
                                 idInput='fundsSapiencia'
@@ -99,8 +108,9 @@ function AssociatePacPages() {
                                 placeholder={'Seleccionar'}
                                 filter={true}
                                 isValidateName={false}
-                                data={[]}
+                                data={arrayDataSelect.listFunds}
                                 errors={errors}
+                                disabled={showSpinner}
                             />
                             <SelectComponent
                                 idInput='pospreSapiencia'
@@ -111,8 +121,9 @@ function AssociatePacPages() {
                                 placeholder={'Seleccionar'}
                                 filter={true}
                                 isValidateName={false}
-                                data={[]}
+                                data={arrayDataSelect.listPospreSapi}
                                 errors={errors}
+                                disabled={showSpinner}
                             />
                         </div>
 
@@ -126,8 +137,9 @@ function AssociatePacPages() {
                                     classNameLabel="text-black weight-500 biggest text-required"
                                     placeholder={'Seleccionar'}
                                     filter={true}
-                                    data={[]}
+                                    data={areasByProjectSt}
                                     errors={errors}
+                                    disabled={showSpinner}
                                 />
                                 <InputComponent
                                     idInput='projectName'
@@ -148,33 +160,52 @@ function AssociatePacPages() {
                             </div>
 
                             <div className="funcionality-filters-container">
-                                <InputNumberComponent
+                                <Controller
                                     control={control}
-                                    idInput="sapienciaBudget"
-                                    label="Presupuesto Sapiencia"
-                                    className="inputNumber-basic medium"
-                                    classNameLabel="text-black big bold "
-                                    mode="currency"
-                                    currency="COP"
-                                    locale="es-CO"
-                                    fieldArray={true}
-                                    minFractionDigits={0}
-                                    maxFractionDigits={0}
+                                    name={"sapienciaBudget"}
+                                    defaultValue='0' 
+                                    render={({ field }) => {
+                                        return(
+                                            <InputNumberComponent
+                                                control={control}
+                                                idInput={field.name}
+                                                label="Presupuesto Sapiencia"
+                                                className="inputNumber-basic medium"
+                                                classNameLabel="text-black big bold  text-required"
+                                                mode="currency"
+                                                currency="COP"
+                                                locale="es-CO"
+                                                minFractionDigits={0}
+                                                maxFractionDigits={0}
+                                                errors={errors}
+                                            />
+                                        )
+                                    }}
                                 />
-                                 <InputNumberComponent
+                                 <Controller
                                     control={control}
-                                    idInput="totalProgrammed"
-                                    label="Total programado"
-                                    className="inputNumber-basic medium"
-                                    classNameLabel="text-black big bold "
-                                    mode="currency"
-                                    currency="COP"
-                                    locale="es-CO"
-                                    fieldArray={true}
-                                    minFractionDigits={0}
-                                    maxFractionDigits={0}
-                                    disabled
+                                    name={"totalProgrammed"}
+                                    defaultValue='0' 
+                                    render={({ field }) => {
+                                        return(
+                                            <InputNumberComponent
+                                                control={control}
+                                                idInput={field.name}
+                                                label="Total programado"
+                                                className="inputNumber-basic medium"
+                                                classNameLabel="text-black big bold  text-required"
+                                                mode="currency"
+                                                currency="COP"
+                                                locale="es-CO"
+                                                minFractionDigits={0}
+                                                maxFractionDigits={0}
+                                                errors={errors}
+                                                disabled
+                                            />
+                                        )
+                                    }}
                                 />
+                                 
                             </div>
 
                         </section>

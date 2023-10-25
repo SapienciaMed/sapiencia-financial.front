@@ -2,14 +2,14 @@ import { IAddFund } from "../../../managementCenter/transfer/interfaces/Transfer
 
 
 export interface IAssocciatePac{
-    sapienciaBudget: number;
-    totalProgrammed: number;
+    sapienciaBudget: string;
+    totalProgrammed: string;
     exercise: string,
     resourceType: string,
     managerCenter: string;
     projectId: string;
     projectName?: string;
-    functionalArea: string;
+    functionalArea: string | number;
     pospreSapiencia?: string;
     funds?: string;
     fundsSapiencia?: string;
