@@ -26,6 +26,9 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, ca
         if (projectName != "") {
             setValue(`${titleAdd.toLowerCase()}[${count}].functionalArea`, (areasByProjectSt.find(e => e.value != null))?.id ?? areaIdSelectedSt)
             setValue(`${titleAdd.toLowerCase()}[${count}].projectName`, projectName)
+            changeValueOfSelect({
+                projectId: true,
+            }, 'projectId', projectIdSelectedSt)
         }
     }, [projectIdSelectedSt])
 
@@ -34,9 +37,6 @@ function FormTransferPac({ count, control, titleAdd, errors, arrayDataSelect, ca
     }, [projectName])
 
     const optionSelected = (option: any) => {
-        changeValueOfSelect({
-            projectId: true,
-        }, 'projectId', option)
         setIdCarsSelect(formArray[count].cardId)
         if (option) {
             setProjectName(functionalArea.find(e => e.value == option)?.nameProject)
