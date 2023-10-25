@@ -535,10 +535,10 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
 
 
 
-  useEffect(() => {
+  useEffect(() => {   
     if (aditionData) {
-      setValue("actAdministrativeDistrict", aditionData?.head[0]?.actAdminDistrict);
-      setValue("actAdministrativeSapiencia", aditionData?.head[0]?.actAdminSapiencia);
+      setValue("actAdministrativeDistrict", aditionData?.head.actAdminDistrict);
+      setValue("actAdministrativeSapiencia", aditionData?.head.actAdminSapiencia);
     }
   }, [aditionData]);
 
