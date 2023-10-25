@@ -77,15 +77,15 @@ export const validationFieldsCreatefunds = yup.object({
 export const validationTransferPac = yup.object({
     pacType: yup
         .string()
-        .required("Completa este campo")
+        .required("Este campo es obligatorio")
         .max(50, 'Solo se permiten 50 caracteres'),
     validity: yup 
         .string()
-        .required("Completa este campo")
+        .required("Este campo es obligatorio")
         .max(10, 'Solo se permiten 10 caracteres'),
     TypeResource: yup 
         .string()
-        .required("Completa este campo")
+        .required("Este campo es obligatorio")
         .max(50, 'Solo se permiten 50 caracteres'),
 
     origen: yup.array()
