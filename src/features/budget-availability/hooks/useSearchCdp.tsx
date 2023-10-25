@@ -2,22 +2,18 @@ import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { budgetAvailabilityValidator } from "../../../common/schemas/budget-availability-schemas";
-import {
-  IBudgetsAvailabilityFilters,
-  IFiltersSelect,
-} from "../interfaces/budgetAvailabilityInterfaces";
-import {
-  tableColumnsCdp,
-  tableActionsCdp,
-  initialFiltersSelect,
-} from "../constants";
+import { IBudgetsAvailabilityFilters } from "../interfaces/budgetAvailabilityInterfaces";
+import { tableColumnsCdp, tableActionsCdp } from "../constants";
 import { useCdpServices } from "./useCdpServices";
 import { clearRequestFilters, filterDataSelect } from "../utils/filtersSearch";
+import { useNavigate } from "react-router-dom";
 
 export const useSearchCdp = () => {
   const { GetRoutesByValidity } = useCdpServices();
   const resolver = useYupValidationResolver(budgetAvailabilityValidator);
   const tableComponentRef = useRef(null);
+  const navigate = useNavigate();
+
   const {
     handleSubmit,
     register,
@@ -33,8 +29,7 @@ export const useSearchCdp = () => {
 
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
-  const [arraySelect, setArraySelect] =
-    useState<IFiltersSelect>(initialFiltersSelect);
+  const [arraySelect, setArraySelect] = useState<any>([]);
 
   useEffect(() => {
     setIsBtnDisable(
@@ -74,7 +69,7 @@ export const useSearchCdp = () => {
           console.log({ queryGetDataFilters: error });
         }
       } else {
-        setArraySelect(initialFiltersSelect);
+        setArraySelect([]);
       }
     };
     queryGetDataFilters();
@@ -93,6 +88,7 @@ export const useSearchCdp = () => {
     tableComponentRef,
     tableColumnsCdp,
     tableActionsCdp,
+    navigate,
     arraySelect,
   };
 };
