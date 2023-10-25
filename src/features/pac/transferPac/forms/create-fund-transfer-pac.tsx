@@ -125,12 +125,9 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
         allElementFull &&  dataSelectorComplete(idCardSelect)
     },[dataSelectElements])
 
-    const changeValueOfSelect = (valor: any, typeSelect: string, option: string) => {  
+    const changeValueOfSelect = (valor: {}, typeSelect: string, option: string) => {  
         if(option != null && option != '' && option != undefined) {
-            setDataSelectElements({
-                ...dataSelectElements,
-                [typeSelect]: valor
-            })
+            setDataSelectElements((prevState) => Object.assign({}, prevState, valor));
         }
 
         if (option == null) {
