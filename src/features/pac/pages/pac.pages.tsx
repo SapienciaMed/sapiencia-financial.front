@@ -26,7 +26,7 @@ function PacPages() {
                     <div className={`${width < 800 ? 'display-justify-space-between-pac' : 'display-align-flex-end'} gap-0 gap-05`}>
                         <div
                             className="title-button font-big"
-                            onClick={() => {}}
+                            onClick={() => { navigate('./asociar') }}
                         >
                             Asociar al PAC <AiOutlinePlusCircle />
                         </div>
