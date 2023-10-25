@@ -1,5 +1,5 @@
 import { ICreateTransferPacForm } from "../../../managementCenter/transfer/interfaces/TransferAreaCrudInterface"
-import { UseFormSetValue, UseFormRegister, FieldErrors, Control } from 'react-hook-form';
+import { UseFormSetValue, UseFormRegister, FieldErrors, Control, UseFormReset } from 'react-hook-form';
 import { IDropdownProps } from "../../../../common/interfaces/select.interface";
 import { Dispatch, SetStateAction } from "react";
 import { IAnnualRoute } from "../../interface/Pac";
@@ -22,7 +22,7 @@ export interface ICreateFundTransferPac {
   }[]>>,
   annualDataRoutesOriginal:  {
     annualRouteService: IAnnualRoute[];
-  }[]
+  }[],
 }
 
 export interface IArrayDataSelectHead {

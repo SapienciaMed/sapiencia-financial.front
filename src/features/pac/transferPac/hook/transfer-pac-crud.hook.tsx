@@ -30,7 +30,9 @@ export function useTransferPacCrudData() {
   const [ showSpinner,   setShowSpinner ] = useState(false)
   const [ disableBtnAdd, setDisableBtnAdd ] = useState(true)
   const [ currentTotal, setCurrentTotal ] = useState(0)
-  const [ originalOriginDestination, setOriginalOriginDestination ] = useState<any>()
+  const [ originalDestinationValueOfService, setOriginalDestinationValueOfService ] = useState<any>([{
+    annualRouteService: [] as IAnnualRoute[]
+  }])
   const [ annualDataRoutesOriginal, setAnnualDataRoutesOriginal ] = useState([{
     annualRouteService: [] as IAnnualRoute[]
   }])
@@ -93,15 +95,45 @@ export function useTransferPacCrudData() {
         const destinoMatch = watchAll.destino.some(destino => annualRouteService.some(routeService => routeService.cardId === destino.cardId));
         
         if (origenMatch) {
-            return { ...item, ubicacion: "origen" };
-        } else if (destinoMatch) {
-            return { ...item, ubicacion: "destino" };
+          return { ...item, ubicacion: "origen" };
+        } 
+        if (destinoMatch) {
+          return { ...item, ubicacion: "destino" };
         } else {
             return item;
         }
       });
+     // Función para actualizar o agregar datos en originalDestinationValueOfService
+      const updateOrAddAnnualRoute = (newAnnualRoute) => {
+        setOriginalDestinationValueOfService((prevData) => {
+          // Clona el arreglo original para no mutarlo directamente
+          const newData = [...prevData];
 
-      setOriginalOriginDestination(originalDataAnnualRouteswithLocations)
+          // Busca si ya existe un objeto con el mismo cardId en annualRouteService
+          const index = newData.findIndex((item) => {
+            return item.annualRouteService.some(
+              (route) => route.cardId === newAnnualRoute.annualRouteService[0]?.cardId
+            );
+          });
+
+          if (index !== -1) {
+            // Si existe, actualiza el objeto
+            newData[index].annualRouteService = newAnnualRoute.annualRouteService;
+          } else {
+            // Si no existe, agrega el nuevo objeto
+            newData.push(newAnnualRoute);
+          }
+
+          return newData;
+        });
+      };
+
+      // Recorre originalDataAnnualRouteswithLocations y llama a la función de actualización/agregación
+      originalDataAnnualRouteswithLocations.forEach((item) => {
+        if (item.annualRouteService.length > 0) {
+          updateOrAddAnnualRoute(item);
+        }
+      });
     }
   },[annualDataRoutesOriginal])
 
@@ -493,7 +525,7 @@ export function useTransferPacCrudData() {
     disableBtnAdd,
     annualDataRoutesOriginal,
     currentTotal,
-    originalOriginDestination,
+    originalDestinationValueOfService,
     register,
     setValue,
     onSubmit,
@@ -503,7 +535,7 @@ export function useTransferPacCrudData() {
     setPacTypeState,
     setTypeValidityState,
     setIsdataResetState,
-    setAnnualDataRoutesOriginal
+    setAnnualDataRoutesOriginal,
   }
 }
 

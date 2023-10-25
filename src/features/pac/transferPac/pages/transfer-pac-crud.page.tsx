@@ -10,7 +10,7 @@ import { ProgressSpinner } from "primereact/progressspinner";
 function TransferPacCrud(): React.JSX.Element {
 
     const { control, arrayDataSelect, errors, pacTypeState, isdataResetState, startIndex, watchAll, itemsPerPage, disableBtnAdd, showSpinner,
-        isBtnDisable, arrayDataSelectHead, annualDataRoutesOriginal, currentTotal, originalOriginDestination, register, 
+        isBtnDisable, arrayDataSelectHead, annualDataRoutesOriginal, currentTotal, originalDestinationValueOfService, register, 
         setValue, onSubmit, onPageChange, getValues, onCancelar, setPacTypeState, setTypeValidityState, 
         setIsdataResetState, setAnnualDataRoutesOriginal } = useTransferPacCrudData()
  
@@ -150,7 +150,7 @@ function TransferPacCrud(): React.JSX.Element {
                                             classNameLabel="text-black big bold"
                                             direction={EDirection.column}
                                             errors={errors}
-                                            value={`$ ${calcularTotalOrigenLocation(originalOriginDestination)?.toLocaleString()}`}
+                                            value={`$ ${calcularTotalOrigenLocation(originalDestinationValueOfService)?.toLocaleString()}`}
                                             disabled
                                         />
                                         <InputComponent
@@ -162,7 +162,7 @@ function TransferPacCrud(): React.JSX.Element {
                                             classNameLabel="text-black big bold"
                                             direction={EDirection.column}
                                             errors={errors}
-                                            value={`$ ${calculateTotalDestinoLocation(originalOriginDestination)?.toLocaleString()}`}
+                                            value={`$ ${calculateTotalDestinoLocation(originalDestinationValueOfService)?.toLocaleString()}`}
                                             disabled
                                         />
                                         <InputComponent
