@@ -29,7 +29,6 @@ export function useTransferPacCrudData() {
   const [currentPage, setCurrentPage] = useState(1);
   const [ showSpinner,   setShowSpinner ] = useState(false)
   const [ disableBtnAdd, setDisableBtnAdd ] = useState(true)
-  const [ currentTotal, setCurrentTotal ] = useState(0)
   const [ originalDestinationValueOfService, setOriginalDestinationValueOfService ] = useState([{
     annualRouteService: [] as IAnnualRoute[]
   }])
@@ -132,7 +131,6 @@ export function useTransferPacCrudData() {
         reset()
         setShowSpinner(false)
         setDisableBtnAdd(true)
-        setCurrentTotal(0)
       } else {
         setPacTypeState2(pacTypeState);
       }
@@ -254,7 +252,7 @@ export function useTransferPacCrudData() {
   },[isActivityAdd, watchAll.TypeResource])
 
   useEffect(() => {
-    watchAll && setIsBtnDisable( calculateTotalOrigen(watchAll) != 0 && calculateTotalDestino(watchAll) != 0  )
+    watchAll && setIsBtnDisable( watchAll.totalDestinoActual > 0 && watchAll.totalOrigenActual > 0  )
     watchAll && validateHeader()
   },[watchAll])
 
@@ -271,7 +269,7 @@ export function useTransferPacCrudData() {
       return obj;
     }
 
-    if(currentTotal != (calculateTotalOrigen(watchAll) + calculateTotalDestino(watchAll))){
+    if( (watchAll.totalDestinoActual + watchAll.totalOrigenActual) != (calculateTotalOrigen(watchAll) + calculateTotalDestino(watchAll))){
       setMessage({
         title: 'Validación',
         show: true,
@@ -467,7 +465,6 @@ export function useTransferPacCrudData() {
         setDisableBtnAdd(true)
         reset()
         setMessage({});
-        setCurrentTotal(0)
         navigate(-1)
       },
       onClose: () => {
@@ -475,7 +472,6 @@ export function useTransferPacCrudData() {
         setDisableBtnAdd(true)
         reset()
         setMessage({});
-        setCurrentTotal(0)
         navigate(-1)
       },
     });
