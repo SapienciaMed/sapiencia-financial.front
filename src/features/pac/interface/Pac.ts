@@ -1,4 +1,6 @@
 import { DateTime } from 'luxon';
+import { IDropdownProps } from '../../../common/interfaces/select.interface';
+import { IDropdownPropsPac } from '../transferPac/interfaces/TypeTransferPac';
 
 export interface IPac {
     id?: number;
@@ -35,6 +37,7 @@ export interface IPacComplementary {
     listProjects?: IDinamicListForProjects[];
     listFunds?: IDinamicListForFunds[];
     listPospreSapi ?: IDinamicListForPospres[];
+    candidatesRoutes?: number[];
 }
 
 export interface IDinamicListForProjects {
@@ -103,7 +106,7 @@ export interface IDestinity {
 
 export interface IAnnualRoute {
     id?:         number;
-    pacId:      number;
+    pacId?:      number;
     type:       string;
     jan:        number;
     feb:        number;
@@ -126,6 +129,7 @@ export interface IResultSearchAnnualizationByRoute {
     headerResult: IPacFilters;
     routeResult: IBudgetsRoutesSimple;
     annualRoute: IAnnualRoute[];
+    idCardTemplate?: string
 }
 
 export interface IBudgetsRoutesSimple {
@@ -153,3 +157,43 @@ export interface IErrorTablePac{
     message:number;
     error:string;
 } 
+
+export interface IPacSearch {
+    exercise: string,
+    resourceType: string,
+    version: string,
+    idProjectVinculation: number,
+    idBudget: number,
+    idPospreSapiencia: number,
+}
+
+export interface IArrayDataSelectPacComplementary{
+    headerComposition?: IPacFilters;
+    listBudgetsRoutes?: IDropdownProps[];
+    listProjects?: IDropdownProps[];
+    listFunds?: IDropdownProps[];
+    listPospreSapi ?: IDropdownProps[];
+}
+
+export interface IArrayDataSelectPacAssociate{
+    headerComposition?: IPacFilters;
+    listBudgetsRoutes?: IDropdownPropsPac[];
+    listProjects?: IDropdownPropsPac[];
+    listFunds?: IDropdownPropsPac[];
+    listPospreSapi ?: IDropdownPropsPac[];
+}
+
+export interface ICreateAssociation {
+    exercise?: number;
+    resourceType?: string;
+    route?: number;
+    pacId?: number;
+    type?: string;
+    version?: number;
+    idProjectVinculation?: number;
+    idFund?: number;
+    idPospreSapiencia?: number;
+    idBudget?: number;
+    budgetSapiencia?: number;
+    annualization?: IAnnualRoute;
+}

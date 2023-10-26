@@ -13,7 +13,6 @@ export const useSearchCdp = () => {
   const resolver = useYupValidationResolver(budgetAvailabilityValidator);
   const tableComponentRef = useRef(null);
   const navigate = useNavigate();
-
   const {
     handleSubmit,
     register,

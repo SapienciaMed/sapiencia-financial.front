@@ -64,7 +64,7 @@ function AdditionAreaCrud({ actionForm, typeMovement }: IAppProps) {
             </div>
             {
               
-              (!isfull && actionForm == "edit") ? 
+              (isfull && actionForm == "edit") ? 
               <TabManagerAdditionPage
                 controlRegister={control}
                 watch={watch}

@@ -28,6 +28,7 @@ const CdpPage = () => {
     tableComponentRef,
     tableActionsCdp,
     tableColumnsCdp,
+    navigate,
     arraySelect,
   } = useSearchCdp();
 
@@ -43,7 +44,7 @@ const CdpPage = () => {
                 : "display-align-flex-end"
             } gap-0 gap-05`}
           >
-            <div className="title-button font-big" onClick={() => {}}>
+            <div className="title-button font-big" onClick={() =>navigate('./create')}>
               Crear CDP
               <AiOutlinePlusCircle />
             </div>

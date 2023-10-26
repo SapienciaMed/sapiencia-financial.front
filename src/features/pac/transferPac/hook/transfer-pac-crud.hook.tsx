@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import { EResponseCodes } from '../../../../common/constants/api.enum';
 import { AppContext } from '../../../../common/contexts/app.context';
 import { isvalidateTypePac } from '../util/is-validate-type-pac';
-import { calculateTotalDestino, calculateTotalOrigen, validateTypeResource, validateTypeResourceServices } from '../util';
+import { calcularTotalOrigenLocation, calculateTotalDestino, calculateTotalDestinoLocation, calculateTotalOrigen, validateTypeResource, validateTypeResourceServices } from '../util';
 import useYupValidationResolver from '../../../../common/hooks/form-validator.hook';
 import { validationTransferPac } from '../../../../common/schemas/transfer-schema';
 import { usePacTransfersService } from './pac-transfers-service.hook';
@@ -12,9 +12,11 @@ import { IArrayDataSelectHead, IArrayDataSelectPac } from '../interfaces/TypeTra
 import { IDropdownProps } from '../../../../common/interfaces/select.interface';
 import { validateTypePac } from '../util/validate-type-pac';
 import { IAnnualRoute } from '../../interface/Pac';
+import { useNavigate } from 'react-router-dom';
 
 export function useTransferPacCrudData() {
 
+  const navigate = useNavigate();
   const resolver = useYupValidationResolver( validationTransferPac );
   const { ValidityList, ResourcesTypeList, ListDinamicsRoutes, TransfersOnPac } = usePacTransfersService()
   const { setMessage, authorization } = useContext(AppContext);
@@ -28,7 +30,9 @@ export function useTransferPacCrudData() {
   const [ showSpinner,   setShowSpinner ] = useState(false)
   const [ disableBtnAdd, setDisableBtnAdd ] = useState(true)
   const [ currentTotal, setCurrentTotal ] = useState(0)
-  const [ originalOriginDestination, setOriginalOriginDestination ] = useState<any>()
+  const [ originalDestinationValueOfService, setOriginalDestinationValueOfService ] = useState([{
+    annualRouteService: [] as IAnnualRoute[]
+  }])
   const [ annualDataRoutesOriginal, setAnnualDataRoutesOriginal ] = useState([{
     annualRouteService: [] as IAnnualRoute[]
   }])
@@ -62,26 +66,16 @@ export function useTransferPacCrudData() {
   const watchAll = watch()
   
   const { hasDataBeforeReset, hasNonEmptyAll } = isvalidateTypePac(watchAll);
-  
+
+  useEffect(() => {
+    if (originalDestinationValueOfService.some(e => e.annualRouteService.length > 0)) {
+      setValue('totalOrigenActual', calcularTotalOrigenLocation(originalDestinationValueOfService))
+      setValue('totalDestinoActual', calculateTotalDestinoLocation(originalDestinationValueOfService))
+    }
+  },[originalDestinationValueOfService])
+
   useEffect(() => {
     if (annualDataRoutesOriginal.length > 1) {
-      const totalOginal = annualDataRoutesOriginal
-        .flatMap(item => item.annualRouteService.map(service => {
-          const { id, pacId, type, cardId, ...values } = service;
-          return values;
-        }))
-        .reduce((acc, service) => {
-          for (const key in service) {
-            if (service.hasOwnProperty(key)) {
-              acc[key] = (acc[key] || 0) + service[key];
-            }
-          }
-          return acc;
-      },  {} as Record<string, number> );
-
-      const totalAmount = Object.values(totalOginal).reduce((total, value) => total + value, 0);
-      setCurrentTotal(totalAmount)
-
       /*Determina que cadId del servicio es igual al annualDataRoutesOriginal.annualRouteService cadId y le agrega una prop nueva al arreglo llamado ubicacion 
         con el fin de determinar que la suma original del origen o del destino sigan iguales sin sufrir cambios.
       */
@@ -91,19 +85,45 @@ export function useTransferPacCrudData() {
         const destinoMatch = watchAll.destino.some(destino => annualRouteService.some(routeService => routeService.cardId === destino.cardId));
         
         if (origenMatch) {
-            return { ...item, ubicacion: "origen" };
-        } else if (destinoMatch) {
-            return { ...item, ubicacion: "destino" };
+          return { ...item, ubicacion: "origen" };
+        } 
+        if (destinoMatch) {
+          return { ...item, ubicacion: "destino" };
         } else {
             return item;
         }
       });
 
-      setOriginalOriginDestination(originalDataAnnualRouteswithLocations)
+      const updateOrAddAnnualRoute = (newAnnualRoute) => {
+        setOriginalDestinationValueOfService((prevData) => {
+          const newData = [...prevData];
+          // Busca si ya existe un objeto con el mismo cardId en annualRouteService
+          const index = newData.findIndex((item) => {
+            return item.annualRouteService.some(
+              (route) => route.cardId === newAnnualRoute.annualRouteService[0]?.cardId
+            );
+          });
+
+          if (index !== -1) {
+            // Si existe, actualiza el objeto
+            newData[index].annualRouteService = newAnnualRoute.annualRouteService;
+          } else {
+            // Si no existe, agrega el nuevo objeto
+            newData.push(newAnnualRoute);
+          }
+
+          return newData;
+        });
+      };
+
+      originalDataAnnualRouteswithLocations.forEach((item) => {
+        if (item.annualRouteService.length > 0) {
+          updateOrAddAnnualRoute(item);
+        }
+      });
     }
   },[annualDataRoutesOriginal])
 
-  //Resetea el formulario, cuando se cambia de pac y algun valor del formulario este lleno
   useEffect(() => {
     if (pacTypeState >= 2 && pacTypeState <= 4 ) {
       if ((hasDataBeforeReset || hasNonEmptyAll) && pacTypeState2 !== pacTypeState) {
@@ -234,7 +254,7 @@ export function useTransferPacCrudData() {
   },[isActivityAdd, watchAll.TypeResource])
 
   useEffect(() => {
-    watchAll && setIsBtnDisable( calculateTotalOrigen(watchAll) != 0 && calculateTotalDestino(watchAll) != 0 /*&& (calculateTotalOrigen(watchAll) == calculateTotalDestino(watchAll))*/  )
+    watchAll && setIsBtnDisable( calculateTotalOrigen(watchAll) != 0 && calculateTotalDestino(watchAll) != 0  )
     watchAll && validateHeader()
   },[watchAll])
 
@@ -448,6 +468,7 @@ export function useTransferPacCrudData() {
         reset()
         setMessage({});
         setCurrentTotal(0)
+        navigate(-1)
       },
       onClose: () => {
         setIsdataResetState(true)
@@ -455,6 +476,7 @@ export function useTransferPacCrudData() {
         reset()
         setMessage({});
         setCurrentTotal(0)
+        navigate(-1)
       },
     });
   }
@@ -488,8 +510,8 @@ export function useTransferPacCrudData() {
     showSpinner,
     disableBtnAdd,
     annualDataRoutesOriginal,
-    currentTotal,
-    originalOriginDestination,
+    originalDestinationValueOfService, 
+    setOriginalDestinationValueOfService,
     register,
     setValue,
     onSubmit,
@@ -499,7 +521,7 @@ export function useTransferPacCrudData() {
     setPacTypeState,
     setTypeValidityState,
     setIsdataResetState,
-    setAnnualDataRoutesOriginal
+    setAnnualDataRoutesOriginal,
   }
 }
 
