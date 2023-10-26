@@ -4,14 +4,15 @@ import { EDirection } from "../../../../common/constants/input.enum";
 import CreateFundTransferPac from "../forms/create-fund-transfer-pac";
 import { useTransferPacCrudData } from "../hook/transfer-pac-crud.hook";
 import { paginatorFooter } from "../../../managementCenter/components/table-detail.component";
-import { calcularTotalOrigenLocation, calculateTotalDestino, calculateTotalDestinoLocation, calculateTotalOrigen } from "../util";
+import { calculateTotalDestino, calculateTotalOrigen } from "../util";
 import { ProgressSpinner } from "primereact/progressspinner";
+import { InputNumberComponent } from "../../../../common/components/Form/input-number.component";
 
 function TransferPacCrud(): React.JSX.Element {
 
     const { control, arrayDataSelect, errors, pacTypeState, isdataResetState, startIndex, watchAll, itemsPerPage, disableBtnAdd, showSpinner,
-        isBtnDisable, arrayDataSelectHead, annualDataRoutesOriginal, currentTotal, originalDestinationValueOfService, register, 
-        setValue, onSubmit, onPageChange, getValues, onCancelar, setPacTypeState, setTypeValidityState, 
+        isBtnDisable, arrayDataSelectHead, annualDataRoutesOriginal, originalDestinationValueOfService, 
+        setOriginalDestinationValueOfService, register, setValue, onSubmit, onPageChange, getValues, onCancelar, setPacTypeState, setTypeValidityState, 
         setIsdataResetState, setAnnualDataRoutesOriginal } = useTransferPacCrudData()
  
     return(
@@ -93,6 +94,8 @@ function TransferPacCrud(): React.JSX.Element {
                                         setIsdataResetState={setIsdataResetState}
                                         setAnnualDataRoutesOriginal={setAnnualDataRoutesOriginal}
                                         annualDataRoutesOriginal={annualDataRoutesOriginal}
+                                        originalDestinationValueOfService={originalDestinationValueOfService}
+                                        setOriginalDestinationValueOfService={setOriginalDestinationValueOfService}
                                     />
                                 </section>
 
@@ -112,6 +115,8 @@ function TransferPacCrud(): React.JSX.Element {
                                         setIsdataResetState={setIsdataResetState}
                                         setAnnualDataRoutesOriginal={setAnnualDataRoutesOriginal}
                                         annualDataRoutesOriginal={annualDataRoutesOriginal}
+                                        originalDestinationValueOfService={originalDestinationValueOfService}
+                                        setOriginalDestinationValueOfService={setOriginalDestinationValueOfService}
                                     />
                                 </section>
 
@@ -141,28 +146,32 @@ function TransferPacCrud(): React.JSX.Element {
                                     </div>
                                     
                                     <div className="funcionality-filters-container">
-                                        <InputComponent
+                                        <InputNumberComponent
+                                            control={control}
                                             idInput="totalOrigenActual"
-                                            className="input-basic medium"
-                                            typeInput="text"
-                                            register={register}
                                             label="Total Origen actual"
+                                            className="inputNumber-basic medium"
                                             classNameLabel="text-black big bold"
-                                            direction={EDirection.column}
                                             errors={errors}
-                                            value={`$ ${calcularTotalOrigenLocation(originalDestinationValueOfService)?.toLocaleString()}`}
+                                            mode="currency"
+                                            currency="COP"
+                                            locale="es-CO"
+                                            minFractionDigits={0}
+                                            maxFractionDigits={0}
                                             disabled
                                         />
-                                        <InputComponent
+                                         <InputNumberComponent
+                                            control={control}
                                             idInput="totalDestinoActual"
-                                            className="input-basic medium"
-                                            typeInput="text"
-                                            register={register}
                                             label="Total Destino actual"
+                                            className="inputNumber-basic medium"
                                             classNameLabel="text-black big bold"
-                                            direction={EDirection.column}
                                             errors={errors}
-                                            value={`$ ${calculateTotalDestinoLocation(originalDestinationValueOfService)?.toLocaleString()}`}
+                                            mode="currency"
+                                            currency="COP"
+                                            locale="es-CO"
+                                            minFractionDigits={0}
+                                            maxFractionDigits={0}
                                             disabled
                                         />
                                         <InputComponent
@@ -174,7 +183,7 @@ function TransferPacCrud(): React.JSX.Element {
                                             classNameLabel="text-black big bold"
                                             direction={EDirection.column}
                                             errors={errors}
-                                            value={`$ ${String(currentTotal).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`}
+                                            value={`$ ${(watchAll.totalDestinoActual + watchAll.totalOrigenActual).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`}
                                             disabled
                                         />
                                     </div>

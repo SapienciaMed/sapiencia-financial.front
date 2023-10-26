@@ -127,6 +127,7 @@ export interface IResultSearchAnnualizationByRoute {
     headerResult: IPacFilters;
     routeResult: IBudgetsRoutesSimple;
     annualRoute: IAnnualRoute[];
+    idCardTemplate?: string
 }
 
 export interface IBudgetsRoutesSimple {
