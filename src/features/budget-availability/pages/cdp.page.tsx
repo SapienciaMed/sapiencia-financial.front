@@ -44,7 +44,10 @@ const CdpPage = () => {
                 : "display-align-flex-end"
             } gap-0 gap-05`}
           >
-            <div className="title-button font-big" onClick={() =>navigate('./create')}>
+            <div
+              className="title-button font-big"
+              onClick={() => navigate("./create")}
+            >
               Crear CDP
               <AiOutlinePlusCircle />
             </div>
