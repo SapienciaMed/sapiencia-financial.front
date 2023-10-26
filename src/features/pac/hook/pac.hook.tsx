@@ -178,7 +178,7 @@ export function usePacData() {
         {
             icon: "Edit",
             onClick: (row) => {
-                
+                navigate('./edit/1')
             },
         }
     ];
