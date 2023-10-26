@@ -514,19 +514,30 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
         }).filter(Boolean);
       }
 
-      function hasAnyChange(mappedData, formData) {
+    /*  function hasAnyChange(mappedData, formData) {
         return Object.keys(mappedData?.[0] || {}).some(key => {
           return mappedData?.[0]?.[key] !== formData?.[0]?.[key];
         });
-      }
+      }  */
 
-      const ingreso = mapDetails("Ingreso");
+     /*  function hasAnyChange(mappedData, formData) {
+        return formData.some((formEntry, index) => {
+          return Object.keys(formEntry).some(key => {
+            return formEntry[key] !== mappedData[index]?.[key];
+          });
+        });
+      } */
+      
+      
+
+     /*  const ingreso = mapDetails("Ingreso");
       const gasto = mapDetails("Gasto");
 
       const hasAnyIngresoChange = hasAnyChange(ingreso, formData.ingreso);
       const hasAnyGastoChange = hasAnyChange(gasto, formData.gasto);
+    
 
-      setIsAllowSave(hasAnyIngresoChange || hasAnyGastoChange);
+      setIsAllowSave(hasAnyIngresoChange || hasAnyGastoChange); */
 
     }, [aditionData, formData]);
 
@@ -535,10 +546,10 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
 
 
 
-  useEffect(() => {
+  useEffect(() => {   
     if (aditionData) {
-      setValue("actAdministrativeDistrict", aditionData?.head[0]?.actAdminDistrict);
-      setValue("actAdministrativeSapiencia", aditionData?.head[0]?.actAdminSapiencia);
+      setValue("actAdministrativeDistrict", aditionData?.head.actAdminDistrict);
+      setValue("actAdministrativeSapiencia", aditionData?.head.actAdminSapiencia);
     }
   }, [aditionData]);
 
