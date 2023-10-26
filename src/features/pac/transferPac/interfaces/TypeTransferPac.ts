@@ -23,6 +23,12 @@ export interface ICreateFundTransferPac {
   annualDataRoutesOriginal:  {
     annualRouteService: IAnnualRoute[];
   }[],
+  originalDestinationValueOfService: {
+    annualRouteService: IAnnualRoute[];
+  }[]
+  setOriginalDestinationValueOfService: React.Dispatch<React.SetStateAction<{
+    annualRouteService: IAnnualRoute[];
+  }[]>>
 }
 
 export interface IArrayDataSelectHead {
