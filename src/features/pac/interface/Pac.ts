@@ -16,7 +16,8 @@ export interface IPac {
     userModify: string;
     dateModify: string;
     userCreate: string;
-    dateCreate: string
+    dateCreate: string;
+    pacAnnualizations?: IAnnualRoute[],
 };
 
 export interface IPacFilters {
@@ -196,3 +197,51 @@ export interface ICreateAssociation {
     budgetSapiencia?: number;
     annualization?: IAnnualRoute;
 }
+
+export interface IPacEdit {
+    pacType: string,
+    managerCenter: string,
+    pospre: string,
+    pospreSapiencia: string,
+    fundsSapiencia: string,
+    funds: string,
+    functionalArea: string,
+    project: string,
+    projectName: string,
+    budgetSapi: string,
+    exercise: string
+    totalProgrammed: string,
+    totalCollected: string,
+    totalFunds: string,
+    programmed: {
+        [key: string]: string;
+    };
+    collected: {
+        [key: string]: string;
+    };
+}
+
+export interface IResultSearchDinamicPac {
+    resultPac : IPac | null,
+    totalsPac : {
+      totalProgramming : number;
+      totalCollected : number;
+    }
+    resultRoute: {
+      managementCenter : string;
+      fundNumber : string;
+      fundId : number;
+      posPreSapiDescription : string;
+      posPreSapiNumber : string;
+      posPreSapiId : number;
+      posPreOrigNumber : string;
+      posPreOrigId : number;
+      projectVinculationId : number;
+      projectPlanningId : number;
+      projectCode : string;
+      projectName : string;
+      functionalAreaId : number;
+      functionalAreaNumber : string;
+    }
+  }
+  

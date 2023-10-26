@@ -178,7 +178,8 @@ export function usePacData() {
         {
             icon: "Edit",
             onClick: (row) => {
-                navigate('./edit/1')
+                const pacId = row?.id
+                navigate(`./edit/${pacId}`)
             },
         }
     ];
@@ -262,7 +263,6 @@ export function usePacData() {
             
         })
     } 
-
 
     return {
         control,
