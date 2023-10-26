@@ -1,7 +1,7 @@
 import React from 'react'
-import { ButtonComponent, FormComponent, SelectComponent } from '../../../../common/components/Form';
+import { ButtonComponent, FormComponent, InputComponent, SelectComponent } from '../../../../common/components/Form';
 import { Controller } from 'react-hook-form';
-import { InputComponent } from '../../../../../../sapiencia-payroll.front/src/common/components/Form/input.component';
+
 import { EDirection } from '../../../../common/constants/input.enum';
 import { useAssociatePac } from '../hook/associate-pac.hook';
 import ProgramedMoths from './programed-moths';
