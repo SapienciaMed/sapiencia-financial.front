@@ -30,6 +30,8 @@ const CdpPage = () => {
     tableColumnsCdp,
     navigate,
     arraySelect,
+    initialDate,
+    endDate,
   } = useSearchCdp();
 
   return (
@@ -169,6 +171,7 @@ const CdpPage = () => {
                 className="dataPicker-basic"
                 placeholder="DD/MM/YYYY"
                 dateFormat="dd/mm/yy"
+                maxDate={new Date(endDate)}
               />
               <DatePickerComponent
                 idInput="endDate"
@@ -179,6 +182,7 @@ const CdpPage = () => {
                 className="dataPicker-basic"
                 placeholder="DD/MM/YYYY"
                 dateFormat="dd/mm/yy"
+                minDate={new Date(initialDate)}
               />
             </div>
             <div className="funcionality-filters-container">

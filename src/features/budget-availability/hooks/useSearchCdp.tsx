@@ -17,6 +17,7 @@ export const useSearchCdp = () => {
     handleSubmit,
     register,
     formState: { errors, isValid },
+    setValue: setValueRegister,
     reset,
     watch,
     control,
@@ -25,6 +26,7 @@ export const useSearchCdp = () => {
     mode: "all",
   });
   const inputValue = watch(["dateOfCdp"]);
+  let [initialDate, endDate] = watch(["initialDate", "endDate"]);
   const tableActionsCdp: any[] = [
     {
       icon: "Detail",
@@ -34,7 +36,6 @@ export const useSearchCdp = () => {
       icon: "Edit",
       onClick: (row) => {
         const id = row.id;
-        console.log({ id });
         navigate(`/gestion-financiera/cdp/edit/${id}`);
       },
     },
@@ -96,6 +97,15 @@ export const useSearchCdp = () => {
     queryGetDataFilters();
   }, [control._formValues.dateOfCdp]);
 
+  useEffect(() => {
+    if (initialDate && endDate === undefined) {
+      setValueRegister("endDate", initialDate);
+    }
+    if (endDate && initialDate === undefined) {
+      setValueRegister("initialDate", endDate);
+    }
+  }, [initialDate, endDate]);
+
   return {
     control,
     register,
@@ -111,5 +121,7 @@ export const useSearchCdp = () => {
     tableActionsCdp,
     navigate,
     arraySelect,
+    initialDate,
+    endDate,
   };
 };
