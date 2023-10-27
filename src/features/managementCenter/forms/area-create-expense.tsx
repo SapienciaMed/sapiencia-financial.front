@@ -13,7 +13,7 @@ import { generarIdAleatorio } from '../../../common/utils/randomGenerate';
 import { useAdditionAreaEdit } from '../hook/addition-area-edit.hook';
 
 interface IAppProps {
-    titleAdd: "ingreso"|"gasto",
+    titleAdd: "ingreso" | "gasto",
     controlRegister: Control<IAdditionsForm, any>,
     arrayDataSelect: IArrayDataSelect,
     showModal: (values: IMessage) => void,
@@ -22,12 +22,13 @@ interface IAppProps {
     invalidCardsAdditionSt: any;
     setValue: any;
     watch: any;
+    detail?: boolean;
 }
 
-function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSelect, showModal, register, invalidCardsAdditionSt, setValue, watch }: IAppProps) {
+function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSelect, showModal, register, invalidCardsAdditionSt, setValue, watch, detail }: IAppProps) {
 
     const { aditionData } = useAdditionAreaEdit();
-   
+    console.log('detalle gasto ', detail)
 
     useEffect(() => {
         if (aditionData) {
@@ -41,14 +42,14 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
                         funds: item.budgetRoute.fund.id,
                         posPre: item.budgetRoute.pospreSapiencia.id,
                         value: item.value,
-                        cardId: generarIdAleatorio(20) 
+                        cardId: generarIdAleatorio(20)
                     });
-                }                
-            });           
+                }
+            });
         }
     }, [aditionData]);
-    
-     
+
+
 
     const [isSearchByName, setIsSearchByName] = useState(false)
 
@@ -179,28 +180,32 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
         <div className="card-user mt-14px">
             <div className="title-area">
                 <label className="text-black biggest"> Lista de {titleAdd} </label>
-                <div className='display-justify-flex-center-adicion p-rating'>
-                    <div className="title-button text-three large" id='pages' onClick={onPaste}> Pegar <FaRegCopy /> </div>
-                    <div className="title-button text-three large"
-                        onClick={() => {
-                            append({
-                                managerCenter: '',
-                                projectId: '',
-                                projectName: '',
-                                functionalArea: '',
-                                funds: '',
-                                posPre: '',
-                                value: '',
-                                cardId: ''
-                            }); setIsSearchByName(false)
-                        }}
-                    > Añadir {titleAdd} <BiPlusCircle /> </div>
-                </div>
+                {
+                    !detail &&
+                    
+                    <div className='display-justify-flex-center-adicion p-rating'>
+                        <div className="title-button text-three large" id='pages' onClick={onPaste}> Pegar <FaRegCopy /> </div>
+                        <div className="title-button text-three large"
+                            onClick={() => {
+                                append({
+                                    managerCenter: '',
+                                    projectId: '',
+                                    projectName: '',
+                                    functionalArea: '',
+                                    funds: '',
+                                    posPre: '',
+                                    value: '',
+                                    cardId: ''
+                                }); setIsSearchByName(false)
+                            }}
+                        > Añadir {titleAdd} <BiPlusCircle /> </div>
+                    </div>
+                }
             </div>
             {
                 visibleFields.map((field, index) => (
                     <div key={field.id}>
-                        <ScreenAddIncomePage controlRegister={controlRegister} titleAdd={titleAdd} fields={fields} arrayDataSelect={arrayDataSelect}
+                        <ScreenAddIncomePage controlRegister={controlRegister} titleAdd={titleAdd} fields={fields} arrayDataSelect={arrayDataSelect} detail={detail}
                             remove={remove} count={startIndex + index} errors={errors} register={register} cardId={field.id} invalidCardsAdditionSt={invalidCardsAdditionSt} setValue={setValue} watch={watch} />
                     </div>
                 ))
