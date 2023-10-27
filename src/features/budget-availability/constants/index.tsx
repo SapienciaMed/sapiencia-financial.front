@@ -20,7 +20,11 @@ export const tableColumnsCdp: any[] = [
     fieldName: "countRpp",
     header: "No. de rutas del CDP",
     renderCell: (row) => {
-      return <>{row.amounts.length}</>;
+      const activeAmounts = row.amounts.filter((amount) => {
+        return amount.isActive === 1;
+      });
+
+      return <>{activeAmounts.length}</>;
     },
   },
   {
@@ -33,27 +37,23 @@ export const tableColumnsCdp: any[] = [
   },
 ];
 
-export const tableActionsCdp: any[] = [
-  {
-    icon: "Detail",
-    onClick: (row) => {},
-  },
-  {
-    icon: "Edit",
-    onClick: (row) => {},
-  },
-  {
-    icon: "Add",
-    onClick: (row) => {},
-  },
-  {
-    icon: "Rp",
-    onClick: (row) => {},
-  },
-];
-
 export const initialFiltersSelect = {
   pospreId: [],
   fundId: [],
   projectId: [],
 };
+
+export const monthNames = [
+  "enero",
+  "febrero",
+  "marzo",
+  "abril",
+  "mayo",
+  "junio",
+  "julio",
+  "agosto",
+  "septiembre",
+  "octubre",
+  "noviembre",
+  "diciembre",
+];

@@ -124,7 +124,7 @@ const CdpPage = () => {
                 control={control}
                 className="select-basic"
                 label="Proyecto"
-                classNameLabel="text-black weight-500 big"
+                classNameLabel="text-black weight-500 biggest"
                 placeholder={"Seleccionar"}
                 data={arraySelect?.projectId}
                 direction={EDirection.column}
@@ -137,7 +137,7 @@ const CdpPage = () => {
                 control={control}
                 label="Fondo"
                 className="select-basic"
-                classNameLabel="text-black weight-500 big"
+                classNameLabel="text-black weight-500 biggest"
                 placeholder={"Seleccionar"}
                 data={arraySelect?.fundId}
                 direction={EDirection.column}
@@ -150,7 +150,7 @@ const CdpPage = () => {
                 control={control}
                 label="Pospre"
                 className="select-basic"
-                classNameLabel="text-black weight-500 big"
+                classNameLabel="text-black weight-500 biggest"
                 placeholder={"Seleccionar"}
                 filter={true}
                 isValidateName={false}

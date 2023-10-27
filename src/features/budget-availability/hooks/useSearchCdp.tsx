@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { budgetAvailabilityValidator } from "../../../common/schemas/budget-availability-schemas";
 import { IBudgetsAvailabilityFilters } from "../interfaces/budgetAvailabilityInterfaces";
-import { tableColumnsCdp, tableActionsCdp } from "../constants";
+import { tableColumnsCdp } from "../constants";
 import { useCdpServices } from "./useCdpServices";
 import { clearRequestFilters, filterDataSelect } from "../utils/filtersSearch";
 import { useNavigate } from "react-router-dom";
@@ -25,6 +25,28 @@ export const useSearchCdp = () => {
     mode: "all",
   });
   const inputValue = watch(["dateOfCdp"]);
+  const tableActionsCdp: any[] = [
+    {
+      icon: "Detail",
+      onClick: (row) => {},
+    },
+    {
+      icon: "Edit",
+      onClick: (row) => {
+        const id = row.id;
+        console.log({ id });
+        navigate(`/gestion-financiera/cdp/edit/${id}`);
+      },
+    },
+    {
+      icon: "Add",
+      onClick: (row) => {},
+    },
+    {
+      icon: "Rp",
+      onClick: (row) => {},
+    },
+  ];
 
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
