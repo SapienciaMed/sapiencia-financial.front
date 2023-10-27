@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { IAdditionsFilters, IAdditionsWithMovements } from "../interfaces/Additions";
 
-export function useManagementCenterAdditional( typeMovement:string ){
- 
+export function useManagementCenterAdditional(typeMovement: string) {
+
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
     const resolver = useYupValidationResolver(consultFundsAdditional);
@@ -22,7 +22,7 @@ export function useManagementCenterAdditional( typeMovement:string ){
         control: controlRegister,
         watch,
         reset,
-    } = useForm<IAdditionsFilters>({ resolver});
+    } = useForm<IAdditionsFilters>({ resolver });
 
     const tableColumns: ITableElement<IAdditionsWithMovements>[] = [
         {
@@ -39,13 +39,13 @@ export function useManagementCenterAdditional( typeMovement:string ){
             renderCell: (row) => {
                 const { totalIncome, totalSpends } = row.additionMove.reduce(
                     (totals, move) => {
-                      const value = parseFloat(move.value);
-                      totals[move.type === "Ingreso" ? "totalIncome" : "totalSpends"] += value;
-                      return totals;
+                        const value = parseFloat(move.value);
+                        totals[move.type === "Ingreso" ? "totalIncome" : "totalSpends"] += value;
+                        return totals;
                     },
                     { totalIncome: 0, totalSpends: 0 }
-                  );
-                return <> { totalIncome === totalSpends ? `$${totalIncome}` : <>-</> } </>
+                );
+                return <> {totalIncome === totalSpends ? `$${totalIncome}` : <>-</>} </>
             }
         }
     ];
@@ -53,18 +53,20 @@ export function useManagementCenterAdditional( typeMovement:string ){
     const tableActions: ITableAction<IAdditionsWithMovements>[] = [
         {
             icon: "Detail",
-            onClick: (row) => {},
+            onClick: (row) => {
+                navigate(`./detail/${row.id}`);
+            },
         },
         {
             icon: "Edit",
-            onClick: (row) => {                
+            onClick: (row) => {
                 navigate(`./edit/${row.id}`);
             },
-            
+
         },
     ];
 
-    const inputValue =  watch(['adminDistrict', 'adminSapiencia'])
+    const inputValue = watch(['adminDistrict', 'adminSapiencia'])
 
     function loadTableData(searchCriteria?: object): void {
         if (tableComponentRef.current) {
@@ -74,21 +76,21 @@ export function useManagementCenterAdditional( typeMovement:string ){
 
     useEffect(() => {
         loadTableData()
-    },[])
+    }, [])
 
     useEffect(() => {
         setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
-    },[inputValue])
+    }, [inputValue])
 
-    useEffect(() => {            
+    useEffect(() => {
         reset();
-        if(showTable)  {
+        if (showTable) {
             tableComponentRef.current.emptyData();
             setShowTable(false);
         }
-    }, [typeMovement]); 
+    }, [typeMovement]);
 
-    const onSubmit = handleSubmit(async (data: {actAdministrativeDistrict: string, actAdministrativeSapiencia: string, typeMovement:string}) => {
+    const onSubmit = handleSubmit(async (data: { actAdministrativeDistrict: string, actAdministrativeSapiencia: string, typeMovement: string }) => {
         const searchData = {
             ...data,
             typeMovement  // Esto agregará typeMovement al objeto.
@@ -97,7 +99,7 @@ export function useManagementCenterAdditional( typeMovement:string ){
         loadTableData(searchData);
     });
 
-    return{
+    return {
         tableComponentRef,
         errors,
         isBtnDisable,

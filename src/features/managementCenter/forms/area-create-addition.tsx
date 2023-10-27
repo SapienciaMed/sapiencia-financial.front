@@ -25,15 +25,17 @@ interface IAppProps {
     register: UseFormRegister<IAdditionsForm>,
     invalidCardsAdditionSt: any;
     setValue: any;
-    watch: any;  
+    watch: any;
+    detail?: boolean;
 }
 
-function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getValues, showModal, register, invalidCardsAdditionSt, setValue, watch }: IAppProps) {
-    const [isLoading, setIsLoading] = useState(true);  
-    const { aditionData } = useAdditionAreaEdit()   
+function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getValues, showModal, register, invalidCardsAdditionSt, setValue, watch, detail }: IAppProps) {
+    const [isLoading, setIsLoading] = useState(true);
+    const { aditionData } = useAdditionAreaEdit()
+
 
     useEffect(() => {
-        if (aditionData) {            
+        if (aditionData) {
             aditionData.details.forEach((item: Detail) => {
                 if (item.type == "Ingreso") {
                     append({
@@ -44,10 +46,10 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
                         funds: item.budgetRoute.fund.id,
                         posPre: item.budgetRoute.pospreSapiencia.id,
                         value: item.value,
-                        cardId: generarIdAleatorio(20) 
+                        cardId: generarIdAleatorio(20)
                     });
-                }                
-            });           
+                }
+            });
         }
     }, [aditionData]);
 
@@ -57,7 +59,7 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
         control: controlRegister,
         name: 'ingreso'
     });
-   
+
 
     const { errors, isValid, dirtyFields } = useFormState({
         control: controlRegister,
@@ -121,7 +123,7 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
                     cardId: generarIdAleatorio(20),
                     managerCenter: item.CENTROGESTOR,
                     projectId: (arrayDataSelect.functionalArea.find(e => e.name == item.PROYECTO)).id,
-                    functionalArea: arrayDataSelect.functionalArea.filter(e => e.value != null && e.name == item.PROYECTO ).find(objeto => objeto.area.some(area => area.name == item.ÁREAFUNCIONAL))?.id,
+                    functionalArea: arrayDataSelect.functionalArea.filter(e => e.value != null && e.name == item.PROYECTO).find(objeto => objeto.area.some(area => area.name == item.ÁREAFUNCIONAL))?.id,
                     funds: (arrayDataSelect.funds.filter(e => e.value != null).find(e => e.name == item.FONDO)).id,
                     posPre: (arrayDataSelect.posPre.filter(e => e.value != null).find(e => e.name == item.POSPRE))?.id,
                     value: item.VALOR.replaceAll('.', ''),
@@ -177,30 +179,33 @@ function AreaCreateAddition({ titleAdd, controlRegister, arrayDataSelect, getVal
         <div className="card-user mt-14px">
             <div className="title-area">
                 <label className="text-black biggest"> Lista de {titleAdd} </label>
-                <div className='display-justify-flex-center-adicion p-rating'>
-                    <div className="title-button text-three large" id='pages' onClick={onPaste}> Pegar <FaRegCopy /> </div>
-                    <div className="title-button text-three large"
-                        onClick={() => {
-                            append({
-                                managerCenter: '',
-                                projectId: '',
-                                projectName: '',
-                                functionalArea: '',
-                                funds: '',
-                                posPre: '',
-                                value: '',
-                                cardId: ''
-                            })
-                        }}
-                    > Añadir {titleAdd} <BiPlusCircle /> </div>
-                </div>
+                {
+                    !detail &&
+                    <div className='display-justify-flex-center-adicion p-rating'>
+                        <div className="title-button text-three large" id='pages' onClick={onPaste}> Pegar <FaRegCopy /> </div>
+                        <div className="title-button text-three large"
+                            onClick={() => {
+                                append({
+                                    managerCenter: '',
+                                    projectId: '',
+                                    projectName: '',
+                                    functionalArea: '',
+                                    funds: '',
+                                    posPre: '',
+                                    value: '',
+                                    cardId: ''
+                                })
+                            }}
+                        > Añadir {titleAdd} <BiPlusCircle /> </div>
+                    </div>
+                }
             </div>
             {
-                
-                visibleFields.map((field, index) => {
+
+                visibleFields.map((field, index) => {                   
                     return (
                         <div key={field.id}>
-                            <ScreenAddIncome controlRegister={controlRegister} titleAdd={titleAdd} fields={fields} arrayDataSelect={arrayDataSelect}
+                            <ScreenAddIncome controlRegister={controlRegister} titleAdd={titleAdd} fields={fields} arrayDataSelect={arrayDataSelect} detail={detail}
                                 remove={remove} count={startIndex + index} errors={errors} register={register} cardId={field.id} invalidCardsAdditionSt={invalidCardsAdditionSt} setValue={setValue} watch={watch} />
                         </div>
                     )

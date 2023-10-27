@@ -18,6 +18,7 @@ export const ManagementCenterRoutes = () => {
       <Route path={"/adicion"} element={<ManagementCenterAdditionalPage typeMovement="Adicion"/>} />
       <Route path={"/adicion/create"} element={<AdditionAreaCrudPage actionForm="new" typeMovement="Adicion"/>} />
       <Route path={"/adicion/edit/:id"} element={<AdditionAreaCrudPage actionForm="edit" typeMovement="Adicion"/>} />
+      <Route path={"/adicion/detail/:id"} element={<AdditionAreaCrudPage actionForm="detail" typeMovement="Adicion"/>} />
 
       <Route path={"/traslado"} element={<ManagementCenterTransferPage/> } />
       <Route path={"/traslado/create"} element={<TransferAreaCrudPage actionForm="new"/>} />
@@ -26,6 +27,7 @@ export const ManagementCenterRoutes = () => {
       <Route path={"/disminucion"} element={<ManagementCenterAdditionalPage typeMovement="Disminucion"/>} />
       <Route path={"/disminucion/create"} element={<AdditionAreaCrudPage actionForm="new" typeMovement="Disminucion"/>} />
       <Route path={"/disminucion/edit/:id"} element={<AdditionAreaCrudPage actionForm="edit" typeMovement="Disminucion"/>} />
+      <Route path={"/disminucion/detail/:id"} element={<AdditionAreaCrudPage actionForm="detail" typeMovement="Disminucion"/>} />
     </Routes>
   )
 }

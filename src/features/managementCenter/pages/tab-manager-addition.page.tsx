@@ -18,6 +18,7 @@ interface IAppProps {
   invalidCardsAdditionSt:any;
   setValue:any;
   tabSelected?:any;  
+  detail?:boolean;
 }
 
 function TabManagerAdditionPage({
@@ -31,9 +32,12 @@ function TabManagerAdditionPage({
   invalidCardsAdditionSt,
   setValue,
   tabSelected,  
+  detail
 }: IAppProps) {
   const { option } = useParams();
   const navigate = useNavigate();
+
+  
 
   const { dirtyFields, isValid, errors } = useFormState({
     control: controlRegister,
@@ -54,6 +58,7 @@ function TabManagerAdditionPage({
           invalidCardsAdditionSt={invalidCardsAdditionSt}
           setValue={setValue}
           watch={watch}
+          detail={detail}
         />
       ),
       action: () => {},
@@ -72,6 +77,7 @@ function TabManagerAdditionPage({
           invalidCardsAdditionSt={invalidCardsAdditionSt}
           setValue={setValue}
           watch={watch}
+          detail={detail}
         />
       ),
       action: () => {},
@@ -153,6 +159,7 @@ function TabManagerAdditionPage({
               invalidCardsAdditionSt={invalidCardsAdditionSt}
               setValue={setValue}
               watch={watch}
+              detail={detail}
             />
           </div>
           <div style={{ display: selectedTab?.id === "gasto" ? "block" : "none" }}>
@@ -166,6 +173,7 @@ function TabManagerAdditionPage({
               invalidCardsAdditionSt={invalidCardsAdditionSt}
               setValue={setValue}
               watch={watch}
+              detail={detail}
             />
           </div>
         </div>

@@ -12,7 +12,7 @@ import { useAdditionAreaEdit } from "./addition-area-edit.hook";
 
 
 export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actionForm?: string) {
-
+  console.log(actionForm)
   const resolver = useYupValidationResolver(fundsAdditionalValidation);
   const { setMessage } = useContext(AppContext);
   const { GetFundsList, GetProjectsList, GetPosPreSapienciaList, validateCreateAdition, createAdition, validateEditAdition, editAdition } = useAdditionsTransfersService()
@@ -155,7 +155,7 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
         })
 
       }
-    } else if (actionForm === "edit") {
+    } else if (actionForm === "edit" || actionForm === "detail") {
       const ingresoFixed = data.ingreso.map(outcome => ({
         idCard: outcome.cardId,
         type: 'Ingreso',
@@ -496,7 +496,7 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
   //Editar validaciones
   const { aditionData } = useAdditionAreaEdit();
 
-  if (actionForm == "edit") {
+  if (actionForm == "edit" || actionForm == "detail") {
     useEffect(() => {
       function mapDetails(type) {
         return aditionData?.details.map((item: Detail) => {
