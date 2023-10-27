@@ -8,7 +8,6 @@ const CdpViewPage = () => {
     const { id: cdpId } = useParams();
     const { tableComponentRef, tableColumns,tableActions, cdpFoundSt } = useCdpCrud(cdpId);
 
-    
     return (
         <div className="main-page">
             <div className="card-table gap-0">

@@ -9,7 +9,8 @@ interface Props {
     cdpId?: string;
 }
 
-function CdpHeadFormComponent(props: Props) {
+
+function CdpHeadMgaAssocComponent(props: Props) {
     const { isDisabled, cdpId } = props;
     const { control, register, errors } = useCdpCrud(cdpId);
 
@@ -27,7 +28,7 @@ function CdpHeadFormComponent(props: Props) {
                                 className="input-basic medium"
                                 typeInput="number"
                                 register={register}
-                                label="Vigencia"
+                                label="Proyecto"
                                 classNameLabel="text-black weight-500 biggest"
                                 direction={EDirection.column}
                                 fieldArray={false}
@@ -51,7 +52,7 @@ function CdpHeadFormComponent(props: Props) {
                                 className="input-basic medium"
                                 typeInput="number"
                                 register={register}
-                                label="Consecutivo CDP SAP"
+                                label="Fondo Sapiencia"
                                 classNameLabel="text-black weight-500 biggest"
                                 direction={EDirection.column}
                                 onChange={field.onChange}
@@ -73,7 +74,7 @@ function CdpHeadFormComponent(props: Props) {
                                 className="input-basic medium"
                                 typeInput="number"
                                 register={register}
-                                label="Consecutivo CDP Aurora"
+                                label="Pospre Sapiensia"
                                 classNameLabel="text-black weight-500 biggest"
                                 direction={EDirection.column}
                                 onChange={field.onChange}
@@ -85,16 +86,26 @@ function CdpHeadFormComponent(props: Props) {
                 />
             </section>
             <section className='grid-form-3-container-area mt-5px'>
-                <DatePickerComponent
-                    idInput="date"
+            <Controller
                     control={control}
-                    label={"Fecha documento"}
-                    errors={errors}
-                    classNameLabel="text-black biggest weight-500"
-                    className="dataPicker-basic medium"
-                    placeholder="DD/MM/YYYY"
-                    dateFormat="dd/mm/yy"
-                    disabled={isDisabled}
+                    name={"consecutive"}
+                    render={({ field }) => {
+                        return (
+                            <InputComponent
+                                id={field.name}
+                                idInput={field.name}
+                                className="input-basic medium"
+                                typeInput="number"
+                                register={register}
+                                label="Pospre Origen"
+                                classNameLabel="text-black weight-500 biggest"
+                                direction={EDirection.column}
+                                onChange={field.onChange}
+                                errors={errors}
+                                disabled={isDisabled}
+                            />
+                        );
+                    }}
                 />
 
 
@@ -109,7 +120,7 @@ function CdpHeadFormComponent(props: Props) {
                                 className="input-basic medium"
                                 typeInput="number"
                                 register={register}
-                                label="RP asociados"
+                                label="Valor final"
                                 classNameLabel="text-black weight-500 biggest"
                                 direction={EDirection.column}
                                 onChange={field.onChange}
@@ -126,4 +137,4 @@ function CdpHeadFormComponent(props: Props) {
     )
 }
 
-export default React.memo(CdpHeadFormComponent);
+export default React.memo(CdpHeadMgaAssocComponent);

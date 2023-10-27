@@ -123,7 +123,7 @@ export function usePacCrud() {
     if (response.operation.code == "OK" && !Object(response).data.data?.errno) {
 
       showModal({
-        title: "Guardado",
+        title: "Confirmación",
         description: response.operation.message,  //"El archivo no pudo ser cargado, revisa las validaciones.",
         show: true,
         OkTitle: "Aceptar",
