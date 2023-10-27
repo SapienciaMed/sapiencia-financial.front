@@ -4,10 +4,11 @@ import { EDirection } from "../../../common/constants/input.enum";
 import { InputNumberComponent } from "../../../common/components/Form/input-number.component";
 import { usePacEdit } from "../hook/pac-edit.hook";
 import PacMonths from "./pac-moths";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 function PacEditPages() {
 
-    const {control, errors, pacMoths, isMothEnabled, entitiesData, handleSubmit, register} = usePacEdit()
+    const {control, errors, pacMoths, isMothEnabled, entitiesData, showSpinner, isBtnDisable, onSubmit, register, confirmClose} = usePacEdit()
 
     return (
         <div className="crud-page full-height">
@@ -16,7 +17,7 @@ function PacEditPages() {
                     <section className="title-area">
                         <div className="text-black weight-500 extra-large">Editar PAC</div>
                     </section>
-                    <FormComponent action={() => {}} id="edit-pac-form">
+                    <FormComponent action={onSubmit} id="edit-pac-form">
                         <SelectComponent
                             idInput="pacType"
                             className="select-basic big width-33"
@@ -30,8 +31,13 @@ function PacEditPages() {
                                 { id: "4", name: "Ambos", value: "4" },
                             ]}
                             control={control}
-                            
+                            disabled={showSpinner}
                         />
+                        {
+                            showSpinner && (
+                                <ProgressSpinner style={{width: '20px', height: '20px', marginTop: '1rem'}}  animationDuration=".5s" />
+                            )              
+                        }
                         <section className="card-user mt-14px">
                             <div className="title-area">
                                 <div className="text-black weight-500 biggest">Ruta presupuestal</div>
@@ -49,17 +55,6 @@ function PacEditPages() {
                                     data={[{ id: "91500000", name: "91500000", value: "91500000" }]}
                                     disabled
                                 />
-                                    {/* Eliminar? */}
-                                <SelectComponent
-                                    idInput='Pospre'
-                                    control={control}
-                                    label='pospre'
-                                    className="select-basic big"
-                                    classNameLabel="text-black weight-500 big"
-                                    data={[]}
-                                    disabled
-                                />
-                            
                                 <SelectComponent
                                     idInput='pospreSapiencia'
                                     control={control}
@@ -70,10 +65,7 @@ function PacEditPages() {
                                     data={entitiesData?.pospreSapiencia}
                                     disabled
                                 />
-                            </div>
-
-                            <div className="funcionality-filters-container">
-                                <SelectComponent
+                                 <SelectComponent
                                     idInput='fundsSapiencia'
                                     control={control}
                                     label='Fondo Sapiencia'
@@ -84,17 +76,10 @@ function PacEditPages() {
                                     data={entitiesData?.fundsSapiencia}
                                     disabled
                                 />
-                                {/* Eliminar? */}
-                                <SelectComponent
-                                    idInput='funds'
-                                    control={control}
-                                    label='Fondo'
-                                    className="select-basic big"
-                                    classNameLabel="text-black weight-500 big text-required"
-                                    placeholder={'Seleccionar'}
-                                    data={[]}
-                                    disabled
-                                />
+                            </div>
+
+                            <div className="funcionality-filters-container">
+                               
                                 <SelectComponent
                                     idInput='functionalArea'
                                     control={control}
@@ -106,31 +91,29 @@ function PacEditPages() {
                                     data={entitiesData?.functionalArea}
                                     disabled
                                 />
+                                <SelectComponent
+                                    idInput='project'
+                                    control={control}
+                                    className="select-basic big"
+                                    label='Proyecto'
+                                    classNameLabel="text-black weight-500 big text-required"
+                                    placeholder={'Seleccionar'}   
+                                    fieldArray={true}
+                                    data={entitiesData?.project}
+                                    disabled
+                                />
                             </div>
 
-                            <div className="funds-form ">
-                                <div className="fund-denomination-container col-gap-1">
-                                    <SelectComponent
-                                        idInput='project'
-                                        control={control}
-                                        className="select-basic big"
-                                        label='Proyecto'
-                                        classNameLabel="text-black weight-500 big text-required"
-                                        placeholder={'Seleccionar'}   
-                                        fieldArray={true}
-                                        data={entitiesData?.project}
-                                        disabled
-                                    />
-                                    <InputComponent
-                                        idInput='projectName'
-                                        label="Nombre proyecto"
-                                        typeInput="text"
-                                        className="input-basic big"                     
-                                        classNameLabel="text-black weight-500 big text-required"
-                                        register={register}
-                                        disabled
-                                    />
-                                </div>
+                            <div className="funcionality-filters-container">
+                                <InputComponent
+                                    idInput='projectName'
+                                    label="Nombre proyecto"
+                                    typeInput="text"
+                                    className="input-basic big"                     
+                                    classNameLabel="text-black weight-500 big text-required"
+                                    register={register}
+                                    disabled
+                                />
                             </div>
                         </section>
 
@@ -145,11 +128,10 @@ function PacEditPages() {
                                     idInput='budgetSapi'
                                     label='Presupuesto Sapiencia'
                                     className='inputNumber-basic big'
-                                    classNameLabel="text-black big weight-500 "
+                                    classNameLabel="text-black big weight-500 text-required"
                                     mode="currency"
                                     currency="COP"
                                     locale="es-CO"
-                                    fieldArray={true}
                                     minFractionDigits={0}
                                     maxFractionDigits={0}
                                     disabled={!isMothEnabled.programed}
@@ -193,18 +175,14 @@ function PacEditPages() {
                                     maxFractionDigits={0}
                                     disabled
                                 />
-                                <InputNumberComponent
-                                    control={control}
-                                    idInput='totalFunds'
-                                    label='Tipo de recurso'
-                                    className="inputNumber-basic big"
-                                    classNameLabel="text-black big weight-500 "
-                                    mode="currency"
-                                    currency="COP"
-                                    locale="es-CO"
-                                    fieldArray={true}
-                                    minFractionDigits={0}
-                                    maxFractionDigits={0}
+                                  <InputComponent
+                                    idInput='resourceType'
+                                    className="input-basic "
+                                    typeInput="text"
+                                    register={register}
+                                    label="Tipo de recurso"
+                                    classNameLabel="text-black weight-500 big text-required"
+                                    direction={EDirection.column}
                                     disabled
                                 />
                                 <div></div>
@@ -267,7 +245,7 @@ function PacEditPages() {
                 <div className="buttons-bot">
                     <span
                         className="bold text-center button"
-                        onClick={() => {}}
+                        onClick={confirmClose}
                     >
                         Cancelar
                     </span>
@@ -276,6 +254,7 @@ function PacEditPages() {
                         value="Guardar"
                         type="submit"
                         form="edit-pac-form"
+                        disabled={!isBtnDisable}
                     />
                 </div>
             </section>

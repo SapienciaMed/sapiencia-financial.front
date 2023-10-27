@@ -18,6 +18,7 @@ export interface IPac {
     userCreate: string;
     dateCreate: string;
     pacAnnualizations?: IAnnualRoute[],
+    sourceType?: string
 };
 
 export interface IPacFilters {
@@ -202,7 +203,7 @@ export interface IPacEdit {
     pacType: string,
     managerCenter: string,
     pospre: string,
-    pospreSapiencia: string,
+    pospreSapiencia: number,
     fundsSapiencia: string,
     funds: string,
     functionalArea: string,
@@ -212,7 +213,7 @@ export interface IPacEdit {
     exercise: string
     totalProgrammed: string,
     totalCollected: string,
-    totalFunds: string,
+    resourceType: string,
     programmed: {
         [key: string]: string;
     };

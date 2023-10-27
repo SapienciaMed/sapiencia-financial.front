@@ -66,3 +66,13 @@ export const pacSearch =  yup.object({
     //     .string()
     //     .required("Este campo es obligatorio"),
 })
+
+export const pacEditValidator = yup.object({
+    pacType: yup
+        .string()
+        .required("Este campo es obligatorio"),
+    budgetSapi: yup
+        .string()
+        .matches(/^[0-9]+$/, "Solo se permiten numeros")
+        .required("Este campo es obligatorio")
+})

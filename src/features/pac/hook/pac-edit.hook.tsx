@@ -1,13 +1,19 @@
 import { useForm } from "react-hook-form"
-import { IPacEdit } from "../interface/Pac"
-import { useEffect, useState } from "react"
+import { IAnnualRoute, IPacEdit } from "../interface/Pac"
+import { useContext, useEffect, useState } from "react"
 import { usePacServices } from "./pac-services.hook"
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { EResponseCodes } from "../../../common/constants/api.enum";
+import { AppContext } from "../../../common/contexts/app.context";
+import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
+import { pacEditValidator } from "../../../common/schemas/pac";
 
 export function usePacEdit() {
-    
+
+    const navigate = useNavigate();
     const { idPac: id } = useParams();
+    const { setMessage } = useContext(AppContext);
+    const resolver = useYupValidationResolver(pacEditValidator);
     const {GetPacById} = usePacServices()
     const {
         control,
@@ -15,8 +21,9 @@ export function usePacEdit() {
         formState: { errors },
         register,
         watch,
-        setValue
-    } = useForm<IPacEdit>()
+        setValue,
+        resetField
+    } = useForm<IPacEdit>({ resolver })
 
     const [entitiesData, setEntitiesData] = useState({
         pospreSapiencia: [],
@@ -24,13 +31,20 @@ export function usePacEdit() {
         functionalArea: [],
         project: []
     })
-
     const [ isMothEnabled, setIsMothEnabled ] = useState({
         programed: false,
         collected: false
     })
+    const [ showSpinner,  setShowSpinner ] = useState(false)
+    const [ pacAnnualizationsProgammedServices, setPacAnnualizationsProgammedServices] = useState<IAnnualRoute[]>()
+    const [ pacAnnualizationsCollectedServices, setPacAnnualizationsCollectedServices] = useState<IAnnualRoute[]>()
+    const [ totalProgrammedServices, setTotalProgrammedServices ] = useState('')
+    const [ totalCollectedServices, setTotalCollectedServices ] =  useState('')
+    const [ totalBudgetSapiServices, setTotalBudgetSapiServices ] = useState('')
+    const [ isBtnDisable, setIsBtnDisable ] = useState<boolean>(false)
 
     const pacTypeWatch = watch('pacType')
+    const watchAll = watch()
 
     useEffect(() => {
         const pacTypeToMothEnabled = {
@@ -41,6 +55,47 @@ export function usePacEdit() {
       
         if (pacTypeWatch !== undefined && pacTypeToMothEnabled[pacTypeWatch]) {
           setIsMothEnabled(pacTypeToMothEnabled[pacTypeWatch]);
+
+          const isProgramed = pacTypeToMothEnabled[pacTypeWatch]?.programed;
+          const isCollected = pacTypeToMothEnabled[pacTypeWatch]?.collected;
+          const monthsServices = ["jan", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dec",];
+          const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+      
+          if (isProgramed && !isCollected ) {
+            resetField('totalCollected', { defaultValue: totalCollectedServices });
+            pacAnnualizationsCollectedServices.map((value) => {
+                monthsServices.map((month, index) => {
+                    resetField(`collected.${months[index]}`,{ defaultValue: String(value[month]) });
+                });
+            });
+          }
+
+          if (isCollected && !isProgramed) {
+            resetField('totalProgrammed', { defaultValue: totalProgrammedServices });
+            resetField('budgetSapi', { defaultValue: totalBudgetSapiServices})
+            pacAnnualizationsProgammedServices.map((value) => {
+                monthsServices.map((month, index) => {
+                    resetField(`programmed.${months[index]}`,{ defaultValue: String(value[month]) });
+                });
+            });
+          }
+
+          if (isProgramed && isCollected) {
+            resetField('totalCollected', { defaultValue: totalCollectedServices });
+            resetField('totalProgrammed', { defaultValue: totalProgrammedServices });
+            resetField('budgetSapi', { defaultValue: totalBudgetSapiServices})
+            pacAnnualizationsCollectedServices.map((value) => {
+                monthsServices.map((month, index) => {
+                    resetField(`collected.${months[index]}`,{ defaultValue: String(value[month]) });
+                });
+            });
+            pacAnnualizationsProgammedServices.map((value) => {
+                monthsServices.map((month, index) => {
+                    resetField(`programmed.${months[index]}`,{ defaultValue: String(value[month]) });
+                });
+            });
+            
+          }        
         }else {
             setIsMothEnabled({
                 programed: false,
@@ -50,9 +105,12 @@ export function usePacEdit() {
 
     }, [pacTypeWatch]);
 
+    //Realiza la consulta 
     useEffect(() => {
         if(id){
+            setShowSpinner(true)
             GetPacById(parseInt(id)).then(response => {
+                setShowSpinner(false)
                 if (response.operation.code === EResponseCodes.OK) {
                     const dinamicData = response?.data;
 
@@ -81,9 +139,10 @@ export function usePacEdit() {
 
                     setValue('projectName', dinamicData.resultRoute.projectName)
                     setValue('exercise', String(dinamicData.resultPac.exercise))
-                    setValue('totalProgrammed', String(dinamicData.totalsPac.totalProgramming))
-                    setValue('totalCollected', String(dinamicData.totalsPac.totalCollected))
+                    setTotalProgrammedServices(String(dinamicData.totalsPac.totalProgramming))
+                    setTotalCollectedServices(String(dinamicData.totalsPac.totalCollected))
 
+                    setPacAnnualizationsProgammedServices(dinamicData.resultPac.pacAnnualizations.filter(content => content.type == 'Programado'))
                     dinamicData.resultPac.pacAnnualizations.filter(content => content.type == 'Programado').map(value => {
                         setValue(`programmed.january`, String(value.jan))
                         setValue(`programmed.february`, String(value.feb))
@@ -98,7 +157,7 @@ export function usePacEdit() {
                         setValue(`programmed.november`, String(value.nov))
                         setValue(`programmed.december`, String(value.dec))
                     })
-
+                    setPacAnnualizationsCollectedServices(dinamicData.resultPac.pacAnnualizations.filter(content => content.type == 'Recaudado'))
                     dinamicData.resultPac.pacAnnualizations.filter(content => content.type == 'Recaudado').map(value => {
                         setValue(`collected.january`, String(value.jan))
                         setValue(`collected.february`, String(value.feb))
@@ -113,12 +172,91 @@ export function usePacEdit() {
                         setValue(`collected.november`, String(value.nov))
                         setValue(`collected.december`, String(value.dec))
                     })
-                    
-                }        
-        
+
+                    setValue('resourceType', dinamicData.resultPac.sourceType)
+                    setValue('budgetSapi', String(dinamicData.totalsPac.totalProgramming)) 
+                    setTotalBudgetSapiServices(String(dinamicData.totalsPac.totalProgramming))
+                }       
+            }).catch(error => {
+                setShowSpinner(false)
+                setMessage({
+                    title: "Error",
+                    description: "Ha ocurrido un error al cargar la información del PAC",
+                    show: true,
+                    OkTitle: "Aceptar",
+                    cancelTitle: "Cancelar",
+                    onOk: () => {
+                        setMessage({});
+                        navigate(-1)
+                    },
+                    background: true
+                });
+            
             })
         }
     },[id])
+
+    useEffect(() => {
+        if (entitiesData.pospreSapiencia.length > 0) {
+            setValue('pospreSapiencia', entitiesData.pospreSapiencia.find(u => u.value != undefined)?.id)
+            setValue('fundsSapiencia',entitiesData.fundsSapiencia.find(u => u.value != undefined)?.id)
+            setValue('functionalArea', entitiesData.functionalArea.find(u => u.value != undefined)?.id)
+            setValue('project', entitiesData.project.find(u => u.value != undefined)?.id)
+            setValue('managerCenter', '91500000')
+        }
+    },[entitiesData])
+
+    useEffect(() => {
+        if(watchAll.programmed){
+            if (Object.values(watchAll.programmed).some(value => value !== "")) {
+                const total: number =  Object.values(watchAll.programmed).reduce((acc: number, currentValue: string) => {
+                    const value = parseFloat(currentValue);
+                    return acc + (isNaN(value) ? 0 : value);
+                }, 0)
+                setValue('totalProgrammed', String(total)) 
+            } 
+        }
+    },[JSON.stringify(watchAll.programmed)])
+
+    useEffect(() => {
+        if(watchAll.collected){
+            if (Object.values(watchAll.collected).some(value => value !== "")) {
+                const total: number =  Object.values(watchAll.collected).reduce((acc: number, currentValue: string) => {
+                    const value = parseFloat(currentValue);
+                    return acc + (isNaN(value) ? 0 : value);
+                }, 0)
+                setValue('totalCollected', String(total)) 
+            } 
+        }
+    },[JSON.stringify(watchAll.collected)])
+
+    useEffect(() => {
+        if(pacAnnualizationsProgammedServices && pacAnnualizationsCollectedServices && totalBudgetSapiServices){
+            const changeProgramed =  compareValues(pacAnnualizationsProgammedServices[0], watchAll.programmed);
+            const changeCollected =  compareValues(pacAnnualizationsCollectedServices[0], watchAll.collected);
+            const changeBudgetSapi = totalBudgetSapiServices == watchAll.budgetSapi;
+
+            const activity = {
+                changeProgramed,
+                changeCollected,
+                changeBudgetSapi
+            }
+            const isBtnDisable = !(
+                activity.changeProgramed &&
+                activity.changeCollected &&
+                activity.changeBudgetSapi
+            );
+            setIsBtnDisable(isBtnDisable);
+        }
+    },[JSON.stringify(watchAll.programmed), JSON.stringify(watchAll.collected), watchAll.budgetSapi])
+    
+    function compareValues(obj1: IAnnualRoute, obj2) {
+        const monthsServices = ["jan", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dec",];
+        return Object.keys(obj2).every((prop, index) => {
+            const {id, cardId, dateCreate, type, dateModify, pacId, ...rest } = obj1
+            return rest[monthsServices[index]] == Number(obj2[prop])        
+        })
+    }
 
     const pacMoths = [{
         january: "Enero",
@@ -135,13 +273,78 @@ export function usePacEdit() {
         december: "Diciembre",
     }]
 
+    const onSubmit = handleSubmit(async (data: any) => {
+        console.log("🚀 ~ file: pac-edit.hook.tsx:268 ~ onSubmit ~ data:", data)
+        
+        if (watchAll.budgetSapi != watchAll.totalProgrammed) {
+            setMessage({
+                title: "Validación",
+                description: "El valor del presupuesto es diferente de la suma de todos los programados",
+                show: true,
+                OkTitle: "Aceptar",
+                cancelTitle: "Cancelar",
+                onOk: () => {
+                    setMessage({});
+                },
+                background: true
+            });
+        } else if (parseInt(watchAll.budgetSapi) < parseInt(watchAll.totalCollected)) {
+            setMessage({
+                title: "Validación",
+                description: "El valor del presupuesto es menor al valor recaudado",
+                show: true,
+                OkTitle: "Aceptar",
+                cancelTitle: "Cancelar",
+                onOk: () => {
+                    setMessage({});
+                },
+                background: true
+            });
+        }else{
+            setMessage({
+                title: "Guardar",
+                description: "¿Estás segur@ de guardar la información?",
+                show: true,
+                OkTitle: "Aceptar",
+                cancelTitle: "Cancelar",
+                onOk: () => {
+                    setMessage({});
+                },
+                onCancel() {
+                    setMessage({});
+                },
+                background: true
+            });
+            
+        }
+
+    })
+
+    const confirmClose = () => {
+        setMessage({
+            title: "Cancelar",
+            description: "¿Estas segur@ de cancelar la información en el sistema?",
+            show: true,
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
+            onOk: () => {
+                setMessage({});
+                navigate(-1)
+            },
+            background: true
+        });
+    }
+
     return {
         pacMoths,
         control,
         isMothEnabled,
         entitiesData,
-        handleSubmit,
         errors,
+        showSpinner,
+        isBtnDisable,
+        onSubmit,
+        confirmClose,
         register
     }
 }
