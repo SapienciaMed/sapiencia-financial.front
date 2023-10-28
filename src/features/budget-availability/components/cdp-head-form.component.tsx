@@ -100,14 +100,14 @@ function CdpHeadFormComponent(props: Props) {
 
                 <Controller
                     control={control}
-                    name={"sapConsecutive"}
+                    name={"rpAssoc"}
                     render={({ field }) => {
                         return (
                             <InputComponent
                                 id={field.name}
                                 idInput={field.name}
                                 className="input-basic medium"
-                                typeInput="number"
+                                typeInput="text"
                                 register={register}
                                 label="RP asociados"
                                 classNameLabel="text-black weight-500 biggest"
