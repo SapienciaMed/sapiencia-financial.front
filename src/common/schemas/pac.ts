@@ -20,10 +20,10 @@ export const pacCrudValidator = yup.object({
         }),
      typePac: yup
         .string()
-        .required("Completa la información"),
+        .required("Este campo es obligatorio"),
     typeSource: yup
         .string()
-        .required("Completa la información"),
+        .required("Este campo es obligatorio"),
     /* file: yup
         .string()
         .required("Completa la información"), */
