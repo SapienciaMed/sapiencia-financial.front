@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useFieldArray, useWatch } from 'react-hook-form';
+import { useFieldArray, useWatch, } from 'react-hook-form';
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import FormTransferPac from "./form-transfer-pac";
 import { IAddFundPac } from "../../../managementCenter/transfer/interfaces/TransferAreaCrudInterface";
@@ -13,7 +13,8 @@ import { IAnnualRoute } from "../../interface/Pac";
 import { AppContext } from "../../../../common/contexts/app.context";
 
 function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pacTypeState, isdataReset, itemsPerPage, annualDataRoutesOriginal,
-    startIndex, disableBtnAdd, register, setValue, setIsdataResetState, setAnnualDataRoutesOriginal }:ICreateFundTransferPac ) {
+    startIndex, disableBtnAdd, originalDestinationValueOfService,
+    setOriginalDestinationValueOfService, register, setValue, setIsdataResetState, setAnnualDataRoutesOriginal }:ICreateFundTransferPac ) {
 
     const { SearchAnnualDataRoutes } = usePacTransfersService()
     const { setMessage } = useContext(AppContext);
@@ -121,15 +122,28 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
     },[visibleFields])
 
     useEffect(() => {
-        const allElementFull = Object.values(dataSelectElements).every(value => value)
+        const allElementFull = Object.values(dataSelectElements).every(value => value && value != null && value != undefined)
         allElementFull &&  dataSelectorComplete(idCardSelect)
     },[dataSelectElements])
 
-    const changeValueOfSelect = (valor: any, typeSelect: string, idCard: string) => {  
-        setDataSelectElements({
-            ...dataSelectElements,
-            [typeSelect]: valor
-        })
+    const changeValueOfSelect = (valor: {}, typeSelect: string, option: string) => {  
+        if(option != null && option != '' && option != undefined) {
+            setDataSelectElements((prevState) => Object.assign({}, prevState, valor));
+        }
+
+        if (option == null) {
+            const existingIndex = annualDataRoutes.findIndex(
+                (item) => item.annualRouteService[0]?.cardId === idCardSelect
+            );
+            if (existingIndex !== -1) {
+                // Si el cardId ya existe, borre el elemento que coincida 
+                const updatedAnnualDataRoutes = [...annualDataRoutes];
+                updatedAnnualDataRoutes.splice(existingIndex, 1);
+                setAnnualDataRoutes(updatedAnnualDataRoutes);
+                titleAdd == 'destino' && setValue('totalDestinoActual', 0)
+                titleAdd == 'origen' && setValue('totalOrigenActual', 0)
+            }
+        }
     }
 
     const dataSelectorComplete = (idCard: string) => {   
@@ -180,30 +194,47 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
               if (existingIndex !== -1) {
                 // Si el cardId ya existe, actualiza el elemento existente
                 const updatedAnnualDataRoutes = [...annualDataRoutes];
-                updatedAnnualDataRoutes[existingIndex].annualRouteService[0] = annualRouteService[0];
+                const existingElement = updatedAnnualDataRoutes[existingIndex];
+                // Copia el elemento existente y actualiza solo las propiedades necesarias
+                const updatedElement = { ...existingElement };
+                updatedElement.annualRouteService[0] = annualRouteService[0];
+                updatedAnnualDataRoutes[existingIndex] = updatedElement;
                 setAnnualDataRoutes(updatedAnnualDataRoutes);
-                setAnnualDataRoutesOriginal(updatedAnnualDataRoutes)
+                setAnnualDataRoutesOriginal(updatedAnnualDataRoutes);
               } else {
-                // Si el cardId no existe, agrega un nuevo elemento
+
                 setAnnualDataRoutes([...annualDataRoutes, { annualRouteService }]);
                 setAnnualDataRoutesOriginal([...annualDataRoutesOriginal, { annualRouteService }])
               }
-              
+          
             }else{
+                const annualDataRoutesResponse = response?.data;
+                const existingIndex = annualDataRoutes.findIndex( (item) => item.annualRouteService[0]?.cardId === annualDataRoutesResponse.idCardTemplate);
+                const updatedAnnualDataRoutesOriginal = annualDataRoutesOriginal.filter(
+                    (item) => item.annualRouteService[0]?.cardId !== annualDataRoutesResponse.idCardTemplate
+                );
+                const updatedOriginalDestinationValueOfService= originalDestinationValueOfService.filter(
+                    (item) => item.annualRouteService[0]?.cardId !== annualDataRoutesResponse.idCardTemplate
+                );
+                
+                const handleAction = () => {
+                    setMessage({});
+                    if (existingIndex !== -1) {
+                        const updatedAnnualDataRoutes = [...annualDataRoutes];
+                        updatedAnnualDataRoutes.splice(existingIndex, 1);
+                        setAnnualDataRoutes(updatedAnnualDataRoutes);
+                        setAnnualDataRoutesOriginal(updatedAnnualDataRoutesOriginal);
+                        setOriginalDestinationValueOfService(updatedOriginalDestinationValueOfService)
+                    }
+                };
                 setMessage({
                     title: "Validación de datos",
                     description: response.operation.message,
                     show: true,
                     OkTitle: "Aceptar",
-                    onOk: () => {
-                      setMessage({});
-                      
-                    },
+                    onOk: handleAction,
                     background: true,
-                    onClose: () => {
-                      setMessage({});
-                
-                    },
+                    onClose: handleAction,
                 });
             }
         }).catch(err => console.log(err))
