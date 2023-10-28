@@ -7,6 +7,7 @@ import { tableColumnsCdp, tableActionsCdp } from "../constants";
 import { useCdpServices } from "./useCdpServices";
 import { clearRequestFilters, filterDataSelect } from "../utils/filtersSearch";
 import { useNavigate } from "react-router-dom";
+import { DateTime } from "luxon";
 
 export const useSearchCdp = () => {
   const { GetRoutesByValidity } = useCdpServices();
@@ -29,6 +30,61 @@ export const useSearchCdp = () => {
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [arraySelect, setArraySelect] = useState<any>([]);
+
+    const tableColumnsCdp: any[] = [
+      {
+        fieldName: "consecutive",
+        header: "No. CDP Aurora",
+      },
+      {
+        fieldName: "sapConsecutive",
+        header: "No. CDP SAP",
+      },
+      {
+        fieldName: "date",
+        header: "Fecha documento",
+        renderCell: (row) => {
+          return <>{DateTime.fromISO(row.date).toLocaleString()}</>;
+        },
+      },
+      {
+        fieldName: "countRpp",
+        header: "No. de rutas del CDP",
+        renderCell: (row) => {
+          return <>{row.amounts.length}</>;
+        },
+      },
+      {
+        fieldName: "partnersRp",
+        header: "RP asociados",
+      },
+      {
+        fieldName: "contractObject",
+        header: "Objeto contractual",
+      },
+    ];
+    
+    const tableActionsCdp: any[] = [
+      {
+        icon: "Detail",
+        onClick: (row) => {
+          navigate(`./view/${row.id}`);
+        },
+      },
+      {
+        icon: "Edit",
+        onClick: (row) => {},
+      },
+      {
+        icon: "Add",
+        onClick: (row) => {},
+      },
+      {
+        icon: "Rp",
+        onClick: (row) => {},
+      },
+    ];
+
 
   useEffect(() => {
     setIsBtnDisable(

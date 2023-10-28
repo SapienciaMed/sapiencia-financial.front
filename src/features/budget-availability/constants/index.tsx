@@ -36,7 +36,10 @@ export const tableColumnsCdp: any[] = [
 export const tableActionsCdp: any[] = [
   {
     icon: "Detail",
-    onClick: (row) => {},
+    onClick: (row) => {
+      //navigate(`./view/${row.id}`);
+      //navigate(`./edit/`);
+    },
   },
   {
     icon: "Edit",

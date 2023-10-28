@@ -151,6 +151,8 @@ export interface IHeadPac {
     typePac:string;
     typeSource:string;
     file:any;
+    userCreate?:string;
+    userModify?:string;
 }
 
 export interface IErrorTablePac{
