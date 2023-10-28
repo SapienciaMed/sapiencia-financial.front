@@ -147,7 +147,7 @@ export function usePacData() {
             fieldName: "listPospreSapi",
             header: "Pospre Sapiencia",
             renderCell(row) {
-                return <>{row.dataCondensed.budgetSapi}</>
+                return <>{row.dataCondensed.posPreSapi}</>
             },
             
         },
@@ -155,7 +155,7 @@ export function usePacData() {
             fieldName: "presupuestoSapi",
             header: "Presupuesto Sapiencia",
             renderCell(row) {
-                return <>{row.dataCondensed.posPreSapi}</>
+                return <>{row.dataCondensed.budgetSapi}</>
             },
         },
         {
@@ -196,7 +196,6 @@ export function usePacData() {
             setShowSpinner(false)
             if (response.operation.code === EResponseCodes.OK) {
                 const dinamicData = response?.data;
-
                 const uniqueProjects = Array.from(new Set(dinamicData.listProjects.map(project => project.projectCode))).map(projectCode => {
                     const item = dinamicData.listProjects.find(project => project.projectCode === projectCode);
                     return {
@@ -241,20 +240,9 @@ export function usePacData() {
                 }));
 
 
-            }else {
-                setMessage({
-                    title: "Validación de datos",
-                    description: response.operation.message,
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                      setMessage({});
-                    },
-                    background: true,
-                    onClose: () => {
-                      setMessage({});
-                    },
-                });
+            } 
+            else {
+                console.log(response.operation.message)
             }
         }).catch((error) => {
             setShowSpinner(false)
