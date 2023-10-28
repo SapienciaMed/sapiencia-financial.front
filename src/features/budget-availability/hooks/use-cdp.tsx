@@ -31,6 +31,7 @@ export function useCdpCrud(cdpId?: string) {
         defaultValues: {
             exercise: Object(cdpFoundSt).exercise,
             consecutive: Object(cdpFoundSt).consecutive,
+            rpAssoc:'No',
             amounts: [{
                 id: null,
                 reasonCancellation: ''
@@ -58,6 +59,7 @@ export function useCdpCrud(cdpId?: string) {
                             setCdpFoundSt(res.data[0])
                         })
                         setMessage({})
+                        setValueRegister('amounts.0.reasonCancellation','')
                     }))
                     : ''
 

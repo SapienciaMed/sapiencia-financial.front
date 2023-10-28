@@ -20,7 +20,6 @@ const CdpViewPage = () => {
             </div>
             <br />
             <div className="card-table gap-0">
-
                 <TableDataPropComponent
                     ref={tableComponentRef}
                     dataTable={Object(cdpFoundSt).amounts}
