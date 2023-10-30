@@ -28,11 +28,17 @@ export function useCdpService() {
         return post(`${roleUrl}${endpoint}`, data);
     }
 
+    async function cancelAmount(data: Object): Promise<ApiResponse<any[]>> {
+        const endpoint: string = "/cancel-amount";
+        return postFormData(`${roleUrl}${endpoint}`,data);
+    }
+
     return {
         createCdp,
         createCdp_,
         getCdpById,
-        getOneRpp
+        getOneRpp,
+        cancelAmount
      }
     };
 

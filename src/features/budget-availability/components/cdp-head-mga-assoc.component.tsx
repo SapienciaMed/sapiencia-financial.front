@@ -1,6 +1,6 @@
 import React from "react";
 import { Controller } from "react-hook-form";
-import { DatePickerComponent, InputComponent, TextAreaComponent } from "../../../common/components/Form";
+import { DatePickerComponent, InputComponent } from "../../../common/components/Form";
 import { useCdpCrud } from "../hooks/use-cdp";
 import { EDirection } from "../../../common/constants/input.enum";
 
@@ -9,7 +9,8 @@ interface Props {
     cdpId?: string;
 }
 
-function CdpHeadFormComponent(props: Props) {
+
+function CdpHeadMgaAssocComponent(props: Props) {
     const { isDisabled, cdpId } = props;
     const { control, register, errors } = useCdpCrud(cdpId);
 
@@ -27,7 +28,7 @@ function CdpHeadFormComponent(props: Props) {
                                 className="input-basic medium"
                                 typeInput="number"
                                 register={register}
-                                label="Vigencia"
+                                label="Proyecto"
                                 classNameLabel="text-black weight-500 biggest"
                                 direction={EDirection.column}
                                 fieldArray={false}
@@ -51,7 +52,7 @@ function CdpHeadFormComponent(props: Props) {
                                 className="input-basic medium"
                                 typeInput="number"
                                 register={register}
-                                label="Consecutivo CDP SAP"
+                                label="Fondo Sapiencia"
                                 classNameLabel="text-black weight-500 biggest"
                                 direction={EDirection.column}
                                 onChange={field.onChange}
@@ -73,7 +74,7 @@ function CdpHeadFormComponent(props: Props) {
                                 className="input-basic medium"
                                 typeInput="number"
                                 register={register}
-                                label="Consecutivo CDP Aurora"
+                                label="Pospre Sapiensia"
                                 classNameLabel="text-black weight-500 biggest"
                                 direction={EDirection.column}
                                 onChange={field.onChange}
@@ -85,31 +86,18 @@ function CdpHeadFormComponent(props: Props) {
                 />
             </section>
             <section className='grid-form-3-container-area mt-5px'>
-                <DatePickerComponent
-                    idInput="date"
+            <Controller
                     control={control}
-                    label={"Fecha documento"}
-                    errors={errors}
-                    classNameLabel="text-black biggest weight-500"
-                    className="dataPicker-basic medium"
-                    placeholder="DD/MM/YYYY"
-                    dateFormat="dd/mm/yy"
-                    disabled={isDisabled}
-                />
-
-
-                <Controller
-                    control={control}
-                    name={"rpAssoc"}
+                    name={"consecutive"}
                     render={({ field }) => {
                         return (
                             <InputComponent
                                 id={field.name}
                                 idInput={field.name}
                                 className="input-basic medium"
-                                typeInput="text"
+                                typeInput="number"
                                 register={register}
-                                label="RP asociados1"
+                                label="Pospre Origen"
                                 classNameLabel="text-black weight-500 biggest"
                                 direction={EDirection.column}
                                 onChange={field.onChange}
@@ -120,35 +108,33 @@ function CdpHeadFormComponent(props: Props) {
                     }}
                 />
 
-                    
-            </section>
 
-             <section>
-             <Controller
-                        control={control}
-                        name={"contractObject"}
-                        defaultValue=""
-                        render={({ field }) => {
-                            return (
-                                <TextAreaComponent
-                                    id={field.name}
-                                    idInput={field.name}
-                                    value={`${field.value}`}
-                                    className="text-area-basic"
-                                    register={register}
-                                    label="Objeto contractual"
-                                    classNameLabel="text-black biggest"
-                                    direction={EDirection.column}
-                                    errors={errors}
-                                    onChange={field.onChange}
-                                    disabled={isDisabled}
-                                />
-                            );
-                        }}
-                    />
-            </section>       
+                <Controller
+                    control={control}
+                    name={"sapConsecutive"}
+                    render={({ field }) => {
+                        return (
+                            <InputComponent
+                                id={field.name}
+                                idInput={field.name}
+                                className="input-basic medium"
+                                typeInput="number"
+                                register={register}
+                                label="Valor final"
+                                classNameLabel="text-black weight-500 biggest"
+                                direction={EDirection.column}
+                                onChange={field.onChange}
+                                errors={errors}
+                                disabled={isDisabled}
+                            />
+                        );
+                    }}
+                />
+
+
+            </section>
         </>
     )
 }
 
-export default React.memo(CdpHeadFormComponent);
+export default React.memo(CdpHeadMgaAssocComponent);

@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
 import { IDropdownProps } from '../../../common/interfaces/select.interface';
+import { IDropdownPropsPac } from '../transferPac/interfaces/TypeTransferPac';
 
 export interface IPac {
     id?: number;
@@ -15,7 +16,9 @@ export interface IPac {
     userModify: string;
     dateModify: string;
     userCreate: string;
-    dateCreate: string
+    dateCreate: string;
+    pacAnnualizations?: IAnnualRoute[],
+    sourceType?: string
 };
 
 export interface IPacFilters {
@@ -36,6 +39,7 @@ export interface IPacComplementary {
     listProjects?: IDinamicListForProjects[];
     listFunds?: IDinamicListForFunds[];
     listPospreSapi ?: IDinamicListForPospres[];
+    candidatesRoutes?: number[];
 }
 
 export interface IDinamicListForProjects {
@@ -103,23 +107,23 @@ export interface IDestinity {
 }
 
 export interface IAnnualRoute {
-    id?:         number;
-    pacId:      number;
-    type:       string;
-    jan:        number;
-    feb:        number;
-    mar:        number;
-    abr:        number;
-    may:        number;
-    jun:        number;
-    jul:        number;
-    ago:        number;
-    sep:        number;
-    oct:        number;
-    nov:        number;
-    dec:        number;
-    dateModify?: null;
-    dateCreate?: null;
+    id?:  number;
+    pacId?: number;
+    type: string;
+    jan:  number;
+    feb:  number;
+    mar:  number;
+    abr:  number;
+    may:  number;
+    jun:  number;
+    jul:  number;
+    ago:  number;
+    sep:  number;
+    oct:  number;
+    nov:  number;
+    dec:  number;
+    dateModify?: string;
+    dateCreate?: string;
     cardId?: string
 }
 
@@ -127,6 +131,7 @@ export interface IResultSearchAnnualizationByRoute {
     headerResult: IPacFilters;
     routeResult: IBudgetsRoutesSimple;
     annualRoute: IAnnualRoute[];
+    idCardTemplate?: string
 }
 
 export interface IBudgetsRoutesSimple {
@@ -148,6 +153,8 @@ export interface IHeadPac {
     typePac:string;
     typeSource:string;
     file:any;
+    userCreate?:string;
+    userModify?:string;
 }
 
 export interface IErrorTablePac{
@@ -170,4 +177,96 @@ export interface IArrayDataSelectPacComplementary{
     listProjects?: IDropdownProps[];
     listFunds?: IDropdownProps[];
     listPospreSapi ?: IDropdownProps[];
+}
+
+export interface IArrayDataSelectPacAssociate{
+    headerComposition?: IPacFilters;
+    listBudgetsRoutes?: IDropdownPropsPac[];
+    listProjects?: IDropdownPropsPac[];
+    listFunds?: IDropdownPropsPac[];
+    listPospreSapi ?: IDropdownPropsPac[];
+}
+
+export interface ICreateAssociation {
+    exercise?: number;
+    resourceType?: string;
+    route?: number;
+    pacId?: number;
+    type?: string;
+    version?: number;
+    idProjectVinculation?: number;
+    idFund?: number;
+    idPospreSapiencia?: number;
+    idBudget?: number;
+    budgetSapiencia?: number;
+    annualization?: IAnnualRoute;
+}
+
+export interface IPacEdit {
+    pacType: string,
+    managerCenter: string,
+    pospre: string,
+    pospreSapiencia: number,
+    fundsSapiencia: string,
+    funds: string,
+    functionalArea: string,
+    project: string,
+    projectName: string,
+    budgetSapi: string,
+    exercise: string
+    totalProgrammed: string,
+    totalCollected: string,
+    resourceType: string,
+    programmed: {
+        [key: string]: string;
+    };
+    collected: {
+        [key: string]: string;
+    };
+}
+
+export interface IResultSearchDinamicPac {
+    resultPac : IPac | null,
+    totalsPac : {
+      totalProgramming : number;
+      totalCollected : number;
+    }
+    resultRoute: {
+      managementCenter : string;
+      fundNumber : string;
+      fundId : number;
+      posPreSapiDescription : string;
+      posPreSapiNumber : string;
+      posPreSapiId : number;
+      posPreOrigNumber : string;
+      posPreOrigId : number;
+      projectVinculationId : number;
+      projectPlanningId : number;
+      projectCode : string;
+      projectName : string;
+      functionalAreaId : number;
+      functionalAreaNumber : string;
+    }
+  }
+  
+export interface IEditPac  {
+    id?: number,
+    route?: number;
+    pacId?: number;
+    budgetRouteId?: number;
+    type?: string;
+    version?: number;
+    resourceType?: string;
+    pacType?: string;
+
+    idProjectVinculation?: number;
+    idFund?: number;
+    idPospreSapiencia?: number;
+    idBudget?: number;
+
+    budgetSapiencia?: number;
+    totalProgramming?: number;
+    totalCollected?: number;
+    annProgrammingPac?: IAnnualRoute;
+    annCollectyerPac?: IAnnualRoute;
 }

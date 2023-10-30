@@ -42,6 +42,24 @@ function FormPacmonths({ count, control, titleAdd, pacTypeMonth, titleActive, an
         }
     },[JSON.stringify(annualDataRoutes)])
 
+    useEffect(() => {
+        return () => {
+            setValue(`${titleAdd}[${count}].${pacTypeMonth}.january`,'')
+            setValue(`${titleAdd}[${count}].${pacTypeMonth}.february`,'')
+            setValue(`${titleAdd}[${count}].${pacTypeMonth}.march`,'')
+            setValue(`${titleAdd}[${count}].${pacTypeMonth}.april`,'')
+            setValue(`${titleAdd}[${count}].${pacTypeMonth}.may`,'')
+            setValue(`${titleAdd}[${count}].${pacTypeMonth}.june`,'')
+            setValue(`${titleAdd}[${count}].${pacTypeMonth}.july`,'')
+            setValue(`${titleAdd}[${count}].${pacTypeMonth}.august`,'')
+            setValue(`${titleAdd}[${count}].${pacTypeMonth}.september`,'')
+            setValue(`${titleAdd}[${count}].${pacTypeMonth}.october`,'')
+            setValue(`${titleAdd}[${count}].${pacTypeMonth}.november`,'')
+            setValue(`${titleAdd}[${count}].${pacTypeMonth}.december`,'')
+            setValue(`${titleAdd}[${count}].${pacTypeMonth}.id`, '')
+            setValue(`${titleAdd}[${count}].${pacTypeMonth}.pacId`, '')
+        }
+    },[])
 
     return(
         <section className="display-flex-direction-column gap-1 mt-3rem">

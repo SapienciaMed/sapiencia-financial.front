@@ -20,18 +20,19 @@ interface IAppProps {
     invalidCardsAdditionSt: any;
     setValue: any;
     watch: any;
-    
+    detail?: boolean
+
 }
 
-function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSelect, remove, titleAdd, register, cardId, invalidCardsAdditionSt, setValue, watch}: IAppProps) {
-    const { functionalArea, areas, funds, posPre, } = arrayDataSelect;  
-   
-    const formOrigen = useWatch({ control:controlRegister, name: titleAdd })
+function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSelect, remove, titleAdd, register, cardId, invalidCardsAdditionSt, setValue, watch, detail }: IAppProps) {
+    const { functionalArea, areas, funds, posPre, } = arrayDataSelect; 
+
+    const formOrigen = useWatch({ control: controlRegister, name: titleAdd })
 
     const [projectIdSelectedSt, setProjectIdSelectedSt] = useState<string>('')
     const [areaIdSelectedSt, setAreaIdSelectedSt] = useState<number | string>()
     const [areasByProjectSt, setAreasByProjectSt] = useState<IDropdownPropsFuctionalArea[]>(functionalArea)
-    const [projectName, setProjectName] = useState('')  
+    const [projectName, setProjectName] = useState('')
 
     useEffect(() => {
         if (projectName != "") {
@@ -47,9 +48,9 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
 
     const optionSelected = (option: any) => {
         if (option) {
-            
+
             setProjectName(functionalArea.find(e => e.value == option)?.description)
-           processFunctionalArea(option)
+            processFunctionalArea(option)
         }
     }
 
@@ -59,7 +60,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
             return Object(propsFunctionalArea).area
         });
 
-        const area = areaList.flat().filter(propsAreaList => propsAreaList.projectId == option && propsAreaList.value !== null);       
+        const area = areaList.flat().filter(propsAreaList => propsAreaList.projectId == option && propsAreaList.value !== null);
 
         setProjectIdSelectedSt(option)
         setAreaIdSelectedSt(area[0]?.id)
@@ -69,18 +70,22 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
     let invalidStyleCard = {
         background: invalidCardsAdditionSt?.find(e => e?.idCard == watch(`${titleAdd.toLowerCase()}[${count}].cardId`)) ? 'rgba(255, 0, 0, 0.30)' : 'none',
         border: invalidCardsAdditionSt?.find(e => e?.idCard == watch(`${titleAdd.toLowerCase()}[${count}].cardId`)) ? '1px solid #F00' : ''
-    }  
+    }
     return (
-        <>    
+        <>
             <div className='card-user mt-14px' style={invalidStyleCard}>
                 <div className="title-area">
                     <label className="text-black biggest"> {count + 1}. {titleAdd.charAt(0).toUpperCase() + titleAdd.slice(1)}</label>
-                    <ButtonComponent
-                        value={"Eliminar"}
-                        type="button"
-                        action={() => { remove(count) }}
-                        className="button-delete biggest bold"
-                    />
+                    {
+                        !detail &&
+                        <ButtonComponent
+                            value={"Eliminar"}
+                            type="button"
+                            action={() => { remove(count) }}
+                            className="button-delete biggest bold"
+                        />
+                    }
+
 
                 </div>
                 <div>
@@ -96,6 +101,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             filter={true}
                             fieldArray={true}
                             errors={errors}
+                            disabled={detail}
                         />
                         <SelectComponent
                             idInput={`${titleAdd.toLowerCase()}[${count}].projectId`}
@@ -103,12 +109,13 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             label={'Proyecto'}
                             className="select-basic medium"
                             classNameLabel="text-black big bold text-required"
-                            placeholder={'Seleccionar'}       
+                            placeholder={'Seleccionar'}
                             data={functionalArea}
                             filter={true}
                             fieldArray={true}
                             errors={errors}
                             optionSelected={optionSelected}
+                            disabled={detail}
                         />
                         <SelectComponent
                             idInput={`${titleAdd.toLowerCase()}[${count}].functionalArea`}
@@ -121,6 +128,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             fieldArray={true}
                             data={areasByProjectSt}
                             errors={errors}
+                            disabled={detail}
                         />
                     </section>
                     <section className='grid-form-3-container-area mt-5px'>
@@ -136,6 +144,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             fieldArray={true}
                             data={funds}
                             errors={errors}
+                            disabled={detail}
                         />
                         <SelectComponent
                             idInput={`${titleAdd.toLowerCase()}[${count}].posPre`}
@@ -148,6 +157,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             fieldArray={true}
                             data={posPre}
                             errors={errors}
+                            disabled={detail}
                         />
 
                         <InputNumberComponent
@@ -164,6 +174,7 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             fieldArray={true}
                             minFractionDigits={0}
                             maxFractionDigits={0}
+                            disabled={detail}
                         />
 
                     </section>
@@ -179,10 +190,11 @@ function ScreenAddIncome({ count, controlRegister, errors, fields, arrayDataSele
                             register={register}
                             fieldArray={true}
                             disabled={true}
+
                         />
                     </section>
                 </div>
-            </div>   
+            </div>
         </>
     );
 }

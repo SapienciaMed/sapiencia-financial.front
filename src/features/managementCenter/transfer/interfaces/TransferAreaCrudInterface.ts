@@ -1,4 +1,4 @@
-import { Control, UseFormRegister, FieldErrors, UseFormSetValue, UseFormGetValues, UseFormWatch } from 'react-hook-form';
+import { Control, UseFormRegister, FieldErrors, UseFormSetValue, UseFormGetValues, UseFormReset } from 'react-hook-form';
 import { IArrayDataSelect } from "../../../../common/interfaces/global.interface";
 import { IArrayDataSelectPac } from '../../../pac/transferPac/interfaces/TypeTransferPac';
 import { IAnnualRoute } from '../../../pac/interface/Pac';
@@ -13,7 +13,9 @@ export interface ICreateTransferPacForm{
     destino: IAddFundPac[]; 
     pacType: number;
     validity: number;
-    TypeResource: number
+    TypeResource: number,
+    totalOrigenActual: number,
+    totalDestinoActual: number
 }
 
 export interface IAddFundPac extends IAddFund{
@@ -76,9 +78,8 @@ export interface IFormTransferPac {
     annualDataRoutes: {
         annualRouteService: IAnnualRoute[];
     }[]
-    changeValueOfSelect: (valor: any, typeSelect: string, cardId: string) => void,
-    setIdCarsSelect: React.Dispatch<React.SetStateAction<string>>
-    
+    changeValueOfSelect: (valor: any, typeSelect: string, option: any) => void,
+    setIdCarsSelect: React.Dispatch<React.SetStateAction<string>>,
 }
 
 export interface IFormPacmonths{
@@ -105,6 +106,6 @@ export interface IMonths{
     october: string ,
     november: string ,
     december: string,
-    id: string,
-	pacId: string,
+    id?: string,
+	pacId?: string,
 }

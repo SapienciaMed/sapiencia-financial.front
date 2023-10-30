@@ -13,7 +13,7 @@ import { ProgressSpinner } from "primereact/progressspinner";
 function PacPages() {
     const {width} = useWidth()
 
-    const {control, errors, isBtnDisable, showTable, tableComponentRef, tableActions, showSpinner, arrayDataSelect,
+    const {control, errors, isBtnDisable, showTable, tableComponentRef, tableActions, showSpinner, arrayDataSelect, disableEdit,
         tableColumns, navigate, setShowTable, register, onSubmit, reset, handleChangeExercise,
         handleChangeVersion} = usePacData()
     
@@ -26,7 +26,7 @@ function PacPages() {
                     <div className={`${width < 800 ? 'display-justify-space-between-pac' : 'display-align-flex-end'} gap-0 gap-05`}>
                         <div
                             className="title-button font-big"
-                            onClick={() => {}}
+                            onClick={() => { navigate('./asociar') }}
                         >
                             Asociar al PAC <AiOutlinePlusCircle />
                         </div>
@@ -86,7 +86,7 @@ function PacPages() {
                                     { id: '1', name: 'Seleccione', value: null},
                                     { id: "2", name: "Transferencias distritales", value: "Transferencias distritales" },
                                     { id: "3", name: "Recursos propios", value: "Recursos propios" },
-                                    { id: "4", name: "Todas", value: "Todas" },
+                                    { id: "4", name: "Todas", value: "Todos" },
                                 ]}
                                 control={control}
                                 isValidateName={false}
@@ -198,6 +198,7 @@ function PacPages() {
                                 titleMessageModalNoResult="No hay resultados"
                                 secondaryTitle="PAC"
                                 classSizeTable='size-table-wd-150'
+                                isDisabled={disableEdit}
                             />
                         </div>
                     )

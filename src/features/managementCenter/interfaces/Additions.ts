@@ -61,7 +61,7 @@ export interface IIncome{
 
 
 export interface IData {
-  head:    Head[];
+  head:    Head;
   details: Detail[];
   id: number
 }
