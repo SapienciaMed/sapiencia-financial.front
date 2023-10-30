@@ -8,6 +8,11 @@
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 16px 16px;
   }
+
+  &.grid-column-repet-4{ 
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 16px 16px;
+  }
   
 }
 
@@ -49,6 +54,10 @@
 @media (max-width: 700px) {
   .grid-form-3-container-area {
     &.grid-column-repet{ 
+      grid-template-columns: 1fr;
+    }
+
+    &.grid-column-repet-4{ 
       grid-template-columns: 1fr;
     }
   }
