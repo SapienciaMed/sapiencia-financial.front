@@ -64,6 +64,7 @@
 
 .p-disabled, .p-component:disabled {
   opacity: 0.8;
+  background: #f0eeee !important;
 }
 
 .p-error {
@@ -753,7 +754,9 @@
   border: 1px solid #ced4da;
   transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
   border-radius: 3px;
+  
 }
+
 .p-dropdown:not(.p-disabled):hover {
   border-color: #533893;
 }

@@ -8,7 +8,7 @@ import { usePacServices } from './pac-services.hook';
 import { validateTypeResourceServices } from '../transferPac/util';
 import { EResponseCodes } from '../../../common/constants/api.enum';
 import { AppContext } from '../../../common/contexts/app.context';
-import { ITableElement } from '../../../common/interfaces/table.interfaces';
+import { ITableAction, ITableElement } from '../../../common/interfaces/table.interfaces';
 export function usePacData() {
 
     const navigate = useNavigate();
@@ -21,6 +21,8 @@ export function usePacData() {
     const [showTable, setShowTable] = useState(false);
     const [ showSpinner, setShowSpinner ] = useState(false)
     const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+    const [ disableEdit, setDisableEdit ] = useState(false)
+    const [versionActual, setVersionActual ] = useState('')
     const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelectPacComplementary>({
         listProjects: [],
         listFunds: [],
@@ -45,7 +47,7 @@ export function usePacData() {
 
     useEffect(() => {
         setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
-        setAreTheFieldsFull(inputValue.every(value => value != '' && value != undefined))        
+        setAreTheFieldsFull(inputValue.every(value => value != '' && value != undefined))     
     },[inputValue])
 
     useEffect(() => {
@@ -54,6 +56,7 @@ export function usePacData() {
         GetUltimateVersion().then(response => {
             if(response.operation.code === EResponseCodes.OK){
                 setValue('version', response.data.version)
+                setVersionActual(response.data.version)
             }
         }).catch(error => console.log(error))
     },[])
@@ -96,6 +99,7 @@ export function usePacData() {
     };
 
     const onSubmit = handleSubmit(async (data: IPacSearch) => {
+        setDisableEdit(inputValue[2] != versionActual)
         const dataFiltered: IPacSearch = Object.keys(data).reduce((object, key) => {
             if (data[key] !== undefined) {
               object[key] = data[key];
@@ -168,7 +172,7 @@ export function usePacData() {
         
     ];
 
-    const tableActions: any[] = [
+    const tableActions: ITableAction<any>[] = [
         {
             icon: "Detail",
             onClick: (row) => {
@@ -178,7 +182,9 @@ export function usePacData() {
         {
             icon: "Edit",
             onClick: (row) => {
-                
+                const pacId = row?.dataCondensed.pacId
+                const budgetRouteId = row?.dataCondensed.routeId
+                navigate(`./edit/${pacId}/${budgetRouteId}`)
             },
         }
     ];
@@ -251,7 +257,6 @@ export function usePacData() {
         })
     } 
 
-
     return {
         control,
         errors,
@@ -262,6 +267,7 @@ export function usePacData() {
         tableColumns,
         showSpinner,
         arrayDataSelect,
+        disableEdit,
         navigate,
         setShowTable,
         register,
