@@ -1,6 +1,6 @@
 import React from "react";
 import { Controller } from "react-hook-form";
-import { DatePickerComponent, InputComponent } from "../../../common/components/Form";
+import { DatePickerComponent, InputComponent, TextAreaComponent } from "../../../common/components/Form";
 import { useCdpCrud } from "../hooks/use-cdp";
 import { EDirection } from "../../../common/constants/input.enum";
 
@@ -109,7 +109,7 @@ function CdpHeadFormComponent(props: Props) {
                                 className="input-basic medium"
                                 typeInput="text"
                                 register={register}
-                                label="RP asociados"
+                                label="RP asociados1"
                                 classNameLabel="text-black weight-500 biggest"
                                 direction={EDirection.column}
                                 onChange={field.onChange}
@@ -120,8 +120,33 @@ function CdpHeadFormComponent(props: Props) {
                     }}
                 />
 
-
+                    
             </section>
+
+             <section>
+             <Controller
+                        control={control}
+                        name={"contractObject"}
+                        defaultValue=""
+                        render={({ field }) => {
+                            return (
+                                <TextAreaComponent
+                                    id={field.name}
+                                    idInput={field.name}
+                                    value={`${field.value}`}
+                                    className="text-area-basic"
+                                    register={register}
+                                    label="Objeto contractual"
+                                    classNameLabel="text-black biggest"
+                                    direction={EDirection.column}
+                                    errors={errors}
+                                    onChange={field.onChange}
+                                    disabled={isDisabled}
+                                />
+                            );
+                        }}
+                    />
+            </section>       
         </>
     )
 }
