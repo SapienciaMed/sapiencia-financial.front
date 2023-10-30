@@ -173,6 +173,20 @@ export function usePacCrud() {
         }
       })
     
+    } else if(response.operation.code == "OK" && Object(response).data?.errors?.length==0){  
+      showModal({
+        title: "Confirmación",
+        description: response.operation.message,
+        show: true,
+        OkTitle: "Aceptar",
+        onOk: () => {
+          setMessage({})
+          onCancelNew()
+          setIsLoading(false)
+          setErrorsPac(Object(response).data.errors)
+        }
+      })
+
     }else {
       showModal({
         title: "Carga de archivo",
