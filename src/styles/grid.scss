@@ -56,5 +56,9 @@
     &.grid-column-repet{ 
       grid-template-columns: 1fr;
     }
+
+    &.grid-column-repet-4{ 
+      grid-template-columns: 1fr;
+    }
   }
 }

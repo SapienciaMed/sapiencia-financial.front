@@ -11,8 +11,8 @@ function PacEditPages() {
     const {control, errors, pacMoths, isMothEnabled, entitiesData, showSpinner, isBtnDisable, onSubmit, register, confirmClose} = usePacEdit()
 
     return (
-        <div className="crud-page full-height">
-            <section className='main-page full-height'>
+        <div className="crud-page">
+            <section className='main-page'>
                 <div className='card-table gap-0'>
                     <section className="title-area">
                         <div className="text-black weight-500 extra-large">Editar PAC</div>

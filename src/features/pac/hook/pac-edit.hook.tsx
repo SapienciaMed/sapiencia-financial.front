@@ -63,19 +63,19 @@ export function usePacEdit() {
       
           if (isProgramed && !isCollected ) {
             resetField('totalCollected', { defaultValue: totalCollectedServices });
-            pacAnnualizationsCollectedServices.map((value) => {
-                monthsServices.map((month, index) => {
-                    resetField(`collected.${months[index]}`,{ defaultValue: String(value[month]) });
+            pacAnnualizationsCollectedServices.forEach((value, index) => {
+                monthsServices.forEach((month, subIndex) => {
+                  resetField(`collected.${months[subIndex]}`, { defaultValue: String(value[month]) });
                 });
-            });
+              });
           }
 
           if (isCollected && !isProgramed) {
             resetField('totalProgrammed', { defaultValue: totalProgrammedServices });
             resetField('budgetSapi', { defaultValue: totalBudgetSapiServices})
-            pacAnnualizationsProgammedServices.map((value) => {
-                monthsServices.map((month, index) => {
-                    resetField(`programmed.${months[index]}`,{ defaultValue: String(value[month]) });
+            pacAnnualizationsProgammedServices.forEach((value, index) => {
+                monthsServices.forEach((month, subIndex) => {
+                  resetField(`programmed.${months[subIndex]}`, { defaultValue: String(value[month]) });
                 });
             });
           }
@@ -84,17 +84,16 @@ export function usePacEdit() {
             resetField('totalCollected', { defaultValue: totalCollectedServices });
             resetField('totalProgrammed', { defaultValue: totalProgrammedServices });
             resetField('budgetSapi', { defaultValue: totalBudgetSapiServices})
-            pacAnnualizationsCollectedServices.map((value) => {
-                monthsServices.map((month, index) => {
-                    resetField(`collected.${months[index]}`,{ defaultValue: String(value[month]) });
+            pacAnnualizationsCollectedServices.forEach((value, index) => {
+                monthsServices.forEach((month, subIndex) => {
+                  resetField(`collected.${months[subIndex]}`, { defaultValue: String(value[month]) });
                 });
-            });
-            pacAnnualizationsProgammedServices.map((value) => {
-                monthsServices.map((month, index) => {
-                    resetField(`programmed.${months[index]}`,{ defaultValue: String(value[month]) });
+              });
+              pacAnnualizationsProgammedServices.forEach((value, index) => {
+                monthsServices.forEach((month, subIndex) => {
+                  resetField(`programmed.${months[subIndex]}`, { defaultValue: String(value[month]) });
                 });
-            });
-            
+              });
           }        
         }else {
             setIsMothEnabled({
