@@ -16,7 +16,7 @@ export const PacRoutes = () => {
             <Route path={'/creacion-modificacion/traslado'} element={<TransferPacPage/>} />
             <Route path={'/creacion-modificacion/cargar'} element={<PacCrud/>} /> 
             <Route path={'/creacion-modificacion/asociar'} element={<AssociatePacPages/>} /> 
-            <Route path={'/creacion-modificacion/edit/:idPac'} element={<PacEditPages/>} />
+            <Route path={'/creacion-modificacion/edit/:idPac/:budgetRouteId'} element={<PacEditPages/>} />
         </Routes>
   )
 }

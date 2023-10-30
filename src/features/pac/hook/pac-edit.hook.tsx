@@ -12,10 +12,10 @@ import { validateTypePac } from "../transferPac/util/validate-type-pac";
 export function usePacEdit() {
 
     const navigate = useNavigate();
-    const { idPac: id } = useParams();
+    const { idPac: id, budgetRouteId } = useParams();
     const { setMessage, authorization } = useContext(AppContext);
     const resolver = useYupValidationResolver(pacEditValidator);
-    const {GetPacById} = usePacServices()
+    const { GetPacById, EditPac } = usePacServices()
     const {
         control,
         handleSubmit,
@@ -274,14 +274,13 @@ export function usePacEdit() {
     }]
 
     const onSubmit = handleSubmit(async (data: IPacEdit) => {
-
         const transformData: IEditPac = {
             id: parseInt(id),
             pacType: validateTypePac( parseInt(data.pacType) ) ,
-            // "budgetRouteId": 123,
+            budgetRouteId: parseInt(budgetRouteId),
             budgetSapiencia: parseInt(data.budgetSapi),
             annProgrammingPac: {
-                // id: 0,
+                id: pacAnnualizationsProgammedServices.find(us => us).id,
                 pacId: parseInt(id),
                 type: "Programado",
                 jan: parseInt(data.programmed.january),
@@ -300,7 +299,7 @@ export function usePacEdit() {
                 dateCreate: new Date(authorization.user.dateCreate).toISOString().split('T')[0]
             },
             annCollectyerPac: {
-                // id: 0,
+                id: pacAnnualizationsCollectedServices.find(us => us).id,
                 pacId: parseInt(id),
                 type: "Recaudado",
                 jan: parseInt(data.collected.january),
@@ -320,7 +319,6 @@ export function usePacEdit() {
             },
             
         }
-        console.log("🚀 ~ file: pac-edit.hook.tsx:321 ~ onSubmit ~ transformData:", transformData)
         
         if (watchAll.budgetSapi != watchAll.totalProgrammed) {
             setMessage({
@@ -354,7 +352,39 @@ export function usePacEdit() {
                 OkTitle: "Aceptar",
                 cancelTitle: "Cancelar",
                 onOk: () => {
-                    setMessage({});
+                    EditPac(transformData).then(response => {
+                        if (response.operation.code === EResponseCodes.OK) {
+                            setMessage({
+                                title: "Confirmación",
+                                description: "¡Guardado exitosamente!",
+                                show: true,
+                                OkTitle: "Cerrar",
+                                onOk: () => {
+                                  setMessage({});
+                                  navigate(-1)
+                                },
+                                background: true,
+                                onClose: () => {
+                                  setMessage({});
+                                  navigate(-1)
+                                },
+                            });
+                        } else {
+                            setMessage({
+                                title: "Validación de datos",
+                                description: response.operation.message,
+                                show: true,
+                                OkTitle: "Aceptar",
+                                onOk: () => {
+                                  setMessage({});
+                                },
+                                background: true,
+                                onClose: () => {
+                                  setMessage({});
+                                },
+                            });
+                        }
+                    })
                 },
                 onCancel() {
                     setMessage({});
