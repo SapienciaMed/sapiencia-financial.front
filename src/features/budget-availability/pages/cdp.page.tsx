@@ -7,6 +7,7 @@ import {
   FormComponent,
   InputComponent,
   SelectComponent,
+  TextAreaComponent,
 } from "../../../common/components/Form";
 import { Controller } from "react-hook-form";
 import { useSearchCdp } from "../hooks/useSearchCdp";
@@ -27,7 +28,8 @@ const CdpPage = () => {
     tableComponentRef,
     tableActionsCdp,
     tableColumnsCdp,
-    navigate
+    navigate,
+    arraySelect,
   } = useSearchCdp();
 
   return (
@@ -84,7 +86,7 @@ const CdpPage = () => {
                       typeInput="number"
                       register={register}
                       label="Consecutivo CDP SAP"
-                      classNameLabel="text-black weight-500 biggest text-required"
+                      classNameLabel="text-black weight-500 biggest"
                       direction={EDirection.column}
                       onChange={field.onChange}
                       errors={errors}
@@ -104,7 +106,7 @@ const CdpPage = () => {
                       typeInput="number"
                       register={register}
                       label="Consecutivo CDP Aurora"
-                      classNameLabel="text-black weight-500 biggest text-required"
+                      classNameLabel="text-black weight-500 biggest"
                       direction={EDirection.column}
                       onChange={field.onChange}
                       errors={errors}
@@ -121,7 +123,8 @@ const CdpPage = () => {
                 label="Proyecto"
                 classNameLabel="text-black weight-500 big"
                 placeholder={"Seleccionar"}
-                data={[]}
+                data={arraySelect?.projectId}
+                direction={EDirection.column}
                 filter={true}
                 isValidateName={false}
                 errors={errors}
@@ -133,9 +136,10 @@ const CdpPage = () => {
                 className="select-basic"
                 classNameLabel="text-black weight-500 big"
                 placeholder={"Seleccionar"}
+                data={arraySelect?.fundId}
+                direction={EDirection.column}
                 filter={true}
                 isValidateName={false}
-                data={[]}
                 errors={errors}
               />
               <SelectComponent
@@ -147,7 +151,8 @@ const CdpPage = () => {
                 placeholder={"Seleccionar"}
                 filter={true}
                 isValidateName={false}
-                data={[]}
+                data={arraySelect?.pospreId}
+                direction={EDirection.column}
                 errors={errors}
               />
             </div>
@@ -173,6 +178,36 @@ const CdpPage = () => {
                 dateFormat="dd/mm/yy"
               />
             </div>
+            <div className="funcionality-filters-container">
+              <Controller
+                control={control}
+                name={"contractObject"}
+                render={({ field }) => {
+                  return (
+                    <TextAreaComponent
+                      id={field.name}
+                      idInput={field.name}
+                      className="text-area-basic"
+                      rows={2}
+                      cols={33}
+                      register={register}
+                      label="Objeto contractual"
+                      classNameLabel="text-black weight-500 biggest"
+                      direction={EDirection.column}
+                      onChange={field.onChange}
+                      errors={errors}
+                    />
+                  );
+                }}
+              />
+            </div>
+            {errors && (
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <div className="title-button font-big">
+                  Max. 5000 caracteres
+                </div>
+              </div>
+            )}
             <div className="funcionality-buttons-container">
               <ButtonComponent
                 form="useQueryForm"

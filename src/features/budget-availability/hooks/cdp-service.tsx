@@ -1,14 +1,26 @@
 import useCrudService from "../../../common/hooks/crud-service.hook";
 import { ApiResponse } from "../../../common/utils/api-response";
+import { IBudgetAvalaibility } from "../interfaces/budgetAvailabilityInterfaces";
 
-export function usePacService() {
+export function useCdpService() {
     const baseURL: string = process.env.urlApiFinancial;
     const roleUrl: string = "/api/v1/cdp";
-    const { get, post, postFormData } = useCrudService(baseURL);
+    const roleUrlA: string = "/api/v1/additions";
+    const { get, post, postFormData } = useCrudService( baseURL);
+
+    async function getCdpById(id:string): Promise<ApiResponse<IBudgetAvalaibility>> {
+        const endpoint: string = "/get-by-id/"+id;
+        return get(`${roleUrl}${endpoint}`);
+    }
 
     async function createCdp(data: Object): Promise<ApiResponse<any[]>> {
         const endpoint: string = "/upload-pac";
         return postFormData(`${roleUrl}${endpoint}`, data);
+    }
+  
+    async function getOneRpp(data: Object): Promise<ApiResponse<any[]>> {
+        const endpoint: string = "/get-info-filter";
+        return postFormData(`${roleUrlA}${endpoint}`, data);
     }
 
     async function createCdp_(data: any): Promise<ApiResponse<any>> {
@@ -19,5 +31,8 @@ export function usePacService() {
     return {
         createCdp,
         createCdp_,
+        getCdpById,
+        getOneRpp
+     }
     };
-}
+

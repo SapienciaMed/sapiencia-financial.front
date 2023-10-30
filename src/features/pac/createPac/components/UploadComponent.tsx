@@ -19,13 +19,13 @@ export const UploadComponent = (props: Atributos) => {
   const { id, dataArchivo, showModal } = props;
 
   const [visible, setVisible] = useState(false);
-
+  
+  const fileGlobal = useRef(null)
   const toast = useRef(null);
   const [totalSize, setTotalSize] = useState(0);
   const fileUploadRef = useRef(null);
 
   const onTemplateSelect = (e) => {
-    console.log("template - select")  
     let _totalSize = totalSize;
     let files = e.files;
 
@@ -54,7 +54,7 @@ export const UploadComponent = (props: Atributos) => {
   };
 
   const onTemplateClear = () => {
-    console.log('--4');
+    fileGlobal.current = true
     setVisible(true);
     setTotalSize(0);
   };
@@ -85,7 +85,6 @@ export const UploadComponent = (props: Atributos) => {
 
   const itemTemplate = (inFile: object, props: ItemTemplateOptions) => {
     const file = inFile as File;
-    console.log(file);
     
     const extencion = file.name.split(".");
 
@@ -93,8 +92,9 @@ export const UploadComponent = (props: Atributos) => {
       onTemplateRemove(file, props.onRemove);
       return;
     }
-
-    dataArchivo(inFile);
+    if(fileGlobal.current){
+      dataArchivo(inFile);
+    }
 
     const footerContent = (
       <div className="text-center">
@@ -189,9 +189,9 @@ export const UploadComponent = (props: Atributos) => {
 
   return (
     <div>
-      <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
-      <Tooltip target=".custom-upload-btn" content="Upload" position="bottom" />
-      <Tooltip target=".custom-cancel-btn" content="Clear" position="bottom" />
+      <Tooltip target=".custom-choose-btn" content="Seleccionar" position="bottom" />
+      <Tooltip target=".custom-upload-btn" content="Cargar" position="bottom" />
+      <Tooltip target=".custom-cancel-btn" content="Limpiar" position="bottom" />
 
       <FileUpload
         id={id}

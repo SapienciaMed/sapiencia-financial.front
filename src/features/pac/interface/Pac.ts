@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon';
+import { IDropdownProps } from '../../../common/interfaces/select.interface';
 
 export interface IPac {
     id?: number;
@@ -153,3 +154,20 @@ export interface IErrorTablePac{
     message:number;
     error:string;
 } 
+
+export interface IPacSearch {
+    exercise: string,
+    resourceType: string,
+    version: string,
+    idProjectVinculation: number,
+    idBudget: number,
+    idPospreSapiencia: number,
+}
+
+export interface IArrayDataSelectPacComplementary{
+    headerComposition?: IPacFilters;
+    listBudgetsRoutes?: IDropdownProps[];
+    listProjects?: IDropdownProps[];
+    listFunds?: IDropdownProps[];
+    listPospreSapi ?: IDropdownProps[];
+}

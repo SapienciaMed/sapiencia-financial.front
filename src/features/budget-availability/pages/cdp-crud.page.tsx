@@ -1,13 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import FormCreateRutaCDPComponent from '../components/form-create-ruta-cdp.component';
-import { usePacService } from '../hooks/cdp-service';
+import { useCdpService } from '../hooks/cdp-service';
 import '../../../styles/from-create-cdp.scss';
 import Icons from '../components/Icons'
+import { useNavigate } from "react-router-dom";
+import { AppContext } from '../../../common/contexts/app.context';
+import CdpHeadFormComponent from '../components/cdp-head-form.component';
 const CdpCrudPage = () => {
+  const { setMessage } = useContext(AppContext);
   const [formCount, setFormCount] = useState(1);
   const [formularios, setFormularios] = useState([]);
   const [formInfo, setFormInfo] = useState({});
-  const pacService = usePacService();
+  const [formHeadInfo, setFormHeadInfo] = useState({})
+  const [objectSendData, setObjectSendData] = useState({})
+  const cdpService = useCdpService();
+  const navigate = useNavigate();
+
 
   const handleAgregarFormulario = () => {
     setFormCount(formCount + 1);
@@ -35,49 +43,123 @@ const CdpCrudPage = () => {
       }
     }
 
-
+    let finalObj = {
+      date: formHeadInfo['date'],
+      contractObject: formHeadInfo['contractObject'],
+      exercise: formHeadInfo['exercise'],
+      icdArr: formularios
+    }
+    setTimeout(() => {
+      setObjectSendData(finalObj)
+      console.log(formHeadInfo);
+      
+    }, 1000);
   }, [formInfo]);
 
 
 
 
   const handleGuardar = async () => {
-    const data = formularios.map((formulario) => ({
-      proyecto: formulario.proyecto,
-      nombreProyecto: formulario.nombreProyecto,
-      fondo: formulario.fondo,
-      pospre: formulario.pospre,
-      areaFuncional: formulario.areaFuncional,
-      centroGestor: formulario.centroGestor,
-      div: formulario.div,
-      posicion: formulario.posicion,
-      valorInicial: formulario.valorInicial
-    }));
-
-    let prueba = {
-      "date": "2023-10-21",
-      "contractObject": "Este es el Prueba new ",
-      "consecutive": 21,
-      "sapConsecutive": 1,
-      "icdArr": [
-        {
-          "idRppCode": 85,
-          "cdpPosition": 1,
-          "amount": 111111
-        },
-        {
-          "idRppCode": 85,
-          "cdpPosition": 1,
-          "amount": 12211
-        }
-      ]
-    }
-
+    let nuevoObjeto;
+    const onCancelNew = () => {
+      navigate("./");
+    };
     try {
-      const response = await pacService.createCdp_(prueba);
-      console.log(response);
+      const icdArrWithBalanceCheck = objectSendData["icdArr"];
+      const allFieldsComplete = Object.values(objectSendData).every(value => !!value);
+  
+      if (!allFieldsComplete) {
+        const missingFields = Object.keys(objectSendData).filter(key => !objectSendData[key]);
+        setMessage({
+          title: "!Completar datos¡",
+          description: `Por favor complete los siguientes campos: ${missingFields.join(", ")}`,
+          show: true,
+          OkTitle: "Aceptar",
+          onOk: () => {
+            onCancelNew();
+            setMessage({});
+          },
+          background: true,
+        });
+        return;
+      }
+  
+      const invalidBalances = icdArrWithBalanceCheck.filter(
+        (item) => parseInt(item.valorInicial) >= parseInt(item.balance)
+      );
+  
+      if (invalidBalances.length === 0) {
+        const updatedIcdArr = icdArrWithBalanceCheck.map(({ balance, ...rest }) => rest);
+  
+        nuevoObjeto = {
+          ...objectSendData,
+          exercise: objectSendData["exercise"],
+          date: objectSendData["date"] && typeof objectSendData["date"] === "string" ? objectSendData["date"].split("/").join("-") : null,
+          contractObject: objectSendData["contractObject"],
+          consecutive: 10,
+          icdArr: updatedIcdArr.map(({ proyecto, posicion, valorInicial, id, ...rest }) => ({
+            idRppCode: parseInt(proyecto),
+            cdpPosition: parseInt(posicion),
+            amount: parseFloat(valorInicial),
+            ...rest,
+          })),
+        };
+  
+        await new Promise((resolve) => {
+          setObjectSendData(nuevoObjeto);
+          resolve('success');
+        });
+        setMessage({
+          title: "Crear CDP",
+          description: `Recuerda que al aceptar se guardaran los datos en el sistema`,
+          show: true,
+          OkTitle: "Aceptar",
+          onOk: async () => {
+            try {
+              const response = await cdpService.createCdp_(nuevoObjeto);
+              setTimeout(() => {
+                if (response && response['operation']['code'] === "FAIL") {
+                setMessage({
+                  title: "Error al crear CDP",
+                  description: response['operation']['message'],
+                  show: true,
+                  OkTitle: "Aceptar",
+                  onOk: () => {
+                    onCancelNew();
+                    setMessage({});
+                  },
+                  background: true,
+                });
+              } else {
+                setMessage({
+                  title: "Guardado",
+                  description: "Guardado Exitosamente!!",
+                  show: true,
+                  OkTitle: "Aceptar",
+                  onOk: () => {
+                    //onCancelNew();
+                    navigate("./../");
+                    setMessage({});
+                  },
+                  background: true,
+                });
+                setMessage({});
+              }
+                console.log('Response:', );
+              }, 1000);
+              
+            } catch (error) {
+              console.error("Error al enviar los datos:", error);
+            }
+            // onCancelNew();
+            setMessage({});
+          },
+          background: true,
+        });
+        return;
+      }
     } catch (error) {
-      console.error('Error al enviar los datos:', error);
+      console.error("Error al enviar los datos:", error);
     }
   };
 
@@ -89,12 +171,15 @@ const CdpCrudPage = () => {
 
   return (
     <div className='container-principal'>
-   <button onClick={handleAgregarFormulario} className='agregar-ruta'>
-  <div className="button-content">
-    <Icons />
-    <span>Agregar Ruta</span>
-  </div>
-</button>
+      <div className="agregar-ruta-container">
+        <button onClick={handleAgregarFormulario} className='agregar-ruta'>
+          <div className="button-content">
+            <Icons />
+            <span>Agregar Ruta</span>
+          </div>
+        </button>
+      </div>
+      <CdpHeadFormComponent isDisabled={false} setFormHeadInfo={setFormHeadInfo} />
       {[...Array(formCount)].map((_, index) => (
         <FormCreateRutaCDPComponent
           key={index}
