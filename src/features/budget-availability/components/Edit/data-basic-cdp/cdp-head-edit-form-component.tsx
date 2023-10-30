@@ -25,6 +25,9 @@ const CdpEditFormComponent = () => {
   return (
     <div>
       <FormComponent action={onSubmit}>
+        <div className="title-area">
+          <label className="text-black biggest bold">Fechas</label>
+        </div>
         <div className="funcionality-filters-container">
           <DatePickerComponent
             idInput="date"

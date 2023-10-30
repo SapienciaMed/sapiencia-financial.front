@@ -57,6 +57,9 @@ const CdpPage = () => {
         </section>
         <section className="card-user">
           <FormComponent action={onSubmit}>
+            <div className="title-area">
+              <label className="text-black biggest bold">Consultar CDP</label>
+            </div>
             <div className="funcionality-filters-container">
               <Controller
                 control={control}

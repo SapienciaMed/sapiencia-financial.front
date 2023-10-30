@@ -94,6 +94,7 @@ const useEditCdp = () => {
       ),
       background: true,
       onOk: () => {
+        navigate("/gestion-financiera/cdp");
         setMessage({});
       },
     });
