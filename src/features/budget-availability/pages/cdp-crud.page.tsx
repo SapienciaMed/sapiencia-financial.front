@@ -6,6 +6,7 @@ import Icons from '../components/Icons'
 import { useNavigate } from "react-router-dom";
 import { AppContext } from '../../../common/contexts/app.context';
 import CdpHeadFormComponent from '../components/cdp-head-form.component';
+import CdpheadCreate from '../components/cdp-head-create.component';
 const CdpCrudPage = () => {
   const { setMessage } = useContext(AppContext);
   const [formCount, setFormCount] = useState(1);
@@ -179,7 +180,7 @@ const CdpCrudPage = () => {
           </div>
         </button>
       </div>
-      <CdpHeadFormComponent isDisabled={false} setFormHeadInfo={setFormHeadInfo} />
+      <CdpheadCreate isDisabled={false} setFormHeadInfo={setFormHeadInfo} />
       {[...Array(formCount)].map((_, index) => (
         <FormCreateRutaCDPComponent
           key={index}
