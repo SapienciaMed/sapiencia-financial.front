@@ -35,7 +35,8 @@ export function useCdpCrud(cdpId?: string) {
             amounts: [{
                 id: null,
                 reasonCancellation: ''
-            }]
+            }],
+            contractObject:''
         },
         mode: 'onChange',
         resolver,
@@ -131,7 +132,7 @@ export function useCdpCrud(cdpId?: string) {
             renderCell: (row) => {
                 return (
                     <div className="flex align-items-center">
-                        <Checkbox checked={false} onChange={() => showModalCancelAmount(row.id)} />
+                        <Checkbox checked={false} onChange={() => showModalCancelAmount(row.id)} disabled={amountWatch.sapConsecutive>0 ? true : false}/>
                     </div>)
             }
         },
