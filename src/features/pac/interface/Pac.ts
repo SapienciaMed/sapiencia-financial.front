@@ -107,23 +107,23 @@ export interface IDestinity {
 }
 
 export interface IAnnualRoute {
-    id?:         number;
-    pacId?:      number;
-    type:       string;
-    jan:        number;
-    feb:        number;
-    mar:        number;
-    abr:        number;
-    may:        number;
-    jun:        number;
-    jul:        number;
-    ago:        number;
-    sep:        number;
-    oct:        number;
-    nov:        number;
-    dec:        number;
-    dateModify?: null;
-    dateCreate?: null;
+    id?:  number;
+    pacId?: number;
+    type: string;
+    jan:  number;
+    feb:  number;
+    mar:  number;
+    abr:  number;
+    may:  number;
+    jun:  number;
+    jul:  number;
+    ago:  number;
+    sep:  number;
+    oct:  number;
+    nov:  number;
+    dec:  number;
+    dateModify?: string;
+    dateCreate?: string;
     cardId?: string
 }
 
@@ -246,3 +246,24 @@ export interface IResultSearchDinamicPac {
     }
   }
   
+export interface IEditPac  {
+    id?: number,
+    route?: number;
+    pacId?: number;
+    budgetRouteId?: number;
+    type?: string;
+    version?: number;
+    resourceType?: string;
+    pacType?: string;
+
+    idProjectVinculation?: number;
+    idFund?: number;
+    idPospreSapiencia?: number;
+    idBudget?: number;
+
+    budgetSapiencia?: number;
+    totalProgramming?: number;
+    totalCollected?: number;
+    annProgrammingPac?: IAnnualRoute;
+    annCollectyerPac?: IAnnualRoute;
+}

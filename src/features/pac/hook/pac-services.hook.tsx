@@ -1,6 +1,6 @@
 import useCrudService from "../../../common/hooks/crud-service.hook";
 import { ApiResponse } from "../../../common/utils";
-import { IPacComplementary, IPacFilters, IResultSearchDinamicPac } from "../interface/Pac";
+import { IEditPac, IPacComplementary, IPacFilters, IResultSearchDinamicPac } from "../interface/Pac";
 
 export const usePacServices = () => {
     const baseURL: string = process.env.urlApiFinancial;
@@ -27,12 +27,17 @@ export const usePacServices = () => {
         const endpoint: string = `/get-pac-by-id/${id}`;
         return get(`${roleUrl}${endpoint}`);
     }
+    async function EditPac(data: IEditPac): Promise<ApiResponse<any>> {
+        const endpoint: string = `/edit-pac`;
+        return post(`${roleUrl}${endpoint}`, data);
+    }
 
     return{
         GetRoutesByValidity,
         GetUltimateVersion,
         SearchPacs,
-        GetPacById
+        GetPacById,
+        EditPac
     }
 
 }

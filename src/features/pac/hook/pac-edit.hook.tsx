@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form"
-import { IAnnualRoute, IPacEdit } from "../interface/Pac"
+import { IAnnualRoute, IEditPac, IPacEdit } from "../interface/Pac"
 import { useContext, useEffect, useState } from "react"
 import { usePacServices } from "./pac-services.hook"
 import { useNavigate, useParams } from "react-router-dom";
@@ -7,12 +7,13 @@ import { EResponseCodes } from "../../../common/constants/api.enum";
 import { AppContext } from "../../../common/contexts/app.context";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { pacEditValidator } from "../../../common/schemas/pac";
+import { validateTypePac } from "../transferPac/util/validate-type-pac";
 
 export function usePacEdit() {
 
     const navigate = useNavigate();
     const { idPac: id } = useParams();
-    const { setMessage } = useContext(AppContext);
+    const { setMessage, authorization } = useContext(AppContext);
     const resolver = useYupValidationResolver(pacEditValidator);
     const {GetPacById} = usePacServices()
     const {
@@ -272,8 +273,54 @@ export function usePacEdit() {
         december: "Diciembre",
     }]
 
-    const onSubmit = handleSubmit(async (data: any) => {
-        console.log("🚀 ~ file: pac-edit.hook.tsx:268 ~ onSubmit ~ data:", data)
+    const onSubmit = handleSubmit(async (data: IPacEdit) => {
+
+        const transformData: IEditPac = {
+            id: parseInt(id),
+            pacType: validateTypePac( parseInt(data.pacType) ) ,
+            // "budgetRouteId": 123,
+            budgetSapiencia: parseInt(data.budgetSapi),
+            annProgrammingPac: {
+                // id: 0,
+                pacId: parseInt(id),
+                type: "Programado",
+                jan: parseInt(data.programmed.january),
+                feb: parseInt(data.programmed.february),
+                mar: parseInt(data.programmed.march),
+                abr: parseInt(data.programmed.april),
+                may: parseInt(data.programmed.may),
+                jun: parseInt(data.programmed.june),
+                jul: parseInt(data.programmed.july),
+                ago: parseInt(data.programmed.august),
+                sep: parseInt(data.programmed.september),
+                oct: parseInt(data.programmed.october),
+                nov: parseInt(data.programmed.november),
+                dec: parseInt(data.programmed.december),
+                dateModify: new Date(authorization.user.dateModify).toISOString().split('T')[0],
+                dateCreate: new Date(authorization.user.dateCreate).toISOString().split('T')[0]
+            },
+            annCollectyerPac: {
+                // id: 0,
+                pacId: parseInt(id),
+                type: "Recaudado",
+                jan: parseInt(data.collected.january),
+                feb: parseInt(data.collected.february),
+                mar: parseInt(data.collected.march),
+                abr: parseInt(data.collected.april),
+                may: parseInt(data.collected.may),
+                jun: parseInt(data.collected.june),
+                jul: parseInt(data.collected.july),
+                ago: parseInt(data.collected.august),
+                sep: parseInt(data.collected.september),
+                oct: parseInt(data.collected.october),
+                nov: parseInt(data.collected.november),
+                dec: parseInt(data.collected.december),
+                dateModify: new Date(authorization.user.dateModify).toISOString().split('T')[0],
+                dateCreate: new Date(authorization.user.dateCreate).toISOString().split('T')[0]
+            },
+            
+        }
+        console.log("🚀 ~ file: pac-edit.hook.tsx:321 ~ onSubmit ~ transformData:", transformData)
         
         if (watchAll.budgetSapi != watchAll.totalProgrammed) {
             setMessage({
