@@ -173,7 +173,7 @@ function PacCrud() {
         </div>
         <br />
         {
-          isVisibleErrors && dataTableSt.length > 0  &&  errorsSt.length > 0 && (
+          isVisibleErrors && dataTableSt.length > 0 && errorsSt.length > 0 && (
             <div
               className={
                 !isVisibleTable ? "card-user isVisible" : "card-user isNotVisible"
