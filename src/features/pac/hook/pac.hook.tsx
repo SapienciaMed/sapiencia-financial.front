@@ -9,6 +9,7 @@ import { validateTypeResourceServices } from '../transferPac/util';
 import { EResponseCodes } from '../../../common/constants/api.enum';
 import { AppContext } from '../../../common/contexts/app.context';
 import { ITableElement } from '../../../common/interfaces/table.interfaces';
+import DisplayPacPages from '../pages/display-pac.pages';
 export function usePacData() {
 
     const navigate = useNavigate();
@@ -172,7 +173,16 @@ export function usePacData() {
         {
             icon: "Detail",
             onClick: (row) => {
-                
+                setMessage({
+                    title: "Detalle PAC",
+                    show: true,
+                    description: <DisplayPacPages/>,
+                    background: true,
+                    OkTitle: "Cerrar",
+                    onOk: () => {
+                      setMessage({});
+                    },
+                })
             },
         },
         {
