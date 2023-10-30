@@ -3,8 +3,7 @@ import { ICreateTransferPacForm } from '../../../managementCenter/transfer/inter
 import { useContext, useEffect, useState } from 'react';
 import { EResponseCodes } from '../../../../common/constants/api.enum';
 import { AppContext } from '../../../../common/contexts/app.context';
-import { isvalidateTypePac } from '../util/is-validate-type-pac';
-import { calcularTotalOrigenLocation, calculateTotalDestino, calculateTotalDestinoLocation, calculateTotalOrigen, validateTypeResource, validateTypeResourceServices } from '../util';
+import { calcularTotalOrigenLocation, calculateTotalDestino, calculateTotalDestinoLocation, calculateTotalOrigen, isvalidateTypePac, processUseData, validateTypeResource, validateTypeResourceServices } from '../util';
 import useYupValidationResolver from '../../../../common/hooks/form-validator.hook';
 import { validationTransferPac } from '../../../../common/schemas/transfer-schema';
 import { usePacTransfersService } from './pac-transfers-service.hook';
@@ -326,84 +325,8 @@ export function useTransferPacCrudData() {
                 resourceType: validateTypeResourceServices(data.TypeResource)
               },
               transferTransaction: {
-                origins:  nuevoObjeto.origen.map(use => {
-                  const newArray = [];
-                  if (use.hasOwnProperty("collected")) {
-                    newArray.push({
-                      collected: use?.collected
-                    });
-                  }
-                  if (use.hasOwnProperty("programmed")) {
-                    newArray.push({
-                      programmed: use?.programmed
-                    });
-                  }
-                  return {
-                    managementCenter: use.managerCenter,
-                    idProjectVinculation: parseInt(use.projectId),
-                    idBudget: arrayDataSelect?.pospreSapiencia?.find(value => use.pospreSapiencia == value.id)?.idPosPreOrig,
-                    idPospreSapiencia: parseInt(use.pospreSapiencia),
-                    idFund: parseInt(use.fundsSapiencia),
-                    idCardTemplate: use.cardId,
-                    annualRoute:  newArray.filter(obj => {
-                      return Object.values(obj).some(value => {
-                          if (typeof value === 'object') {
-                              return Object.values(value).some(subValue => subValue !== 0);
-                          }
-                          return false;
-                      })
-                    }).map(ob => {
-                      if (ob.hasOwnProperty("collected") && !ob.hasOwnProperty("programmed")) {
-                        return transformData(ob.collected, "Recaudado", authorization);
-                      } else if (ob.hasOwnProperty("programmed") && !ob.hasOwnProperty("collected")) {
-                        return transformData(ob.programmed, "Programado", authorization);
-                      } else if (ob.hasOwnProperty("collected") && ob.hasOwnProperty("programmed")) {
-                        const collectedData = transformData(ob.collected, "Recaudado", authorization);
-                        const programmedData = transformData(ob.programmed, "Programado", authorization);
-                        return [collectedData, programmedData];
-                      }
-                    })
-                  }
-                }),
-                destinities: nuevoObjeto.destino.map(use => {
-                  const newArray = [];
-                  if (use.hasOwnProperty("collected")) {
-                    newArray.push({
-                      collected: use?.collected
-                    });
-                  }
-                  if (use.hasOwnProperty("programmed")) {
-                    newArray.push({
-                      programmed: use?.programmed
-                    });
-                  }
-                  return {
-                    managementCenter: use.managerCenter,
-                    idProjectVinculation: parseInt(use.projectId),
-                    idBudget: arrayDataSelect?.pospreSapiencia?.find(value => use.pospreSapiencia == value.id)?.idPosPreOrig,
-                    idPospreSapiencia: parseInt(use.pospreSapiencia),
-                    idFund: parseInt(use.fundsSapiencia),
-                    idCardTemplate: use.cardId,
-                    annualRoute:  newArray.filter(obj => {
-                      return Object.values(obj).some(value => {
-                          if (typeof value === 'object') {
-                              return Object.values(value).some(subValue => subValue !== 0);
-                          }
-                          return false;
-                      })
-                    }).map(ob => {
-                      if (ob.hasOwnProperty("collected") && !ob.hasOwnProperty("programmed")) {
-                        return transformData(ob.collected, "Recaudado", authorization);
-                      } else if (ob.hasOwnProperty("programmed") && !ob.hasOwnProperty("collected")) {
-                        return transformData(ob.programmed, "Programado", authorization);
-                      } else if (ob.hasOwnProperty("collected") && ob.hasOwnProperty("programmed")) {
-                        const collectedData = transformData(ob.collected, "Recaudado", authorization);
-                        const programmedData = transformData(ob.programmed, "Programado", authorization);
-                        return [collectedData, programmedData];
-                      }
-                    })
-                  }
-                }),
+                origins: nuevoObjeto.origen.map(use => processUseData(use, arrayDataSelect, authorization)),
+                destinities: nuevoObjeto.destino.map(use => processUseData(use, arrayDataSelect, authorization)),
               }
             }
   
