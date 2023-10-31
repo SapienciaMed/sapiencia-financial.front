@@ -11,9 +11,9 @@ import { InputNumberComponent } from "../../../../common/components/Form/input-n
 function TransferPacCrud(): React.JSX.Element {
 
     const { control, arrayDataSelect, errors, pacTypeState, isdataResetState, startIndex, watchAll, itemsPerPage, disableBtnAdd, showSpinner,
-        isBtnDisable, arrayDataSelectHead, annualDataRoutesOriginal, originalDestinationValueOfService, 
+        isBtnDisable, arrayDataSelectHead, annualDataRoutesOriginal, originalDestinationValueOfService,
         setOriginalDestinationValueOfService, register, setValue, onSubmit, onPageChange, getValues, onCancelar, setPacTypeState, setTypeValidityState, 
-        setIsdataResetState, setAnnualDataRoutesOriginal } = useTransferPacCrudData()
+        setIsdataResetState, setAnnualDataRoutesOriginal, addNewObject } = useTransferPacCrudData()
  
     return(
         <div className="crud-page full-height">
@@ -96,6 +96,7 @@ function TransferPacCrud(): React.JSX.Element {
                                         annualDataRoutesOriginal={annualDataRoutesOriginal}
                                         originalDestinationValueOfService={originalDestinationValueOfService}
                                         setOriginalDestinationValueOfService={setOriginalDestinationValueOfService}
+                                        addNewObject={addNewObject}
                                     />
                                 </section>
 
@@ -117,6 +118,7 @@ function TransferPacCrud(): React.JSX.Element {
                                         annualDataRoutesOriginal={annualDataRoutesOriginal}
                                         originalDestinationValueOfService={originalDestinationValueOfService}
                                         setOriginalDestinationValueOfService={setOriginalDestinationValueOfService}
+                                        addNewObject={addNewObject}
                                     />
                                 </section>
 
