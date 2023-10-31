@@ -22,9 +22,10 @@ const CdpEditFormComponent = () => {
     dataEdit,
     setMessage,
     navigate,
+    loading,
   } = useEditCdp();
 
-  if (!dataEdit) {
+  if (loading) {
     return <FaSpinner />;
   }
 
@@ -91,7 +92,7 @@ const CdpEditFormComponent = () => {
           <Controller
             control={control}
             name={"consecutive"}
-            defaultValue={dataEdit.consecutive}
+            defaultValue={dataEdit?.consecutive}
             render={({ field }) => {
               return (
                 <InputComponent
@@ -115,7 +116,7 @@ const CdpEditFormComponent = () => {
           <Controller
             control={control}
             name={"contractObject"}
-            defaultValue={dataEdit.contractObject}
+            defaultValue={dataEdit?.contractObject}
             render={({ field }) => {
               return (
                 <TextAreaComponent
@@ -144,7 +145,7 @@ const CdpEditFormComponent = () => {
           <Controller
             control={control}
             name={"sapConsecutive"}
-            defaultValue={dataEdit.sapConsecutive}
+            defaultValue={dataEdit?.sapConsecutive}
             render={({ field }) => {
               return (
                 <InputComponent
