@@ -12,10 +12,9 @@ export const usePacServices = () => {
         return post(`${roleUrl}${endpoint}`, data);
     }
 
-    async function GetUltimateVersion(): Promise<ApiResponse<any>> {
-        const endpoint: string = "/get-ultimate-version"; 
-        return get(`${roleUrl}${endpoint}`);
-        
+    async function GetUltimateVersion(exercise: object): Promise<ApiResponse<any>> {
+        const endpoint: string = `/get-ultimate-version/`; 
+        return post(`${roleUrl}${endpoint}`, exercise);  
     }
 
     async function SearchPacs(data: IPacFilters):  Promise<ApiResponse<any>> {
