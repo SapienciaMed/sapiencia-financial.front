@@ -311,6 +311,12 @@ function getIconElement(
       ) : (
         <Icons.FaRegistered className="button grid-button button-add" />
       );
+    case "":
+      return element == "name" ? (
+        "LinkMga"
+      ) : (
+        <Icons.FaLink className="button grid-button button-add" />
+      );
     default:
       return "";
   }
