@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { Controller } from "react-hook-form";
-import { DatePickerComponent, InputComponent, SelectComponent, TextAreaComponent } from "../../../common/components/Form";
+import { InputComponent, TextAreaComponent } from "../../../common/components/Form";
 import { useCdpCrud } from "../hooks/use-cdp";
 import { EDirection } from "../../../common/constants/input.enum";
-import { IBudgetAvalaibility } from "../interfaces/budgetAvailabilityInterfaces";
-import DatePickerCdp from './date-picker-cdp';
 import '../../../styles/from-create-cdp.scss';
 
 interface FormHeadInfo {
@@ -27,9 +25,6 @@ function CdpheadCreate(prop: Props) {
         contractObject: '',
     });
     const [exercise, setExercise] = useState(String(new Date().getFullYear()));
-    const [sapConsecutive, setSapConsecutive] = useState('');
-    const [consecutive, setConsecutive] = useState('');
-    const [rpAsociados, setRpAsociados] = useState('');
     const [contractObject, setContractObject] = useState('');
     const [date, setDate] = useState("");
     const [year, setYear] = useState("");
@@ -95,11 +90,10 @@ function CdpheadCreate(prop: Props) {
     }, [exercise, contractObject]);
 
     useEffect(() => {
-        const dateString = document.getElementById("document-date-cdp")['value'];
-        let partsDate = dateString.split("/");
-        setYear(partsDate[2]);
-        setDate(dateString);
-        setMonth(mothsYear[partsDate[1]]);
+        // let partsDate = dateString.split("/");
+        // setYear(partsDate[2]);
+        // setDate(dateString);
+        // setMonth(mothsYear[partsDate[1]]);
     }, []);
 
     return (
@@ -108,13 +102,13 @@ function CdpheadCreate(prop: Props) {
                 <section className='grid-form-3-container-area mt-5px'>
                     <div className="date-picker-container">
                         <label className="date-picker-label text-black weight-500 biggest">Fecha Documento:</label>
-                        <DatePickerCdp
+                        {/* <DatePickerCdp Cambiar por componente comun
                             selected={date}
                             onChange={value => handleInputChange("date", value)}
                             placeholder="DD/MM/YYYY"
                             disabled={isDisabled}
                             id="document-date-cdp"
-                        />
+                        /> */}
                     </div>
                     <Controller
                         control={control}
