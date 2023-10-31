@@ -34,6 +34,7 @@ export function useTransferPacCrudData() {
   const [ annualDataRoutesOriginal, setAnnualDataRoutesOriginal ] = useState([{
     annualRouteService: [] as IAnnualRoute[]
   }])
+  const [ annualDataRoutesBoth, setAnnualDataRoutesBoth ] = useState<IAnnualRoute[]>([])
 
   const itemsPerPage = 2;
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -130,6 +131,8 @@ export function useTransferPacCrudData() {
         reset()
         setShowSpinner(false)
         setDisableBtnAdd(true)
+        setOriginalDestinationValueOfService([])
+        setAnnualDataRoutesBoth([])
       } else {
         setPacTypeState2(pacTypeState);
       }
@@ -262,7 +265,7 @@ export function useTransferPacCrudData() {
         if (obj[key] === '' || obj[key] === undefined || obj[key] === null) {
           delete obj[key];
         } else if (typeof obj[key] === 'object') {
-          removeEmptyFields(obj[key]); // Recursivamente llamamos la función para objetos anidados
+          removeEmptyFields(obj[key]);
         }
       }
       return obj;
@@ -295,29 +298,6 @@ export function useTransferPacCrudData() {
             setMessage({});
           },
           onOk: () => {
-  
-            const transformData = (ob, type, authorization) => {
-              return {
-                type,
-                jan: ob?.january,
-                feb: ob?.february,
-                mar: ob?.march,
-                abr: ob?.april,
-                may: ob?.may,
-                jun: ob?.june,
-                jul: ob?.july,
-                ago: ob?.august,
-                sep: ob?.september,
-                oct: ob?.october,
-                nov: ob?.november,
-                dec: ob?.december,
-                id: ob?.id,
-                pacId: ob?.pacId,
-                dateModify: new Date(authorization.user.dateModify).toISOString().split('T')[0],
-                dateCreate: new Date(authorization.user.dateCreate).toISOString().split('T')[0]
-              };
-            };
-  
             const dataTransferpac = {
               headTransfer: {
                 pacType: validateTypePac(data.pacType),
@@ -325,49 +305,54 @@ export function useTransferPacCrudData() {
                 resourceType: validateTypeResourceServices(data.TypeResource)
               },
               transferTransaction: {
-                origins: nuevoObjeto.origen.map(use => processUseData(use, arrayDataSelect, authorization)),
-                destinities: nuevoObjeto.destino.map(use => processUseData(use, arrayDataSelect, authorization)),
+                origins: nuevoObjeto.origen.map(use => processUseData(use, arrayDataSelect, authorization, annualDataRoutesBoth, nuevoObjeto.origen)),
+                destinities: nuevoObjeto.destino.map(use => processUseData(use, arrayDataSelect, authorization, annualDataRoutesBoth, nuevoObjeto.destino)),
               }
             }
+            console.log("🚀 ~ file: transfer-pac-crud.hook.tsx:312 ~ onSubmit ~ dataTransferpac:", dataTransferpac)
+
+            // dataTransferpac && TransfersOnPac(dataTransferpac).then(response => {
+            //   if (response.operation.code === EResponseCodes.OK) {
+            //     setMessage({
+            //         title: "Confirmación",
+            //         description: "¡Guardado exitosamente!",
+            //         show: true,
+            //         OkTitle: "Aceptar",
+            //         onOk: () => {
+            //           setMessage({});
+            //           setIsdataResetState(true)
+            //           setDisableBtnAdd(true)
+            //           reset()
+            //           setOriginalDestinationValueOfService([])
+            //           navigate(-1)
+            //         },
+            //         background: true,
+            //         onClose: () => {
+            //           setMessage({});
+            //           setIsdataResetState(true)
+            //           setDisableBtnAdd(true)
+            //           reset()
+            //           setOriginalDestinationValueOfService([])
+            //           navigate(-1)
+            //         },
+            //     });
+            // } else {
+            //     setMessage({
+            //         title: "Validación de datos",
+            //         description: response.operation.message,
+            //         show: true,
+            //         OkTitle: "Aceptar",
+            //         onOk: () => {
+            //           setMessage({});
+            //         },
+            //         background: true,
+            //         onClose: () => {
+            //           setMessage({});
+            //         },
+            //     });
+            // }
   
-            dataTransferpac && TransfersOnPac(dataTransferpac).then(response => {
-              if (response.operation.code === EResponseCodes.OK) {
-                setMessage({
-                    title: "Confirmación",
-                    description: "¡Guardado exitosamente!",
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                      setMessage({});
-                      setIsdataResetState(true)
-                      setDisableBtnAdd(true)
-                      reset()
-                    },
-                    background: true,
-                    onClose: () => {
-                      setMessage({});
-                      setIsdataResetState(true)
-                      setDisableBtnAdd(true)
-                      reset()
-                    },
-                });
-            } else {
-                setMessage({
-                    title: "Validación de datos",
-                    description: response.operation.message,
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                      setMessage({});
-                    },
-                    background: true,
-                    onClose: () => {
-                      setMessage({});
-                    },
-                });
-            }
-  
-            })
+            // })
           },
           background: true,
       });
@@ -413,6 +398,12 @@ export function useTransferPacCrudData() {
 
     setIsActivityAdd(isValid);
   }
+
+  const addNewObject = (newObj: IAnnualRoute[]) => {
+    setAnnualDataRoutesBoth(
+      (prevData) => [...prevData, ...newObj]
+    );
+  };
   
   return{
     control,
@@ -441,6 +432,7 @@ export function useTransferPacCrudData() {
     setTypeValidityState,
     setIsdataResetState,
     setAnnualDataRoutesOriginal,
+    addNewObject
   }
 }
 

@@ -25,10 +25,11 @@ export interface ICreateFundTransferPac {
   }[],
   originalDestinationValueOfService: {
     annualRouteService: IAnnualRoute[];
-  }[]
+  }[],
   setOriginalDestinationValueOfService: React.Dispatch<React.SetStateAction<{
     annualRouteService: IAnnualRoute[];
-  }[]>>
+  }[]>>,
+  addNewObject: (value: any) => void,
 }
 
 export interface IArrayDataSelectHead {

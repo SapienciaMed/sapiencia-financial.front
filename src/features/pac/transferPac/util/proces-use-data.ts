@@ -1,37 +1,44 @@
-export function processUseData(use, arrayDataSelect, authorization) {
+import { IAuthorization } from "../../../../common/interfaces/auth.interfaces";
+import { IAnnualRoute } from "../../interface/Pac";
+import { IArrayDataSelectPac } from "../interfaces/TypeTransferPac";
+
+export function processUseData(use, arrayDataSelect: IArrayDataSelectPac, authorization: IAuthorization, annualDataRoutesBot: IAnnualRoute[], cardId: any) {
     const newArray = [];
-    if (use.hasOwnProperty("collected")) {
+
+    if (use.hasOwnProperty("collected") && !use.hasOwnProperty("programmed")) {
       newArray.push({
         collected: use?.collected
       });
     }
-    if (use.hasOwnProperty("programmed")) {
+    if (use.hasOwnProperty("programmed") && !use.hasOwnProperty("collected")) {
       newArray.push({
         programmed: use?.programmed
       });
     }
+
+    if (use.hasOwnProperty("programmed") && use.hasOwnProperty("collected")) {
+      newArray.push({
+        collected: use?.collected,
+        programmed: use?.programmed
+      });
+    }
   
-    const annualRoute = newArray
-      .filter(obj => Object.values(obj).some(value => {
-        if (typeof value === 'object') {
-          return Object.values(value).some(subValue => subValue !== 0);
-        }
-        return false;
-      }))
-      .map(ob => {
-        if (ob.hasOwnProperty("collected") && !ob.hasOwnProperty("programmed")) {
+    const annualRoute = newArray.map(ob => {
+        if (Object.keys(ob.programmed).length == 0 && Object.keys(ob.collected).length > 0) {
           return [
-            transformData(ob.collected, "Recaudado", authorization),
-            transformData(ob.collected, "Programado", authorization)
+            transformData(ob.collected, "Recaudado", authorization, annualDataRoutesBot, cardId),
+            transformData(ob.collected, "Programado", authorization, annualDataRoutesBot, cardId)
           ];
-        } else if (ob.hasOwnProperty("programmed") && !ob.hasOwnProperty("collected")) {
+        } 
+        if (Object.keys(ob.programmed).length > 0 && Object.keys(ob.collected).length == 0) {
           return [
-            transformData(ob.programmed, "Recaudado", authorization),
-            transformData(ob.programmed, "Programado", authorization)
+            transformData(ob.programmed, "Recaudado", authorization, annualDataRoutesBot, cardId),
+            transformData(ob.programmed, "Programado", authorization, annualDataRoutesBot, cardId)
           ];
-        } else if (ob.hasOwnProperty("collected") && ob.hasOwnProperty("programmed")) {
-          const collectedData = transformData(ob.collected, "Recaudado", authorization);
-          const programmedData = transformData(ob.programmed, "Programado", authorization);
+        } 
+        if(Object.keys(ob.programmed).length > 0 && Object.keys(ob.collected).length > 0)  {
+          const collectedData = transformData(ob.collected, "Recaudado", authorization, annualDataRoutesBot, cardId);
+          const programmedData = transformData(ob.programmed, "Programado", authorization, annualDataRoutesBot, cardId);
           return [collectedData, programmedData];
         }
       });
@@ -47,25 +54,24 @@ export function processUseData(use, arrayDataSelect, authorization) {
     };
 }
   
-
-const transformData = (ob, type, authorization) => {
-    return {
-        type,
-        jan: ob?.january,
-        feb: ob?.february,
-        mar: ob?.march,
-        abr: ob?.april,
-        may: ob?.may,
-        jun: ob?.june,
-        jul: ob?.july,
-        ago: ob?.august,
-        sep: ob?.september,
-        oct: ob?.october,
-        nov: ob?.november,
-        dec: ob?.december,
-        id: ob?.id,
-        pacId: ob?.pacId,
-        dateModify: new Date(authorization.user.dateModify).toISOString().split('T')[0],
-        dateCreate: new Date(authorization.user.dateCreate).toISOString().split('T')[0]
-    };
+const transformData = (ob, type: string, authorization: IAuthorization, annualDataRoutesBot: IAnnualRoute[], cardId: any) => {
+  return {
+    type,
+    jan: ob?.january,
+    feb: ob?.february,
+    mar: ob?.march,
+    abr: ob?.april,
+    may: ob?.may,
+    jun: ob?.june,
+    jul: ob?.july,
+    ago: ob?.august,
+    sep: ob?.september,
+    oct: ob?.october,
+    nov: ob?.november,
+    dec: ob?.december,
+    id: annualDataRoutesBot.find(us => us.cardId == cardId[0].cardId && us.type == type)?.id,
+    pacId: ob?.pacId,
+    dateModify: new Date(authorization.user.dateModify).toISOString().split('T')[0],
+    dateCreate: new Date(authorization.user.dateCreate).toISOString().split('T')[0]
+  };
 };
