@@ -20,10 +20,10 @@ export const pacCrudValidator = yup.object({
         }),
      typePac: yup
         .string()
-        .required("Completa la información"),
+        .required("Este campo es obligatorio"),
     typeSource: yup
         .string()
-        .required("Completa la información"),
+        .required("Este campo es obligatorio"),
     /* file: yup
         .string()
         .required("Completa la información"), */
@@ -65,4 +65,14 @@ export const pacSearch =  yup.object({
     // idPospreSapiencia: yup
     //     .string()
     //     .required("Este campo es obligatorio"),
+})
+
+export const pacEditValidator = yup.object({
+    pacType: yup
+        .string()
+        .required("Este campo es obligatorio"),
+    budgetSapi: yup
+        .string()
+        .matches(/^[0-9]+$/, "Solo se permiten numeros")
+        .required("Este campo es obligatorio")
 })

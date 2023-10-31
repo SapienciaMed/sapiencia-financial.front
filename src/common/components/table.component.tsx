@@ -39,6 +39,7 @@ interface IProps<T> {
   isShowModal: boolean;
   titleMessageModalNoResult?: string;
   classSizeTable?: "size-table-wd-150";
+  isDisabled?: boolean;
 }
 
 interface IRef {
@@ -56,6 +57,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
     isShowModal,
     emptyMessage = "No hay resultados.",
     classSizeTable,
+    isDisabled,
   } = props;
 
   // States
@@ -95,6 +97,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
       setResultData(res.data);
 
       if (res.data.array.length <= 0 && isShowModal) {
+        EmptyData();
         setMessage({
           title: `${titleMessageModalNoResult || ""}`,
           show: true,
@@ -104,6 +107,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
         });
       }
     } else {
+      EmptyData();
       setMessage({
         title: `Error en la consulta de datos`,
         show: true,
@@ -163,8 +167,11 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
           </section>
           <section className="section-action">
             {actions?.map((action) => (
-              <div key={action.icon} onClick={() => action.onClick(item)}>
-                {getIconElement(action.icon, "src")}
+              <div
+                key={action.icon}
+                onClick={() => !isDisabled && action.onClick(item)}
+              >
+                {getIconElement(action.icon, "src", isDisabled)}
               </div>
             ))}
           </section>
@@ -229,7 +236,13 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
                   <div className="spc-header-title">Acciones</div>
                 </div>
               }
-              body={(row) => <ActionComponent row={row} actions={actions} />}
+              body={(row) => (
+                <ActionComponent
+                  row={row}
+                  actions={actions}
+                  isDisabled={isDisabled}
+                />
+              )}
             />
           )}
         </DataTable>
@@ -254,7 +267,11 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
 });
 
 // Metodo que retorna el icono o nombre de la accion
-function getIconElement(icon: string, element: "name" | "src") {
+function getIconElement(
+  icon: string,
+  element: "name" | "src",
+  isDisabled: boolean
+) {
   switch (icon) {
     case "Detail":
       return element == "name" ? (
@@ -266,7 +283,11 @@ function getIconElement(icon: string, element: "name" | "src") {
       return element == "name" ? (
         "Editar"
       ) : (
-        <Icons.FaPencilAlt className="button grid-button button-edit" />
+        <Icons.FaPencilAlt
+          className={`button grid-button button-edit ${
+            isDisabled && "disable"
+          }`}
+        />
       );
     case "Delete":
       return element == "name" ? (
@@ -393,12 +414,16 @@ export const paginatorFooter: PaginatorTemplateOptions = {
 const ActionComponent = (props: {
   row: any;
   actions: ITableAction<any>[];
+  isDisabled: boolean;
 }): React.JSX.Element => {
   return (
     <div className="spc-table-action-button">
       {props.actions.map((action) => (
-        <div key={action.icon} onClick={() => action.onClick(props.row)}>
-          {getIconElement(action.icon, "src")}
+        <div
+          key={action.icon}
+          onClick={() => !props?.isDisabled && action.onClick(props.row)}
+        >
+          {getIconElement(action.icon, "src", props.isDisabled)}
         </div>
       ))}
     </div>

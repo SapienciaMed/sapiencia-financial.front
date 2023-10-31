@@ -1,16 +1,20 @@
-
 import React, { useEffect, useState } from 'react'
 import { BiPlusCircle } from 'react-icons/bi'
 import { FaRegCopy } from 'react-icons/fa'
-import { UseFormGetValues, useFieldArray, useFormState, useWatch, Control, UseFormRegister } from 'react-hook-form';
-import { Detail, IAdditionsForm } from '../interfaces/Additions';
-import { IArrayDataSelect, IMessage } from '../../../common/interfaces/global.interface';
-import { AddValidHeaders } from '../../../common/constants/doc.enum';
-import ScreenAddIncomePage from '../pages/screen-add-income.page';
+import { useFieldArray, useFormState, useWatch, Control, UseFormGetValues, UseFormRegister } from 'react-hook-form';
 import { Paginator } from 'primereact/paginator';
 import { paginatorFooter } from '../../../common/components/table.component';
+import ScreenAddIncome from '../pages/screen-add-income.page';
+import { IArrayDataSelect, IMessage } from '../../../common/interfaces/global.interface';
+import { AddValidHeaders } from '../../../common/constants/doc.enum';
+import { Detail, IAdditionsForm, IData } from '../interfaces/Additions';
 import { generarIdAleatorio } from '../../../common/utils/randomGenerate';
 import { useAdditionAreaEdit } from '../hook/addition-area-edit.hook';
+import { useNavigate, useParams } from 'react-router-dom';
+import { EResponseCodes } from '../../../common/constants/api.enum';
+import { useAdditionsTransfersService } from '../hook/additions-transfers-service.hook';
+
+import { useRef } from 'react';
 
 interface IAppProps {
     titleAdd: "ingreso" | "gasto",
@@ -21,19 +25,17 @@ interface IAppProps {
     register: UseFormRegister<IAdditionsForm>,
     invalidCardsAdditionSt: any;
     setValue: any;
-    watch: any;
-    detail?: boolean;
+    watch: any;  
 }
 
-function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSelect, showModal, register, invalidCardsAdditionSt, setValue, watch, detail }: IAppProps) {
-
-    const { aditionData } = useAdditionAreaEdit();
-    console.log('detalle gasto ', detail)
+function AreaCreateCdp({ titleAdd, controlRegister, arrayDataSelect, getValues, showModal, register, invalidCardsAdditionSt, setValue, watch }: IAppProps) {
+    const [isLoading, setIsLoading] = useState(true);  
+    const { aditionData } = useAdditionAreaEdit()   
 
     useEffect(() => {
-        if (aditionData) {
+        if (aditionData) {            
             aditionData.details.forEach((item: Detail) => {
-                if (item.type == "Gasto") {
+                if (item.type == "Ingreso") {
                     append({
                         managerCenter: item.budgetRoute.managementCenter,
                         projectId: item.budgetRoute.projectVinculation.id,
@@ -42,29 +44,28 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
                         funds: item.budgetRoute.fund.id,
                         posPre: item.budgetRoute.pospreSapiencia.id,
                         value: item.value,
-                        cardId: generarIdAleatorio(20)
+                        cardId: generarIdAleatorio(20) 
                     });
-                }
-            });
+                }                
+            });           
         }
     }, [aditionData]);
-
-
 
     const [isSearchByName, setIsSearchByName] = useState(false)
 
     const { fields, append, remove } = useFieldArray({
         control: controlRegister,
-        name: 'gasto'
+        name: 'ingreso'
     });
+   
 
     const { errors, isValid, dirtyFields } = useFormState({
-        control: controlRegister
+        control: controlRegister,
     })
 
     const watchIncome = useWatch({
         control: controlRegister,
-        name: 'gasto'
+        name: 'ingreso'
     })
 
     const [dataPaste, setDataPaste] = useState([])
@@ -87,7 +88,6 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
         let rawRows = pastedInput.split("\n");
         let headersArray = rawRows[0].split("\t");
         let output = [];
-
         (headersArray.every(value => AddValidHeaders.includes(value)) && headersArray.length == AddValidHeaders.length) ?
             rawRows.forEach((rawRow, idx) => {
                 if (rawRow != '') {
@@ -118,18 +118,16 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
 
                 return ({
                     isPaste: true,
-                    cardId: generarIdAleatorio(10),
+                    cardId: generarIdAleatorio(20),
                     managerCenter: item.CENTROGESTOR,
                     projectId: (arrayDataSelect.functionalArea.find(e => e.name == item.PROYECTO)).id,
-                    functionalArea: Object(arrayDataSelect.functionalArea.filter(e => e.value != null).find((e: any) => e.area[0].name == item.ÁREAFUNCIONAL)).area[0].id,
-                    funds: (arrayDataSelect.funds.find(e => e.name == item.FONDO)).id,
-                    posPre: (arrayDataSelect.posPre.find(e => e.name == item.POSPRE)).id,
+                    functionalArea: arrayDataSelect.functionalArea.filter(e => e.value != null && e.name == item.PROYECTO ).find(objeto => objeto.area.some(area => area.name == item.ÁREAFUNCIONAL))?.id,
+                    funds: (arrayDataSelect.funds.filter(e => e.value != null).find(e => e.name == item.FONDO)).id,
+                    posPre: (arrayDataSelect.posPre.filter(e => e.value != null).find(e => e.name == item.POSPRE))?.id,
                     value: item.VALOR.replaceAll('.', ''),
                     projectName: item.NOMBREPROYECTO
                 })
             }))
-
-
         } catch (error) {
             showModal({
                 title: "Validación de datos",
@@ -139,18 +137,18 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
             })
         }
 
-
     }
+
+
 
     const onPageChange = event => {
         setCurrentPage(event.page + 1);
     };
 
     const calculateTotal = () => {
-        const values = getValues('gasto');
+        const values = getValues('ingreso');
         const total = values?.reduce((acc, curr) => {
-            //const value = parseFloat(curr.value.replace(/\./g, '').replace(/,/g, '.'));
-            const value = parseFloat(curr.value)
+            const value = parseFloat(curr.value);
             return acc + (isNaN(value) ? 0 : value);
         }, 0);
         return total;
@@ -161,54 +159,52 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
     };
 
     useEffect(() => {
-        if (dataPaste.length > 0) {
-            append(dataPaste);
-        }
+
+        dataPaste.length > 0 && append(dataPaste)
     }, [dataPaste])
 
     useEffect(() => {
-        errors?.gasto?.message == 'datos duplicados en el sistema' && showModal({
+
+        errors?.ingreso?.message == 'datos duplicados en el sistema' && showModal({
             title: 'Validación de datos',
-            description: errors?.gasto?.message,
+            description: errors?.ingreso?.message,
             show: true,
             OkTitle: 'Aceptar',
         });
-    }, [errors?.gasto?.message, isValid, dirtyFields])
-
+    }, [errors?.ingreso?.message, isValid, dirtyFields])
 
     return (
         <div className="card-user mt-14px">
             <div className="title-area">
                 <label className="text-black biggest"> Lista de {titleAdd} </label>
-                {
-                    !detail &&
-                    
-                    <div className='display-justify-flex-center-adicion p-rating'>
-                        <div className="title-button text-three large" id='pages' onClick={onPaste}> Pegar <FaRegCopy /> </div>
-                        <div className="title-button text-three large"
-                            onClick={() => {
-                                append({
-                                    managerCenter: '',
-                                    projectId: '',
-                                    projectName: '',
-                                    functionalArea: '',
-                                    funds: '',
-                                    posPre: '',
-                                    value: '',
-                                    cardId: ''
-                                }); setIsSearchByName(false)
-                            }}
-                        > Añadir {titleAdd} <BiPlusCircle /> </div>
-                    </div>
-                }
+                <div className='display-justify-flex-center-adicion p-rating'>
+                    <div className="title-button text-three large" id='pages' onClick={onPaste}> Pegar <FaRegCopy /> </div>
+                    <div className="title-button text-three large"
+                        onClick={() => {
+                            append({
+                                managerCenter: '',
+                                projectId: '',
+                                projectName: '',
+                                functionalArea: '',
+                                funds: '',
+                                posPre: '',
+                                value: '',
+                                cardId: ''
+                            })
+                        }}
+                    > Añadir {titleAdd} <BiPlusCircle /> </div>
+                </div>
             </div>
             {
-                visibleFields.map((field, index) => (
-                    <div key={field.id}>
-                        <ScreenAddIncomePage controlRegister={controlRegister} titleAdd={titleAdd} fields={fields} arrayDataSelect={arrayDataSelect} detail={detail}
-                            remove={remove} count={startIndex + index} errors={errors} register={register} cardId={field.id} invalidCardsAdditionSt={invalidCardsAdditionSt} setValue={setValue} watch={watch} />
-                    </div>
-                ))
+                
+                visibleFields.map((field, index) => {
+                    return (
+                        <div key={field.id}>
+                            <ScreenAddIncome controlRegister={controlRegister} titleAdd={titleAdd} fields={fields} arrayDataSelect={arrayDataSelect}
+                                remove={remove} count={startIndex + index} errors={errors} register={register} cardId={field.id} invalidCardsAdditionSt={invalidCardsAdditionSt} setValue={setValue} watch={watch} />
+                        </div>
+                    )
+                })
             }
             {
                 fields.length >= 6 &&
@@ -224,12 +220,13 @@ function AreaCreateExpense({ titleAdd, controlRegister, getValues, arrayDataSele
                 </div>
             }
             {
+
                 watchIncome.some(use => use.value != '') &&
-                <label className="text-black biggest ml-16px mt-14px"> Total gastos: $  {formatMoney(calculateTotal())} </label>
+                <label className="text-black biggest ml-16px mt-14px"> Total ingresos: $  {formatMoney(calculateTotal())} </label>
 
             }
         </div>
     )
 }
 
-export default React.memo(AreaCreateExpense);
+export default React.memo(AreaCreateCdp);

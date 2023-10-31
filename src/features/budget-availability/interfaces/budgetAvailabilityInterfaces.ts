@@ -27,6 +27,7 @@ export interface IBudgetAvalaibility {
   contractObject: string;
   consecutive: number;
   sapConsecutive: number;
+  rpAssoc?:string;
   amounts: IAmounts[];
 }
 

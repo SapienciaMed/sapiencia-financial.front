@@ -1,16 +1,13 @@
-import { useEffect, useState } from "react";
 import TableDataPropComponent from "../../../common/components/tableDataProp.component";
-import { useWidth } from "../../../common/hooks/use-width";
 import CdpHeadFormComponent from "../components/cdp-head-form.component";
 import { useCdpCrud } from "../hooks/use-cdp";
-import { IBudgetAvalaibility } from "../interfaces/budgetAvailabilityInterfaces";
+import { useParams } from "react-router-dom";
 
 
 const CdpViewPage = () => {
-    const { width } = useWidth();
-    const { control, register, tableComponentRef, tableColumns,tableActions, cdpFoundSt } = useCdpCrud();
+    const { id: cdpId } = useParams();
+    const { tableComponentRef, tableColumns,tableActions, cdpFoundSt } = useCdpCrud(cdpId);
 
-    
     return (
         <div className="main-page">
             <div className="card-table gap-0">
@@ -18,12 +15,11 @@ const CdpViewPage = () => {
                     <div className="text-black weight-500 extra-large">Visualizar CDP</div>
                 </section>
                 <section className="card-user">
-                    <CdpHeadFormComponent isDisabled={true} detail={cdpFoundSt} />
+                    <CdpHeadFormComponent isDisabled={true} cdpId={cdpId}/>
                 </section>
             </div>
             <br />
             <div className="card-table gap-0">
-
                 <TableDataPropComponent
                     ref={tableComponentRef}
                     dataTable={Object(cdpFoundSt).amounts}
