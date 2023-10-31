@@ -44,9 +44,9 @@ export const useSearchCdp = () => {
     {
       fieldName: "date",
       header: "Fecha documento",
-      renderCell: (row) => {
-        return <>{DateTime.fromISO(row.date).toLocaleString()}</>;
-      },
+      // renderCell: (row) => {
+      //   return <>{DateTime.(row.date).toLocaleString()}</>;
+      // },
     },
     {
       fieldName: "countRpp",

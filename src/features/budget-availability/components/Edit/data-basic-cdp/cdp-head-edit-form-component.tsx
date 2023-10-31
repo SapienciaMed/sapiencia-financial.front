@@ -10,6 +10,7 @@ import {
 import { Controller } from "react-hook-form";
 import { EDirection } from "../../../../../common/constants/input.enum";
 import { monthNames } from "../../../constants";
+import { FaSpinner } from "react-icons/fa";
 
 const CdpEditFormComponent = () => {
   const {
@@ -22,6 +23,11 @@ const CdpEditFormComponent = () => {
     setMessage,
     navigate,
   } = useEditCdp();
+
+  if (!dataEdit) {
+    return <FaSpinner />;
+  }
+
   return (
     <div>
       <FormComponent action={onSubmit}>
@@ -63,7 +69,7 @@ const CdpEditFormComponent = () => {
           <Controller
             control={control}
             name={"monthExercise"}
-            defaultValue={monthNames[new Date(dataEdit.date).getMonth()]}
+            defaultValue={monthNames[new Date(dataEdit?.date).getMonth()]}
             render={({ field }) => {
               return (
                 <InputComponent
@@ -138,7 +144,7 @@ const CdpEditFormComponent = () => {
           <Controller
             control={control}
             name={"sapConsecutive"}
-            defaultValue={dataEdit.consecutiveSap}
+            defaultValue={dataEdit.sapConsecutive}
             render={({ field }) => {
               return (
                 <InputComponent

@@ -31,9 +31,8 @@ const useEditCdp = () => {
   });
   const { getCdpById } = useCdpService();
   const { id } = useParams();
-  const [dataEdit, setDataEdit] = useState<
-    IBudgetAvalaibilityDataBasicOriginalDataEdit | any
-  >({});
+  const [dataEdit, setDataEdit] =
+    useState<IBudgetAvalaibilityDataBasicOriginalDataEdit>();
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(true);
   const inputValue = watch(["date", "contractObject", "sapConsecutive"]);
 
@@ -67,12 +66,14 @@ const useEditCdp = () => {
   }, []);
 
   useEffect(() => {
+    
     const getDataCdp = async () => {
+
       setValueRegister("id", Object(dataEdit).id);
       setValueRegister("exercise", Object(dataEdit).exercise);
       setValueRegister("consecutive", Object(dataEdit).consecutive);
       setValueRegister("sapConsecutive", Object(dataEdit).sapConsecutive);
-      setValueRegister("date", Object(dataEdit).date);
+      setValueRegister("date", new Date(dataEdit.date).toString());
       setValueRegister("contractObject", Object(dataEdit).contractObject);
       setValueRegister(
         "monthExercise",
