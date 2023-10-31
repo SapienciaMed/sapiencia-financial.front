@@ -111,15 +111,15 @@ export function useCdpCrud(cdpId?: string) {
             header: "Posición"
         },
         {
-            fieldName: "budgetRoute.projectVinculation.",
+            fieldName: "projectName",
             header: "Proyecto",
         },
         {
-            fieldName: "budgetRoute.fund.number",
+            fieldName: "fundCode",
             header: "Fondo",
         },
         {
-            fieldName: "budgetRoute.pospreSapiencia.number",
+            fieldName: "pospreSapienciaCode",
             header: "Pospre",
         },
         {
@@ -141,7 +141,7 @@ export function useCdpCrud(cdpId?: string) {
 
     const tableActions: ITableAction<any>[] = [
         {
-            icon: "Detail",
+            icon: "Link",
             onClick: (row) => {
                 navigate(`./mga-assoc/${row.id}`);
                 /* const rows = [
