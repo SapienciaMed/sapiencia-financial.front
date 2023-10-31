@@ -52,7 +52,11 @@ export const useSearchCdp = () => {
       fieldName: "countRpp",
       header: "No. de rutas del CDP",
       renderCell: (row) => {
-        return <>{row.amounts.length}</>;
+        const activeAmounts = row.amounts.filter((amount) => {
+          return amount.isActive === 1;
+        });
+
+        return <>{activeAmounts.length}</>;
       },
     },
     {
