@@ -30,6 +30,8 @@ const CdpPage = () => {
     tableColumnsCdp,
     navigate,
     arraySelect,
+    initialDate,
+    endDate,
   } = useSearchCdp();
 
   return (
@@ -55,6 +57,9 @@ const CdpPage = () => {
         </section>
         <section className="card-user">
           <FormComponent action={onSubmit}>
+            <div className="title-area">
+              <label className="text-black biggest bold">Consultar CDP</label>
+            </div>
             <div className="funcionality-filters-container">
               <Controller
                 control={control}
@@ -124,7 +129,7 @@ const CdpPage = () => {
                 control={control}
                 className="select-basic"
                 label="Proyecto"
-                classNameLabel="text-black weight-500 big"
+                classNameLabel="text-black weight-500 biggest"
                 placeholder={"Seleccionar"}
                 data={arraySelect?.projectId}
                 direction={EDirection.column}
@@ -137,7 +142,7 @@ const CdpPage = () => {
                 control={control}
                 label="Fondo"
                 className="select-basic"
-                classNameLabel="text-black weight-500 big"
+                classNameLabel="text-black weight-500 biggest"
                 placeholder={"Seleccionar"}
                 data={arraySelect?.fundId}
                 direction={EDirection.column}
@@ -150,7 +155,7 @@ const CdpPage = () => {
                 control={control}
                 label="Pospre"
                 className="select-basic"
-                classNameLabel="text-black weight-500 big"
+                classNameLabel="text-black weight-500 biggest"
                 placeholder={"Seleccionar"}
                 filter={true}
                 isValidateName={false}
@@ -169,6 +174,7 @@ const CdpPage = () => {
                 className="dataPicker-basic"
                 placeholder="DD/MM/YYYY"
                 dateFormat="dd/mm/yy"
+                maxDate={new Date(endDate)}
               />
               <DatePickerComponent
                 idInput="endDate"
@@ -179,6 +185,7 @@ const CdpPage = () => {
                 className="dataPicker-basic"
                 placeholder="DD/MM/YYYY"
                 dateFormat="dd/mm/yy"
+                minDate={new Date(initialDate)}
               />
             </div>
             <div className="funcionality-filters-container">

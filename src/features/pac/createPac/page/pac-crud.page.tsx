@@ -28,13 +28,14 @@ function PacCrud() {
   const [file, setfile] = useState<File>(null);
   const [isVisibleErrors, setIsVisibleErrors] = useState(false)
   const [isUploadFileSt, setIsUploadFileSt] = useState(false)
+  const [errorsSt, setErrorsSt] = useState([])
 
   const getFile = (file: File) => {
     setfile(file)
     return file;
   }
 
-  const prueba = (file: any) => {
+  const uploadFileFn = (file: any) => {
     if (file.name) {
       setIsUploadFileSt(true)
     } else {
@@ -46,8 +47,15 @@ function PacCrud() {
   const [dataTableSt, setDataTableSt] = useState<any>()
 
   useEffect(() => {
+    errorsPac.sort((a, b) => a.rowError - b.rowError);
     setDataTableSt(errorsPac)
+    setErrorsSt(errorsPac)
   }, [errorsPac])
+
+  useEffect(() => {
+    setErrorsSt([])
+    setIsVisibleErrors(false)
+  }, [file])
 
 
   return (
@@ -119,7 +127,7 @@ function PacCrud() {
                 </div>
 
                 {
-                  errorsPac?.length > 0 && (
+                  errorsSt.length > 0 && (
                     <ButtonComponent
                       className="button-clean-fields button-border"
                       value="Validación"
@@ -148,7 +156,7 @@ function PacCrud() {
                     <>
                       <UploadComponent
                         id={field.name}
-                        dataArchivo={(e: File) => { field.onChange(getFile(e)); prueba(e) }}
+                        dataArchivo={(e: File) => { field.onChange(getFile(e)); uploadFileFn(e); }}
                         showModal={(e: boolean) => field.onChange(setVisible(e))}
                       />
                     </>
@@ -164,24 +172,22 @@ function PacCrud() {
           </FormComponent>
         </div>
         <br />
-
         {
-          isVisibleErrors && dataTableSt.length>0 && (
+          isVisibleErrors && dataTableSt.length > 0 && errorsSt.length > 0 && (
             <div
               className={
                 !isVisibleTable ? "card-user isVisible" : "card-user isNotVisible"
               }
             >
-
-              <TableDataPropComponent
-                ref={tableComponentRef}
-                dataTable={dataTableSt}
-                columns={tableColumns}
-                isShowModal={false}
-                titleMessageModalNoResult={"No se encontraron registros"}
-                secondaryTitle="Validaciones"
-              />
-
+                  <TableDataPropComponent
+                    ref={tableComponentRef}
+                    dataTable={dataTableSt}
+                    columns={tableColumns}
+                    isShowModal={false}
+                    titleMessageModalNoResult={"No se encontraron registros"}
+                    secondaryTitle="Validaciones"
+                  />
+          
             </div>
           )
         }

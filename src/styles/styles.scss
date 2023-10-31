@@ -154,7 +154,7 @@ div[id="single-spa-application:@sapiencia/financial"] {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: repeat(auto-fit, minmax(50px, 1fr));
-  padding: 1rem 0px;
+  padding: 0 0 0.8rem 0;
   row-gap: 1rem;
 }
 
@@ -343,6 +343,10 @@ div[id="single-spa-application:@sapiencia/financial"] {
   width: 100%;
 }
 
+.width-33 {
+  width: 100%;
+}
+
 .style-form-create {
   border-radius: 14px;
   border: 1px solid #ddd;
@@ -482,6 +486,8 @@ div[id="single-spa-application:@sapiencia/financial"] {
     display: grid;
     row-gap: 1rem;
 
+   
+
     .mobile-actions {
       display: none;
       grid-template-columns: 1fr 1fr;
@@ -495,6 +501,10 @@ div[id="single-spa-application:@sapiencia/financial"] {
     .fund-denomination-container {
       grid-template-columns: 1fr 2fr;
       column-gap: 1.5rem;
+
+      &.col-gap-1{
+        column-gap: 1rem;
+      }
     }
   }
 
@@ -574,6 +584,10 @@ div[id="single-spa-application:@sapiencia/financial"] {
       justify-content: flex-end;
       margin-left: -2rem;
     }
+  }
+
+  .width-33 {
+    width: 33%;
   }
 }
 

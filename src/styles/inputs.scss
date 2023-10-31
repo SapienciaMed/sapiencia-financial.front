@@ -76,12 +76,18 @@
   }
 
   &.big {
-    height: 2.5em;
+    height: 2.667em;
   }
 
   &.large {
     height: 3em;
   }
+
+  &:disabled{
+    background: #f0eeee;
+    opacity: 0.8
+  }
+  
 }
 
 .input-group-basic {

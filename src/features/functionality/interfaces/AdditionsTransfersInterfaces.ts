@@ -1,3 +1,4 @@
+import { ManagementCenterRoutes } from './../../managementCenter/management-center-routes';
 import { DateTime } from 'luxon';
 import { IFunctionalArea } from './Functional-Area';
 export interface IAdditionsTransfersDistrictInterfaces {
@@ -96,4 +97,13 @@ export interface IBudgetsAddition {
     dateModify?: Date;
     userCreate?: string;
     dateCreate?: DateTime;
+}
+export interface IBudgetsProjectInfo {
+    id?: number;
+    idProjectVinculation: number;
+    ManagementCenter: number;
+    div:string;
+    idPospreSapiencia:string;
+    valuePospreSapiencia:string;
+    name?: string;
 }
