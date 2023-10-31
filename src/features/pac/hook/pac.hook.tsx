@@ -2,19 +2,17 @@ import { useForm } from 'react-hook-form';
 import useYupValidationResolver from '../../../common/hooks/form-validator.hook';
 import { pacSearch } from '../../../common/schemas/pac';
 import { IArrayDataSelectPacComplementary, IPacSearch } from '../interface/Pac';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePacServices } from './pac-services.hook';
 import { validateTypeResourceServices } from '../transferPac/util';
 import { EResponseCodes } from '../../../common/constants/api.enum';
-import { AppContext } from '../../../common/contexts/app.context';
 import { ITableAction, ITableElement } from '../../../common/interfaces/table.interfaces';
 export function usePacData() {
 
     const navigate = useNavigate();
     const tableComponentRef = useRef(null);
     const { GetRoutesByValidity, GetUltimateVersion } = usePacServices()
-    const { setMessage } = useContext(AppContext);
     const resolver = useYupValidationResolver(pacSearch);
     const [ isBtnDisable, setIsBtnDisable ] = useState<boolean>(false)
     const [ areTheFieldsFull, setAreTheFieldsFull ] = useState<boolean>(false)
@@ -53,10 +51,16 @@ export function usePacData() {
     useEffect(() => {
         setValue('exercise', String(new Date().getFullYear()))
 
-        GetUltimateVersion().then(response => {
+        const exerciseAct = {
+            exercise: new Date().getFullYear(),
+            pege: 1,
+            perPage: 10000
+        }
+
+        GetUltimateVersion(exerciseAct).then(response => {
             if(response.operation.code === EResponseCodes.OK){
-                setValue('version', response.data.version)
-                setVersionActual(response.data.version)
+                response.data?.version ?  setValue('version', response.data.version) : setValue('version', '')
+                response.data?.version ? setVersionActual(response.data.version) : setVersionActual('')
             }
         }).catch(error => console.log(error))
     },[])
@@ -74,6 +78,20 @@ export function usePacData() {
     const handleChangeExercise = (exercise: any) => {
         timer &&  clearTimeout(timer);  
         const newTimer =  setTimeout(() => {
+            if(exercise.target.value.length == 4){
+                const exerciseAct = {
+                    exercise: parseInt(exercise.target.value),
+                    pege: 1,
+                    perPage: 10000
+                }
+                GetUltimateVersion(exerciseAct).then(response => {
+                    if(response.operation.code === EResponseCodes.OK){
+                        response.data?.version ?  setValue('version', response.data.version) : setValue('version', '')
+                        response.data?.version ? setVersionActual(response.data.version) : setVersionActual('')
+                    }
+                }).catch(error => console.log(error))
+                
+            }
             if(exercise.target.value.length == 4 && areTheFieldsFull){
                 setArrayDataSelect({})   
                 setShowSpinner(true)     
