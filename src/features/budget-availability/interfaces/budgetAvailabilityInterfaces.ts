@@ -27,7 +27,7 @@ export interface IBudgetAvalaibility {
   contractObject: string;
   consecutive: number;
   sapConsecutive: number;
-  rpAssoc?:string;
+  rpAssoc?: string;
   amounts: IAmounts[];
 }
 
@@ -48,7 +48,7 @@ export interface IBudgetAvalaibilityDataBasicEdit {
   contractObject: string;
   sapConsecutive: number;
   id?: number;
-  exercise?: number;
+  exercise?: string;
   consecutive?: number;
   monthExercise?: string;
 }
