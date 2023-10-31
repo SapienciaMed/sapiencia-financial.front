@@ -309,50 +309,49 @@ export function useTransferPacCrudData() {
                 destinities: nuevoObjeto.destino.map(use => processUseData(use, arrayDataSelect, authorization, annualDataRoutesBoth, nuevoObjeto.destino)),
               }
             }
-            console.log("🚀 ~ file: transfer-pac-crud.hook.tsx:312 ~ onSubmit ~ dataTransferpac:", dataTransferpac)
 
-            // dataTransferpac && TransfersOnPac(dataTransferpac).then(response => {
-            //   if (response.operation.code === EResponseCodes.OK) {
-            //     setMessage({
-            //         title: "Confirmación",
-            //         description: "¡Guardado exitosamente!",
-            //         show: true,
-            //         OkTitle: "Aceptar",
-            //         onOk: () => {
-            //           setMessage({});
-            //           setIsdataResetState(true)
-            //           setDisableBtnAdd(true)
-            //           reset()
-            //           setOriginalDestinationValueOfService([])
-            //           navigate(-1)
-            //         },
-            //         background: true,
-            //         onClose: () => {
-            //           setMessage({});
-            //           setIsdataResetState(true)
-            //           setDisableBtnAdd(true)
-            //           reset()
-            //           setOriginalDestinationValueOfService([])
-            //           navigate(-1)
-            //         },
-            //     });
-            // } else {
-            //     setMessage({
-            //         title: "Validación de datos",
-            //         description: response.operation.message,
-            //         show: true,
-            //         OkTitle: "Aceptar",
-            //         onOk: () => {
-            //           setMessage({});
-            //         },
-            //         background: true,
-            //         onClose: () => {
-            //           setMessage({});
-            //         },
-            //     });
-            // }
+            dataTransferpac && TransfersOnPac(dataTransferpac).then(response => {
+              if (response.operation.code === EResponseCodes.OK) {
+                setMessage({
+                    title: "Confirmación",
+                    description: "¡Guardado exitosamente!",
+                    show: true,
+                    OkTitle: "Aceptar",
+                    onOk: () => {
+                      setMessage({});
+                      setIsdataResetState(true)
+                      setDisableBtnAdd(true)
+                      reset()
+                      setOriginalDestinationValueOfService([])
+                      navigate(-1)
+                    },
+                    background: true,
+                    onClose: () => {
+                      setMessage({});
+                      setIsdataResetState(true)
+                      setDisableBtnAdd(true)
+                      reset()
+                      setOriginalDestinationValueOfService([])
+                      navigate(-1)
+                    },
+                });
+            } else {
+                setMessage({
+                    title: "Validación de datos",
+                    description: response.operation.message,
+                    show: true,
+                    OkTitle: "Aceptar",
+                    onOk: () => {
+                      setMessage({});
+                    },
+                    background: true,
+                    onClose: () => {
+                      setMessage({});
+                    },
+                });
+            }
   
-            // })
+            })
           },
           background: true,
       });

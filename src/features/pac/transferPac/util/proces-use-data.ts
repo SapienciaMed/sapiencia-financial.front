@@ -22,17 +22,51 @@ export function processUseData(use, arrayDataSelect: IArrayDataSelectPac, author
         programmed: use?.programmed
       });
     }
-  
+    
     const annualRoute = newArray.map(ob => {
         if (Object.keys(ob.programmed).length == 0 && Object.keys(ob.collected).length > 0) {
+          const pro = annualDataRoutesBot.filter(u => u.cardId == cardId[0].cardId && "Programado" == u.type).map(us => {
+            return {
+              january: us.jan,
+              february: us.feb,
+              march: us.mar,
+              april: us.abr,
+              may: us.may,
+              june: us.jun,
+              july: us.jul,
+              august: us.ago,
+              september: us.sep,
+              october: us.oct,
+              november: us.nov,
+              december: us.dec,
+              pacId: us.pacId
+            }
+          })
           return [
             transformData(ob.collected, "Recaudado", authorization, annualDataRoutesBot, cardId),
-            transformData(ob.collected, "Programado", authorization, annualDataRoutesBot, cardId)
+            transformData(pro[0], "Programado", authorization, annualDataRoutesBot, cardId)
           ];
         } 
         if (Object.keys(ob.programmed).length > 0 && Object.keys(ob.collected).length == 0) {
+          const pro = annualDataRoutesBot.filter(u => u.cardId == cardId[0].cardId && "Recaudado" == u.type).map(us => {
+            return {
+              january: us.jan,
+              february: us.feb,
+              march: us.mar,
+              april: us.abr,
+              may: us.may,
+              june: us.jun,
+              july: us.jul,
+              august: us.ago,
+              september: us.sep,
+              october: us.oct,
+              november: us.nov,
+              december: us.dec,
+              pacId: us.pacId
+            }
+          })
           return [
-            transformData(ob.programmed, "Recaudado", authorization, annualDataRoutesBot, cardId),
+            transformData(pro[0], "Recaudado", authorization, annualDataRoutesBot, cardId),
             transformData(ob.programmed, "Programado", authorization, annualDataRoutesBot, cardId)
           ];
         } 
@@ -50,7 +84,7 @@ export function processUseData(use, arrayDataSelect: IArrayDataSelectPac, author
       idPospreSapiencia: parseInt(use.pospreSapiencia),
       idFund: parseInt(use.fundsSapiencia),
       idCardTemplate: use.cardId,
-      annualRoute,
+      annualRoute: annualRoute[0]
     };
 }
   
