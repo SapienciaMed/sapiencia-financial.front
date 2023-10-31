@@ -174,7 +174,6 @@ const CdpPage = () => {
                 className="dataPicker-basic"
                 placeholder="DD/MM/YYYY"
                 dateFormat="dd/mm/yy"
-                maxDate={new Date(endDate)}
               />
               <DatePickerComponent
                 idInput="endDate"
