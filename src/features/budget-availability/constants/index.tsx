@@ -18,3 +18,13 @@ export const monthNames = [
   "noviembre",
   "diciembre",
 ];
+
+export const initialDataEdit = {
+  amount: [],
+  consecutive: 0,
+  contractObject: "Pruba",
+  date: "2023-10-10",
+  exercise: "2023",
+  id: 0,
+  sapConsecutive: 0,
+};

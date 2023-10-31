@@ -48,7 +48,7 @@ export interface IBudgetAvalaibilityDataBasicEdit {
   contractObject: string;
   sapConsecutive: number;
   id?: number;
-  exercise?: number;
+  exercise?: string;
   consecutive?: number;
   monthExercise?: string;
 }
