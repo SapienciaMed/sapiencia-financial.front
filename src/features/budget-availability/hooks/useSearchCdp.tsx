@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { budgetAvailabilityValidator } from "../../../common/schemas/budget-availability-schemas";
 import { IBudgetsAvailabilityFilters } from "../interfaces/budgetAvailabilityInterfaces";
-import { tableColumnsCdp } from "../constants";
 import { useCdpServices } from "./useCdpServices";
 import { clearRequestFilters, filterDataSelect } from "../utils/filtersSearch";
 import { useNavigate } from "react-router-dom";
