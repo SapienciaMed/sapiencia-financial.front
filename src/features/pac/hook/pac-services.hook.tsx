@@ -1,6 +1,6 @@
 import useCrudService from "../../../common/hooks/crud-service.hook";
 import { ApiResponse } from "../../../common/utils";
-import { IPacComplementary, IPacFilters } from "../interface/Pac";
+import { IEditPac, IPacComplementary, IPacFilters, IResultSearchDinamicPac } from "../interface/Pac";
 
 export const usePacServices = () => {
     const baseURL: string = process.env.urlApiFinancial;
@@ -12,10 +12,9 @@ export const usePacServices = () => {
         return post(`${roleUrl}${endpoint}`, data);
     }
 
-    async function GetUltimateVersion(): Promise<ApiResponse<any>> {
-        const endpoint: string = "/get-ultimate-version"; 
-        return get(`${roleUrl}${endpoint}`);
-        
+    async function GetUltimateVersion(exercise: object): Promise<ApiResponse<any>> {
+        const endpoint: string = `/get-ultimate-version/`; 
+        return post(`${roleUrl}${endpoint}`, exercise);  
     }
 
     async function SearchPacs(data: IPacFilters):  Promise<ApiResponse<any>> {
@@ -23,10 +22,21 @@ export const usePacServices = () => {
         return post(`${roleUrl}${endpoint}`, data);
     }
 
+    async function GetPacById(id: number): Promise<ApiResponse<IResultSearchDinamicPac>> {
+        const endpoint: string = `/get-pac-by-id/${id}`;
+        return get(`${roleUrl}${endpoint}`);
+    }
+    async function EditPac(data: IEditPac): Promise<ApiResponse<any>> {
+        const endpoint: string = `/edit-pac`;
+        return post(`${roleUrl}${endpoint}`, data);
+    }
+
     return{
         GetRoutesByValidity,
         GetUltimateVersion,
-        SearchPacs
+        SearchPacs,
+        GetPacById,
+        EditPac
     }
 
 }

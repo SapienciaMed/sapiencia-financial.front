@@ -13,7 +13,7 @@ import { ProgressSpinner } from "primereact/progressspinner";
 function PacPages() {
     const {width} = useWidth()
 
-    const {control, errors, isBtnDisable, showTable, tableComponentRef, tableActions, showSpinner, arrayDataSelect,
+    const {control, errors, isBtnDisable, showTable, tableComponentRef, tableActions, showSpinner, arrayDataSelect, disableEdit,
         tableColumns, navigate, setShowTable, register, onSubmit, reset, handleChangeExercise,
         handleChangeVersion} = usePacData()
     
@@ -86,7 +86,7 @@ function PacPages() {
                                     { id: '1', name: 'Seleccione', value: null},
                                     { id: "2", name: "Transferencias distritales", value: "Transferencias distritales" },
                                     { id: "3", name: "Recursos propios", value: "Recursos propios" },
-                                    { id: "4", name: "Todas", value: "Todas" },
+                                    { id: "4", name: "Todas", value: "Todos" },
                                 ]}
                                 control={control}
                                 isValidateName={false}
@@ -197,7 +197,8 @@ function PacPages() {
                                 isShowModal={true}
                                 titleMessageModalNoResult="No hay resultados"
                                 secondaryTitle="PAC"
-                                classSizeTable='size-table-wd-150'
+                                classSizeTable='size-table-wd-110'
+                                isDisabled={disableEdit}
                             />
                         </div>
                     )

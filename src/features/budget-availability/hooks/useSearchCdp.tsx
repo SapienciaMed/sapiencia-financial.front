@@ -2,29 +2,22 @@ import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { budgetAvailabilityValidator } from "../../../common/schemas/budget-availability-schemas";
-import {
-  IBudgetsAvailabilityFilters,
-  IFiltersSelect,
-} from "../interfaces/budgetAvailabilityInterfaces";
-import {
-  tableColumnsCdp,
-  tableActionsCdp,
-  initialFiltersSelect,
-} from "../constants";
+import { IBudgetsAvailabilityFilters } from "../interfaces/budgetAvailabilityInterfaces";
 import { useCdpServices } from "./useCdpServices";
 import { clearRequestFilters, filterDataSelect } from "../utils/filtersSearch";
 import { useNavigate } from "react-router-dom";
+import { DateTime } from "luxon";
 
 export const useSearchCdp = () => {
   const { GetRoutesByValidity } = useCdpServices();
   const resolver = useYupValidationResolver(budgetAvailabilityValidator);
   const tableComponentRef = useRef(null);
   const navigate = useNavigate();
-  
   const {
     handleSubmit,
     register,
     formState: { errors, isValid },
+    setValue: setValueRegister,
     reset,
     watch,
     control,
@@ -33,11 +26,72 @@ export const useSearchCdp = () => {
     mode: "all",
   });
   const inputValue = watch(["dateOfCdp"]);
+  let [initialDate, endDate] = watch(["initialDate", "endDate"]);
 
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
-  const [arraySelect, setArraySelect] =
-    useState<IFiltersSelect>(initialFiltersSelect);
+  const [arraySelect, setArraySelect] = useState<any>([]);
+
+  const tableColumnsCdp: any[] = [
+    {
+      fieldName: "consecutive",
+      header: "No. CDP Aurora",
+    },
+    {
+      fieldName: "sapConsecutive",
+      header: "No. CDP SAP",
+    },
+    {
+      fieldName: "date",
+      header: "Fecha documento",
+      // renderCell: (row) => {
+      //   return <>{DateTime.(row.date).toLocaleString()}</>;
+      // },
+    },
+    {
+      fieldName: "countRpp",
+      header: "No. de rutas del CDP",
+      renderCell: (row) => {
+        const activeAmounts = row.amounts.filter((amount) => {
+          return amount.isActive === 1;
+        });
+
+        return <>{activeAmounts.length}</>;
+      },
+    },
+    {
+      fieldName: "partnersRp",
+      header: "RP asociados",
+    },
+    {
+      fieldName: "contractObject",
+      header: "Objeto contractual",
+    },
+  ];
+
+  const tableActionsCdp: any[] = [
+    {
+      icon: "Detail",
+      onClick: (row) => {
+        navigate(`./view/${row.id}`);
+      },
+    },
+    {
+      icon: "Edit",
+      onClick: (row) => {
+        const id = row.id;
+        navigate(`/gestion-financiera/cdp/edit/${id}`);
+      },
+    },
+    {
+      icon: "Add",
+      onClick: (row) => {},
+    },
+    {
+      icon: "Rp",
+      onClick: (row) => {},
+    },
+  ];
 
   useEffect(() => {
     setIsBtnDisable(
@@ -77,11 +131,20 @@ export const useSearchCdp = () => {
           console.log({ queryGetDataFilters: error });
         }
       } else {
-        setArraySelect(initialFiltersSelect);
+        setArraySelect([]);
       }
     };
     queryGetDataFilters();
   }, [control._formValues.dateOfCdp]);
+
+  useEffect(() => {
+    if (initialDate && endDate === undefined) {
+      setValueRegister("endDate", initialDate);
+    }
+    if (endDate && initialDate === undefined) {
+      setValueRegister("initialDate", endDate);
+    }
+  }, [initialDate, endDate]);
 
   return {
     control,
@@ -98,5 +161,7 @@ export const useSearchCdp = () => {
     tableActionsCdp,
     navigate,
     arraySelect,
+    initialDate,
+    endDate,
   };
 };

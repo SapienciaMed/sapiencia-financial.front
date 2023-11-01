@@ -8,6 +8,7 @@ import { trashIcon } from "./icons/trash";
 import { clip } from "./icons/clip";
 import { imagesicon } from "./icons/images";
 import { fileIcon } from "./icons/file-icon";
+import React from "react"
 
 interface Atributos {
   id: string;
@@ -15,7 +16,7 @@ interface Atributos {
   showModal: (data: boolean) => void;
 }
 
-export const UploadComponent = (props: Atributos) => {
+const UploadComponent = (props: Atributos) => {
   const { id, dataArchivo, showModal } = props;
 
   const [visible, setVisible] = useState(false);
@@ -214,3 +215,5 @@ export const UploadComponent = (props: Atributos) => {
     </div>
   );
 };
+
+export default React.memo(UploadComponent)

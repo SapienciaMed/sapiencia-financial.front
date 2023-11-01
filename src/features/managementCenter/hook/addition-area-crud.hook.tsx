@@ -12,7 +12,7 @@ import { useAdditionAreaEdit } from "./addition-area-edit.hook";
 
 
 export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actionForm?: string) {
-
+  console.log(actionForm)
   const resolver = useYupValidationResolver(fundsAdditionalValidation);
   const { setMessage } = useContext(AppContext);
   const { GetFundsList, GetProjectsList, GetPosPreSapienciaList, validateCreateAdition, createAdition, validateEditAdition, editAdition } = useAdditionsTransfersService()
@@ -155,7 +155,7 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
         })
 
       }
-    } else if (actionForm === "edit") {
+    } else if (actionForm === "edit" || actionForm === "detail") {
       const ingresoFixed = data.ingreso.map(outcome => ({
         idCard: outcome.cardId,
         type: 'Ingreso',
@@ -496,7 +496,7 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
   //Editar validaciones
   const { aditionData } = useAdditionAreaEdit();
 
-  if (actionForm == "edit") {
+  if (actionForm == "edit" || actionForm == "detail") {
     useEffect(() => {
       function mapDetails(type) {
         return aditionData?.details.map((item: Detail) => {
@@ -514,19 +514,30 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
         }).filter(Boolean);
       }
 
-      function hasAnyChange(mappedData, formData) {
+    /*  function hasAnyChange(mappedData, formData) {
         return Object.keys(mappedData?.[0] || {}).some(key => {
           return mappedData?.[0]?.[key] !== formData?.[0]?.[key];
         });
-      }
+      }  */
 
-      const ingreso = mapDetails("Ingreso");
+     /*  function hasAnyChange(mappedData, formData) {
+        return formData.some((formEntry, index) => {
+          return Object.keys(formEntry).some(key => {
+            return formEntry[key] !== mappedData[index]?.[key];
+          });
+        });
+      } */
+      
+      
+
+     /*  const ingreso = mapDetails("Ingreso");
       const gasto = mapDetails("Gasto");
 
       const hasAnyIngresoChange = hasAnyChange(ingreso, formData.ingreso);
       const hasAnyGastoChange = hasAnyChange(gasto, formData.gasto);
+    
 
-      setIsAllowSave(hasAnyIngresoChange || hasAnyGastoChange);
+      setIsAllowSave(hasAnyIngresoChange || hasAnyGastoChange); */
 
     }, [aditionData, formData]);
 

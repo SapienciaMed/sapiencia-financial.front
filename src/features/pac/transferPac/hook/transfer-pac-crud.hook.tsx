@@ -3,8 +3,7 @@ import { ICreateTransferPacForm } from '../../../managementCenter/transfer/inter
 import { useContext, useEffect, useState } from 'react';
 import { EResponseCodes } from '../../../../common/constants/api.enum';
 import { AppContext } from '../../../../common/contexts/app.context';
-import { isvalidateTypePac } from '../util/is-validate-type-pac';
-import { calculateTotalDestino, calculateTotalOrigen, validateTypeResource, validateTypeResourceServices } from '../util';
+import { calcularTotalOrigenLocation, calculateTotalDestino, calculateTotalDestinoLocation, calculateTotalOrigen, isvalidateTypePac, processUseData, validateTypeResource, validateTypeResourceServices } from '../util';
 import useYupValidationResolver from '../../../../common/hooks/form-validator.hook';
 import { validationTransferPac } from '../../../../common/schemas/transfer-schema';
 import { usePacTransfersService } from './pac-transfers-service.hook';
@@ -29,13 +28,13 @@ export function useTransferPacCrudData() {
   const [currentPage, setCurrentPage] = useState(1);
   const [ showSpinner,   setShowSpinner ] = useState(false)
   const [ disableBtnAdd, setDisableBtnAdd ] = useState(true)
-  const [ currentTotal, setCurrentTotal ] = useState(0)
-  const [ originalDestinationValueOfService, setOriginalDestinationValueOfService ] = useState<any>([{
+  const [ originalDestinationValueOfService, setOriginalDestinationValueOfService ] = useState([{
     annualRouteService: [] as IAnnualRoute[]
   }])
   const [ annualDataRoutesOriginal, setAnnualDataRoutesOriginal ] = useState([{
     annualRouteService: [] as IAnnualRoute[]
   }])
+  const [ annualDataRoutesBoth, setAnnualDataRoutesBoth ] = useState<IAnnualRoute[]>([])
 
   const itemsPerPage = 2;
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -66,26 +65,16 @@ export function useTransferPacCrudData() {
   const watchAll = watch()
   
   const { hasDataBeforeReset, hasNonEmptyAll } = isvalidateTypePac(watchAll);
-  
+
+  useEffect(() => {
+    if (originalDestinationValueOfService.some(e => e.annualRouteService.length > 0)) {
+      setValue('totalOrigenActual', calcularTotalOrigenLocation(originalDestinationValueOfService))
+      setValue('totalDestinoActual', calculateTotalDestinoLocation(originalDestinationValueOfService))
+    }
+  },[originalDestinationValueOfService])
+
   useEffect(() => {
     if (annualDataRoutesOriginal.length > 1) {
-      const totalOginal = annualDataRoutesOriginal
-        .flatMap(item => item.annualRouteService.map(service => {
-          const { id, pacId, type, cardId, ...values } = service;
-          return values;
-        }))
-        .reduce((acc, service) => {
-          for (const key in service) {
-            if (service.hasOwnProperty(key)) {
-              acc[key] = (acc[key] || 0) + service[key];
-            }
-          }
-          return acc;
-      },  {} as Record<string, number> );
-
-      const totalAmount = Object.values(totalOginal).reduce((total, value) => total + value, 0);
-      setCurrentTotal(totalAmount)
-
       /*Determina que cadId del servicio es igual al annualDataRoutesOriginal.annualRouteService cadId y le agrega una prop nueva al arreglo llamado ubicacion 
         con el fin de determinar que la suma original del origen o del destino sigan iguales sin sufrir cambios.
       */
@@ -103,12 +92,10 @@ export function useTransferPacCrudData() {
             return item;
         }
       });
-     // Función para actualizar o agregar datos en originalDestinationValueOfService
+
       const updateOrAddAnnualRoute = (newAnnualRoute) => {
         setOriginalDestinationValueOfService((prevData) => {
-          // Clona el arreglo original para no mutarlo directamente
           const newData = [...prevData];
-
           // Busca si ya existe un objeto con el mismo cardId en annualRouteService
           const index = newData.findIndex((item) => {
             return item.annualRouteService.some(
@@ -128,7 +115,6 @@ export function useTransferPacCrudData() {
         });
       };
 
-      // Recorre originalDataAnnualRouteswithLocations y llama a la función de actualización/agregación
       originalDataAnnualRouteswithLocations.forEach((item) => {
         if (item.annualRouteService.length > 0) {
           updateOrAddAnnualRoute(item);
@@ -137,7 +123,6 @@ export function useTransferPacCrudData() {
     }
   },[annualDataRoutesOriginal])
 
-  //Resetea el formulario, cuando se cambia de pac y algun valor del formulario este lleno
   useEffect(() => {
     if (pacTypeState >= 2 && pacTypeState <= 4 ) {
       if ((hasDataBeforeReset || hasNonEmptyAll) && pacTypeState2 !== pacTypeState) {
@@ -146,7 +131,8 @@ export function useTransferPacCrudData() {
         reset()
         setShowSpinner(false)
         setDisableBtnAdd(true)
-        setCurrentTotal(0)
+        setOriginalDestinationValueOfService([])
+        setAnnualDataRoutesBoth([])
       } else {
         setPacTypeState2(pacTypeState);
       }
@@ -268,7 +254,7 @@ export function useTransferPacCrudData() {
   },[isActivityAdd, watchAll.TypeResource])
 
   useEffect(() => {
-    watchAll && setIsBtnDisable( calculateTotalOrigen(watchAll) != 0 && calculateTotalDestino(watchAll) != 0 /*&& (calculateTotalOrigen(watchAll) == calculateTotalDestino(watchAll))*/  )
+    watchAll && setIsBtnDisable( watchAll.totalDestinoActual > 0 && watchAll.totalOrigenActual > 0  )
     watchAll && validateHeader()
   },[watchAll])
 
@@ -279,13 +265,13 @@ export function useTransferPacCrudData() {
         if (obj[key] === '' || obj[key] === undefined || obj[key] === null) {
           delete obj[key];
         } else if (typeof obj[key] === 'object') {
-          removeEmptyFields(obj[key]); // Recursivamente llamamos la función para objetos anidados
+          removeEmptyFields(obj[key]);
         }
       }
       return obj;
     }
 
-    if(currentTotal != (calculateTotalOrigen(watchAll) + calculateTotalDestino(watchAll))){
+    if( (watchAll.totalDestinoActual + watchAll.totalOrigenActual) != (calculateTotalOrigen(watchAll) + calculateTotalDestino(watchAll))){
       setMessage({
         title: 'Validación',
         show: true,
@@ -312,29 +298,6 @@ export function useTransferPacCrudData() {
             setMessage({});
           },
           onOk: () => {
-  
-            const transformData = (ob, type, authorization) => {
-              return {
-                type,
-                jan: ob?.january,
-                feb: ob?.february,
-                mar: ob?.march,
-                abr: ob?.april,
-                may: ob?.may,
-                jun: ob?.june,
-                jul: ob?.july,
-                ago: ob?.august,
-                sep: ob?.september,
-                oct: ob?.october,
-                nov: ob?.november,
-                dec: ob?.december,
-                id: ob?.id,
-                pacId: ob?.pacId,
-                dateModify: new Date(authorization.user.dateModify).toISOString().split('T')[0],
-                dateCreate: new Date(authorization.user.dateCreate).toISOString().split('T')[0]
-              };
-            };
-  
             const dataTransferpac = {
               headTransfer: {
                 pacType: validateTypePac(data.pacType),
@@ -342,87 +305,11 @@ export function useTransferPacCrudData() {
                 resourceType: validateTypeResourceServices(data.TypeResource)
               },
               transferTransaction: {
-                origins:  nuevoObjeto.origen.map(use => {
-                  const newArray = [];
-                  if (use.hasOwnProperty("collected")) {
-                    newArray.push({
-                      collected: use?.collected
-                    });
-                  }
-                  if (use.hasOwnProperty("programmed")) {
-                    newArray.push({
-                      programmed: use?.programmed
-                    });
-                  }
-                  return {
-                    managementCenter: use.managerCenter,
-                    idProjectVinculation: parseInt(use.projectId),
-                    idBudget: arrayDataSelect?.pospreSapiencia?.find(value => use.pospreSapiencia == value.id)?.idPosPreOrig,
-                    idPospreSapiencia: parseInt(use.pospreSapiencia),
-                    idFund: parseInt(use.fundsSapiencia),
-                    idCardTemplate: use.cardId,
-                    annualRoute:  newArray.filter(obj => {
-                      return Object.values(obj).some(value => {
-                          if (typeof value === 'object') {
-                              return Object.values(value).some(subValue => subValue !== 0);
-                          }
-                          return false;
-                      })
-                    }).map(ob => {
-                      if (ob.hasOwnProperty("collected") && !ob.hasOwnProperty("programmed")) {
-                        return transformData(ob.collected, "Recaudado", authorization);
-                      } else if (ob.hasOwnProperty("programmed") && !ob.hasOwnProperty("collected")) {
-                        return transformData(ob.programmed, "Programado", authorization);
-                      } else if (ob.hasOwnProperty("collected") && ob.hasOwnProperty("programmed")) {
-                        const collectedData = transformData(ob.collected, "Recaudado", authorization);
-                        const programmedData = transformData(ob.programmed, "Programado", authorization);
-                        return [collectedData, programmedData];
-                      }
-                    })
-                  }
-                }),
-                destinities: nuevoObjeto.destino.map(use => {
-                  const newArray = [];
-                  if (use.hasOwnProperty("collected")) {
-                    newArray.push({
-                      collected: use?.collected
-                    });
-                  }
-                  if (use.hasOwnProperty("programmed")) {
-                    newArray.push({
-                      programmed: use?.programmed
-                    });
-                  }
-                  return {
-                    managementCenter: use.managerCenter,
-                    idProjectVinculation: parseInt(use.projectId),
-                    idBudget: arrayDataSelect?.pospreSapiencia?.find(value => use.pospreSapiencia == value.id)?.idPosPreOrig,
-                    idPospreSapiencia: parseInt(use.pospreSapiencia),
-                    idFund: parseInt(use.fundsSapiencia),
-                    idCardTemplate: use.cardId,
-                    annualRoute:  newArray.filter(obj => {
-                      return Object.values(obj).some(value => {
-                          if (typeof value === 'object') {
-                              return Object.values(value).some(subValue => subValue !== 0);
-                          }
-                          return false;
-                      })
-                    }).map(ob => {
-                      if (ob.hasOwnProperty("collected") && !ob.hasOwnProperty("programmed")) {
-                        return transformData(ob.collected, "Recaudado", authorization);
-                      } else if (ob.hasOwnProperty("programmed") && !ob.hasOwnProperty("collected")) {
-                        return transformData(ob.programmed, "Programado", authorization);
-                      } else if (ob.hasOwnProperty("collected") && ob.hasOwnProperty("programmed")) {
-                        const collectedData = transformData(ob.collected, "Recaudado", authorization);
-                        const programmedData = transformData(ob.programmed, "Programado", authorization);
-                        return [collectedData, programmedData];
-                      }
-                    })
-                  }
-                }),
+                origins: nuevoObjeto.origen.map(use => processUseData(use, arrayDataSelect, authorization, annualDataRoutesBoth, nuevoObjeto.origen)),
+                destinities: nuevoObjeto.destino.map(use => processUseData(use, arrayDataSelect, authorization, annualDataRoutesBoth, nuevoObjeto.destino)),
               }
             }
-  
+
             dataTransferpac && TransfersOnPac(dataTransferpac).then(response => {
               if (response.operation.code === EResponseCodes.OK) {
                 setMessage({
@@ -435,6 +322,8 @@ export function useTransferPacCrudData() {
                       setIsdataResetState(true)
                       setDisableBtnAdd(true)
                       reset()
+                      setOriginalDestinationValueOfService([])
+                      navigate(-1)
                     },
                     background: true,
                     onClose: () => {
@@ -442,6 +331,8 @@ export function useTransferPacCrudData() {
                       setIsdataResetState(true)
                       setDisableBtnAdd(true)
                       reset()
+                      setOriginalDestinationValueOfService([])
+                      navigate(-1)
                     },
                 });
             } else {
@@ -481,7 +372,6 @@ export function useTransferPacCrudData() {
         setDisableBtnAdd(true)
         reset()
         setMessage({});
-        setCurrentTotal(0)
         navigate(-1)
       },
       onClose: () => {
@@ -489,7 +379,6 @@ export function useTransferPacCrudData() {
         setDisableBtnAdd(true)
         reset()
         setMessage({});
-        setCurrentTotal(0)
         navigate(-1)
       },
     });
@@ -508,6 +397,12 @@ export function useTransferPacCrudData() {
 
     setIsActivityAdd(isValid);
   }
+
+  const addNewObject = (newObj: IAnnualRoute[]) => {
+    setAnnualDataRoutesBoth(
+      (prevData) => [...prevData, ...newObj]
+    );
+  };
   
   return{
     control,
@@ -524,8 +419,8 @@ export function useTransferPacCrudData() {
     showSpinner,
     disableBtnAdd,
     annualDataRoutesOriginal,
-    currentTotal,
-    originalDestinationValueOfService,
+    originalDestinationValueOfService, 
+    setOriginalDestinationValueOfService,
     register,
     setValue,
     onSubmit,
@@ -536,6 +431,7 @@ export function useTransferPacCrudData() {
     setTypeValidityState,
     setIsdataResetState,
     setAnnualDataRoutesOriginal,
+    addNewObject
   }
 }
 

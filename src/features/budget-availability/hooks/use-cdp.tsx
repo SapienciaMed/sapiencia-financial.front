@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { AppContext } from "../../../common/contexts/app.context";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { cdpCrudValidator } from "../../../common/schemas/cdp-crud-validator";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { useCdpService } from "./cdp-service";
@@ -11,16 +11,99 @@ import { Checkbox } from 'primereact/checkbox';
 import { TextAreaComponent } from "../../../common/components/Form";
 import { EDirection } from "../../../common/constants/input.enum";
 
-
-export function useCdpCrud() {
+export function useCdpCrud(cdpId?: string) {
     const resolver = useYupValidationResolver(cdpCrudValidator);
     const { setMessage } = useContext(AppContext);
     const navigate = useNavigate();
-    const { getCdpById } = useCdpService()
+    const { getCdpById, cancelAmount } = useCdpService()
 
     const [cdpFoundSt, setCdpFoundSt] = useState<IBudgetAvalaibility>()
-    
     const tableComponentRef = useRef(null);
+
+    const {
+        register,
+        formState: { errors, isValid },
+        setValue: setValueRegister,
+        control,
+        watch,
+        getValues
+    } = useForm<IBudgetAvalaibility>({
+        defaultValues: {
+            exercise: Object(cdpFoundSt).exercise,
+            consecutive: Object(cdpFoundSt).consecutive,
+            rpAssoc:'No',
+            amounts: [{
+                id: null,
+                reasonCancellation: ''
+            }],
+            contractObject:''
+        },
+        mode: 'onChange',
+        resolver,
+    });
+
+
+    const amountWatch = watch()
+
+    const showModalCancelAmount = (id: number) => {
+        setMessage({
+            title: "Observación anulado",
+            show: true,
+            OkTitle: "Guardar",
+            onOk: () => {
+                amountWatch.amounts[0].reasonCancellation != ""
+                    ? (cancelAmount({
+                        id,
+                        reasonCancellation: amountWatch.amounts[0].reasonCancellation
+                    }).then(res => {
+                        getCdpById(cdpId).then(res => {
+                            setCdpFoundSt(res.data[0])
+                        })
+                        setMessage({})
+                        setValueRegister('amounts.0.reasonCancellation','')
+                    }))
+                    : ''
+
+            },
+            onClose() {
+                setMessage({})
+            },
+            description: <div style={{ width: '100%' }}>
+                <label>Digite el motivo de la anulación</label>
+                <div>
+                    <Controller
+                        control={control}
+                        name={"amounts.0.reasonCancellation"}
+                        render={({ field }) => {
+                            return (
+                                <TextAreaComponent
+                                    id={field.name}
+                                    idInput={field.name}
+                                    value={`${field.value}`}
+                                    className="text-area-basic"
+                                    register={register}
+                                    label="Motivo"
+                                    classNameLabel="text-black biggest bold text-required"
+                                    direction={EDirection.column}
+                                    errors={errors}
+                                    onChange={field.onChange}
+                                />
+                            );
+                        }}
+                    />
+
+                </div>
+                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                    <div className="title-button font-big">
+                        Max. 500 caracteres
+                    </div>
+                </div>
+
+            </div>,
+            background: true
+        })
+
+    }
 
     const tableColumns: ITableElement<any>[] = [
         {
@@ -28,15 +111,15 @@ export function useCdpCrud() {
             header: "Posición"
         },
         {
-            fieldName: "budgetRoute.projectVinculation.",
+            fieldName: "projectName",
             header: "Proyecto",
         },
         {
-            fieldName: "budgetRoute.fund.number",
+            fieldName: "fundCode",
             header: "Fondo",
         },
         {
-            fieldName: "budgetRoute.pospreSapiencia.number",
+            fieldName: "pospreSapienciaCode",
             header: "Pospre",
         },
         {
@@ -49,28 +132,7 @@ export function useCdpCrud() {
             renderCell: (row) => {
                 return (
                     <div className="flex align-items-center">
-                        <Checkbox checked={false} onChange={() => setMessage({
-                            title: "Observación anulado",
-                            show: true,
-                            OkTitle: "Guardar",
-                            description: <div style={{width:'100%'}}>
-                                <label>Digite el motivo de la anulación</label>
-                                <TextAreaComponent
-                                    id={'field.name'}
-                                    idInput={'field.name'}
-                                    //value={`${'field.value'}`}
-                                    className="text-area-basic"
-                                    register={register}
-                                    label="Motivo"
-                                    classNameLabel="text-black biggest"
-                                    direction={EDirection.column}
-                                    errors={errors}
-                                    rows={2}
-                                //onChange={field.onChange}
-                                />
-                            </div>,
-                            background: true
-                        })} />
+                        <Checkbox checked={false} onChange={() => showModalCancelAmount(row.id)} disabled={amountWatch.sapConsecutive>0 ? true : false}/>
                     </div>)
             }
         },
@@ -79,8 +141,9 @@ export function useCdpCrud() {
 
     const tableActions: ITableAction<any>[] = [
         {
-            icon: "Detail",
+            icon: "Link",
             onClick: (row) => {
+                navigate(`./mga-assoc/${row.id}`);
                 /* const rows = [
                     {
                         title: "Entidad CP",
@@ -125,35 +188,21 @@ export function useCdpCrud() {
     ];
 
 
-    const {
-        handleSubmit,
-        register,
-        formState: { errors, isValid },
-        setValue: setValueRegister,
-        reset,
-        control,
-        watch,
-        getValues
-    } = useForm<IBudgetAvalaibility>({
-        mode: 'onChange',
-        resolver,
-    });
 
     useEffect(() => {
-        getCdpById('1').then(res => setCdpFoundSt(res.data[0]))
-        
+        cdpId && getCdpById(cdpId).then(res => {
+            setCdpFoundSt(res.data[0])
+        })
     }, [])
-    
-    useEffect(() => {
-        setValueRegister('id',Object(cdpFoundSt).id)
-        setValueRegister('exercise','2023')
-        setValueRegister('consecutive',Object(cdpFoundSt).consecutive)
-        setValueRegister('sapConsecutive',Object(cdpFoundSt).sapConsecutive)
-        setValueRegister('date',Object(cdpFoundSt).date)
-        setValueRegister('contractObject',Object(cdpFoundSt).contractObject)
-    }, [cdpFoundSt])
-    
 
+    useEffect(() => {
+        if (!cdpFoundSt) return;
+        setValueRegister('exercise', Object(cdpFoundSt).exercise)
+        setValueRegister('consecutive', Object(cdpFoundSt).consecutive)
+        setValueRegister('sapConsecutive', Object(cdpFoundSt).sapConsecutive)
+        setValueRegister('date', Object(cdpFoundSt).date)
+        setValueRegister('contractObject', Object(cdpFoundSt).contractObject)
+    }, [cdpFoundSt])
 
     return {
         control,

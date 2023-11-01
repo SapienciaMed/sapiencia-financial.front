@@ -13,7 +13,7 @@ import { usePosPreSapienciaService } from "../../functionality/hooks/pospre-sapi
 import { useFundsService } from "../../functionality/hooks/funds-service.hook";
 import { useBudgetRoutesService } from "./budget-routes-service.hook";
 import { useAdditionsTransfersService } from "../../managementCenter/hook/additions-transfers-service.hook";
-import { IProjectAdditionList } from "../../functionality/interfaces/AdditionsTransfersInterfaces";
+import { IBudgetsProjectInfo, IProjectAdditionList } from "../../functionality/interfaces/AdditionsTransfersInterfaces";
 
 export function useBudgetRoutesCrudData(id: string) {
     const resolver = useYupValidationResolver(budgetRoutesCrudValidator);
@@ -37,9 +37,9 @@ export function useBudgetRoutesCrudData(id: string) {
     const [projectsData, setProjectsData] = useState<IDropdownProps[]>([]);
     const [budgetData, setBudgetData] = useState<IDropdownProps[]>([]);
     const [pospreSapienciaData, setPospreSapienciaData] = useState<IDropdownProps[]>([]);
+    const [pospreSapienciaDataCdp, setPospreSapienciaDataCdp] = useState<IDropdownProps[]>([]);
     const [fundsData, setFundsData] = useState<IDropdownProps[]>([]);
     const [projectsVinculateData, setProjectsVinculateData] = useState<IProjectAdditionList[]>(null);
-
     const budgetSelected = watch("idBudget");
     const projectVinculationSelected = watch("idProjectVinculation");
 
@@ -47,14 +47,24 @@ export function useBudgetRoutesCrudData(id: string) {
 
         const viculateProjects = await GetProjectsList();
 
+
         if (viculateProjects.operation.code === EResponseCodes.OK) {
-            
-            const arrayProjects: IDropdownProps[] = viculateProjects.data.map((project) => {   
-                return { name: `${project.projectId} - ${project.conceptProject}`, value: project.id }
+
+            const arrayProjects: IDropdownProps[] = viculateProjects.data.map((project) => {
+
+                return { name: `${project.projectId} - ${project.conceptProject}`, value: project.id, areaFuncional: project.functionalAreaId }
             });
 
             setProjectsData(arrayProjects);
             setProjectsVinculateData(viculateProjects.data)
+            GetAllPosPreSapiencia().then(response => {
+                if (response.operation.code === EResponseCodes.OK) {
+                    const arrayPosPreSapiencia: IDropdownProps[] = response.data.map((posPreSapiencia) => {
+                        return { name: posPreSapiencia.number.toString(), value: posPreSapiencia.id, label: posPreSapiencia.number.toString() };
+                    });
+                    setPospreSapienciaDataCdp(arrayPosPreSapiencia);
+                }
+            })
         }
         const response3 = await getAllBudgets();
         if (response3.operation.code === EResponseCodes.OK) {
@@ -107,13 +117,13 @@ export function useBudgetRoutesCrudData(id: string) {
     }, [budgetSelected])
 
     useEffect(() => {
-        if(projectVinculationSelected) {
+        if (projectVinculationSelected) {
             const projectVinculation = projectsVinculateData.find((projectV) => projectV.id === projectVinculationSelected);
-            if(projectVinculation) {
+            if (projectVinculation) {
                 GetAllFunctionalAreas().then(response => {
                     if (response.operation.code === EResponseCodes.OK) {
                         const functionalArea = response.data.find((data) => data.id === projectVinculation.functionalAreaId);
-                        if(functionalArea) {
+                        if (functionalArea) {
                             setValueRegister("functionalArea", functionalArea.number);
                         } else {
                             setValueRegister("functionalArea", "");
@@ -227,5 +237,5 @@ export function useBudgetRoutesCrudData(id: string) {
         });
     }
 
-    return { register, errors, controlRegister, onSubmitNewBudgetRoute, onSubmitEditBudgetRoute, onCancelNew, onCancelEdit, confirmClose, projectsData, budgetData, pospreSapienciaData, fundsData };
+    return {pospreSapienciaDataCdp, projectsVinculateData, register, errors, controlRegister, onSubmitNewBudgetRoute, onSubmitEditBudgetRoute, onCancelNew, onCancelEdit, confirmClose, projectsData, budgetData, pospreSapienciaData, fundsData, projectVinculationSelected, setValueRegister };
 }

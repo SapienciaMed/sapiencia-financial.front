@@ -8,20 +8,22 @@ import { usePacServices } from './pac-services.hook';
 import { validateTypeResourceServices } from '../transferPac/util';
 import { EResponseCodes } from '../../../common/constants/api.enum';
 import { AppContext } from '../../../common/contexts/app.context';
-import { ITableElement } from '../../../common/interfaces/table.interfaces';
 import DisplayPacPages from '../pages/display-pac.pages';
+import { ITableAction, ITableElement } from '../../../common/interfaces/table.interfaces';
 export function usePacData() {
 
+    const { message, setMessage } = useContext(AppContext);
     const navigate = useNavigate();
     const tableComponentRef = useRef(null);
     const { GetRoutesByValidity, GetUltimateVersion } = usePacServices()
-    const { setMessage } = useContext(AppContext);
     const resolver = useYupValidationResolver(pacSearch);
     const [ isBtnDisable, setIsBtnDisable ] = useState<boolean>(false)
     const [ areTheFieldsFull, setAreTheFieldsFull ] = useState<boolean>(false)
     const [showTable, setShowTable] = useState(false);
     const [ showSpinner, setShowSpinner ] = useState(false)
     const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+    const [ disableEdit, setDisableEdit ] = useState(false)
+    const [versionActual, setVersionActual ] = useState('')
     const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelectPacComplementary>({
         listProjects: [],
         listFunds: [],
@@ -46,15 +48,22 @@ export function usePacData() {
 
     useEffect(() => {
         setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
-        setAreTheFieldsFull(inputValue.every(value => value != '' && value != undefined))        
+        setAreTheFieldsFull(inputValue.every(value => value != '' && value != undefined))     
     },[inputValue])
 
     useEffect(() => {
         setValue('exercise', String(new Date().getFullYear()))
 
-        GetUltimateVersion().then(response => {
+        const exerciseAct = {
+            exercise: new Date().getFullYear(),
+            pege: 1,
+            perPage: 10000
+        }
+
+        GetUltimateVersion(exerciseAct).then(response => {
             if(response.operation.code === EResponseCodes.OK){
-                setValue('version', response.data.version)
+                response.data?.version ?  setValue('version', response.data.version) : setValue('version', '')
+                response.data?.version ? setVersionActual(response.data.version) : setVersionActual('')
             }
         }).catch(error => console.log(error))
     },[])
@@ -72,6 +81,20 @@ export function usePacData() {
     const handleChangeExercise = (exercise: any) => {
         timer &&  clearTimeout(timer);  
         const newTimer =  setTimeout(() => {
+            if(exercise.target.value.length == 4){
+                const exerciseAct = {
+                    exercise: parseInt(exercise.target.value),
+                    pege: 1,
+                    perPage: 10000
+                }
+                GetUltimateVersion(exerciseAct).then(response => {
+                    if(response.operation.code === EResponseCodes.OK){
+                        response.data?.version ?  setValue('version', response.data.version) : setValue('version', '')
+                        response.data?.version ? setVersionActual(response.data.version) : setVersionActual('')
+                    }
+                }).catch(error => console.log(error))
+                
+            }
             if(exercise.target.value.length == 4 && areTheFieldsFull){
                 setArrayDataSelect({})   
                 setShowSpinner(true)     
@@ -97,6 +120,7 @@ export function usePacData() {
     };
 
     const onSubmit = handleSubmit(async (data: IPacSearch) => {
+        setDisableEdit(inputValue[2] != versionActual)
         const dataFiltered: IPacSearch = Object.keys(data).reduce((object, key) => {
             if (data[key] !== undefined) {
               object[key] = data[key];
@@ -148,7 +172,7 @@ export function usePacData() {
             fieldName: "listPospreSapi",
             header: "Pospre Sapiencia",
             renderCell(row) {
-                return <>{row.dataCondensed.budgetSapi}</>
+                return <>{row.dataCondensed.posPreSapi}</>
             },
             
         },
@@ -156,7 +180,7 @@ export function usePacData() {
             fieldName: "presupuestoSapi",
             header: "Presupuesto Sapiencia",
             renderCell(row) {
-                return <>{row.dataCondensed.posPreSapi}</>
+                return <>{row.dataCondensed.budgetSapi}</>
             },
         },
         {
@@ -169,7 +193,7 @@ export function usePacData() {
         
     ];
 
-    const tableActions: any[] = [
+    const tableActions: ITableAction<any>[] = [
         {
             icon: "Detail",
             onClick: (row) => {
@@ -188,7 +212,9 @@ export function usePacData() {
         {
             icon: "Edit",
             onClick: (row) => {
-                
+                const pacId = row?.dataCondensed.pacId
+                const budgetRouteId = row?.dataCondensed.routeId
+                navigate(`./edit/${pacId}/${budgetRouteId}`)
             },
         }
     ];
@@ -206,7 +232,6 @@ export function usePacData() {
             setShowSpinner(false)
             if (response.operation.code === EResponseCodes.OK) {
                 const dinamicData = response?.data;
-
                 const uniqueProjects = Array.from(new Set(dinamicData.listProjects.map(project => project.projectCode))).map(projectCode => {
                     const item = dinamicData.listProjects.find(project => project.projectCode === projectCode);
                     return {
@@ -251,20 +276,9 @@ export function usePacData() {
                 }));
 
 
-            }else {
-                setMessage({
-                    title: "Validación de datos",
-                    description: response.operation.message,
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                      setMessage({});
-                    },
-                    background: true,
-                    onClose: () => {
-                      setMessage({});
-                    },
-                });
+            } 
+            else {
+                console.log(response.operation.message)
             }
         }).catch((error) => {
             setShowSpinner(false)
@@ -272,7 +286,6 @@ export function usePacData() {
             
         })
     } 
-
 
     return {
         control,
@@ -284,6 +297,7 @@ export function usePacData() {
         tableColumns,
         showSpinner,
         arrayDataSelect,
+        disableEdit,
         navigate,
         setShowTable,
         register,

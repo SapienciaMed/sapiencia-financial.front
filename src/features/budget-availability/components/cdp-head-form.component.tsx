@@ -1,17 +1,17 @@
+import React from "react";
 import { Controller } from "react-hook-form";
-import { DatePickerComponent, InputComponent, SelectComponent, TextAreaComponent } from "../../../common/components/Form";
+import { DatePickerComponent, InputComponent, TextAreaComponent } from "../../../common/components/Form";
 import { useCdpCrud } from "../hooks/use-cdp";
 import { EDirection } from "../../../common/constants/input.enum";
-import { IBudgetAvalaibility } from "../interfaces/budgetAvailabilityInterfaces";
 
-interface Props{
-    isDisabled:boolean;
-    detail:IBudgetAvalaibility;
+interface Props {
+    isDisabled: boolean;
+    cdpId?: string;
 }
 
-function CdpHeadFormComponent(props:Props) {
-    const { detail, isDisabled } = props;
-    const { control, register, errors } = useCdpCrud();
+function CdpHeadFormComponent(props: Props) {
+    const { isDisabled, cdpId } = props;
+    const { control, register, errors } = useCdpCrud(cdpId);
 
     return (
         <>
@@ -19,20 +19,19 @@ function CdpHeadFormComponent(props:Props) {
                 <Controller
                     control={control}
                     name={"exercise"}
-                    defaultValue={String(new Date().getFullYear())}
                     render={({ field }) => {
                         return (
                             <InputComponent
                                 id={field.name}
                                 idInput={field.name}
-                                value={''}
                                 className="input-basic medium"
                                 typeInput="number"
                                 register={register}
                                 label="Vigencia"
                                 classNameLabel="text-black weight-500 biggest"
                                 direction={EDirection.column}
-                                onChange={field.onChange}
+                                fieldArray={false}
+                                //onChange={field.onChange}
                                 errors={errors}
                                 disabled={isDisabled}
                             />
@@ -101,16 +100,16 @@ function CdpHeadFormComponent(props:Props) {
 
                 <Controller
                     control={control}
-                    name={"sapConsecutive"}
+                    name={"rpAssoc"}
                     render={({ field }) => {
                         return (
                             <InputComponent
                                 id={field.name}
                                 idInput={field.name}
                                 className="input-basic medium"
-                                typeInput="number"
+                                typeInput="text"
                                 register={register}
-                                label="RP asociados"
+                                label="RP asociados1"
                                 classNameLabel="text-black weight-500 biggest"
                                 direction={EDirection.column}
                                 onChange={field.onChange}
@@ -121,28 +120,35 @@ function CdpHeadFormComponent(props:Props) {
                     }}
                 />
 
-
+                    
             </section>
 
-            <TextAreaComponent
-                id={'contractObject'}
-                idInput={'contractObject'}
-                className="text-area-basic"
-                register={register}
-                label="Objeto contractual"
-                classNameLabel="text-black biggest"
-                direction={EDirection.column}
-                errors={errors}
-                rows={2}
-                disabled={isDisabled}
-            />
-
-
+             <section>
+             <Controller
+                        control={control}
+                        name={"contractObject"}
+                        defaultValue=""
+                        render={({ field }) => {
+                            return (
+                                <TextAreaComponent
+                                    id={field.name}
+                                    idInput={field.name}
+                                    value={`${field.value}`}
+                                    className="text-area-basic"
+                                    register={register}
+                                    label="Objeto contractual"
+                                    classNameLabel="text-black biggest"
+                                    direction={EDirection.column}
+                                    errors={errors}
+                                    onChange={field.onChange}
+                                    disabled={isDisabled}
+                                />
+                            );
+                        }}
+                    />
+            </section>       
         </>
     )
-
-
-
 }
 
-export default CdpHeadFormComponent;
+export default React.memo(CdpHeadFormComponent);

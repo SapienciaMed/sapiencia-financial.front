@@ -19,7 +19,7 @@ export function usePacCrud() {
 
   const resolver = useYupValidationResolver(pacCrudValidator);
 
-  const { setMessage } = useContext(AppContext);
+  const { setMessage, authorization } = useContext(AppContext);
 
   const { uploadPac } = usePacService()
 
@@ -90,6 +90,9 @@ export function usePacCrud() {
     formData.append('typePac', data.typePac)
     formData.append('typeSource', data.typeSource)
     formData.append('file', data.file)
+    formData.append('userCreate', authorization.user.numberDocument)
+    const userModify = data.typePac=='Carga inicial' || data.typePac=='Nueva version' ? '' : authorization.user.numberDocument
+    formData.append('userModify', userModify)
     showModal({
       title: "Guardar",
       description: "¿Está segur@ de guardar el proyecto?",
@@ -123,7 +126,7 @@ export function usePacCrud() {
     if (response.operation.code == "OK" && !Object(response).data.data?.errno) {
 
       showModal({
-        title: "Guardado",
+        title: "Confirmación",
         description: response.operation.message,  //"El archivo no pudo ser cargado, revisa las validaciones.",
         show: true,
         OkTitle: "Aceptar",
@@ -170,6 +173,20 @@ export function usePacCrud() {
         }
       })
     
+    } else if(response.operation.code == "OK" && Object(response).data?.errors?.length==0){  
+      showModal({
+        title: "Confirmación",
+        description: response.operation.message,
+        show: true,
+        OkTitle: "Aceptar",
+        onOk: () => {
+          setMessage({})
+          onCancelNew()
+          setIsLoading(false)
+          setErrorsPac(Object(response).data.errors)
+        }
+      })
+
     }else {
       showModal({
         title: "Carga de archivo",

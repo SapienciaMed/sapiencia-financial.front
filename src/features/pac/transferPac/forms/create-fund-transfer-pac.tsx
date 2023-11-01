@@ -13,7 +13,8 @@ import { IAnnualRoute } from "../../interface/Pac";
 import { AppContext } from "../../../../common/contexts/app.context";
 
 function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pacTypeState, isdataReset, itemsPerPage, annualDataRoutesOriginal,
-    startIndex, disableBtnAdd, register, setValue, setIsdataResetState, setAnnualDataRoutesOriginal }:ICreateFundTransferPac ) {
+    startIndex, disableBtnAdd, originalDestinationValueOfService, addNewObject,
+    setOriginalDestinationValueOfService, register, setValue, setIsdataResetState, setAnnualDataRoutesOriginal }:ICreateFundTransferPac ) {
 
     const { SearchAnnualDataRoutes } = usePacTransfersService()
     const { setMessage } = useContext(AppContext);
@@ -46,6 +47,11 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
     })
     const tipoRecurso = useWatch({
         name: 'TypeResource',
+        control
+    })
+
+    const pacTypeWatch = useWatch({
+        name: 'pacType',
         control
     })
 
@@ -165,7 +171,26 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
         dataRoutes.length > 0 && SearchAnnualDataRoutes(dataRoutes[0]).then(response => {
             if (response.operation.code === EResponseCodes.OK) {
               const annualDataRoutesResponse = response?.data;
-              const annualRouteService = annualDataRoutesResponse.annualRoute.map(use => {
+              const annualRouteService = pacTypeWatch != 4 ? annualDataRoutesResponse.annualRoute.filter(us => us.type == validateTypePac(pacTypeWatch)).map(use => {
+                return {
+                    id: use.id,
+                    pacId: use.pacId,
+                    type: use.type,
+                    jan: use.jan,
+                    feb: use.feb,
+                    mar: use.mar,
+                    abr: use.abr,
+                    may: use.may,
+                    jun: use.jun,
+                    jul: use.jul,
+                    ago: use.ago,
+                    sep: use.sep,
+                    oct: use.oct,
+                    nov: use.nov,
+                    dec: use.dec,
+                    cardId: annualDataRoutesResponse.headerResult.idCardTemplate
+                }
+              }) : annualDataRoutesResponse.annualRoute.map(use => {
                 return {
                     id: use.id,
                     pacId: use.pacId,
@@ -186,6 +211,29 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
                 }
               })
 
+              const annualDataRoutesBothService = annualDataRoutesResponse.annualRoute.map(use => {
+                return {
+                    id: use.id,
+                    pacId: use.pacId,
+                    type: use.type,
+                    jan: use.jan,
+                    feb: use.feb,
+                    mar: use.mar,
+                    abr: use.abr,
+                    may: use.may,
+                    jun: use.jun,
+                    jul: use.jul,
+                    ago: use.ago,
+                    sep: use.sep,
+                    oct: use.oct,
+                    nov: use.nov,
+                    dec: use.dec,
+                    cardId: annualDataRoutesResponse.headerResult.idCardTemplate
+                }
+              })
+
+              addNewObject(annualDataRoutesBothService)
+
               const existingIndex = annualDataRoutes.findIndex(
                 (item) => item.annualRouteService[0]?.cardId === annualRouteService[0]?.cardId
               );
@@ -193,30 +241,47 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
               if (existingIndex !== -1) {
                 // Si el cardId ya existe, actualiza el elemento existente
                 const updatedAnnualDataRoutes = [...annualDataRoutes];
-                updatedAnnualDataRoutes[existingIndex].annualRouteService[0] = annualRouteService[0];
+                const existingElement = updatedAnnualDataRoutes[existingIndex];
+                // Copia el elemento existente y actualiza solo las propiedades necesarias
+                const updatedElement = { ...existingElement };
+                updatedElement.annualRouteService[0] = annualRouteService[0];
+                updatedAnnualDataRoutes[existingIndex] = updatedElement;
                 setAnnualDataRoutes(updatedAnnualDataRoutes);
-                setAnnualDataRoutesOriginal(updatedAnnualDataRoutes)
+                setAnnualDataRoutesOriginal(updatedAnnualDataRoutes);
               } else {
-                // Si el cardId no existe, agrega un nuevo elemento
+
                 setAnnualDataRoutes([...annualDataRoutes, { annualRouteService }]);
                 setAnnualDataRoutesOriginal([...annualDataRoutesOriginal, { annualRouteService }])
               }
           
             }else{
+                const annualDataRoutesResponse = response?.data;
+                const existingIndex = annualDataRoutes.findIndex( (item) => item.annualRouteService[0]?.cardId === annualDataRoutesResponse.idCardTemplate);
+                const updatedAnnualDataRoutesOriginal = annualDataRoutesOriginal.filter(
+                    (item) => item.annualRouteService[0]?.cardId !== annualDataRoutesResponse.idCardTemplate
+                );
+                const updatedOriginalDestinationValueOfService= originalDestinationValueOfService.filter(
+                    (item) => item.annualRouteService[0]?.cardId !== annualDataRoutesResponse.idCardTemplate
+                );
+                
+                const handleAction = () => {
+                    setMessage({});
+                    if (existingIndex !== -1) {
+                        const updatedAnnualDataRoutes = [...annualDataRoutes];
+                        updatedAnnualDataRoutes.splice(existingIndex, 1);
+                        setAnnualDataRoutes(updatedAnnualDataRoutes);
+                        setAnnualDataRoutesOriginal(updatedAnnualDataRoutesOriginal);
+                        setOriginalDestinationValueOfService(updatedOriginalDestinationValueOfService)
+                    }
+                };
                 setMessage({
                     title: "Validación de datos",
                     description: response.operation.message,
                     show: true,
                     OkTitle: "Aceptar",
-                    onOk: () => {
-                      setMessage({});
-                      
-                    },
+                    onOk: handleAction,
                     background: true,
-                    onClose: () => {
-                      setMessage({});
-                
-                    },
+                    onClose: handleAction,
                 });
             }
         }).catch(err => console.log(err))
