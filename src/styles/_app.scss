@@ -75,3 +75,22 @@ hr {
   margin-top: 0px;
   font-size: 14px;
 }
+
+
+.routes-denomination-container {
+  display: grid;
+  grid-template-columns: 1.5fr 3fr; 
+  gap: 18px; 
+}
+
+.input-basic {
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .routes-denomination-container {
+    grid-template-columns: 1fr; 
+  }
+}
+
+

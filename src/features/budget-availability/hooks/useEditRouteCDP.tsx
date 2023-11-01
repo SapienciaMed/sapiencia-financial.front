@@ -1,4 +1,4 @@
-import { useState, useEffect,useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCdpService } from "./cdp-service";
 
@@ -14,15 +14,15 @@ import { IFunctionalArea } from "../../functionality/interfaces/Functional-Area"
 import { AppContext } from "../../../common/contexts/app.context";
 
 
-export function useEditrouteCDP(modifiedIdcCountercredit:number,idcModifiedCredit:number,idcFixedCompleted:number) {    
-   
+export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCredit: number, idcFixedCompleted: number) {
+
     //params url
     const navigate = useNavigate();
     const { id: idRoute } = useParams();
     const { setMessage } = useContext(AppContext);
 
     //services
-    const { getRouteCDPId } = useCdpService()
+    const { getRouteCDPId, getOneRpp } = useCdpService()
     const { GetProjectsList } = useAdditionsTransfersService()
     const { GetAllFunctionalAreas } = useFunctionalAreaService()
 
@@ -32,10 +32,14 @@ export function useEditrouteCDP(modifiedIdcCountercredit:number,idcModifiedCredi
     const [areaData, setAreaData] = useState<IFunctionalArea[]>([]);
     const [projectNumber, setProjectNumber] = useState("");
     const [projectName, setProjectName] = useState("");
+    const [projectId, setProjectId] = useState("");
     const [areaNumber, setAreaNumber] = useState("");
     const [centroGestor, setCentroGestor] = useState('91500000');
     const [idcFinalValue, setIdcFinalValue] = useState(0);
-    //IProjectAdditionList
+    const [balance, setBalance] = useState(0);
+    const [disable, setDisable] = useState(false);
+
+
     //Form
     const {
         control,
@@ -58,7 +62,7 @@ export function useEditrouteCDP(modifiedIdcCountercredit:number,idcModifiedCredi
             });
         }
         GetProjectsList().then((response) => {
-            if (response.operation.code === EResponseCodes.OK) {        
+            if (response.operation.code === EResponseCodes.OK) {
                 //console.log('datos',response.data)       
                 const projectDetails = response.data.map((project) => ({
                     id: project.id,
@@ -70,7 +74,7 @@ export function useEditrouteCDP(modifiedIdcCountercredit:number,idcModifiedCredi
                     projectId: project.projectId,
                     conceptProject: project.conceptProject,
                     plannedValue: project.plannedValue,
-                    assignmentValue: project.assignmentValue,                 
+                    assignmentValue: project.assignmentValue,
 
                 }));
                 setProjectsData(projectDetails);
@@ -82,58 +86,88 @@ export function useEditrouteCDP(modifiedIdcCountercredit:number,idcModifiedCredi
                     id: area.id,
                     number: area.number,
                     denomination: area.denomination,
-                    description: area.description 
-                }));                
+                    description: area.description
+                }));
 
-               setAreaData(areaDetails);
+                setAreaData(areaDetails);
             }
         });
     }, [idRoute]);
 
-  
+
     useEffect(() => {
         if (dataRoutesCDP && dataRoutesCDP.budgetRoute && projectsData.length > 0) {
-          const foundProject = projectsData.find(project => project.id === dataRoutesCDP?.budgetRoute.projectVinculation.id);
-          if (foundProject) {
-            
-            setProjectNumber(String(foundProject.projectId));
-            setProjectName(String(foundProject.conceptProject));
-          }
+            const foundProject = projectsData.find(project => project.id === dataRoutesCDP?.budgetRoute.projectVinculation.id);
+            if (foundProject) {
+
+                setProjectNumber(String(foundProject.projectId));
+                setProjectName(String(foundProject.conceptProject));
+                setProjectId(String(foundProject.id));
+            }
         }
 
         if (areaData.length > 0) {
-          const areas = areaData.find(project => project.id === dataRoutesCDP?.budgetRoute.projectVinculation.functionalAreaId);
-          if (areas) {           
-          
-            setAreaNumber(String(areas.number));
-          }
+            const areas = areaData.find(project => project.id === dataRoutesCDP?.budgetRoute.projectVinculation.functionalAreaId);
+            if (areas) {
+
+                setAreaNumber(String(areas.number));
+            }
         }
-      }, [dataRoutesCDP, projectsData]);
-      
-  
-      useEffect(() => {
+    }, [dataRoutesCDP, projectsData]);
+
+
+    useEffect(() => {
         const amount = dataRoutesCDP?.amount ?? 0;
         const idcModifiedCreditNumber = idcModifiedCredit ?? 0;
         const modifiedIdcCountercreditNumber = modifiedIdcCountercredit ?? 0;
         const idcFixedCompletedNumber = idcFixedCompleted ?? 0;
-      
-        const resultFinal = (Number(amount) + idcModifiedCreditNumber) - modifiedIdcCountercreditNumber - idcFixedCompletedNumber;
-      
-        setIdcFinalValue(resultFinal); // Asegúrate de que esta línea no esté comentada
-        console.log(resultFinal);
-      }, [dataRoutesCDP, idcModifiedCredit, modifiedIdcCountercredit, idcFixedCompleted]); // Incluye todas las dependencias relevantes aquí
-      
+
+        const resultFinal = Math.max(0, (Number(amount) + idcModifiedCreditNumber) - modifiedIdcCountercreditNumber - idcFixedCompletedNumber);
+        setIdcFinalValue(resultFinal);
+
+
+    }, [dataRoutesCDP, idcModifiedCredit, modifiedIdcCountercredit, idcFixedCompleted]); // Incluye todas las dependencias relevantes aquí
+
+
+    //validar por valores
+    const fetchBalance = async () => {
+        if (dataRoutesCDP) {
+            try {
+                const objectSendData = {
+                    posPreId: dataRoutesCDP.budgetRoute.pospreSapiencia.id,
+                    foundId: dataRoutesCDP.budgetRoute.fund.id,
+                    projectId: dataRoutesCDP.budgetRoute.idProjectVinculation,
+                };
+                console.log(objectSendData)
+                const res = await getOneRpp(objectSendData);
+                setBalance(parseInt(res['balance']));
+            } catch (error) {
+                console.error('Error al obtener los datos:', error);
+            }
+        }
+    };
+
+    useEffect(() => {
+        fetchBalance()
+        console.log('balance', balance)
+        if (idcModifiedCredit >= idcFinalValue) {           
+            setDisable(true)
+        }else{    
+            setDisable(false)
+        }
+    })
 
 
 
     //setear valores
     useEffect(() => {
         if (!dataRoutesCDP) return;
-        
+
         //Obtener mes
         const date = new Date(dataRoutesCDP.budgetAvailability.date);
         const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
         const monthText = monthNames[date.getMonth()];
+
 
         // Asignar los campos que siempre vienen
         setValue("date", dataRoutesCDP.budgetAvailability.date);
@@ -155,7 +189,7 @@ export function useEditrouteCDP(modifiedIdcCountercredit:number,idcModifiedCredi
 
 
 
-    }, [dataRoutesCDP,projectNumber,projectName,areaNumber,centroGestor]);
+    }, [dataRoutesCDP, projectNumber, projectName, areaNumber, centroGestor]);
 
     const onSubmiteditRouteCDP = handleSubmit(async (data: IUpdateRoutesCDP) => {
 
@@ -166,30 +200,30 @@ export function useEditrouteCDP(modifiedIdcCountercredit:number,idcModifiedCredi
             cancelTitle: "Cancelar",
             OkTitle: "Aceptar",
             onOk() {
-              confirmEdit(data);
+                confirmEdit(data);
             },
             background: true,
-          });
-       
-       
-
-          
-          
         });
+
+
+
+
+
+    });
 
     const confirmEdit = async (data: IUpdateRoutesCDP) => {
 
         const datos: IUpdateRoutesCDP = {
-            idRppCode: dataRoutesCDP.idRppCode,   
-            cdpPosition:data.cdpPosition,         
-            amount:   data.amount,                
+            idRppCode: dataRoutesCDP.idRppCode,
+            cdpPosition: data.cdpPosition,
+            amount: data.amount,
             modifiedIdcCountercredit: data.modifiedIdcCountercredit,
             idcModifiedCredit: data.idcModifiedCredit,
             idcFixedCompleted: data.idcFixedCompleted,
             idcFinalValue: idcFinalValue
         }
 
-        console.log('llego',datos)
+        console.log('llego', datos)
         /* 
             const res = await updateUser(parseInt(userId), user);
 
@@ -242,7 +276,8 @@ export function useEditrouteCDP(modifiedIdcCountercredit:number,idcModifiedCredi
         control,
         register,
         onSubmiteditRouteCDP,
-        idcFinalValue
+        idcFinalValue,
+        disable
     };
 
 }

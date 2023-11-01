@@ -12,7 +12,7 @@ function RoutesCDPEditPage() {
     const [idcModifiedCredit, setIdcModifiedCredit] = useState(0)
     const [idcFixedCompleted, setIdcFixedCompleted] = useState(0)
 
-    const { onSubmiteditRouteCDP, register, control,idcFinalValue } = useEditrouteCDP(modifiedIdcCountercredit,idcModifiedCredit,idcFixedCompleted);
+    const { onSubmiteditRouteCDP, register, control, idcFinalValue, disable } = useEditrouteCDP(modifiedIdcCountercredit, idcModifiedCredit, idcFixedCompleted);
 
     return (
         <div className="main-page">
@@ -111,10 +111,10 @@ function RoutesCDPEditPage() {
                         <div className="title-area">
                             <label className="text-black biggest">Ruta presupuestal</label>
                         </div>
-                        <section className='fund-denomination-container mt-5px'>
+                        <div className="routes-denomination-container">
                             <InputComponent
                                 idInput="numberProject"
-                                className="input-basic"
+                                className="input-basic "
                                 typeInput="text"
                                 register={register}
                                 label="Proyecto"
@@ -130,8 +130,7 @@ function RoutesCDPEditPage() {
                                 classNameLabel="text-black biggest text-required"
                                 disabled
                             />
-                        </section>
-
+                        </div>
                         <section className='grid-form-3-container-area mt-5px'>
                             <InputComponent
                                 idInput="numberFound"
@@ -210,7 +209,7 @@ function RoutesCDPEditPage() {
                                 register={register}
                                 label="Modificado contracrédito"
                                 classNameLabel="text-black biggest"
-                                onChange={(e) => setModifiedIdcCountercredit(Number(e.target.value))}                             
+                                onChange={(e) => setModifiedIdcCountercredit(Number(e.target.value))}
                             />
                             <InputComponent
                                 idInput="idcModifiedCredit"
@@ -220,7 +219,7 @@ function RoutesCDPEditPage() {
                                 label="Modificado crédito"
                                 classNameLabel="text-black biggest"
                                 onChange={(e) => setIdcModifiedCredit(Number(e.target.value))}
-                                />
+                            />
                             <InputComponent
                                 idInput="idcFixedCompleted"
                                 className="input-basic"
@@ -245,6 +244,7 @@ function RoutesCDPEditPage() {
                         </section>
 
                     </section>
+
                 </FormComponent>
             </div>
             <hr />
@@ -265,6 +265,7 @@ function RoutesCDPEditPage() {
                             className="button-search"
                             value="Guardar"
                             type="submit"
+                            disabled={disable}
 
 
                         />
