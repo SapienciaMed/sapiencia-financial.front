@@ -1,7 +1,15 @@
 import { ProgressSpinner } from "primereact/progressspinner";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 function DisplayPacPages() {
+
+    const [ showSpinner, setShowSpinner ] = useState(true)
+
+    useEffect(() => {
+        setTimeout(()=> {
+            setShowSpinner(false);
+        },900)
+    },[])
 
     const rowsMock =[
         {
@@ -174,21 +182,22 @@ function DisplayPacPages() {
     return (
         <>
             {
-                false && 
+                showSpinner ? 
                     <ProgressSpinner style={{width: '20px', height: '20px'}}  animationDuration=".5s" />
+                :
+                <table className="details-table">
+                    {
+                        rowsMock.map(row => {
+                            return (
+                                <tr key={row.title}>
+                                    <th className="th-title text-black weight-500">{row.title}</th>
+                                    <th className="th-content text-black weight-500">{row.value}</th>
+                                </tr>
+                            )
+                        })
+                    }
+                </table>   
             }
-            <table className="details-table">
-                {
-                    rowsMock.map(row => {
-                        return (
-                            <tr key={row.title}>
-                                <th className="th-title text-black weight-500">{row.title}</th>
-                                <th className="th-content text-black weight-500">{row.value}</th>
-                            </tr>
-                        )
-                    })
-                }
-            </table>
         </>
     )
 }
