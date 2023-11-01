@@ -32,6 +32,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
   const [valorInicial, setValorInicial] = useState('0');
   const [balance, setBalance] = useState('0');
   const [idRpp, setIdRpp] = useState('0');
+ 
 
   const onDeleteClick = () => {
     handleEliminar(formNumber);
@@ -59,6 +60,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
 
   const validateField = (field) => {
     if (formSubmitted && !field) {
+
       return 'campo-obligatorio';
     }
     return '';
@@ -168,12 +170,12 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
         <div className="grid-form">
           <h2 className="h3-style">{formNumber + 1}. Ruta</h2>
           <h2>Ruta presupuestal</h2>
-          <div className={`col-4 ${validateField(proyecto)}`}>
+          <div className={`col-4`}>
             <label>Proyecto <span>*</span></label>
-            <SelectSearch style={{ border: formSubmitted && !proyecto ? '1px solid red' : 'none' }} options={projectsData} setter={setProyecto} />
+            <SelectSearch style={{ border: formSubmitted && !proyecto ? '1px solid red' : '1px solid #ccc' }} options={projectsData} setter={setProyecto} />
             {formSubmitted && !proyecto && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
           </div>
-          <div className={`col-8 ${validateField(nombreProyecto)}`}>
+          <div className={`col-8`}>
             <label>Nombre proyecto <span>*</span></label>
             <input
               type="text"
@@ -184,34 +186,34 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
             />
             {formSubmitted && !nombreProyecto && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
           </div>
-          <div className={`col-4 ${validateField(fondo)}`}>
+          <div className={`col-4`}>
             <label>Fondo <span>*</span></label>
-            <SelectSearch style={{ border: formSubmitted && !fondo ? '1px solid red' : 'none' }} options={fundsData} setter={setFondo} />
+            <SelectSearch style={{ border: formSubmitted && !fondo ? '1px solid red' : '1px solid #ccc' }} options={fundsData} setter={setFondo} />
             {formSubmitted && !fondo && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
           </div>
-          <div className={`col-4 ${validateField(pospreNewV)}`}>
+          <div className={`col-4`}>
             <label>Pospre <span>*</span></label>
-            <SelectSearch style={{ border: formSubmitted && !pospreNewV ? '1px solid red' : 'none' }} options={convertedOptionsPosPre} setter={setPospreNewV} />
+            <SelectSearch style={{ border: formSubmitted && !pospreNewV ? '1px solid red' : '1px solid #ccc' }} options={convertedOptionsPosPre} setter={setPospreNewV} />
             {formSubmitted && !pospreNewV && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
           </div>
-          <div className={`col-4 ${validateField(areaFuncional)}`}>
+          <div className={`col-4`}>
             <label>Área funcional <span>*</span></label>
             <input style={{ border: formSubmitted && !areaFuncional ? '1px solid red' : 'none' }} type="text" className={`estilo-input bgSecondary ${validateField(areaFuncional)}`} value={areaFuncional} onChange={handleAreaFuncionalChange} />
             {formSubmitted && !areaFuncional && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
           </div>
-          <div className={`col-4 ${validateField(centroGestor)}`}>
+          <div className={`col-4`}>
             <label>Centro gestor <span>*</span></label>
             <input type="text" readOnly className={`estilo-input bgSecondary ${validateField(centroGestor)}`} value={centroGestor} onChange={handleCentroGestorChange} />
             {formSubmitted && !centroGestor && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
           </div>
-          <div className={`col-4 ${validateField(div)}`}>
+          <div className={`col-4`}>
             <label>DIV <span>*</span></label>
             <input type="text" readOnly className={`estilo-input bgSecondary ${validateField(div)}`} value={div} onChange={handleDivChange} />
             {formSubmitted && !div && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
           </div>
-          <div className={`col-4 ${validateField(formNumber + 1)}`}>
+          <div className={`col-4`}>
             <label>Posición <span>*</span></label>
-            <input type="text" readOnly className={`estilo-input bgSecondary ${validateField(formNumber + 1)}`} value={formNumber + 1} onChange={handlePosicionChange} />
+            <input type="text" readOnly className={`estilo-input bgSecondary`} value={formNumber + 1} onChange={handlePosicionChange} />
             {formSubmitted && !(formNumber + 1) && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
           </div>
           <h3>Importe</h3>
