@@ -12,7 +12,7 @@ export function useCdpService() {
         const endpoint: string = "/get-by-id/"+id;
         return get(`${roleUrl}${endpoint}`);
     }
-
+    
     async function createCdp(data: Object): Promise<ApiResponse<any[]>> {
         const endpoint: string = "/upload-pac";
         return postFormData(`${roleUrl}${endpoint}`, data);
@@ -32,13 +32,19 @@ export function useCdpService() {
         const endpoint: string = "/cancel-amount";
         return postFormData(`${roleUrl}${endpoint}`,data);
     }
+    
+    async function getRouteCDPId(id:number): Promise<ApiResponse<IBudgetAvalaibility>> {
+        const endpoint: string = "/get-routeCDP-id/"+id;
+        return get(`${roleUrl}${endpoint}`);
+    }
 
     return {
         createCdp,
         createCdp_,
         getCdpById,
         getOneRpp,
-        cancelAmount
+        cancelAmount,
+        getRouteCDPId
      }
     };
 

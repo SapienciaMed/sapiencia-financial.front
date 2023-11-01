@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom"
 import { lazy } from "react";
 import CdpMgaAssocPage from "./pages/cdp-mga-assoc.page";
+import RoutesCdpEditPage from "./pages/routes-cdp-edit.page";
 
 
 const BudgetAvailabilityRoutes = () => {
@@ -15,7 +16,7 @@ const BudgetAvailabilityRoutes = () => {
             <Route path={"/create"} element={ <CdpCrudPage /> } />
             <Route path={"/view/:id"} element={ <CdpViewPage /> } />
             <Route path={"/view/:id/mga-assoc/:idRoute"} element={ <CdpMgaAssocPage /> } />
-            <Route path={"/view/:id/edit/:idRoute"} element={ <CdpCrudPage /> } />
+            <Route path={"/view/:id/edit/:idRoute"} element={ <RoutesCdpEditPage /> } />
         </Routes>
     )
 
