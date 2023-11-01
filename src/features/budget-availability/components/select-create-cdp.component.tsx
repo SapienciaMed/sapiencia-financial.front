@@ -50,14 +50,7 @@ const SelectSearch = ({ options, setter, style }) => {
         };
     }, []);
 
-    const selectSearchStyle = {
-        border: '1px solid grey', // Establecer el borde predeterminado como "1px solid grey"
-    };
-
-    if (style && style.border) {
-        selectSearchStyle.border = style.border // Cambiar el borde si la condición se cumple
-    }
-
+    
     return (
         <div className="position-relative" ref={node}>
             <input
@@ -67,7 +60,7 @@ const SelectSearch = ({ options, setter, style }) => {
                 value={searchTerm}
                 onChange={handleSearchChange}
                 onClick={() => setShowOptions(true)}
-                style={selectSearchStyle}
+                style={style}
             />
             {showOptions && (
                 <div

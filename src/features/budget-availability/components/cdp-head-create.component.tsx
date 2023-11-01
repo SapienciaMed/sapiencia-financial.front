@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Controller } from "react-hook-form";
 import { InputComponent, TextAreaComponent } from "../../../common/components/Form";
 import { useCdpCrud } from "../hooks/use-cdp";
@@ -64,7 +64,7 @@ function CdpheadCreate(prop: Props) {
         };
         setFormHeadInfoState(objRpp);
         setFormHeadInfo(objRpp);
-    }, [exercise, contractObject,date]);
+    }, [exercise, contractObject, date]);
 
     const validateField = (field) => {
         if (formSubmitted && !field) {
@@ -87,8 +87,8 @@ function CdpheadCreate(prop: Props) {
                             placeholder="Elige una fecha"
                             disabled={false}
                             id="fecha-elegida"
+                            className={validateField(date)}
                         />
-
                         {formSubmitted && date === "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
                     </div>
                     <div className="exercise-container" style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
@@ -114,6 +114,7 @@ function CdpheadCreate(prop: Props) {
                                     />
                                 )}
                             />
+
                             {formSubmitted && year === "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
                         </div>
                         <div className="input-container">
@@ -157,6 +158,7 @@ function CdpheadCreate(prop: Props) {
                     disabled={isDisabled}
                     onChange={(e) => handleInputChange("contractObject", e.target)}
                 />
+
                 {formSubmitted && contractObject == "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
             </div>
         </>
