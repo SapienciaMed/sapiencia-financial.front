@@ -19,20 +19,6 @@ const DatePickerCdp = ({ setYear, setMonth, setDate, selected, placeholder, disa
         "diciembre"
     ];
 
-    /* const handleChange = (e) => {
-        const selectedDate = e.target.value;
-        const parts = selectedDate.split('-');
-        const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
-        setDate(selectedDate);
-        setValue(formattedDate);
-        
-        let partsDate = selectedDate.split("-");
-        setYear(partsDate[0]);
-        let monthNumber = parseInt(partsDate[1]);
-        setMonth(mothsYear[monthNumber]);
-    }; */
-
-
     const handleChange = (newValue) => {
         let dateSelected = event.target['value'];
         const arrData = dateSelected.split("-");

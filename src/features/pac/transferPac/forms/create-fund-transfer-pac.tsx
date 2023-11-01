@@ -13,7 +13,7 @@ import { IAnnualRoute } from "../../interface/Pac";
 import { AppContext } from "../../../../common/contexts/app.context";
 
 function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pacTypeState, isdataReset, itemsPerPage, annualDataRoutesOriginal,
-    startIndex, disableBtnAdd, originalDestinationValueOfService,
+    startIndex, disableBtnAdd, originalDestinationValueOfService, addNewObject,
     setOriginalDestinationValueOfService, register, setValue, setIsdataResetState, setAnnualDataRoutesOriginal }:ICreateFundTransferPac ) {
 
     const { SearchAnnualDataRoutes } = usePacTransfersService()
@@ -47,6 +47,11 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
     })
     const tipoRecurso = useWatch({
         name: 'TypeResource',
+        control
+    })
+
+    const pacTypeWatch = useWatch({
+        name: 'pacType',
         control
     })
 
@@ -166,7 +171,26 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
         dataRoutes.length > 0 && SearchAnnualDataRoutes(dataRoutes[0]).then(response => {
             if (response.operation.code === EResponseCodes.OK) {
               const annualDataRoutesResponse = response?.data;
-              const annualRouteService = annualDataRoutesResponse.annualRoute.map(use => {
+              const annualRouteService = pacTypeWatch != 4 ? annualDataRoutesResponse.annualRoute.filter(us => us.type == validateTypePac(pacTypeWatch)).map(use => {
+                return {
+                    id: use.id,
+                    pacId: use.pacId,
+                    type: use.type,
+                    jan: use.jan,
+                    feb: use.feb,
+                    mar: use.mar,
+                    abr: use.abr,
+                    may: use.may,
+                    jun: use.jun,
+                    jul: use.jul,
+                    ago: use.ago,
+                    sep: use.sep,
+                    oct: use.oct,
+                    nov: use.nov,
+                    dec: use.dec,
+                    cardId: annualDataRoutesResponse.headerResult.idCardTemplate
+                }
+              }) : annualDataRoutesResponse.annualRoute.map(use => {
                 return {
                     id: use.id,
                     pacId: use.pacId,
@@ -186,6 +210,29 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
                     cardId: annualDataRoutesResponse.headerResult.idCardTemplate
                 }
               })
+
+              const annualDataRoutesBothService = annualDataRoutesResponse.annualRoute.map(use => {
+                return {
+                    id: use.id,
+                    pacId: use.pacId,
+                    type: use.type,
+                    jan: use.jan,
+                    feb: use.feb,
+                    mar: use.mar,
+                    abr: use.abr,
+                    may: use.may,
+                    jun: use.jun,
+                    jul: use.jul,
+                    ago: use.ago,
+                    sep: use.sep,
+                    oct: use.oct,
+                    nov: use.nov,
+                    dec: use.dec,
+                    cardId: annualDataRoutesResponse.headerResult.idCardTemplate
+                }
+              })
+
+              addNewObject(annualDataRoutesBothService)
 
               const existingIndex = annualDataRoutes.findIndex(
                 (item) => item.annualRouteService[0]?.cardId === annualRouteService[0]?.cardId

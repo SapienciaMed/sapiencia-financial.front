@@ -13,5 +13,14 @@ export const useCdpServices = () => {
       console.log({ GetRoutesByValidity: error });
     }
   }
-  return { GetRoutesByValidity };
+
+  const updateDataBasicCdp = async (data, id) => {
+    try {
+      const endpoint: string = `/edit-cdp/${id}`;
+      return post(`${roleUrl}${endpoint}`, data);
+    } catch (error) {
+      console.log({ updateDataBasicCdp: error });
+    }
+  };
+  return { GetRoutesByValidity, updateDataBasicCdp };
 };

@@ -38,8 +38,8 @@ interface IProps<T> {
   searchItems?: object;
   isShowModal: boolean;
   titleMessageModalNoResult?: string;
-  classSizeTable?: 'size-table-wd-150'
-  isDisabled?: boolean
+  classSizeTable?: string;
+  isDisabled?: boolean;
 }
 
 interface IRef {
@@ -57,7 +57,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
     isShowModal,
     emptyMessage = "No hay resultados.",
     classSizeTable,
-    isDisabled
+    isDisabled,
   } = props;
 
   // States
@@ -97,7 +97,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
       setResultData(res.data);
 
       if (res.data.array.length <= 0 && isShowModal) {
-        EmptyData()
+        EmptyData();
         setMessage({
           title: `${titleMessageModalNoResult || ""}`,
           show: true,
@@ -107,7 +107,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
         });
       }
     } else {
-      EmptyData()
+      EmptyData();
       setMessage({
         title: `Error en la consulta de datos`,
         show: true,
@@ -167,7 +167,10 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
           </section>
           <section className="section-action">
             {actions?.map((action) => (
-              <div key={action.icon} onClick={() => !isDisabled && action.onClick(item)}>
+              <div
+                key={action.icon}
+                onClick={() => !isDisabled && action.onClick(item)}
+              >
                 {getIconElement(action.icon, "src", isDisabled)}
               </div>
             ))}
@@ -208,7 +211,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
 
       {width > 830 ? (
         <DataTable
-          className={`spc-table full-height ${classSizeTable && 'size-table-wd-150'}`}
+          className={`spc-table full-height ${classSizeTable}`}
           value={resultData?.array || []}
           loading={loading}
           scrollable={true}
@@ -231,7 +234,13 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
                   <div className="spc-header-title">Acciones</div>
                 </div>
               }
-              body={(row) => <ActionComponent row={row} actions={actions} isDisabled={isDisabled} />}
+              body={(row) => (
+                <ActionComponent
+                  row={row}
+                  actions={actions}
+                  isDisabled={isDisabled}
+                />
+              )}
             />
           )}
         </DataTable>
@@ -256,7 +265,11 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
 });
 
 // Metodo que retorna el icono o nombre de la accion
-function getIconElement(icon: string, element: "name" | "src", isDisabled: boolean) {
+function getIconElement(
+  icon: string,
+  element: "name" | "src",
+  isDisabled: boolean
+) {
   switch (icon) {
     case "Detail":
       return element == "name" ? (
@@ -268,7 +281,11 @@ function getIconElement(icon: string, element: "name" | "src", isDisabled: boole
       return element == "name" ? (
         "Editar"
       ) : (
-        <Icons.FaPencilAlt className={`button grid-button button-edit ${isDisabled && 'disable'}`} />
+        <Icons.FaPencilAlt
+          className={`button grid-button button-edit ${
+            isDisabled && "disable"
+          }`}
+        />
       );
     case "Delete":
       return element == "name" ? (
@@ -293,6 +310,12 @@ function getIconElement(icon: string, element: "name" | "src", isDisabled: boole
         "Rp"
       ) : (
         <Icons.FaRegistered className="button grid-button button-add" />
+      );
+    case "":
+      return element == "name" ? (
+        "LinkMga"
+      ) : (
+        <Icons.FaLink className="button grid-button button-add" />
       );
     default:
       return "";
@@ -395,12 +418,15 @@ export const paginatorFooter: PaginatorTemplateOptions = {
 const ActionComponent = (props: {
   row: any;
   actions: ITableAction<any>[];
-  isDisabled: boolean
+  isDisabled: boolean;
 }): React.JSX.Element => {
   return (
     <div className="spc-table-action-button">
       {props.actions.map((action) => (
-        <div key={action.icon} onClick={() => !props?.isDisabled && action.onClick(props.row)}>
+        <div
+          key={action.icon}
+          onClick={() => !props?.isDisabled && action.onClick(props.row)}
+        >
           {getIconElement(action.icon, "src", props.isDisabled)}
         </div>
       ))}

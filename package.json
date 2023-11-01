@@ -23,7 +23,6 @@
     "@babel/runtime": "^7.15.3",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
-    "@types/react-datepicker": "^4.19.1",
     "@types/testing-library__jest-dom": "^5.14.1",
     "babel-jest": "^27.0.6",
     "concurrently": "^6.2.1",
@@ -70,7 +69,6 @@
     "moment": "^2.29.4",
     "primereact": "^9.5.0",
     "react": "^17.0.2",
-    "react-datepicker": "^4.21.0",
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.44.2",
     "react-icons": "^4.9.0",
@@ -78,6 +76,7 @@
     "react-select": "^5.7.7",
     "single-spa": "^5.9.3",
     "single-spa-react": "^4.3.1",
+    "update": "^0.7.4",
     "url-loader": "^4.1.1",
     "yup": "^1.2.0"
   },
