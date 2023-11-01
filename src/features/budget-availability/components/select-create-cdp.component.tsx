@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-
-const SelectSearch = ({ options, setter }) => {
+import React,{useEffect,useState,useRef} from "react";
+const SelectSearch = ({ options, setter, style }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredOptions, setFilteredOptions] = useState(options);
     const [selectedOption, setSelectedOption] = useState('');
@@ -51,6 +50,14 @@ const SelectSearch = ({ options, setter }) => {
         };
     }, []);
 
+    const selectSearchStyle = {
+        border: '1px solid grey', // Establecer el borde predeterminado como "1px solid grey"
+    };
+
+    if (style && style.border) {
+        selectSearchStyle.border = style.border // Cambiar el borde si la condición se cumple
+    }
+
     return (
         <div className="position-relative" ref={node}>
             <input
@@ -60,6 +67,7 @@ const SelectSearch = ({ options, setter }) => {
                 value={searchTerm}
                 onChange={handleSearchChange}
                 onClick={() => setShowOptions(true)}
+                style={selectSearchStyle}
             />
             {showOptions && (
                 <div
@@ -99,7 +107,6 @@ const SelectSearch = ({ options, setter }) => {
                     )}
                 </div>
             )}
-
         </div>
     );
 };
