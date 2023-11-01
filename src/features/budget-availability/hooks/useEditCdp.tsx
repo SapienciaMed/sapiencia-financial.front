@@ -4,7 +4,7 @@ import useYupValidationResolver from "../../../common/hooks/form-validator.hook"
 import { budgetAvailabilityEditValidator } from "../../../common/schemas/budget-availability-schemas";
 import { useCdpService } from "./cdp-service";
 import { useNavigate, useParams } from "react-router-dom";
-import { monthNames } from "../constants";
+import { initialDataEdit, monthNames } from "../constants";
 import { useCdpServices } from "./useCdpServices";
 import { AppContext } from "../../../common/contexts/app.context";
 import {
@@ -31,11 +31,11 @@ const useEditCdp = () => {
   });
   const { getCdpById } = useCdpService();
   const { id } = useParams();
-  const [dataEdit, setDataEdit] = useState<
-    IBudgetAvalaibilityDataBasicOriginalDataEdit | any
-  >({});
+  const [dataEdit, setDataEdit] =
+    useState<IBudgetAvalaibilityDataBasicOriginalDataEdit>(initialDataEdit);
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(true);
   const inputValue = watch(["date", "contractObject", "sapConsecutive"]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (
@@ -43,14 +43,17 @@ const useEditCdp = () => {
       control._formValues.contractObject !== undefined &&
       control._formValues.sapConsecutive !== undefined
     ) {
+      const date = new Date(dataEdit.date);
+      date.setDate(date.getDate() + 1);
+
       const hasChanged: boolean =
-        new Date(control._formValues.date).toISOString() != dataEdit.date ||
+        control._formValues.date !== date.toString() ||
         control._formValues.contractObject != dataEdit.contractObject ||
         control._formValues.sapConsecutive != dataEdit.sapConsecutive;
       if (inputValue[0]) {
         setValueRegister(
           "exercise",
-          new Date(control._formValues.date).getFullYear()
+          new Date(control._formValues.date).getFullYear().toString()
         );
         setValueRegister(
           "monthExercise",
@@ -63,20 +66,25 @@ const useEditCdp = () => {
   }, [dataEdit, control._formValues, inputValue]);
 
   useEffect(() => {
-    getCdpById(id).then((res) => setDataEdit(res.data[0]));
+    getCdpById(id).then((res) => {
+      setDataEdit(res.data[0]);
+      setLoading(false);
+    });
   }, []);
 
   useEffect(() => {
     const getDataCdp = async () => {
-      setValueRegister("id", Object(dataEdit).id);
-      setValueRegister("exercise", Object(dataEdit).exercise);
-      setValueRegister("consecutive", Object(dataEdit).consecutive);
-      setValueRegister("sapConsecutive", Object(dataEdit).sapConsecutive);
-      setValueRegister("date", Object(dataEdit).date);
-      setValueRegister("contractObject", Object(dataEdit).contractObject);
+      const date = new Date(dataEdit.date);
+      date.setDate(date.getDate() + 1);
+      setValueRegister("id", dataEdit.id);
+      setValueRegister("exercise", dataEdit.exercise);
+      setValueRegister("consecutive", dataEdit.consecutive);
+      setValueRegister("sapConsecutive", dataEdit.sapConsecutive);
+      setValueRegister("date", date.toString());
+      setValueRegister("contractObject", dataEdit.contractObject);
       setValueRegister(
         "monthExercise",
-        monthNames[new Date(Object(dataEdit).date).getMonth()]
+        monthNames[new Date(dataEdit.date).getMonth()]
       );
     };
     getDataCdp();
@@ -169,6 +177,7 @@ const useEditCdp = () => {
     dataEdit,
     setMessage,
     navigate,
+    loading,
   };
 };
 

@@ -3,8 +3,7 @@ import { ICreateTransferPacForm } from '../../../managementCenter/transfer/inter
 import { useContext, useEffect, useState } from 'react';
 import { EResponseCodes } from '../../../../common/constants/api.enum';
 import { AppContext } from '../../../../common/contexts/app.context';
-import { isvalidateTypePac } from '../util/is-validate-type-pac';
-import { calcularTotalOrigenLocation, calculateTotalDestino, calculateTotalDestinoLocation, calculateTotalOrigen, validateTypeResource, validateTypeResourceServices } from '../util';
+import { calcularTotalOrigenLocation, calculateTotalDestino, calculateTotalDestinoLocation, calculateTotalOrigen, isvalidateTypePac, processUseData, validateTypeResource, validateTypeResourceServices } from '../util';
 import useYupValidationResolver from '../../../../common/hooks/form-validator.hook';
 import { validationTransferPac } from '../../../../common/schemas/transfer-schema';
 import { usePacTransfersService } from './pac-transfers-service.hook';
@@ -35,6 +34,7 @@ export function useTransferPacCrudData() {
   const [ annualDataRoutesOriginal, setAnnualDataRoutesOriginal ] = useState([{
     annualRouteService: [] as IAnnualRoute[]
   }])
+  const [ annualDataRoutesBoth, setAnnualDataRoutesBoth ] = useState<IAnnualRoute[]>([])
 
   const itemsPerPage = 2;
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -131,6 +131,8 @@ export function useTransferPacCrudData() {
         reset()
         setShowSpinner(false)
         setDisableBtnAdd(true)
+        setOriginalDestinationValueOfService([])
+        setAnnualDataRoutesBoth([])
       } else {
         setPacTypeState2(pacTypeState);
       }
@@ -263,7 +265,7 @@ export function useTransferPacCrudData() {
         if (obj[key] === '' || obj[key] === undefined || obj[key] === null) {
           delete obj[key];
         } else if (typeof obj[key] === 'object') {
-          removeEmptyFields(obj[key]); // Recursivamente llamamos la función para objetos anidados
+          removeEmptyFields(obj[key]);
         }
       }
       return obj;
@@ -296,29 +298,6 @@ export function useTransferPacCrudData() {
             setMessage({});
           },
           onOk: () => {
-  
-            const transformData = (ob, type, authorization) => {
-              return {
-                type,
-                jan: ob?.january,
-                feb: ob?.february,
-                mar: ob?.march,
-                abr: ob?.april,
-                may: ob?.may,
-                jun: ob?.june,
-                jul: ob?.july,
-                ago: ob?.august,
-                sep: ob?.september,
-                oct: ob?.october,
-                nov: ob?.november,
-                dec: ob?.december,
-                id: ob?.id,
-                pacId: ob?.pacId,
-                dateModify: new Date(authorization.user.dateModify).toISOString().split('T')[0],
-                dateCreate: new Date(authorization.user.dateCreate).toISOString().split('T')[0]
-              };
-            };
-  
             const dataTransferpac = {
               headTransfer: {
                 pacType: validateTypePac(data.pacType),
@@ -326,87 +305,11 @@ export function useTransferPacCrudData() {
                 resourceType: validateTypeResourceServices(data.TypeResource)
               },
               transferTransaction: {
-                origins:  nuevoObjeto.origen.map(use => {
-                  const newArray = [];
-                  if (use.hasOwnProperty("collected")) {
-                    newArray.push({
-                      collected: use?.collected
-                    });
-                  }
-                  if (use.hasOwnProperty("programmed")) {
-                    newArray.push({
-                      programmed: use?.programmed
-                    });
-                  }
-                  return {
-                    managementCenter: use.managerCenter,
-                    idProjectVinculation: parseInt(use.projectId),
-                    idBudget: arrayDataSelect?.pospreSapiencia?.find(value => use.pospreSapiencia == value.id)?.idPosPreOrig,
-                    idPospreSapiencia: parseInt(use.pospreSapiencia),
-                    idFund: parseInt(use.fundsSapiencia),
-                    idCardTemplate: use.cardId,
-                    annualRoute:  newArray.filter(obj => {
-                      return Object.values(obj).some(value => {
-                          if (typeof value === 'object') {
-                              return Object.values(value).some(subValue => subValue !== 0);
-                          }
-                          return false;
-                      })
-                    }).map(ob => {
-                      if (ob.hasOwnProperty("collected") && !ob.hasOwnProperty("programmed")) {
-                        return transformData(ob.collected, "Recaudado", authorization);
-                      } else if (ob.hasOwnProperty("programmed") && !ob.hasOwnProperty("collected")) {
-                        return transformData(ob.programmed, "Programado", authorization);
-                      } else if (ob.hasOwnProperty("collected") && ob.hasOwnProperty("programmed")) {
-                        const collectedData = transformData(ob.collected, "Recaudado", authorization);
-                        const programmedData = transformData(ob.programmed, "Programado", authorization);
-                        return [collectedData, programmedData];
-                      }
-                    })
-                  }
-                }),
-                destinities: nuevoObjeto.destino.map(use => {
-                  const newArray = [];
-                  if (use.hasOwnProperty("collected")) {
-                    newArray.push({
-                      collected: use?.collected
-                    });
-                  }
-                  if (use.hasOwnProperty("programmed")) {
-                    newArray.push({
-                      programmed: use?.programmed
-                    });
-                  }
-                  return {
-                    managementCenter: use.managerCenter,
-                    idProjectVinculation: parseInt(use.projectId),
-                    idBudget: arrayDataSelect?.pospreSapiencia?.find(value => use.pospreSapiencia == value.id)?.idPosPreOrig,
-                    idPospreSapiencia: parseInt(use.pospreSapiencia),
-                    idFund: parseInt(use.fundsSapiencia),
-                    idCardTemplate: use.cardId,
-                    annualRoute:  newArray.filter(obj => {
-                      return Object.values(obj).some(value => {
-                          if (typeof value === 'object') {
-                              return Object.values(value).some(subValue => subValue !== 0);
-                          }
-                          return false;
-                      })
-                    }).map(ob => {
-                      if (ob.hasOwnProperty("collected") && !ob.hasOwnProperty("programmed")) {
-                        return transformData(ob.collected, "Recaudado", authorization);
-                      } else if (ob.hasOwnProperty("programmed") && !ob.hasOwnProperty("collected")) {
-                        return transformData(ob.programmed, "Programado", authorization);
-                      } else if (ob.hasOwnProperty("collected") && ob.hasOwnProperty("programmed")) {
-                        const collectedData = transformData(ob.collected, "Recaudado", authorization);
-                        const programmedData = transformData(ob.programmed, "Programado", authorization);
-                        return [collectedData, programmedData];
-                      }
-                    })
-                  }
-                }),
+                origins: nuevoObjeto.origen.map(use => processUseData(use, arrayDataSelect, authorization, annualDataRoutesBoth, nuevoObjeto.origen)),
+                destinities: nuevoObjeto.destino.map(use => processUseData(use, arrayDataSelect, authorization, annualDataRoutesBoth, nuevoObjeto.destino)),
               }
             }
-  
+
             dataTransferpac && TransfersOnPac(dataTransferpac).then(response => {
               if (response.operation.code === EResponseCodes.OK) {
                 setMessage({
@@ -419,6 +322,8 @@ export function useTransferPacCrudData() {
                       setIsdataResetState(true)
                       setDisableBtnAdd(true)
                       reset()
+                      setOriginalDestinationValueOfService([])
+                      navigate(-1)
                     },
                     background: true,
                     onClose: () => {
@@ -426,6 +331,8 @@ export function useTransferPacCrudData() {
                       setIsdataResetState(true)
                       setDisableBtnAdd(true)
                       reset()
+                      setOriginalDestinationValueOfService([])
+                      navigate(-1)
                     },
                 });
             } else {
@@ -490,6 +397,12 @@ export function useTransferPacCrudData() {
 
     setIsActivityAdd(isValid);
   }
+
+  const addNewObject = (newObj: IAnnualRoute[]) => {
+    setAnnualDataRoutesBoth(
+      (prevData) => [...prevData, ...newObj]
+    );
+  };
   
   return{
     control,
@@ -518,6 +431,7 @@ export function useTransferPacCrudData() {
     setTypeValidityState,
     setIsdataResetState,
     setAnnualDataRoutesOriginal,
+    addNewObject
   }
 }
 

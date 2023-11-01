@@ -15,9 +15,10 @@ interface FormularioProps {
     valorInicial: string;
     balance: string;
   }) => void;
+  formSubmitted?: boolean;
 }
 
-const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ isRequired = false, formNumber, handleEliminar, setFormInfo }) => {
+const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, isRequired = false, formNumber, handleEliminar, setFormInfo }) => {
   const cdpService = useCdpService();
   const [proyecto, setProyecto] = useState('');
   const [nombreProyecto, setNombreProyecto] = useState('');
@@ -29,9 +30,10 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ isRequired = fa
   const [div, setDiv] = useState('SAPI');
   const [posicion, setPosicion] = useState('1');
   const [valorInicial, setValorInicial] = useState('0');
-  const [balance, setBalance] = useState('0')
-  const [idRpp, setIdRpp] = useState('0')
-  
+  const [balance, setBalance] = useState('0');
+  const [idRpp, setIdRpp] = useState('0');
+ 
+
   const onDeleteClick = () => {
     handleEliminar(formNumber);
   };
@@ -46,7 +48,6 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ isRequired = fa
 
   const { pospreSapienciaDataCdp, projectsVinculateData, projectsData, fundsData, pospreSapienciaData, budgetData, register, errors, controlRegister, projectVinculationSelected, setValueRegister } = useBudgetRoutesCrudData('');
 
-
   const convertedOptionsPosPre = pospreSapienciaDataCdp.map((item) => ({
     value: String(item.value),
     name: item.name,
@@ -56,13 +57,21 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ isRequired = fa
     value: String(item.value),
     name: item.name,
   }));
+
+  const validateField = (field) => {
+    if (formSubmitted && !field) {
+
+      return 'campo-obligatorio';
+    }
+    return '';
+  };
+
   const loadInfo = () => {
     setFormInfo(formValues);
   };
+
   useEffect(() => {
     loadInfo();
-    console.log(pospreSapienciaDataCdp);
-
   }, [proyecto, nombreProyecto, fondo, pospre, areaFuncional, centroGestor, div, posicion, valorInicial]);
 
   const formatToColombianPesos = (value) => {
@@ -70,11 +79,10 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ isRequired = fa
       style: 'currency',
       currency: 'COP',
     });
-    const unformattedValue = value.replace(/[^\d]/g, ''); // Eliminar todos los caracteres no numéricos
+    const unformattedValue = value.replace(/[^\d]/g, '');
     const floatValue = parseFloat(unformattedValue);
     return formatter.format(floatValue);
   };
-
 
   const handleProyectoChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedProyecto = event.target.value;
@@ -112,7 +120,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ isRequired = fa
   };
 
   const handleValorInicialChange = (event) => {
-    const unformattedValue = event.target.value.replace(/[^\d]/g, ''); // Eliminar todos los caracteres no numéricos
+    const unformattedValue = event.target.value.replace(/[^\d]/g, '');
     setValorInicial(unformattedValue);
   };
 
@@ -121,26 +129,17 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ isRequired = fa
     setValorInicial(formattedValue);
   };
 
-
-
-
-
   useEffect(() => {
-    //console.log(projectsData);
-
     const selectedProject = projectsData.find((project) => {
       if (project.value === parseInt(proyecto)) {
-        setNombreProyecto(project.name)
+        setNombreProyecto(project.name);
         projectsVinculateData.find((area) => {
           if (project['areaFuncional'] === area.functionalAreaId) {
-            setAreaFuncional(area.areaFuntional.number)
+            setAreaFuncional(area.areaFuntional.number);
           }
-        }
-        );
+        });
       }
     });
-
-
   }, [proyecto]);
 
   const fetchData = async () => {
@@ -153,9 +152,8 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ isRequired = fa
         };
         const response = await cdpService.getOneRpp(objectSendData);
         setValorInicial(response['balance']);
-        setBalance(response['balance'])
-        setIdRpp(response['id'])
-        console.log(response);
+        setBalance(response['balance']);
+        setIdRpp(response['id']);
       } catch (error) {
         console.error('Error al obtener los datos:', error);
       }
@@ -163,9 +161,8 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ isRequired = fa
   };
 
   useEffect(() => {
-
-    fetchData()
-  }, [pospreNewV, fondo, proyecto])
+    fetchData();
+  }, [pospreNewV, fondo, proyecto]);
 
   return (
     <div className='containerOne'>
@@ -173,65 +170,71 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ isRequired = fa
         <div className="grid-form">
           <h2 className="h3-style">{formNumber + 1}. Ruta</h2>
           <h2>Ruta presupuestal</h2>
-          <div className="col-4">
-            <label>Proyecto*</label>
-            <SelectSearch options={projectsData} setter={setProyecto} />
+          <div className={`col-4`}>
+            <label>Proyecto <span>*</span></label>
+            <SelectSearch style={{ border: formSubmitted && !proyecto ? '1px solid red' : '1px solid #ccc' }} options={projectsData} setter={setProyecto} />
+            {formSubmitted && !proyecto && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
           </div>
-
-          <div className="col-8">
-            <label>Nombre proyecto*</label>
-            <input type="text" className="estilo-input bgSecondary" value={nombreProyecto} readOnly />
-          </div>
-
-          <div className="col-4">
-            <label>Fondo*</label>
-            <SelectSearch options={fundsData} setter={setFondo} />
-          </div>
-
-          <div className="col-4">
-            <label>Pospre*</label>
-            <SelectSearch options={convertedOptionsPosPre} setter={setPospreNewV} />
-          </div>
-
-          <div className="col-4">
-            <label>Área funcional*</label>
-            <input type="text" className="estilo-input bgSecondary" value={areaFuncional} onChange={handleAreaFuncionalChange} />
-          </div>
-
-          <div className="col-4">
-            <label>Centro gestor*</label>
-            <input type="text" readOnly className="estilo-input bgSecondary" value={centroGestor} onChange={handleCentroGestorChange} />
-          </div>
-
-          <div className="col-4">
-            <label>DIV*</label>
-            <input type="text" readOnly className="estilo-input bgSecondary" value={div} onChange={handleDivChange} />
-          </div>
-
-          <div className="col-4">
-            <label>Posición*</label>
-            <input type="text" readOnly className="estilo-input bgSecondary" value={formNumber + 1} onChange={handlePosicionChange} />
-          </div>
-
-          <h3>Importe</h3>
-
-          <div className="col-3">
-            <label>Valor inicial*</label>
+          <div className={`col-8`}>
+            <label>Nombre proyecto <span>*</span></label>
             <input
               type="text"
-              className="estilo-input"
+              style={{ border: formSubmitted && !nombreProyecto ? '1px solid red' : 'none' }}
+              className={`estilo-input bgSecondary ${validateField(nombreProyecto)}`}
+              value={nombreProyecto}
+              readOnly
+            />
+            {formSubmitted && !nombreProyecto && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
+          </div>
+          <div className={`col-4`}>
+            <label>Fondo <span>*</span></label>
+            <SelectSearch style={{ border: formSubmitted && !fondo ? '1px solid red' : '1px solid #ccc' }} options={fundsData} setter={setFondo} />
+            {formSubmitted && !fondo && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
+          </div>
+          <div className={`col-4`}>
+            <label>Pospre <span>*</span></label>
+            <SelectSearch style={{ border: formSubmitted && !pospreNewV ? '1px solid red' : '1px solid #ccc' }} options={convertedOptionsPosPre} setter={setPospreNewV} />
+            {formSubmitted && !pospreNewV && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
+          </div>
+          <div className={`col-4`}>
+            <label>Área funcional <span>*</span></label>
+            <input style={{ border: formSubmitted && !areaFuncional ? '1px solid red' : 'none' }} type="text" className={`estilo-input bgSecondary ${validateField(areaFuncional)}`} value={areaFuncional} onChange={handleAreaFuncionalChange} />
+            {formSubmitted && !areaFuncional && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
+          </div>
+          <div className={`col-4`}>
+            <label>Centro gestor <span>*</span></label>
+            <input type="text" readOnly className={`estilo-input bgSecondary ${validateField(centroGestor)}`} value={centroGestor} onChange={handleCentroGestorChange} />
+            {formSubmitted && !centroGestor && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
+          </div>
+          <div className={`col-4`}>
+            <label>DIV <span>*</span></label>
+            <input type="text" readOnly className={`estilo-input bgSecondary ${validateField(div)}`} value={div} onChange={handleDivChange} />
+            {formSubmitted && !div && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
+          </div>
+          <div className={`col-4`}>
+            <label>Posición <span>*</span></label>
+            <input type="text" readOnly className={`estilo-input bgSecondary`} value={formNumber + 1} onChange={handlePosicionChange} />
+            {formSubmitted && !(formNumber + 1) && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
+          </div>
+          <h3>Importe</h3>
+          <div className={`col-3 ${validateField(valorInicial)}`}>
+            <label>Valor inicial <span>*</span></label>
+            <input
+              type="text"
+              className={`estilo-input ${validateField(valorInicial)}`}
               value={valorInicial}
               onChange={handleValorInicialChange}
               onBlur={handleBlur}
             />
+            {formSubmitted && !valorInicial && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
           </div>
-
-          {!isRequired && (
+{/*           {!isRequired && (
             <button className="agregar-btn" onClick={onDeleteClick}>
               Eliminar
             </button>
-          )}
+          )} */}
         </div>
+
       </div>
     </div>
   );

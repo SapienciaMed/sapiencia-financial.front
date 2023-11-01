@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Controller } from "react-hook-form";
-import { DatePickerComponent, InputComponent, SelectComponent, TextAreaComponent } from "../../../common/components/Form";
+import { InputComponent, TextAreaComponent } from "../../../common/components/Form";
 import { useCdpCrud } from "../hooks/use-cdp";
 import { EDirection } from "../../../common/constants/input.enum";
-import { IBudgetAvalaibility } from "../interfaces/budgetAvailabilityInterfaces";
 import DatePickerCdp from './date-picker-cdp';
 import '../../../styles/from-create-cdp.scss';
-
 interface FormHeadInfo {
     date: string | null;
     exercise: string;
@@ -16,10 +14,11 @@ interface FormHeadInfo {
 interface Props {
     isDisabled: boolean;
     setFormHeadInfo?: (data: FormHeadInfo) => void;
+    formSubmitted?: boolean;
 }
 
 function CdpheadCreate(prop: Props) {
-    const { isDisabled, setFormHeadInfo = () => { } } = prop;
+    const { isDisabled, setFormHeadInfo = () => { }, formSubmitted } = prop;
 
     const [formHeadInfo, setFormHeadInfoState] = useState<FormHeadInfo>({
         date: null,
@@ -27,61 +26,34 @@ function CdpheadCreate(prop: Props) {
         contractObject: '',
     });
     const [exercise, setExercise] = useState(String(new Date().getFullYear()));
-    const [sapConsecutive, setSapConsecutive] = useState('');
-    const [consecutive, setConsecutive] = useState('');
-    const [rpAsociados, setRpAsociados] = useState('');
     const [contractObject, setContractObject] = useState('');
     const [date, setDate] = useState("");
     const [year, setYear] = useState("");
     const [month, setMonth] = useState("");
-    
-    const { control, register, errors } = useCdpCrud();
 
-    const mothsYear = [
-        "meses",
-        "enero", 
-        "febrero", 
-        "marzo", 
-        "abril", 
-        "mayo", 
-        "junio", 
-        "julio", 
-        "agosto", 
-        "septiembre", 
-        "octubre", 
-        "noviembre", 
-        "diciembre"
-    ];
+    const { control, register, errors } = useCdpCrud();
 
     const handleInputChange = (name, target) => {
         let value = target.value;
-        const dateString = document.getElementById("document-date-cdp")['value'];
-        let partsDate = dateString.split("/");
-        setYear(partsDate[2]);
-        let monthNumber = partsDate[1];
-        setMonth(mothsYear[monthNumber]);
-        
-        const formattedDate = `${partsDate[2]}-${partsDate[1]}-${partsDate[0]}`;
-        setDate(formattedDate);
-        
-        let objInformationHead = {
-            date: formattedDate,
-            exercise: formHeadInfo.exercise,
-            contractObject: formHeadInfo.contractObject,
-        };
-
         switch (name) {
             case "exercise":
-                objInformationHead.exercise = value;
                 setExercise(value);
                 break;
             case "contractObject":
-                objInformationHead.contractObject = value;
                 setContractObject(value);
                 break;
             default:
                 break;
         }
+
+        let objInformationHead = {
+            date: date,
+            exercise: exercise,
+            contractObject: contractObject,
+        };
+
+        setFormHeadInfoState(objInformationHead);
+        setFormHeadInfo(objInformationHead);
     };
 
     useEffect(() => {
@@ -92,80 +64,90 @@ function CdpheadCreate(prop: Props) {
         };
         setFormHeadInfoState(objRpp);
         setFormHeadInfo(objRpp);
-    }, [exercise, contractObject]);
+    }, [exercise, contractObject, date]);
 
-    useEffect(() => {
-        const dateString = document.getElementById("document-date-cdp")['value'];
-        let partsDate = dateString.split("/");
-        setYear(partsDate[2]);
-        setDate(dateString);
-        setMonth(mothsYear[partsDate[1]]);
-    }, []);
+    const validateField = (field) => {
+        if (formSubmitted && !field) {
+            return 'campo-obligatorio';
+        }
+        return '';
+    };
 
     return (
         <>
             <div className='container-head-form-cdp'>
-                <section className='grid-form-3-container-area mt-5px'>
+                <section className="grid-form-3-container-area mt-5px" style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
                     <div className="date-picker-container">
-                        <label className="date-picker-label text-black weight-500 biggest">Fecha Documento:</label>
+                        <label className="date-picker-label text-black weight-500 biggest">Fecha Documento: <span>*</span></label>
                         <DatePickerCdp
+                            setYear={setYear}
+                            setMonth={setMonth}
+                            setDate={setDate}
                             selected={date}
-                            onChange={value => handleInputChange("date", value)}
-                            placeholder="DD/MM/YYYY"
-                            disabled={isDisabled}
-                            id="document-date-cdp"
+                            placeholder="Elige una fecha"
+                            disabled={false}
+                            id="fecha-elegida"
+                            className={validateField(date)}
                         />
+                        {formSubmitted && date === "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
                     </div>
-                    <Controller
-                        control={control}
-                        name={"exercise"}
-                        defaultValue={String(new Date().getFullYear())}
-                        render={({ field }) => {
-                            return (
-                                <InputComponent
-                                    id={field.name}
-                                    idInput={field.name}
-                                    value={year}
-                                    className="input-basic medium inactive-input"
-                                    typeInput="number"
-                                    register={register}
-                                    label="Vigencia"
-                                    classNameLabel="text-black weight-500 biggest"
-                                    direction={EDirection.column}
-                                    errors={errors}
-                                    onChange={(e) => handleInputChange(field.name, e.target)}
-                                    disabled={true}
-                                />
-                            );
-                        }}
-                    />
-                    <Controller
-                        control={control}
-                        name={'exercise'}
-                        defaultValue={String(new Date().getFullYear())}
-                        render={({ field }) => {
-                            return (
-                                <InputComponent
-                                    id={"mes"}
-                                    idInput={"mes"}
-                                    value={month}
-                                    className="input-basic medium inactive-input"
-                                    typeInput="text"
-                                    register={register}
-                                    label="Mes expedición *"
-                                    classNameLabel="text-black weight-500 biggest"
-                                    direction={EDirection.column}
-                                    errors={errors}
-                                    disabled={true}
-                                />
-                            );
-                        }}
-                    />
+                    <div className="exercise-container" style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
+                        <div className="input-container">
+                            <Controller
+                                control={control}
+                                name={"exercise"}
+                                defaultValue={String(new Date().getFullYear())}
+                                render={({ field }) => (
+                                    <InputComponent
+                                        id={field.name}
+                                        idInput={field.name}
+                                        value={year}
+                                        className={`input-basic medium inactive-input ${validateField(year)}`}
+                                        typeInput="number"
+                                        register={register}
+                                        label="Vigencia"
+                                        classNameLabel="text-black weight-500 biggest"
+                                        direction={EDirection.column}
+                                        errors={errors}
+                                        onChange={(e) => handleInputChange(field.name, e.target)}
+                                        disabled={true}
+                                    />
+                                )}
+                            />
+
+                            {formSubmitted && year === "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
+                        </div>
+                        <div className="input-container">
+                            <Controller
+                                control={control}
+                                name={'exercise'}
+                                defaultValue={String(new Date().getFullYear())}
+                                render={({ field }) => (
+                                    <InputComponent
+                                        id={"mes"}
+                                        idInput={"mes"}
+                                        value={month}
+                                        className={`input-basic medium inactive-input ${validateField(month)}`}
+                                        typeInput="text"
+                                        register={register}
+                                        label="Mes expedición"
+                                        classNameLabel="text-black weight-500 biggest"
+                                        direction={EDirection.column}
+                                        errors={errors}
+                                        disabled={true}
+                                    />
+                                )}
+                            />
+                            {formSubmitted && month === "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
+                        </div>
+                    </div>
                 </section>
+
+
                 <TextAreaComponent
                     id={'contractObject'}
                     idInput={'contractObject'}
-                    className="text-area-basic"
+                    className={`text-area-basic ${validateField(contractObject)}`}
                     register={register}
                     value={contractObject}
                     label="Objeto contractual"
@@ -176,6 +158,8 @@ function CdpheadCreate(prop: Props) {
                     disabled={isDisabled}
                     onChange={(e) => handleInputChange("contractObject", e.target)}
                 />
+
+                {formSubmitted && contractObject == "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
             </div>
         </>
     );

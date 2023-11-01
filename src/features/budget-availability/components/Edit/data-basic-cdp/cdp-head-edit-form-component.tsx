@@ -10,6 +10,7 @@ import {
 import { Controller } from "react-hook-form";
 import { EDirection } from "../../../../../common/constants/input.enum";
 import { monthNames } from "../../../constants";
+import { FaSpinner } from "react-icons/fa";
 
 const CdpEditFormComponent = () => {
   const {
@@ -21,7 +22,13 @@ const CdpEditFormComponent = () => {
     dataEdit,
     setMessage,
     navigate,
+    loading,
   } = useEditCdp();
+
+  if (loading) {
+    return <FaSpinner />;
+  }
+
   return (
     <div>
       <FormComponent action={onSubmit}>
@@ -63,7 +70,7 @@ const CdpEditFormComponent = () => {
           <Controller
             control={control}
             name={"monthExercise"}
-            defaultValue={monthNames[new Date(dataEdit.date).getMonth()]}
+            defaultValue={monthNames[new Date(dataEdit?.date).getMonth()]}
             render={({ field }) => {
               return (
                 <InputComponent
@@ -85,7 +92,7 @@ const CdpEditFormComponent = () => {
           <Controller
             control={control}
             name={"consecutive"}
-            defaultValue={dataEdit.consecutive}
+            defaultValue={dataEdit?.consecutive}
             render={({ field }) => {
               return (
                 <InputComponent
@@ -109,7 +116,7 @@ const CdpEditFormComponent = () => {
           <Controller
             control={control}
             name={"contractObject"}
-            defaultValue={dataEdit.contractObject}
+            defaultValue={dataEdit?.contractObject}
             render={({ field }) => {
               return (
                 <TextAreaComponent
@@ -138,7 +145,7 @@ const CdpEditFormComponent = () => {
           <Controller
             control={control}
             name={"sapConsecutive"}
-            defaultValue={dataEdit.consecutiveSap}
+            defaultValue={dataEdit?.sapConsecutive}
             render={({ field }) => {
               return (
                 <InputComponent

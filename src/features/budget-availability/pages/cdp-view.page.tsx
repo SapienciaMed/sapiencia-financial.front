@@ -25,7 +25,7 @@ const CdpViewPage = () => {
                     dataTable={Object(cdpFoundSt).amounts}
                     columns={tableColumns}
                     actions={tableActions}
-                    isShowModal={true}
+                    isShowModal={false}
                     titleMessageModalNoResult={"No se encontraron registros"}
                     secondaryTitle="CDP"
                 />

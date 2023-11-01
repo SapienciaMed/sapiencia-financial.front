@@ -38,7 +38,7 @@ interface IProps<T> {
   searchItems?: object;
   isShowModal: boolean;
   titleMessageModalNoResult?: string;
-  classSizeTable?: "size-table-wd-150";
+  classSizeTable?: string;
   isDisabled?: boolean;
 }
 
@@ -211,9 +211,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
 
       {width > 830 ? (
         <DataTable
-          className={`spc-table full-height ${
-            classSizeTable && "size-table-wd-150"
-          }`}
+          className={`spc-table full-height ${classSizeTable}`}
           value={resultData?.array || []}
           loading={loading}
           scrollable={true}
@@ -312,6 +310,12 @@ function getIconElement(
         "Rp"
       ) : (
         <Icons.FaRegistered className="button grid-button button-add" />
+      );
+    case "":
+      return element == "name" ? (
+        "LinkMga"
+      ) : (
+        <Icons.FaLink className="button grid-button button-add" />
       );
     default:
       return "";

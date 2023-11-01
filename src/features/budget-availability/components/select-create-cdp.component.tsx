@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-
-const SelectSearch = ({ options, setter }) => {
+import React,{useEffect,useState,useRef} from "react";
+const SelectSearch = ({ options, setter, style }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredOptions, setFilteredOptions] = useState(options);
     const [selectedOption, setSelectedOption] = useState('');
@@ -51,6 +50,7 @@ const SelectSearch = ({ options, setter }) => {
         };
     }, []);
 
+    
     return (
         <div className="position-relative" ref={node}>
             <input
@@ -60,6 +60,7 @@ const SelectSearch = ({ options, setter }) => {
                 value={searchTerm}
                 onChange={handleSearchChange}
                 onClick={() => setShowOptions(true)}
+                style={style}
             />
             {showOptions && (
                 <div
@@ -99,7 +100,6 @@ const SelectSearch = ({ options, setter }) => {
                     )}
                 </div>
             )}
-
         </div>
     );
 };
