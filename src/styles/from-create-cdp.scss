@@ -4,6 +4,10 @@
     display: flex;
     flex-direction: column;
 
+    .campo-obligatorio {
+        border: 1px solid red;
+      }
+
     .grid-form-3-container-area {
         width: 100%;
       }
