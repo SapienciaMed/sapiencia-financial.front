@@ -37,8 +37,10 @@ const useReports = () => {
   // Observar cambios en los datos del formulario
   useEffect(() => {
     const subscription = watch((value, { name, type }) => {
-      setSelectedReport(name);
-      setIsBtnDisable(true);
+      if (name !== "exercise") {
+        setSelectedReport(name);
+        setIsBtnDisable(true);
+      }
     });
     return () => subscription.unsubscribe();
   }, [watch]);
