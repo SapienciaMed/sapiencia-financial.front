@@ -2,14 +2,17 @@ import { useForm } from 'react-hook-form';
 import useYupValidationResolver from '../../../common/hooks/form-validator.hook';
 import { pacSearch } from '../../../common/schemas/pac';
 import { IArrayDataSelectPacComplementary, IPacSearch } from '../interface/Pac';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePacServices } from './pac-services.hook';
 import { validateTypeResourceServices } from '../transferPac/util';
 import { EResponseCodes } from '../../../common/constants/api.enum';
+import { AppContext } from '../../../common/contexts/app.context';
+import DisplayPacPages from '../pages/display-pac.pages';
 import { ITableAction, ITableElement } from '../../../common/interfaces/table.interfaces';
 export function usePacData() {
 
+    const { setCondensedQueryData, setMessage } = useContext(AppContext);
     const navigate = useNavigate();
     const tableComponentRef = useRef(null);
     const { GetRoutesByValidity, GetUltimateVersion } = usePacServices()
@@ -130,7 +133,7 @@ export function usePacData() {
             exercise: parseInt(dataFiltered?.exercise),
             resourceType: validateTypeResourceServices(dataFiltered?.resourceType) || dataFiltered?.resourceType,
             version: parseInt(dataFiltered.version),
-            idBunget: arrayDataSelect?.listPospreSapi?.find(e => e?.id == dataFiltered?.idPospreSapiencia)?.projectId
+            idBudget: arrayDataSelect?.listPospreSapi?.find(e => e?.id == dataFiltered?.idPospreSapiencia)?.projectId
         }
 
         setShowTable(true);
@@ -194,7 +197,20 @@ export function usePacData() {
         {
             icon: "Detail",
             onClick: (row) => {
-                
+                setCondensedQueryData({
+                    pacId: row.id,
+                    dataCondensed: row.dataCondensed
+                })               
+                setMessage({
+                    title: "Detalle PAC",
+                    show: true,
+                    description: <DisplayPacPages/>,
+                    background: true,
+                    OkTitle: "Cerrar",
+                    onOk: () => {
+                      setMessage({});
+                    },
+                })
             },
         },
         {
