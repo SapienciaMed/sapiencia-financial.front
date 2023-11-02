@@ -1,14 +1,8 @@
-import {
-  useState,
-  createContext,
-  useMemo,
-  ReactElement,
-  Dispatch,
-  SetStateAction,
-} from "react";
+import React, { useState, createContext, useMemo, ReactElement, Dispatch, SetStateAction } from "react";
 import { IDataPaste, IHeadTransferData, IMessage, IMessageEdit, IobjectAddTransfer } from "../interfaces/global.interface";
 import { IAuthorization } from "../interfaces/auth.interfaces";
 import { IPagingData } from "../utils/api-response";
+import { IEditPac } from "../../features/pac/interface/Pac";
 
 interface IAppContext {
   authorization: IAuthorization;
@@ -20,17 +14,30 @@ interface IAppContext {
   setMessageEdit: Dispatch<SetStateAction<IMessageEdit>>;
   headTransferData: IHeadTransferData;
   setHeadTransferData: Dispatch<SetStateAction<IHeadTransferData>>;
-  addTransferData: IPagingData<IobjectAddTransfer>,
+  addTransferData: IPagingData<IobjectAddTransfer>;
   setAddTransferData: Dispatch<SetStateAction<IPagingData<IobjectAddTransfer>>>;
-  dataPasteRedux:  IDataPaste[],
-  setDataPasteRedux: Dispatch<SetStateAction<IDataPaste[]>>,
-  detailTransferData: IPagingData<IobjectAddTransfer>,
+  dataPasteRedux: IDataPaste[];
+  setDataPasteRedux: Dispatch<SetStateAction<IDataPaste[]>>;
+  detailTransferData: IPagingData<IobjectAddTransfer>;
   setDetailTransferData: Dispatch<SetStateAction<IPagingData<IobjectAddTransfer>>>;
-  isValue: boolean,
+  isValue: boolean;
   setIsValue: Dispatch<SetStateAction<boolean>>;
+  condensedQueryData: IEditPac
+  setCondensedQueryData: Dispatch<SetStateAction<IEditPac>>
+  formInfo: FormInfoType;
+  setFormInfo: Dispatch<SetStateAction<FormInfoType>>;
 }
+
 interface IProps {
   children: ReactElement | ReactElement[];
+}
+
+interface FormInfoType {
+  id: number;
+  proyecto: string;
+  posicion: string;
+  valorInicial: string;
+  balance: string;
 }
 
 export const AppContext = createContext<IAppContext>({
@@ -45,34 +52,48 @@ export const AppContext = createContext<IAppContext>({
   setHeadTransferData: () => {},
   addTransferData: {} as IPagingData<IobjectAddTransfer>,
   setAddTransferData: () => {},
-  dataPasteRedux:  {} as IDataPaste[],
+  dataPasteRedux: [] as IDataPaste[],
   setDataPasteRedux: () => {},
   detailTransferData: {} as IPagingData<IobjectAddTransfer>,
   setDetailTransferData: () => {},
-  isValue: {} as boolean,
-  setIsValue: () => {}
+  isValue: false,
+  setIsValue: () => {},
+  formInfo: {
+    id: 0,
+    proyecto: "",
+    posicion: "",
+    valorInicial: "",
+    balance: "",
+  },
+  setFormInfo: () => {},
+  condensedQueryData: {} as IEditPac,
+  setCondensedQueryData: () => {}
 });
 
 export function AppContextProvider({ children }: IProps) {
-  // States
   const [message, setMessage] = useState<IMessage>({} as IMessage);
-  const [authorization, setAuthorization] = useState<IAuthorization>(
-    {} as IAuthorization
-  )
+  const [authorization, setAuthorization] = useState<IAuthorization>({} as IAuthorization);
   const [messageEdit, setMessageEdit] = useState<IMessageEdit>({} as IMessageEdit);
-  const [headTransferData, setHeadTransferData] = useState<IHeadTransferData>({} as IHeadTransferData)
-  const [addTransferData, setAddTransferData] = useState<IPagingData<IobjectAddTransfer>>({} as IPagingData<IobjectAddTransfer>)
-  const [dataPasteRedux, setDataPasteRedux] = useState<IDataPaste[]>({} as IDataPaste[])
-  const [detailTransferData, setDetailTransferData] = useState<IPagingData<IobjectAddTransfer>>({} as IPagingData<IobjectAddTransfer>)
-  const [isValue, setIsValue] = useState<boolean>(null as boolean)
+  const [headTransferData, setHeadTransferData] = useState<IHeadTransferData>({} as IHeadTransferData);
+  const [addTransferData, setAddTransferData] = useState<IPagingData<IobjectAddTransfer>>({} as IPagingData<IobjectAddTransfer>);
+  const [dataPasteRedux, setDataPasteRedux] = useState<IDataPaste[]>({} as IDataPaste[]);
+  const [detailTransferData, setDetailTransferData] = useState<IPagingData<IobjectAddTransfer>>({} as IPagingData<IobjectAddTransfer>);
+  const [isValue, setIsValue] = useState<boolean>(null as boolean);
+  const [formInfo, setFormInfo] = useState<FormInfoType>({
+    proyecto: "",
+    posicion: "",
+    valorInicial: "",
+    balance: "",
+    id: 0,
+  });
+  const [condensedQueryData, setCondensedQueryData] = useState<IEditPac>({} as IEditPac)
 
-  // Metodo que verifica si el usuario posee permisos sobre un accion
   function validateActionAccess(indicator: string): boolean {
     return authorization.allowedActions?.findIndex((i) => i === indicator) >= 0;
   }
 
-  const values = useMemo<IAppContext>(() => {
-    return {
+  const values = useMemo<IAppContext>(
+    () => ({
       authorization,
       setAuthorization,
       message,
@@ -89,9 +110,14 @@ export function AppContextProvider({ children }: IProps) {
       detailTransferData,
       setDetailTransferData,
       isValue,
-      setIsValue
-    };
-  }, [message, authorization, messageEdit, headTransferData, addTransferData, dataPasteRedux, detailTransferData, isValue]);
+      setIsValue,
+      formInfo,
+      setFormInfo,
+      condensedQueryData,
+      setCondensedQueryData
+    }),
+    [message, authorization, messageEdit, headTransferData, addTransferData, dataPasteRedux, detailTransferData, isValue, condensedQueryData]
+  );
 
   return <AppContext.Provider value={values}>{children}</AppContext.Provider>;
 }
