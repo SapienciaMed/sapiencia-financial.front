@@ -18,6 +18,7 @@ const HomeReports = () => {
     isBtnDisable,
     setMessage,
     navigate,
+    selectedReport,
   } = useReports();
 
   return (
@@ -68,7 +69,7 @@ const HomeReports = () => {
                           onChange={field.onChange}
                           type="radio"
                           style={{ width: "18px", height: "18px" }}
-                          // {...register("radio")}
+                          checked={selectedReport === report.name}
                         />
                       </div>
                       <div>

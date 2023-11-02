@@ -34,4 +34,5 @@ export const inputsValues = [
   "accounts_payable",
   "execution_income",
   "execution_expenses",
+  "radio",
 ];
