@@ -37,43 +37,59 @@ function DisplayPacPages() {
                 const titleAnnual = [ 'programado', 'recaudado', 'ejecutado', 'diferencias' ]
 
                 const additionalData = [
-                {
-                    title: 'Centro Gestor',
-                    value: dinamicData?.managementCenter
-                },
-                {
-                    title: 'Pospre',
-                    value: dinamicData?.posPreSapiNumber
-                },
-                {
-                    title: 'Pospre Sapiencia',
-                    value: dinamicData?.posPreSapiNumber
-                },
-                {
-                    title: 'Fondo Sapiencia',
-                    value: dinamicData?.fundNumber
-                },
-                {
-                    title: 'Fondo',
-                    value: dinamicData?.fundNumber
-                },
-                {
-                    title: 'Area Funcional',
-                    value: dinamicData?.functionalAreaNumber
-                },
-                {
-                    title: 'Proyecto',
-                    value: dinamicData?.projectCode
-                },
-                {
-                    title: 'Nombre proyecto',
-                    value: dinamicData?.projectName
-                },
-                {
-                    title: 'Presupuesto Sapiencia',
-                    value: `$ ${dinamicData?.totalProgrammingAnnual.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
-                },
+                    {
+                        title: 'Centro Gestor',
+                        value: dinamicData?.managementCenter
+                    },
+                    {
+                        title: 'Pospre',
+                        value: dinamicData?.posPreSapiNumber
+                    },
+                    {
+                        title: 'Pospre Sapiencia',
+                        value: dinamicData?.posPreSapiNumber
+                    },
+                    {
+                        title: 'Fondo Sapiencia',
+                        value: dinamicData?.fundNumber
+                    },
+                    {
+                        title: 'Fondo',
+                        value: dinamicData?.fundNumber
+                    },
+                    {
+                        title: 'Area Funcional',
+                        value: dinamicData?.functionalAreaNumber
+                    },
+                    {
+                        title: 'Proyecto',
+                        value: dinamicData?.projectCode
+                    },
+                    {
+                        title: 'Nombre proyecto',
+                        value: dinamicData?.projectName
+                    },
+                    {
+                        title: 'Presupuesto Sapiencia',
+                        value: `$ ${dinamicData?.totalProgrammingAnnual.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
+                    },
+                    
                 ];
+
+                const annualCollectionData  = [
+                    {
+                        title: 'Recaudado',
+                        value: `$ ${dinamicData?.totalCollectedAnnual.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
+                    },
+                    {
+                        title: 'Por Recaudar',
+                        value: `$ ${dinamicData?.forCollected.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
+                    },
+                    {
+                        title: 'Por Porcentaje Ejecución',
+                        value: `${dinamicData?.percentExecuteAnnual}`
+                    }
+                ]
 
                 const monthsData = monthsServices.map((month, index) => {
                     const data = propServices.map((prop, index2) => {
@@ -85,7 +101,7 @@ function DisplayPacPages() {
                     return data
                 })
 
-                const data = additionalData.concat(monthsData.flat())
+                const data = additionalData.concat(monthsData.flat()).concat(annualCollectionData)
 
                 setDataCondensedService(data)
 
