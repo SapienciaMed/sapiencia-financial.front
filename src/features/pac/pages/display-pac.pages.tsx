@@ -1,184 +1,103 @@
 import { ProgressSpinner } from "primereact/progressspinner";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { usePacServices } from "../hook/pac-services.hook";
+import { AppContext } from "../../../common/contexts/app.context";
+import { EResponseCodes } from "../../../common/constants/api.enum";
+
+type dataCondensedServiceProp = {
+    title: string,
+    value: string 
+}
 
 function DisplayPacPages() {
 
     const [ showSpinner, setShowSpinner ] = useState(true)
+    const [ dataCondensedService, setDataCondensedService ] = useState<dataCondensedServiceProp[]>()
+    const { condensedQueryData } = useContext(AppContext);
+    const { ViewPacComplete } = usePacServices()
 
     useEffect(() => {
-        setTimeout(()=> {
-            setShowSpinner(false);
-        },900)
-    },[])
+        ViewPacComplete(condensedQueryData).then(response => {
+            setShowSpinner(false)
+            if (response.operation.code === EResponseCodes.OK) {
+                const dinamicData = response?.data;
 
-    const rowsMock =[
-        {
-            title: 'Centro Gestor',
-            value: '000000'
-        },
-        {
-            title: 'Pospre',
-            value: '000000'
-        },
-        {
-            title: 'Pospre Sapiencia',
-            value: '000000'
-        },
-        {
-            title: 'Fondo Sapiencia',
-            value: '000000'
-        },
-        {
-            title: 'Fondo',
-            value: '000000'  
-        },
-        {
-            title: 'Area Funcional',
-            value: '000000'
-        },
-        {
-            title: 'Proyecto',
-            value: '000000'
-        },
-        {
-            title: 'Nombre proyecto',
-            value: '000000'
-        },
-        {
-            title: 'Presupuesto Sapiencia',
-            value: '000000'
-        },
-        {
-            title: 'Enero Programado',
-            value: '000000'
-        },
-        {
-            title: 'Enero Recaudado',
-            value: '000000'
-        },
-        {
-            title: 'Enero Ejecutado',
-            value: '0000000'
-        },
-        {
-            title: 'Enero Diferencias',
-            value: '000000'
-        },
-        {
-            title: 'Enero Programado',
-            value: '000000'
-        },
-        {
-            title: 'Enero Recaudado',
-            value: '000000'
-        },
-        {
-            title: 'Enero Ejecutado',
-            value: '0000000'
-        },
-        {
-            title: 'Enero Diferencias',
-            value: '000000'
-        },
-        {
-            title: 'Enero Programado',
-            value: '000000'
-        },
-        {
-            title: 'Enero Recaudado',
-            value: '000000'
-        },
-        {
-            title: 'Enero Ejecutado',
-            value: '0000000'
-        },
-        {
-            title: 'Enero Diferencias',
-            value: '000000'
-        },
-        {
-            title: 'Enero Programado',
-            value: '000000'
-        },
-        {
-            title: 'Enero Recaudado',
-            value: '000000'
-        },
-        {
-            title: 'Enero Ejecutado',
-            value: '0000000'
-        },
-        {
-            title: 'Enero Diferencias',
-            value: '000000'
-        },
-        {
-            title: 'Enero Programado',
-            value: '000000'
-        },
-        {
-            title: 'Enero Recaudado',
-            value: '000000'
-        },
-        {
-            title: 'Enero Ejecutado',
-            value: '0000000'
-        },
-        {
-            title: 'Enero Diferencias',
-            value: '000000'
-        },
-        {
-            title: 'Enero Programado',
-            value: '000000'
-        },
-        {
-            title: 'Enero Recaudado',
-            value: '000000'
-        },
-        {
-            title: 'Enero Ejecutado',
-            value: '0000000'
-        },
-        {
-            title: 'Enero Diferencias',
-            value: '000000'
-        },
-        {
-            title: 'Enero Programado',
-            value: '000000'
-        },
-        {
-            title: 'Enero Recaudado',
-            value: '000000'
-        },
-        {
-            title: 'Enero Ejecutado',
-            value: '0000000'
-        },
-        {
-            title: 'Enero Diferencias',
-            value: '000000'
-        },
-        {
-            title: 'Enero Programado',
-            value: '000000'
-        },
-        {
-            title: 'Enero Recaudado',
-            value: '000000'
-        },
-        {
-            title: 'Enero Ejecutado',
-            value: '0000000'
-        },
-        {
-            title: 'Enero Diferencias',
-            value: '000000'
-        }
-        
-    ]
-    
+                const months = [
+                    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio",
+                    "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+                ];
+
+                const monthsServices = [
+                    "Jan", "Feb", "Mar", "Abr", "May", "Jun", "Jul",
+                    "Ago", "Sep", "Oct", "Nov", "Dec",
+                ];
+
+                const propServices = [ 'totalProgramming', 'totalCollected', 'execute', 'diference' ]
+
+                const titleAnnual = [ 'programado', 'recaudado', 'ejecutado', 'diferencias' ]
+
+                const additionalData = [
+                {
+                    title: 'Centro Gestor',
+                    value: dinamicData?.managementCenter
+                },
+                {
+                    title: 'Pospre',
+                    value: dinamicData?.posPreSapiNumber
+                },
+                {
+                    title: 'Pospre Sapiencia',
+                    value: dinamicData?.posPreSapiNumber
+                },
+                {
+                    title: 'Fondo Sapiencia',
+                    value: dinamicData?.fundNumber
+                },
+                {
+                    title: 'Fondo',
+                    value: dinamicData?.fundNumber
+                },
+                {
+                    title: 'Area Funcional',
+                    value: dinamicData?.functionalAreaNumber
+                },
+                {
+                    title: 'Proyecto',
+                    value: dinamicData?.projectCode
+                },
+                {
+                    title: 'Nombre proyecto',
+                    value: dinamicData?.projectName
+                },
+                {
+                    title: 'Presupuesto Sapiencia',
+                    value: `$ ${dinamicData?.totalProgrammingAnnual.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
+                },
+                ];
+
+                const monthsData = monthsServices.map((month, index) => {
+                    const data = propServices.map((prop, index2) => {
+                        return {
+                            title: `${months[index]} ${titleAnnual[index2]}`,
+                            value: `$ ${dinamicData?.[month]?.[`${prop}${month}`].toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
+                        }
+                    })
+                    return data
+                })
+
+                const data = additionalData.concat(monthsData.flat())
+
+                setDataCondensedService(data)
+
+            }else {
+                console.log(response.operation.message)
+            }
+        }).catch((error) => {
+            setShowSpinner(false)
+            console.log(error);
+        })
+    },[condensedQueryData])
+
     return (
         <>
             {
@@ -187,11 +106,11 @@ function DisplayPacPages() {
                 :
                 <table className="details-table">
                     {
-                        rowsMock.map(row => {
+                        dataCondensedService?.map(data => {
                             return (
-                                <tr key={row.title}>
-                                    <th className="th-title text-black weight-500">{row.title}</th>
-                                    <th className="th-content text-black weight-500">{row.value}</th>
+                                <tr key={data.title}>
+                                    <th className="th-title text-black weight-500">{data.title}</th>
+                                    <th className="th-content text-black weight-500">{data.value}</th>
                                 </tr>
                             )
                         })

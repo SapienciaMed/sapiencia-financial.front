@@ -9,6 +9,7 @@ import {
 import { IDataPaste, IHeadTransferData, IMessage, IMessageEdit, IobjectAddTransfer } from "../interfaces/global.interface";
 import { IAuthorization } from "../interfaces/auth.interfaces";
 import { IPagingData } from "../utils/api-response";
+import { IEditPac } from "../../features/pac/interface/Pac";
 
 interface IAppContext {
   authorization: IAuthorization;
@@ -28,6 +29,8 @@ interface IAppContext {
   setDetailTransferData: Dispatch<SetStateAction<IPagingData<IobjectAddTransfer>>>;
   isValue: boolean,
   setIsValue: Dispatch<SetStateAction<boolean>>;
+  condensedQueryData: IEditPac
+  setCondensedQueryData: Dispatch<SetStateAction<IEditPac>>
 }
 interface IProps {
   children: ReactElement | ReactElement[];
@@ -50,7 +53,9 @@ export const AppContext = createContext<IAppContext>({
   detailTransferData: {} as IPagingData<IobjectAddTransfer>,
   setDetailTransferData: () => {},
   isValue: {} as boolean,
-  setIsValue: () => {}
+  setIsValue: () => {},
+  condensedQueryData: {} as IEditPac,
+  setCondensedQueryData: () => {}
 });
 
 export function AppContextProvider({ children }: IProps) {
@@ -65,6 +70,7 @@ export function AppContextProvider({ children }: IProps) {
   const [dataPasteRedux, setDataPasteRedux] = useState<IDataPaste[]>({} as IDataPaste[])
   const [detailTransferData, setDetailTransferData] = useState<IPagingData<IobjectAddTransfer>>({} as IPagingData<IobjectAddTransfer>)
   const [isValue, setIsValue] = useState<boolean>(null as boolean)
+  const [condensedQueryData, setCondensedQueryData] = useState<IEditPac>({} as IEditPac)
 
   // Metodo que verifica si el usuario posee permisos sobre un accion
   function validateActionAccess(indicator: string): boolean {
@@ -89,9 +95,11 @@ export function AppContextProvider({ children }: IProps) {
       detailTransferData,
       setDetailTransferData,
       isValue,
-      setIsValue
+      setIsValue,
+      condensedQueryData,
+      setCondensedQueryData
     };
-  }, [message, authorization, messageEdit, headTransferData, addTransferData, dataPasteRedux, detailTransferData, isValue]);
+  }, [message, authorization, messageEdit, headTransferData, addTransferData, dataPasteRedux, detailTransferData, isValue, condensedQueryData]);
 
   return <AppContext.Provider value={values}>{children}</AppContext.Provider>;
 }

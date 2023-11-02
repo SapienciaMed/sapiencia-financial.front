@@ -337,7 +337,7 @@ export function useTransferPacCrudData() {
                 });
             } else {
                 setMessage({
-                    title: "Validación de datos",
+                    title: "Validación",
                     description: response.operation.message,
                     show: true,
                     OkTitle: "Aceptar",

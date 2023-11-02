@@ -12,7 +12,7 @@ import DisplayPacPages from '../pages/display-pac.pages';
 import { ITableAction, ITableElement } from '../../../common/interfaces/table.interfaces';
 export function usePacData() {
 
-    const { message, setMessage } = useContext(AppContext);
+    const { setCondensedQueryData, setMessage } = useContext(AppContext);
     const navigate = useNavigate();
     const tableComponentRef = useRef(null);
     const { GetRoutesByValidity, GetUltimateVersion } = usePacServices()
@@ -133,7 +133,7 @@ export function usePacData() {
             exercise: parseInt(dataFiltered?.exercise),
             resourceType: validateTypeResourceServices(dataFiltered?.resourceType) || dataFiltered?.resourceType,
             version: parseInt(dataFiltered.version),
-            idBunget: arrayDataSelect?.listPospreSapi?.find(e => e?.id == dataFiltered?.idPospreSapiencia)?.projectId
+            idBudget: arrayDataSelect?.listPospreSapi?.find(e => e?.id == dataFiltered?.idPospreSapiencia)?.projectId
         }
 
         setShowTable(true);
@@ -197,6 +197,10 @@ export function usePacData() {
         {
             icon: "Detail",
             onClick: (row) => {
+                setCondensedQueryData({
+                    pacId: row.id,
+                    dataCondensed: row.dataCondensed
+                })               
                 setMessage({
                     title: "Detalle PAC",
                     show: true,
