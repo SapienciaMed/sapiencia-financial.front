@@ -2,6 +2,7 @@ import React, { useState, createContext, useMemo, ReactElement, Dispatch, SetSta
 import { IDataPaste, IHeadTransferData, IMessage, IMessageEdit, IobjectAddTransfer } from "../interfaces/global.interface";
 import { IAuthorization } from "../interfaces/auth.interfaces";
 import { IPagingData } from "../utils/api-response";
+import { IEditPac } from "../../features/pac/interface/Pac";
 
 interface IAppContext {
   authorization: IAuthorization;
@@ -21,6 +22,8 @@ interface IAppContext {
   setDetailTransferData: Dispatch<SetStateAction<IPagingData<IobjectAddTransfer>>>;
   isValue: boolean;
   setIsValue: Dispatch<SetStateAction<boolean>>;
+  condensedQueryData: IEditPac
+  setCondensedQueryData: Dispatch<SetStateAction<IEditPac>>
   formInfo: FormInfoType;
   setFormInfo: Dispatch<SetStateAction<FormInfoType>>;
 }
@@ -63,6 +66,8 @@ export const AppContext = createContext<IAppContext>({
     balance: "",
   },
   setFormInfo: () => {},
+  condensedQueryData: {} as IEditPac,
+  setCondensedQueryData: () => {}
 });
 
 export function AppContextProvider({ children }: IProps) {
@@ -81,6 +86,7 @@ export function AppContextProvider({ children }: IProps) {
     balance: "",
     id: 0,
   });
+  const [condensedQueryData, setCondensedQueryData] = useState<IEditPac>({} as IEditPac)
 
   function validateActionAccess(indicator: string): boolean {
     return authorization.allowedActions?.findIndex((i) => i === indicator) >= 0;
@@ -107,8 +113,10 @@ export function AppContextProvider({ children }: IProps) {
       setIsValue,
       formInfo,
       setFormInfo,
+      condensedQueryData,
+      setCondensedQueryData
     }),
-    [message, authorization, messageEdit, headTransferData, addTransferData, dataPasteRedux, detailTransferData, isValue]
+    [message, authorization, messageEdit, headTransferData, addTransferData, dataPasteRedux, detailTransferData, isValue, condensedQueryData]
   );
 
   return <AppContext.Provider value={values}>{children}</AppContext.Provider>;
