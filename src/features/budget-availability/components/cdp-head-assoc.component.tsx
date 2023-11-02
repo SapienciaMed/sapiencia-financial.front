@@ -89,7 +89,7 @@ function CdpAssociation(props: Props) {
                         />
                         {formSubmitted && date === "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
                     </div>
-                    <div className="cdp-sap-consecutive-container">
+              {/*       <div className="cdp-sap-consecutive-container">
                         <Controller
                             control={control}
                             name="cdpSapConsecutive"
@@ -136,7 +136,7 @@ function CdpAssociation(props: Props) {
                             )}
                         />
                         {formSubmitted && cdpAuroraConsecutive === "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
-                    </div>
+                    </div> */}
                 </section>
 
                 <TextAreaComponent
