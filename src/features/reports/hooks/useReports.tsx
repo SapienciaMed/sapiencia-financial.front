@@ -35,13 +35,31 @@ const useReports = () => {
   const [selectedReport, setSelectedReport] = useState<string>("");
 
   // Observar cambios en los datos del formulario
-  React.useEffect(() => {
+  useEffect(() => {
     const subscription = watch((value, { name, type }) => {
       setSelectedReport(name);
       setIsBtnDisable(true);
     });
     return () => subscription.unsubscribe();
   }, [watch]);
+
+  const showMesageSuccessful = () => {
+    setMessage({
+      title: "Descarga",
+      show: true,
+      OkTitle: "Aceptar",
+      description: (
+        <div style={{ width: "100%" }}>
+          <label>¡Se descargó exitosamente!</label>
+        </div>
+      ),
+      background: true,
+      onOk: () => {
+        navigate("/gestion-financiera/reports");
+        setMessage({});
+      },
+    });
+  };
 
   // Método para manejar la presentación del formulario
   const onSubmit = handleSubmit(async (data: any) => {
@@ -55,10 +73,11 @@ const useReports = () => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "reporte.xlsx";
+      a.download = `${selectedReport}.xlsx`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
+      showMesageSuccessful();
     }
   });
 
