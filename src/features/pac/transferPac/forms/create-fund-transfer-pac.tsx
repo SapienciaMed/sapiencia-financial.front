@@ -119,6 +119,12 @@ function CreateFundTransferPac({ titleAdd, arrayDataSelect, control, errors, pac
                     annualRouteService: [] as IAnnualRoute[]
                 }]
             )
+            setOriginalDestinationValueOfService(
+                [{
+                    annualRouteService: [] as IAnnualRoute[],
+                    ubicacion: ''
+                }]
+            )
         }  
     },[isdataReset])
 
