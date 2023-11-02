@@ -2,23 +2,18 @@ import React, { useState, useEffect, useContext } from 'react';
 import '../../../styles/from-create-cdp.scss';
 import { useCdpService } from '../hooks/cdp-service';
 import SelectSearch from './select-create-cdp.component';
-
+import { AppContext } from '../../../common/contexts/app.context';
 import { useBudgetRoutesCrudData } from '../../budget-routes/hooks/budget-routes-crud.hook';
 
 interface FormularioProps {
   isRequired?: boolean;
   formNumber: number;
   handleEliminar: (formNumber: number) => void;
-  setFormInfo: (data: {
-    proyecto: string;
-    posicion: string;
-    valorInicial: string;
-    balance: string;
-  }) => void;
   formSubmitted?: boolean;
 }
 
-const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, isRequired = false, formNumber, handleEliminar, setFormInfo }) => {
+const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, isRequired = false, formNumber, handleEliminar }) => {
+  const { setFormInfo } = useContext(AppContext);
   const cdpService = useCdpService();
   const [proyecto, setProyecto] = useState('');
   const [nombreProyecto, setNombreProyecto] = useState('');
@@ -33,7 +28,6 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
   const [balance, setBalance] = useState('0');
   const [idRpp, setIdRpp] = useState('0');
  
-
   const onDeleteClick = () => {
     handleEliminar(formNumber);
   };
@@ -42,7 +36,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
     proyecto: idRpp,
     posicion: posicion,
     valorInicial: valorInicial,
-    id: formNumber,
+    id: Number(formNumber),
     balance: balance,
   };
 
@@ -67,6 +61,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
   };
 
   const loadInfo = () => {
+    
     setFormInfo(formValues);
   };
 

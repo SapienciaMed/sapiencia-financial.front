@@ -11,6 +11,7 @@ import { ManagementCenterRoutes } from "./features/managementCenter/management-c
 import { FunctionalityRoutes } from "./features/functionality/functionality-routes";
 import { PacRoutes } from "./features/pac/pac-routes";
 import { EditCdp, HomeCdp } from "./features/budget-availability/pages";
+import Reports from "./features/reports/pages";
 
 const Home = lazy(() => import("./features/home/pages/home.page"));
 const BudgetRoutes = lazy(()  => import("./features/budget-routes/pages/budget-routes.page"));
@@ -48,6 +49,7 @@ function App() {
               <Route path={"/gestion-financiera/ruta-presupuestal/edit/:id"} element={<BudgetRoutesCrudPage action="edit"/>} />
               <Route path={"/gestion-financiera/cdp"} element={HomeCdp} />
               <Route path={"/gestion-financiera/cdp/edit/:id"} element={EditCdp} />
+              <Route path={"/gestion-financiera/reports"} element={<Reports/>}/>
             </Routes>
           </Suspense>
         </Router>

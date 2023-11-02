@@ -124,7 +124,8 @@ export interface IAnnualRoute {
     dec:  number;
     dateModify?: string;
     dateCreate?: string;
-    cardId?: string
+    cardId?: string,
+    ubicacion?: string
 }
 
 export interface IResultSearchAnnualizationByRoute {

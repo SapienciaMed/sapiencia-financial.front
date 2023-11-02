@@ -8,11 +8,28 @@ import { AppContext } from '../../../common/contexts/app.context';
 import CdpHeadFormComponent from '../components/cdp-head-form.component';
 import CdpheadCreate from '../components/cdp-head-create.component';
 import PaginatorComponent from '../components/paginator-cdp.component';
+import CdpPaginator from '../components/cdp-paginator.component';
+
+interface FormInfoType {
+  id: number;
+  proyecto: string;
+  posicion: string;
+  valorInicial: string;
+  balance: string;
+}
+interface FormularioProps {
+  isRequired?: boolean;
+  formNumber: number;
+  handleEliminar: (formNumber: number) => void;
+  formSubmitted?: boolean;
+
+}
+
 const CdpCrudPage = () => {
   const { setMessage } = useContext(AppContext);
-  const [formCount, setFormCount] = useState(1);
-  const [formularios, setFormularios] = useState([]);
-  const [formInfo, setFormInfo] = useState({});
+  const { formInfo } = useContext(AppContext);
+  const [formCount, setFormCount] = useState(2);
+  const [formularios, setFormularios] = useState([{ id: 1 }]);
   const [formHeadInfo, setFormHeadInfo] = useState({})
   const [objectSendData, setObjectSendData] = useState({})
   const cdpService = useCdpService();
@@ -28,7 +45,12 @@ const CdpCrudPage = () => {
     }
   };
 
+  /*   const handleAgregarFormulario = () => {
+      setFormCount(formCount + 1);
+    }; */
   const handleAgregarFormulario = () => {
+    const newFormulario = { id: formCount };
+    setFormularios([...formularios, newFormulario]);
     setFormCount(formCount + 1);
   };
 
@@ -38,21 +60,24 @@ const CdpCrudPage = () => {
 
   useEffect(() => {
     if (Object.keys(formInfo).length > 0) {
-      const id = formInfo['id'];
-      const isExisting = formularios.some((item) => item.id === id);
-      if (isExisting) {
-        const updatedFormularios = formularios.map((item) => {
-          if (item.id === id) {
-            return formInfo;
-          }
-          return item;
-        });
-        setFormularios(updatedFormularios);
-      } else {
-        const updatedFormularios = [...formularios, formInfo];
-        setFormularios(updatedFormularios);
+      if ('id' in formInfo) {
+        const id = typeof formInfo.id === 'number' ? formInfo.id : 0; // Asegura que id sea un número
+        const isExisting = formularios.some((item) => item.id === id);
+        if (isExisting) {
+          const updatedFormularios = formularios.map((item) => {
+            if (item.id === id) {
+              return formInfo;
+            }
+            return item;
+          });
+          setFormularios(updatedFormularios);
+        } else {
+          const updatedFormularios = [...formularios, { ...formInfo, id: id }]; // Asegura que el objeto tenga la propiedad id
+          setFormularios(updatedFormularios);
+        }
       }
     }
+
 
     let finalObj = {
       date: formHeadInfo['date'],
@@ -66,6 +91,7 @@ const CdpCrudPage = () => {
 
     }, 1000);
   }, [formInfo]);
+
 
   const handleGuardar = async () => {
     setFormSubmitted(true);
@@ -146,7 +172,7 @@ const CdpCrudPage = () => {
             }
             // onCancelNew();
             setMessage({});
-          },onCancel() {
+          }, onCancel() {
             onCancelNew();
           },
           background: true,
@@ -163,7 +189,26 @@ const CdpCrudPage = () => {
   const indexOfLastForm = currentPage * formsPerPage;
   const indexOfFirstForm = indexOfLastForm - formsPerPage;
   const currentForms = formularios.slice(indexOfFirstForm, indexOfLastForm);
+  const totalForms = formularios.length;
+  const totalPages = Math.ceil(totalForms / formsPerPage);
 
+  const renderFormsForCurrentPage = () => {
+    const indexOfLastForm = currentPage * formsPerPage;
+    const indexOfFirstForm = indexOfLastForm - formsPerPage;
+    return formularios.slice(indexOfFirstForm, indexOfLastForm).map((_, index) => (
+      <FormCreateRutaCDPComponent
+        key={indexOfFirstForm + index}
+        isRequired={indexOfFirstForm + index === 0}
+        formNumber={indexOfFirstForm + index}
+        handleEliminar={handleEliminar}
+        formSubmitted={formSubmitted}
+      />
+    ));
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
   return (
     <div className='container-principal'>
       <div className="agregar-ruta-container">
@@ -176,25 +221,16 @@ const CdpCrudPage = () => {
         </button>
       </div>
       <CdpheadCreate formSubmitted={formSubmitted} isDisabled={false} setFormHeadInfo={setFormHeadInfo} />
-      {[...Array(formCount)].map((_, index) => (
-        <FormCreateRutaCDPComponent
-          key={index}
-          isRequired={index === 0}
-          formNumber={index}
-          handleEliminar={handleEliminar}
-          setFormInfo={setFormInfo}
-          formSubmitted={formSubmitted}
+      {renderFormsForCurrentPage()}
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <CdpPaginator
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
         />
-      ))}
-      
-      <div>
-        {formularios.length > formsPerPage && (
-          <div>
-            <button onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
-            <button onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
-          </div>
-        )}
       </div>
+
+
       <div className="button-container component-container-create">
         <button className="cancel-btn">
           Cancelar
