@@ -29,10 +29,12 @@ export function useTransferPacCrudData() {
   const [ showSpinner,   setShowSpinner ] = useState(false)
   const [ disableBtnAdd, setDisableBtnAdd ] = useState(true)
   const [ originalDestinationValueOfService, setOriginalDestinationValueOfService ] = useState([{
-    annualRouteService: [] as IAnnualRoute[]
+    annualRouteService: [] as IAnnualRoute[],
+    ubicacion: ''
   }])
+  
   const [ annualDataRoutesOriginal, setAnnualDataRoutesOriginal ] = useState([{
-    annualRouteService: [] as IAnnualRoute[]
+    annualRouteService: [] as IAnnualRoute[],
   }])
   const [ annualDataRoutesBoth, setAnnualDataRoutesBoth ] = useState<IAnnualRoute[]>([])
 
@@ -89,7 +91,7 @@ export function useTransferPacCrudData() {
         if (destinoMatch) {
           return { ...item, ubicacion: "destino" };
         } else {
-            return item;
+          return item;
         }
       });
 
@@ -116,6 +118,7 @@ export function useTransferPacCrudData() {
       };
 
       originalDataAnnualRouteswithLocations.forEach((item) => {
+        console.log("🚀 ~ item:", item)
         if (item.annualRouteService.length > 0) {
           updateOrAddAnnualRoute(item);
         }
@@ -254,7 +257,7 @@ export function useTransferPacCrudData() {
   },[isActivityAdd, watchAll.TypeResource])
 
   useEffect(() => {
-    watchAll && setIsBtnDisable( watchAll.totalDestinoActual > 0 && watchAll.totalOrigenActual > 0  )
+    watchAll && setIsBtnDisable( originalDestinationValueOfService.some(objeto => objeto.ubicacion === 'destino') && originalDestinationValueOfService.some(objeto => objeto.ubicacion === 'origen')) 
     watchAll && validateHeader()
   },[watchAll])
 
