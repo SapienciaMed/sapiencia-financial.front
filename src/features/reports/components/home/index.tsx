@@ -21,7 +21,6 @@ const HomeReports = () => {
     navigate,
     selectedReport,
   } = useReports();
-  console.log({ width });
 
   return (
     <div>
