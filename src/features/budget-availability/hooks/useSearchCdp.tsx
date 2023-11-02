@@ -89,7 +89,9 @@ export const useSearchCdp = () => {
     },
     {
       icon: "Rp",
-      onClick: (row) => {},
+      onClick: (row) => {
+        navigate(`/gestion-financiera/cdp/rp/${row.id}`);
+      },
     },
   ];
 
