@@ -29,16 +29,7 @@ const CdpCrudPage = () => {
   const { setMessage } = useContext(AppContext);
   const { formInfo } = useContext(AppContext);
   const [formCount, setFormCount] = useState(2);
-  //const [formularios, setFormularios] = useState([]);
   const [formularios, setFormularios] = useState([{ id: 1 }]);
-  //const [formInfo, setFormInfo] = useState({});
-/*   const [formInfo, setFormInfo] = useState<FormInfoType>({
-    proyecto: '',
-    posicion: '',
-    valorInicial: '',
-    balance: '',
-    id: 0
-  }); */
   const [formHeadInfo, setFormHeadInfo] = useState({})
   const [objectSendData, setObjectSendData] = useState({})
   const cdpService = useCdpService();
