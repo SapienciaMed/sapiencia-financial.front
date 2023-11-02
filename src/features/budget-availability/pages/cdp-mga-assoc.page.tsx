@@ -12,51 +12,41 @@ const CdpMgaAssocPage = () => {
     const { id: cdpId } = useParams();
     const { isBtnDisable, onCancel } = useCdpMgaAssocCrud(cdpId);
 
-
     return (
-        <div className="main-page">
-            <div className="card-table gap-0">
+        <div className="crud-page full-height ">
+            <div className='main-page core-container full-height gap-1'>
                 <section className="title-area">
                     <div className="text-black weight-500 extra-large">Asociar MGA</div>
                 </section>
-                <section className="card-user">
+
+                <section  className='card-table gap-0'>
                     <CdpHeadMgaAssocComponent isDisabled={true} cdpId={cdpId} />
                 </section>
-            </div>
-            <br />
-            <div className="card-table gap-0">
-                <section className="title-area">
-                    <div className="text-black weight-500 extra-large">MGA</div>
-                </section>
-                <CdpMgaAssocFormComponent isDisabled={true} cdpId={cdpId} />
 
+                <section  className='card-table gap-0 mt-16px'>
+                    <CdpMgaAssocFormComponent isDisabled={true} cdpId={cdpId} /> 
+                </section>
             </div>
             <section className="container-button-bot-2">
-                {/* <div className='content-label'>
-                    <label className="text-black biggest"> Total Traslado:</label>
-                    <label className="text-black biggest" style={{ color: '#533893' }}> $ {totalTransfer} </label>
-                </div> */}
-                <div className="buttons-bot">
-                    <span
-                        className="bold text-center button"
-                        onClick={onCancel}
+            <div></div>
+            <div className="buttons-bot">
+                <span
+                    className="bold text-center button"
+                    onClick={onCancel}
                     >
-                        Cancelar
-                    </span>
-                    <ButtonComponent
-                        className="button-main huge hover-three"
-                        value="Guardar"
-                        type="submit"
-                        form="transfer-form"
-                        disabled={!isBtnDisable}
+                    Cancelar
+                </span>
+                <ButtonComponent
+                    className="button-main huge hover-three"
+                    value="Guardar"
+                    type="submit"
+                    form="transfer-form"
+                    disabled={!isBtnDisable}
                     />
-                </div>
+            </div>
             </section>
         </div>
     )
-
-
-
 }
 
 export default CdpMgaAssocPage;
