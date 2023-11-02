@@ -12,6 +12,7 @@ import { FunctionalityRoutes } from "./features/functionality/functionality-rout
 import { PacRoutes } from "./features/pac/pac-routes";
 import { EditCdp, HomeCdp } from "./features/budget-availability/pages";
 import Reports from "./features/reports/pages";
+import { EditCdp, HomeCdp, RpCdp } from "./features/budget-availability/pages";
 
 const Home = lazy(() => import("./features/home/pages/home.page"));
 const BudgetRoutes = lazy(()  => import("./features/budget-routes/pages/budget-routes.page"));
@@ -50,6 +51,7 @@ function App() {
               <Route path={"/gestion-financiera/cdp"} element={HomeCdp} />
               <Route path={"/gestion-financiera/cdp/edit/:id"} element={EditCdp} />
               <Route path={"/gestion-financiera/reports"} element={<Reports/>}/>
+              <Route path={"/gestion-financiera/cdp/rp/:id"} element={RpCdp} />
             </Routes>
           </Suspense>
         </Router>
