@@ -12,7 +12,7 @@ function RoutesCDPEditPage() {
     const [idcModifiedCredit, setIdcModifiedCredit] = useState(0)
     const [idcFixedCompleted, setIdcFixedCompleted] = useState(0)
 
-    const { onSubmiteditRouteCDP, register, control, idcFinalValue, disable } = useEditrouteCDP(modifiedIdcCountercredit, idcModifiedCredit, idcFixedCompleted);
+    const { onSubmiteditRouteCDP, register, control, idcFinalValue, disable,CancelFunction } = useEditrouteCDP(modifiedIdcCountercredit, idcModifiedCredit, idcFixedCompleted);
 
     return (
         <div className="main-page">
@@ -230,16 +230,16 @@ function RoutesCDPEditPage() {
                                 onChange={(e) => setIdcFixedCompleted(Number(e.target.value))}
                             />
                         </section>
-                        <section className='one-filter-container mt-24px'>
+                        <section className='one-filter-container'>
                             <InputComponent
                                 idInput="idcFinalValue"
                                 className="input-basic"
                                 typeInput="text"
                                 register={register}
-                                label="Valorfinal"
+                                label="Valor final"
                                 classNameLabel="text-black biggest text-required"
                                 disabled
-                                value={String(idcFinalValue)}
+                                //value={String(idcFinalValue)}
                             />
                         </section>
 
@@ -256,9 +256,7 @@ function RoutesCDPEditPage() {
                             value="Cancelar"
                             type="button"
                             className="button-clean-fields bold"
-                            action={() => {
-
-                            }}
+                            action={() => CancelFunction()}
                         />
                         <ButtonComponent
                             form="editRouteCDP"

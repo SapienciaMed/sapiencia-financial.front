@@ -22,7 +22,7 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
     const { setMessage } = useContext(AppContext);
 
     //services
-    const { getRouteCDPId, getOneRpp } = useCdpService()
+    const { getRouteCDPId, getOneRpp, updateRouteCdp } = useCdpService()
     const { GetProjectsList } = useAdditionsTransfersService()
     const { GetAllFunctionalAreas } = useFunctionalAreaService()
 
@@ -150,13 +150,30 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
     useEffect(() => {
         fetchBalance()
         console.log('balance', balance)
-        if (idcModifiedCredit >= idcFinalValue) {           
+        if (idcModifiedCredit >= idcFinalValue) {
             setDisable(true)
-        }else{    
+        } else {
             setDisable(false)
         }
     })
 
+
+    // Este efecto se ejecutará cada vez que cambien idcModifiedCredit, modifiedIdcCountercredit, o idcFixedCompleted.
+    useEffect(() => {
+        // Solo recalcula si dataRoutesCDP ya ha sido cargado
+        if (dataRoutesCDP) {
+            if (dataRoutesCDP.idcFinalValue || Number(dataRoutesCDP.idcFinalValue) > 0) {
+                const recalculatedValue = Math.max(0, (Number(dataRoutesCDP.idcFinalValue) + idcModifiedCredit) - modifiedIdcCountercredit - idcFixedCompleted);
+                setIdcFinalValue(recalculatedValue); // Actualiza el estado con el nuevo valor calculado
+                setValue("idcFinalValue", recalculatedValue); // Actualiza el valor en el formulario
+            } else {
+                const recalculatedValue = Math.max(0, (Number(dataRoutesCDP.amount) + idcModifiedCredit) - modifiedIdcCountercredit - idcFixedCompleted);
+                setIdcFinalValue(recalculatedValue); // Actualiza el estado con el nuevo valor calculado
+                setValue("idcFinalValue", recalculatedValue); // Actualiza el valor en el formulario
+            }
+        }
+    }, [idcModifiedCredit, modifiedIdcCountercredit, idcFixedCompleted, dataRoutesCDP, setValue]);
+    
 
 
     //setear valores
@@ -185,7 +202,11 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
         setValue("managementCenter", centroGestor);
         setValue("div", dataRoutesCDP.budgetRoute.div);
         setValue("amount", dataRoutesCDP.amount);
-        //setValue("idcFinalValue", idcFinalValue);
+
+        setValue("modifiedIdcCountercredit", Number(dataRoutesCDP.modifiedIdcCountercredit));
+        setValue("idcModifiedCredit", Number(dataRoutesCDP.idcModifiedCredit));
+        setValue("idcFixedCompleted", Number(dataRoutesCDP.idcFixedCompleted));
+        setValue("idcFinalValue", Number(dataRoutesCDP.idcFinalValue));
 
 
 
@@ -216,7 +237,7 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
         const datos: IUpdateRoutesCDP = {
             idRppCode: dataRoutesCDP.idRppCode,
             cdpPosition: data.cdpPosition,
-            amount: data.amount,
+            amount: Number(data.amount),
             modifiedIdcCountercredit: data.modifiedIdcCountercredit,
             idcModifiedCredit: data.idcModifiedCredit,
             idcFixedCompleted: data.idcFixedCompleted,
@@ -224,60 +245,63 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
         }
 
         console.log('llego', datos)
-        /* 
-            const res = await updateUser(parseInt(userId), user);
 
-    if (res && res?.operation?.code === EResponseCodes.OK) {
-      setMessage({
-        okTitle: "Cerrar",
-        description: "¡Usuario editado exitosamente!",
-        title: "Usuario editado",
-        show: true,
-        type: EResponseCodes.OK,
-        background: true,
-        onOk() {
-          reset();
-          setMessage({});
-          navigate("/core/usuarios/consultar");
-        },
-        onClose() {
-          reset();
-          setMessage({});
-        },
-      });
-      setSending(false);
-    } else {
-      setMessage({
-        type: EResponseCodes.FAIL,
-        title: "Crear Usuario",
-        description: "El usuario no se pudo actualizar",
-        show: true,
-        okTitle: "Aceptar",
-        background: true,
-      });
-      setSending(false);
-    }
-        */
+        const res = await updateRouteCdp(parseInt(idRoute), datos);
 
+        if (res && res?.operation?.code === EResponseCodes.OK) {
+            setMessage({
+                OkTitle: "Cerrar",
+                description: "¡Guardado exitosamente!",
+                title: "Guardado",
+                show: true,
+                type: EResponseCodes.OK,
+                background: true,
+                onOk() {
+                    reset();
+                    setMessage({});
+                    navigate("/gestion-financiera/cdp");
+                },
+                onClose() {
+                    reset();
+                    setMessage({});
+                },
+            });
+
+        } else {
+            setMessage({
+                type: EResponseCodes.FAIL,
+                title: "Guardar",
+                description: "El registro no se pudo actualizar",
+                show: true,
+                OkTitle: "Cerrar",
+                background: true,
+            });
+        }
     }
+
+    const CancelFunction = () => {
+        setMessage({
+            show: true,
+            title: "Cancelar",
+            description: "¿Estas segur@ de cancelar?",
+            cancelTitle: "Cancelar",
+            OkTitle: "Aceptar",
+            onOk() {
+                navigate("/gestion-financiera/cdp");
+                setMessage((prev) => ({ ...prev, show: false }));
+            },
+            background: true,
+        });
+    };
 
 
     return {
-        /*   control,
-          errors,
-          register,
-          watch,
-          setMessage,
-          getValues,
-          tableComponentRef,
-          tableColumns,
-          tableActions,
-          cdpFoundSt */
         control,
         register,
         onSubmiteditRouteCDP,
         idcFinalValue,
-        disable
+        disable,
+        CancelFunction
     };
 
 }
