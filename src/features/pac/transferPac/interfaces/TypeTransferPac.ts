@@ -28,6 +28,7 @@ export interface ICreateFundTransferPac {
   }[],
   setOriginalDestinationValueOfService: React.Dispatch<React.SetStateAction<{
     annualRouteService: IAnnualRoute[];
+    ubicacion?: string
   }[]>>,
   addNewObject: (value: any) => void,
 }
