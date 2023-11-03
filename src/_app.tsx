@@ -10,7 +10,7 @@ import useAppCominicator from "./common/hooks/app-communicator.hook";
 import { ManagementCenterRoutes } from "./features/managementCenter/management-center-routes";
 import { FunctionalityRoutes } from "./features/functionality/functionality-routes";
 import { PacRoutes } from "./features/pac/pac-routes";
-import { EditCdp, HomeCdp } from "./features/budget-availability/pages";
+import { EditCdp, HomeCdp,RpCdp } from "./features/budget-availability/pages";
 import Reports from "./features/reports/pages";
 
 const Home = lazy(() => import("./features/home/pages/home.page"));
@@ -49,7 +49,8 @@ function App() {
               <Route path={"/gestion-financiera/ruta-presupuestal/edit/:id"} element={<BudgetRoutesCrudPage action="edit"/>} />
               <Route path={"/gestion-financiera/cdp"} element={HomeCdp} />
               <Route path={"/gestion-financiera/cdp/edit/:id"} element={EditCdp} />
-              <Route path={"/gestion-financiera/reports"} element={<Reports/>}/>
+              <Route path={"/gestion-financiera/reportes"} element={<Reports/>}/>
+              <Route path={"/gestion-financiera/cdp/rp/:id"} element={RpCdp} />
             </Routes>
           </Suspense>
         </Router>
