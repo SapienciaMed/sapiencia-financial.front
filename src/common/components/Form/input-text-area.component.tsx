@@ -131,6 +131,7 @@ export function TextAreaComponent({
           rows={rows}
           cols={cols}
           optionsRegister={optionsRegister}
+          
         />
         {messageError() && (
           <MdOutlineError

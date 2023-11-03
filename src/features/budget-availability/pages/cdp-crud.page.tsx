@@ -9,10 +9,10 @@ import CdpHeadFormComponent from '../components/cdp-head-form.component';
 import CdpheadCreate from '../components/cdp-head-create.component';
 import PaginatorComponent from '../components/paginator-cdp.component';
 import CdpPaginator from '../components/cdp-paginator.component';
-
+import { log } from 'console';
 interface FormInfoType {
   id: number;
-  proyecto: string;
+  idRppCode: string;
   posicion: string;
   valorInicial: string;
   balance: string;
@@ -29,14 +29,20 @@ const CdpCrudPage = () => {
   const { setMessage } = useContext(AppContext);
   const { formInfo } = useContext(AppContext);
   const [formCount, setFormCount] = useState(2);
-  const [formularios, setFormularios] = useState([{ id: 1 }]);
+  const [formularios, setFormularios] = useState([]);
   const [formHeadInfo, setFormHeadInfo] = useState({})
   const [objectSendData, setObjectSendData] = useState({})
   const cdpService = useCdpService();
   const navigate = useNavigate();
   const [proyectoError, setProyectoError] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
-
+  const [amountInfo, setAmountInfo] = useState<FormInfoType>({
+    idRppCode: "",
+    posicion: "",
+    valorInicial: "",
+    balance: "",
+    id: 0,
+  });
   const handleProyectoError = (selectedProyecto) => {
     if (!selectedProyecto) {
       setProyectoError(true);
@@ -45,39 +51,41 @@ const CdpCrudPage = () => {
     }
   };
 
-  /*   const handleAgregarFormulario = () => {
-      setFormCount(formCount + 1);
-    }; */
   const handleAgregarFormulario = () => {
     const newFormulario = { id: formCount };
+    console.log();
+
     setFormularios([...formularios, newFormulario]);
     setFormCount(formCount + 1);
   };
-
   const handleEliminar = (formNumber) => {
+    setFormularios((prevFormularios) =>
+      prevFormularios.filter((_, index) => indexOfFirstForm + index !== formNumber)
+    );
     setFormCount((prevCount) => prevCount - 1);
   };
+  function setInfoData() {
+    console.log("amountInfo", amountInfo);
 
-  useEffect(() => {
-    if (Object.keys(formInfo).length > 0) {
-      if ('id' in formInfo) {
-        const id = typeof formInfo.id === 'number' ? formInfo.id : 0; // Asegura que id sea un número
+    if (Object.keys(amountInfo).length > 0) {
+
+      if ('id' in amountInfo) {
+        const id = typeof amountInfo.id === 'number' ? amountInfo.id : 0;
         const isExisting = formularios.some((item) => item.id === id);
         if (isExisting) {
           const updatedFormularios = formularios.map((item) => {
             if (item.id === id) {
-              return formInfo;
+              return amountInfo;
             }
             return item;
           });
           setFormularios(updatedFormularios);
         } else {
-          const updatedFormularios = [...formularios, { ...formInfo, id: id }]; // Asegura que el objeto tenga la propiedad id
+          const updatedFormularios = [...formularios, { ...amountInfo, id: id }];
           setFormularios(updatedFormularios);
         }
       }
     }
-
 
     let finalObj = {
       date: formHeadInfo['date'],
@@ -85,14 +93,107 @@ const CdpCrudPage = () => {
       exercise: formHeadInfo['exercise'],
       icdArr: formularios
     }
-    setTimeout(() => {
-      setObjectSendData(finalObj)
-      console.log(formHeadInfo);
+    setObjectSendData(finalObj)
+    console.log(formHeadInfo);
+    console.log("la informacion del amount", amountInfo);
+    console.log("la informacion final", finalObj);
+  }
 
-    }, 1000);
-  }, [formInfo]);
+  useEffect(() => {
+    setInfoData()
+  }, [amountInfo]);
 
+  const handleCancel = () => {
+    setMessage({
+      title: "Cancelar",
+      description: "¿Estás segur@ de cancelar?",
+      show: true,
+      OkTitle: "Aceptar",
+      cancelTitle: "Cancelar",
+      onOk: () => {
+        //onCancelNew();
+        navigate("./../");
+        setMessage({});
+      },
+      onCancel() {
+        setMessage({});
+      },
+      background: true,
+    });
 
+  }
+
+  /*  const handleGuardar = async () => {
+ 
+ 
+     // setFormSubmitted(true);
+     let nuevoObjeto;
+     const onCancelNew = () => {
+       navigate("./");
+     };
+     try {
+       const icdArrWithBalanceCheck = objectSendData["icdArr"];
+ 
+       const invalidBalances = icdArrWithBalanceCheck.filter(
+         (item) => parseInt(item.valorInicial) >= parseInt(item.balance)
+       );
+ 
+       if (invalidBalances.length === 0) {
+         const updatedIcdArr = icdArrWithBalanceCheck.map(({ balance, ...rest }) => rest);
+ 
+         nuevoObjeto = {
+           ...objectSendData,
+           exercise: objectSendData["exercise"],
+           date: objectSendData["date"] && typeof objectSendData["date"] === "string" ? objectSendData["date"].split("/").join("-") : null,
+           contractObject: objectSendData["contractObject"],
+           consecutive: 10,
+           icdArr: updatedIcdArr.map(({ idRppCode, posicion, valorInicial, id, ...rest }) => ({
+             idRppCode: parseInt(idRppCode),
+             cdpPosition: parseInt(posicion),
+             amount: parseFloat(valorInicial),
+             ...rest,
+           })),
+         };
+ 
+         await new Promise((resolve) => {
+           setObjectSendData(nuevoObjeto);
+           resolve('success');
+         });
+ 
+         const response = await cdpService.createCdp_(nuevoObjeto);
+ 
+         if (response && response['operation']['code'] === "FAIL") {
+           setMessage({
+             title: "Error al crear CDP",
+             description: response['operation']['message'],
+             show: true,
+             OkTitle: "Aceptar",
+             onOk: () => {
+               onCancelNew();
+               setMessage({});
+             },
+             background: true,
+           });
+         } else {
+           setMessage({
+             title: "Guardado",
+             description: "Guardado Exitosamente!!",
+             show: true,
+             OkTitle: "Aceptar",
+             onOk: () => {
+               navigate("./../");
+               setMessage({});
+             },
+             background: true,
+           });
+         }
+         console.log('Response:', response);
+       }
+     } catch (error) {
+       console.error("Error al enviar los datos:", error);
+     }
+   };
+  */
   const handleGuardar = async () => {
     setFormSubmitted(true);
     let nuevoObjeto;
@@ -105,6 +206,23 @@ const CdpCrudPage = () => {
       const invalidBalances = icdArrWithBalanceCheck.filter(
         (item) => parseInt(item.valorInicial) >= parseInt(item.balance)
       );
+
+      if (invalidBalances.length !== 0) {
+        setMessage({
+          title: "Validar valor inicial",
+          description: "Recuerda que el valor inicial no puede ser mayor o igual al balance disponible de la ruta presupuestal",
+          show: true,
+          OkTitle: "Aceptar",
+          onOk: () => {
+            setMessage({});
+          },
+          background: true,
+        });
+
+        return;
+      }
+
+
 
       if (invalidBalances.length === 0) {
         const updatedIcdArr = icdArrWithBalanceCheck.map(({ balance, ...rest }) => rest);
@@ -136,8 +254,33 @@ const CdpCrudPage = () => {
           onOk: async () => {
             try {
               const response = await cdpService.createCdp_(nuevoObjeto);
+              console.log(response['operation']['code']);
+
               setTimeout(() => {
-                if (response && response['operation']['code'] === "FAIL") {
+                if (response['operation']['code'] == "OK") {
+                  setMessage({
+                    title: "Guardado",
+                    description: "Guardado Exitosamente!",
+                    show: true,
+                    OkTitle: "Cerrar",
+                    onOk: () => {
+                      //onCancelNew();
+                      navigate("./../");
+                      setMessage({
+                        title: "Consecutivo CDP Aurora",
+                        description: `Al CDP sele asignó el consecutivo ${response["data"]['consecutive']}`,
+                        show: true,
+                        OkTitle: "Cerrar",
+                        onOk: () => {
+                          setMessage({});
+                        },
+                      });
+                    },
+                    background: true,
+                  });
+                }
+
+                if (response['operation']['code'] === "FAIL") {
                   setMessage({
                     title: "Error al crear CDP",
                     description: response['operation']['message'],
@@ -149,28 +292,13 @@ const CdpCrudPage = () => {
                     },
                     background: true,
                   });
-                } else {
-                  setMessage({
-                    title: "Guardado",
-                    description: "Guardado Exitosamente!!",
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                      //onCancelNew();
-                      navigate("./../");
-                      setMessage({});
-                    },
-                    background: true,
-                  });
-                  setMessage({});
+                  return
                 }
-                console.log('Response:',);
-              }, 1000);
+              }, 1500);
 
             } catch (error) {
               console.error("Error al enviar los datos:", error);
             }
-            // onCancelNew();
             setMessage({});
           }, onCancel() {
             onCancelNew();
@@ -183,6 +311,10 @@ const CdpCrudPage = () => {
       console.error("Error al enviar los datos:", error);
     }
   };
+
+
+
+
 
   const formsPerPage = 2;
   const [currentPage, setCurrentPage] = useState(1);
@@ -202,9 +334,36 @@ const CdpCrudPage = () => {
         formNumber={indexOfFirstForm + index}
         handleEliminar={handleEliminar}
         formSubmitted={formSubmitted}
+        amountInfo={amountInfo}
+        setAmountInfo={setAmountInfo}
       />
     ));
   };
+
+  /* const renderFormsForCurrentPage = () => {
+      const indexOfLastForm = currentPage * formsPerPage;
+      const indexOfFirstForm = indexOfLastForm - formsPerPage;
+      return formularios
+        .slice(indexOfFirstForm, indexOfLastForm)
+        .map((form, index) => (
+          <FormCreateRutaCDPComponent
+          key={indexOfFirstForm + index}
+          isRequired={indexOfFirstForm + index === 0}
+          formNumber={indexOfFirstForm + index}
+          handleEliminar={handleEliminar}
+          formSubmitted={formSubmitted}
+          amountInfo={form}
+          setAmountInfo={(updatedFormInfo) => {
+            setFormularios((prevFormularios) => {
+              const updatedFormularios = [...prevFormularios];
+              updatedFormularios[indexOfFirstForm + index] = updatedFormInfo;
+              return updatedFormularios;
+            });
+          }}
+        />
+        ));
+    }; */
+
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -221,18 +380,23 @@ const CdpCrudPage = () => {
         </button>
       </div>
       <CdpheadCreate formSubmitted={formSubmitted} isDisabled={false} setFormHeadInfo={setFormHeadInfo} />
-      {renderFormsForCurrentPage()}
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <CdpPaginator
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      </div>
+      {formularios.length > 0 && (
+
+        <div>
+          {renderFormsForCurrentPage()}
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <CdpPaginator
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        </div>
+      )}
 
 
       <div className="button-container component-container-create">
-        <button className="cancel-btn">
+        <button onClick={handleCancel} className="cancel-btn">
           Cancelar
         </button>
         <p onClick={handleGuardar} className="btn-guardar">

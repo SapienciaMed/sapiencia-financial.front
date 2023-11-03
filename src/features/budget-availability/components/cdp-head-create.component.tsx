@@ -20,7 +20,7 @@ interface Props {
 function CdpheadCreate(prop: Props) {
     const { isDisabled, setFormHeadInfo = () => { }, formSubmitted } = prop;
 
-    const [formHeadInfo, setFormHeadInfoState] = useState<FormHeadInfo>({
+    const [formHeadInfoState, setFormHeadInfoState] = useState<FormHeadInfo>({
         date: null,
         exercise: String(new Date().getFullYear()),
         contractObject: '',
@@ -58,7 +58,7 @@ function CdpheadCreate(prop: Props) {
 
     useEffect(() => {
         let objRpp = {
-            date,
+            date: date.toString(),
             exercise,
             contractObject,
         };
@@ -76,7 +76,10 @@ function CdpheadCreate(prop: Props) {
     return (
         <>
             <div className='container-head-form-cdp'>
-                <section className="grid-form-3-container-area mt-5px" style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
+                <div>
+                    <h2 className='tittles'>Fechas</h2>
+                </div>
+                <section className="grid-form-3-container-area mt-6px" style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
                     <div className="date-picker-container">
                         <label className="date-picker-label text-black weight-500 biggest">Fecha Documento: <span>*</span></label>
                         <DatePickerCdp
@@ -98,22 +101,28 @@ function CdpheadCreate(prop: Props) {
                                 name={"exercise"}
                                 defaultValue={String(new Date().getFullYear())}
                                 render={({ field }) => (
-                                    <InputComponent
-                                        id={field.name}
-                                        idInput={field.name}
-                                        value={year}
-                                        className={`input-basic medium inactive-input ${validateField(year)}`}
-                                        typeInput="number"
-                                        register={register}
-                                        label="Vigencia"
-                                        classNameLabel="text-black weight-500 biggest"
-                                        direction={EDirection.column}
-                                        errors={errors}
-                                        onChange={(e) => handleInputChange(field.name, e.target)}
-                                        disabled={true}
-                                    />
+                                    <div>
+                                        <label className="text-black weight-500 biggest">
+                                            Vigencia <span style={{ color: 'red' }}>*</span>
+                                        </label>
+                                        <InputComponent
+                                            id={field.name}
+                                            idInput={field.name}
+                                            value={year}
+                                            className={`input-basic medium inactive-input ${validateField(year)}`}
+                                            typeInput="number"
+                                            register={register}
+                                            classNameLabel="text-black weight-500 biggest"
+                                            direction={EDirection.column}
+                                            errors={errors}
+                                            onChange={(e) => handleInputChange(field.name, e.target)}
+                                            disabled={true}
+                                            style={{ marginTop: '3.2px' }}
+                                        />
+                                    </div>
                                 )}
                             />
+
 
                             {formSubmitted && year === "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
                         </div>
@@ -123,43 +132,62 @@ function CdpheadCreate(prop: Props) {
                                 name={'exercise'}
                                 defaultValue={String(new Date().getFullYear())}
                                 render={({ field }) => (
-                                    <InputComponent
-                                        id={"mes"}
-                                        idInput={"mes"}
-                                        value={month}
-                                        className={`input-basic medium inactive-input ${validateField(month)}`}
-                                        typeInput="text"
-                                        register={register}
-                                        label="Mes expedición"
-                                        classNameLabel="text-black weight-500 biggest"
-                                        direction={EDirection.column}
-                                        errors={errors}
-                                        disabled={true}
-                                    />
+                                    <div>
+                                        <label className="text-black weight-500 biggest">
+                                            Mes expedición <span style={{ color: 'red' }}>*</span>
+                                        </label>
+                                        <InputComponent
+                                            id={"mes"}
+                                            idInput={"mes"}
+                                            value={month}
+                                            className={`input-basic medium inactive-input ${validateField(month)}`}
+                                            typeInput="text"
+                                            register={register}
+                                            classNameLabel="text-black weight-500 biggest"
+                                            direction={EDirection.column}
+                                            errors={errors}
+                                            disabled={true}
+                                        />
+                                    </div>
                                 )}
                             />
+
                             {formSubmitted && month === "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
                         </div>
                     </div>
                 </section>
-
-
                 <TextAreaComponent
                     id={'contractObject'}
                     idInput={'contractObject'}
                     className={`text-area-basic ${validateField(contractObject)}`}
                     register={register}
                     value={contractObject}
-                    label="Objeto contractual"
-                    classNameLabel="text-black biggest"
+                    label={
+                        <span className="text-black biggest">
+                            Objeto contractual <span style={{ color: 'red' }}>*</span>
+                        </span>
+                    }
                     direction={EDirection.column}
                     errors={errors}
                     rows={2}
                     disabled={isDisabled}
                     onChange={(e) => handleInputChange("contractObject", e.target)}
-                />
 
-                {formSubmitted && contractObject == "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
+                />
+                {formSubmitted && contractObject === "" && (
+                    <p className="aviso-campo" style={{ color: "red" }}>
+                        Este campo es obligatorio
+                    </p>
+                )}
+                {errors && (
+                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <div className="title-button font-big">
+                            Max. 5000 caracteres
+                        </div>
+                    </div>
+                )}
+
+
             </div>
         </>
     );

@@ -34,7 +34,7 @@ interface IProps {
 
 interface FormInfoType {
   id: number;
-  proyecto: string;
+  idRppCode: string;
   posicion: string;
   valorInicial: string;
   balance: string;
@@ -60,7 +60,7 @@ export const AppContext = createContext<IAppContext>({
   setIsValue: () => {},
   formInfo: {
     id: 0,
-    proyecto: "",
+    idRppCode: "",
     posicion: "",
     valorInicial: "",
     balance: "",
@@ -80,7 +80,7 @@ export function AppContextProvider({ children }: IProps) {
   const [detailTransferData, setDetailTransferData] = useState<IPagingData<IobjectAddTransfer>>({} as IPagingData<IobjectAddTransfer>);
   const [isValue, setIsValue] = useState<boolean>(null as boolean);
   const [formInfo, setFormInfo] = useState<FormInfoType>({
-    proyecto: "",
+    idRppCode: "",
     posicion: "",
     valorInicial: "",
     balance: "",
