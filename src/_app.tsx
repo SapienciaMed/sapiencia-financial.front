@@ -49,7 +49,7 @@ function App() {
               <Route path={"/gestion-financiera/ruta-presupuestal/edit/:id"} element={<BudgetRoutesCrudPage action="edit"/>} />
               <Route path={"/gestion-financiera/cdp"} element={HomeCdp} />
               <Route path={"/gestion-financiera/cdp/edit/:id"} element={EditCdp} />
-              <Route path={"/gestion-financiera/reports"} element={<Reports/>}/>
+              <Route path={"/gestion-financiera/reportes"} element={<Reports/>}/>
             </Routes>
           </Suspense>
         </Router>
