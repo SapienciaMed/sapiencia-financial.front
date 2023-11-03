@@ -33,6 +33,8 @@ const SelectSearch = ({ options, setter, style }) => {
         setSearchTerm(option.name);
         setShowOptions(false);
         setter(option.value);
+        console.log(option.value);
+        
     };
 
     const handleClick = (e) => {

@@ -6,7 +6,16 @@ import FormCreateRutaCDPComponent from '../components/form-create-ruta-cdp.compo
 import { useCdpService } from '../hooks/cdp-service';
 import { useNavigate } from "react-router-dom";
 import { AppContext } from '../../../common/contexts/app.context';
-import Icons from '../components/Icons'
+import Icons from '../components/Icons';
+
+
+interface FormInfoType {
+    id: number;
+    idRppCode: string;
+    posicion: string;
+    valorInicial: string;
+    balance: string;
+  }
 const CdpAmountAssoc = () => {
     const { setMessage } = useContext(AppContext);
     const { formInfo } = useContext(AppContext);
@@ -18,7 +27,13 @@ const CdpAmountAssoc = () => {
     const navigate = useNavigate();
     const [proyectoError, setProyectoError] = useState(false);
     const [formSubmitted, setFormSubmitted] = useState(false);
-
+    const [amountInfo, setAmountInfo] = useState<FormInfoType>({
+        idRppCode: "",
+        posicion: "",
+        valorInicial: "",
+        balance: "",
+        id: 0,
+      });
     const currentUrl = window.location.href;
     const segments = currentUrl.split('/');
     const lastSegment = segments[segments.length - 1];
@@ -79,11 +94,13 @@ const CdpAmountAssoc = () => {
         const indexOfFirstForm = indexOfLastForm - formsPerPage;
         return formularios.slice(indexOfFirstForm, indexOfLastForm).map((_, index) => (
             <FormCreateRutaCDPComponent
-                key={indexOfFirstForm + index}
-                isRequired={indexOfFirstForm + index === 0}
-                formNumber={indexOfFirstForm + index}
-                handleEliminar={handleEliminar}
-                formSubmitted={formSubmitted}
+            key={indexOfFirstForm + index}
+            isRequired={indexOfFirstForm + index === 0}
+            formNumber={indexOfFirstForm + index}
+            handleEliminar={handleEliminar}
+            formSubmitted={formSubmitted}
+            amountInfo={amountInfo}
+            setAmountInfo={setAmountInfo}
             />
         ));
     };
