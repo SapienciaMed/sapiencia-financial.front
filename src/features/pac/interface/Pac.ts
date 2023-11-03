@@ -298,6 +298,7 @@ export interface IViewPacComplete {
     posPreSapiNumber: string;
     projectCode: string;
     projectName: string;
+    posPreOrig: string;
     functionalAreaNumber: string;
     totalProgrammingAnnual: number;
     totalCollectedAnnual: number;
