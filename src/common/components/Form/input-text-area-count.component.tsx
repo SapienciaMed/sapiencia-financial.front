@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
+import { UseFormRegister } from "react-hook-form";
 import { EDirection } from "../../constants/input.enum";
 import { LabelComponent } from "./label.component";
-import { FieldErrors, UseFormRegister } from "react-hook-form";
 
 import { MdOutlineError } from "react-icons/md";
 
@@ -23,7 +23,8 @@ interface IInputProps<T> {
   fieldArray?: boolean;
   rows?: number;
   cols?: number;
-  optionsRegister?: {}; 
+  optionsRegister?: {};
+  characters?: number;
 }
 
 function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
@@ -49,7 +50,8 @@ function TextAreaElement({
   id,
   rows,
   cols,
-  optionsRegister = {},  
+  optionsRegister = {},
+  setCount
 }): React.JSX.Element {
   return (
     <textarea
@@ -60,16 +62,18 @@ function TextAreaElement({
       placeholder={placeholder}
       defaultValue={defaultValue}
       disabled={disabled}
-      onChange={onChange}
+      onChange={(event) => {
+        onChange(event);
+        setCount(event.target.value.length);
+      }}
       value={value}
       rows={rows}
       cols={cols}
-      
     />
   );
 }
 
-export function TextAreaComponent({
+export function TextAreaCountComponent({
   idInput,
   register,
   className = "input-basic",
@@ -88,7 +92,9 @@ export function TextAreaComponent({
   rows,
   cols,
   optionsRegister = {},
+  characters
 }: IInputProps<any>): React.JSX.Element {
+  const [count, setCount] = useState(0);
   const messageError = () => {
     const keysError = idInput.split(".");
     let errs = errors;
@@ -131,7 +137,7 @@ export function TextAreaComponent({
           rows={rows}
           cols={cols}
           optionsRegister={optionsRegister}
-          
+          setCount={setCount}
         />
         {messageError() && (
           <MdOutlineError
@@ -146,7 +152,14 @@ export function TextAreaComponent({
           {messageError()}
         </p>
       )}
+      {characters > 0 ? <CharactersComponent characters={characters} count={count} /> : <></>}
       {children}
     </div>
   );
+}
+
+const CharactersComponent = ({characters, count}) => {
+  return (
+    count > 0 ? <label className="label-max-textarea">{characters-count} caracteres restantes</label> : <label className="label-max-textarea">Máx. {characters} caracteres</label>
+  )
 }

@@ -7,8 +7,10 @@ import {
 import { Controller } from "react-hook-form";
 import { EDirection } from "../../../../common/constants/input.enum";
 import { typesReports } from "../../constants";
+import { useWidth } from "../../../../common/hooks/use-width";
 
 const HomeReports = () => {
+  const { width } = useWidth();
   const {
     onSubmit,
     control,
@@ -46,7 +48,13 @@ const HomeReports = () => {
             }}
           />
         </div>
-        <div className="two-filters-container">
+        <div
+          className={
+            width > 540
+              ? "two-filters-container"
+              : "funcionality-filters-container"
+          }
+        >
           {typesReports?.map((report, index) => (
             <div key={report.name}>
               <Controller
@@ -109,7 +117,7 @@ const HomeReports = () => {
                 ),
                 background: true,
                 onOk: () => {
-                  navigate("/gestion-financiera/reports");
+                  navigate("/gestion-financiera");
                   setMessage({});
                 },
                 onCancel: () => {
