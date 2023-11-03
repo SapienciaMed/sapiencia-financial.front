@@ -33,19 +33,19 @@ const CdpRp = () => {
                                 disabled
                             />
                         <InputComponent
-                            idInput="numberPospre"
+                            idInput="sapConsecutive"
                             className="input-basic"
                             typeInput="text"
-                            //register={register}
+                            register={register}
                             label="Consecutivo CDP SAP"
                             classNameLabel="text-black biggest text-required"
                             disabled
                         />
                         <InputComponent
-                            idInput="areaNumber"
+                            idInput="consecutive"
                             className="input-basic"
                             typeInput="text"
-                            //register={register}
+                            register={register}
                             label="Consecutivo CDP Aurora"
                             classNameLabel="text-black biggest text-required"
                             disabled
