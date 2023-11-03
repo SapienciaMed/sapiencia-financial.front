@@ -1,13 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
+import { UseFormRegister } from "react-hook-form";
 import { EDirection } from "../../constants/input.enum";
 import { LabelComponent } from "./label.component";
-import { UseFormRegister } from "react-hook-form";
 
 import { MdOutlineError } from "react-icons/md";
 
 interface IInputProps<T> {
   idInput: string;
-  typeInput: string;
   register?: UseFormRegister<T>;
   className?: string;
   placeholder?: string;
@@ -20,13 +19,12 @@ interface IInputProps<T> {
   errors?: any;
   disabled?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onKeyPress?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   id?: string;
-  style?: React.CSSProperties;
   fieldArray?: boolean;
+  rows?: number;
+  cols?: number;
   optionsRegister?: {};
-  max?: number | string;
-  min?:number | string;
+  characters?: number;
 }
 
 function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
@@ -40,44 +38,43 @@ function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
   );
 }
 
-function InputElement({
-  typeInput,
+function TextAreaElement({
   idInput,
   className,
   placeholder,
   register,
   value,
   disabled,
-  onChange: onChangeProp,
+  onChange,
   defaultValue,
   id,
-  optionsRegister,
-  max,
-  min
+  rows,
+  cols,
+  optionsRegister = {},
+  setCount
 }): React.JSX.Element {
-  
-  
   return (
-    <input
+    <textarea
       {...(register ? register(idInput, optionsRegister) : {})}
       id={id}
       name={idInput}
-      type={typeInput}
       className={className}
       placeholder={placeholder}
       defaultValue={defaultValue}
       disabled={disabled}
-      onChange={onChangeProp}
+      onChange={(event) => {
+        onChange(event);
+        setCount(event.target.value.length);
+      }}
       value={value}
-      max={max}
-      min={min}
+      rows={rows}
+      cols={cols}
     />
   );
 }
 
-export function InputComponent({
+export function TextAreaCountComponent({
   idInput,
-  typeInput,
   register,
   className = "input-basic",
   placeholder,
@@ -89,19 +86,20 @@ export function InputComponent({
   errors,
   disabled,
   onChange,
-  onKeyPress,
   defaultValue,
   id,
   fieldArray,
+  rows,
+  cols,
   optionsRegister = {},
-  max,
-  min
+  characters
 }: IInputProps<any>): React.JSX.Element {
+  const [count, setCount] = useState(0);
   const messageError = () => {
     const keysError = idInput.split(".");
     let errs = errors;
     if (fieldArray) {
-      const errorKey = `${keysError[0]}.${keysError[1]}`;
+      const errorKey = `${keysError[0]}[${keysError[1]}].${keysError[2]}`;
       return errors[errorKey]?.message;
     } else {
       for (let key of keysError) {
@@ -114,7 +112,6 @@ export function InputComponent({
     }
   };
 
-  
   return (
     <div
       className={
@@ -123,12 +120,11 @@ export function InputComponent({
     >
       <LabelElement
         label={label}
-        idInput={id}
+        idInput={idInput}
         classNameLabel={classNameLabel}
       />
       <div className="flex-container-input">
-        <InputElement
-          typeInput={typeInput}
+        <TextAreaElement
           idInput={idInput}
           className={messageError() ? `${className} error` : className}
           placeholder={placeholder}
@@ -138,9 +134,10 @@ export function InputComponent({
           onChange={onChange}
           defaultValue={defaultValue}
           id={id}
+          rows={rows}
+          cols={cols}
           optionsRegister={optionsRegister}
-          max={max}
-          min={min}
+          setCount={setCount}
         />
         {messageError() && (
           <MdOutlineError
@@ -155,7 +152,14 @@ export function InputComponent({
           {messageError()}
         </p>
       )}
+      {characters > 0 ? <CharactersComponent characters={characters} count={count} /> : <></>}
       {children}
     </div>
   );
+}
+
+const CharactersComponent = ({characters, count}) => {
+  return (
+    count > 0 ? <label className="label-max-textarea">{characters-count} caracteres restantes</label> : <label className="label-max-textarea">Máx. {characters} caracteres</label>
+  )
 }
