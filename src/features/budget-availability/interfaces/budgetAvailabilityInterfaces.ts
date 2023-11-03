@@ -68,3 +68,14 @@ export interface IBudgetAvalaibilityDataBasicModifiedDataEdit {
   date?: string;
   sapConsecutive?: number;
 }
+
+export interface ICdpMgaAssoc{
+  projectId?: string,
+  fundsSapiencia?: string,
+  pospreSapiencia?: string,
+  idBudget?: string,
+  finalValue?: string,
+  DetailedActivityMGA: string,
+  cpc: string,
+  percentageAffected: string
+}
