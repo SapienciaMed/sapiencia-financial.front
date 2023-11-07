@@ -4,6 +4,7 @@ export interface IBudgetRecord {
     id?: number;
     supplierType: string;
     supplierId: number;
+    supplierName?:string;
     contractorDocument: string;
     documentDate: any;
     dateValidity: any;

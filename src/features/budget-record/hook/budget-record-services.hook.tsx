@@ -12,13 +12,14 @@ export const useBudgetRecordServices = () => {
         return post(`${roleUrl}${endpoint}`, data);
     }
 
-    /* async function GetPacById(id: number): Promise<ApiResponse<IResultSearchDinamicPac>> {
-        const endpoint: string = `/get-pac-by-id/${id}`;
+    async function GetAllComponents(): Promise<ApiResponse<{id:number, name:string}[]>> {
+        const endpoint: string = `/get-components`;
         return get(`${roleUrl}${endpoint}`);
-    } */
+    }
 
     return{
-        CreateBudgetRecord
+        CreateBudgetRecord,
+        GetAllComponents
     }
 
 }

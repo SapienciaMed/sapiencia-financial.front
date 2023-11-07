@@ -15,7 +15,11 @@ function BudgetRecordCrudPage() {
     tableColumns,
     isLoading,
     dataAmounts,
-    tableActions
+    tableActions,
+    componentsData,
+    dependeciesData,
+    contractorsData,
+    creditorsData
   } = useBudgeRecordCrud();
 
   const btnUploadFileRef = useRef(null);
@@ -41,7 +45,7 @@ function BudgetRecordCrudPage() {
               <SelectComponent
                 idInput="supplierType"
                 control={control}
-                label="Tipo de proveedor"
+                label="Tipo"
                 className="select-basic medium"
                 classNameLabel="text-black big bold text-required"
                 placeholder={"Seleccionar"}
@@ -56,23 +60,24 @@ function BudgetRecordCrudPage() {
 
 
               <InputComponent
-                idInput="supplierId"
+                idInput="contractorDocument"
                 className="input-basic medium"
-                typeInput="number"
+                typeInput="text"
                 register={register}
-                label="Identificación"
+                label="Numero de documento"
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
                 errors={errors}
               />
               <InputComponent
-                idInput="exercise"
+                idInput="supplierName"
                 className="input-basic medium"
                 typeInput="text"
                 register={register}
-                label="Nombre proveedor"
+                label="Nombre"
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
+                disabled={true}
                 errors={errors}
               />
 
@@ -89,7 +94,7 @@ function BudgetRecordCrudPage() {
                 dateFormat="dd/mm/yy"
               />
               <DatePickerComponent
-                idInput="dateTo"
+                idInput="dateValidity"
                 control={control}
                 label={"Fecha vencimiento"}
                 errors={errors}
@@ -109,10 +114,7 @@ function BudgetRecordCrudPage() {
                 className="select-basic medium"
                 classNameLabel="text-black big bold text-required"
                 placeholder={"Seleccionar"}
-                data={[
-                  { id: 1, name: "Dependencia1", value: "Dependencia1" },
-                  { id: 2, name: "Dependencia2", value: "Dependencia2" }
-                ]}
+                data={dependeciesData}
                 filter={true}
                 errors={errors}
                 direction={EDirection.column}
@@ -136,12 +138,7 @@ function BudgetRecordCrudPage() {
                 className="select-basic medium"
                 classNameLabel="text-black big bold text-required"
                 placeholder={"Seleccionar"}
-                data={[
-                  { id: 1, name: "Comunicaciones", value: "Comunicaciones" },
-                  { id: 2, name: "Gastos de personal", value: "Gastos de personal" },
-                  { id: 3, name: "Misional", value: "Misional" },
-                  { id: 4, name: "Soporte logístico y administrativo", value: "Soporte logístico y administrativo" }
-                ]}
+                data={componentsData}
                 filter={true}
                 errors={errors}
                 direction={EDirection.column}
