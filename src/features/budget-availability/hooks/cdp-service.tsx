@@ -1,11 +1,13 @@
 import useCrudService from "../../../common/hooks/crud-service.hook";
 import { ApiResponse } from "../../../common/utils/api-response";
 import { IBudgetAvalaibility } from "../interfaces/budgetAvailabilityInterfaces";
+import { ITotalRP } from "../interfaces/totalRPInterface";
 
 export function useCdpService() {
     const baseURL: string = process.env.urlApiFinancial;
     const roleUrl: string = "/api/v1/cdp";
     const roleUrlA: string = "/api/v1/additions";
+    const totalValuesUrl: string = "/api/v1/budget-records";   
     const { get, post, postFormData, put } = useCrudService( baseURL);
 
     async function getCdpById(id:string): Promise<ApiResponse<IBudgetAvalaibility>> {
@@ -43,6 +45,11 @@ export function useCdpService() {
         return put(`${roleUrl}${endpoint}`, data);
     }
 
+    async function getTotalValuesImport(id:number): Promise<ApiResponse<ITotalRP>> {
+        const endpoint: string = "/get-totalvaluesimports/"+id;
+        return get(`${totalValuesUrl}${endpoint}`);
+    }
+
     async function associateCdpAmounts(data: Object): Promise<ApiResponse<any[]>> {
         const endpoint: string = "/asociate-amounts";
         return postFormData(`${roleUrl}${endpoint}`, data);
@@ -55,7 +62,8 @@ export function useCdpService() {
         cancelAmount,
         getRouteCDPId,
         updateRouteCdp,
-        associateCdpAmounts
+        associateCdpAmounts,
+        getTotalValuesImport
      }
     };
 

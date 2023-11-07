@@ -43,7 +43,7 @@ function DisplayPacPages() {
                     },
                     {
                         title: 'Pospre',
-                        value: dinamicData?.posPreSapiNumber
+                        value: `${condensedQueryData?.dataCondensed?.posPreOrig}`
                     },
                     {
                         title: 'Pospre Sapiencia',
@@ -51,10 +51,6 @@ function DisplayPacPages() {
                     },
                     {
                         title: 'Fondo Sapiencia',
-                        value: dinamicData?.fundNumber
-                    },
-                    {
-                        title: 'Fondo',
                         value: dinamicData?.fundNumber
                     },
                     {
