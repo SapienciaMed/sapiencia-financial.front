@@ -8,19 +8,26 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from '../../../common/contexts/app.context';
 import Icons from '../components/Icons';
 
-
 interface FormInfoType {
     id: number;
     idRppCode: string;
     posicion: string;
     valorInicial: string;
     balance: string;
-  }
+}
+
+interface FormHeadInfo {
+    date: string;
+    cdpSapConsecutive: string;
+    cdpAuroraConsecutive: string;
+    contractObject: string;
+}
+
 const CdpAmountAssoc = () => {
     const { setMessage } = useContext(AppContext);
     const { formInfo } = useContext(AppContext);
     const [formCount, setFormCount] = useState(2);
-    const [formularios, setFormularios] = useState([{ id: 1 }]);
+    const [formularios, setFormularios] = useState([{ id: 0 }]);
     const [formHeadInfo, setFormHeadInfo] = useState({})
     const [objectSendData, setObjectSendData] = useState({})
     const cdpService = useCdpService();
@@ -33,18 +40,10 @@ const CdpAmountAssoc = () => {
         valorInicial: "",
         balance: "",
         id: 0,
-      });
+    });
     const currentUrl = window.location.href;
     const segments = currentUrl.split('/');
     const lastSegment = segments[segments.length - 1];
-
-    const handleAgregarFormulario = () => {
-        const newFormulario = { id: formCount };
-        setFormularios([...formularios, newFormulario]);
-        setFormCount(formCount + 1);
-    };
-
-
     const formsPerPage = 2;
     const [currentPage, setCurrentPage] = useState(1);
     const indexOfLastForm = currentPage * formsPerPage;
@@ -52,24 +51,43 @@ const CdpAmountAssoc = () => {
     const currentForms = formularios.slice(indexOfFirstForm, indexOfLastForm);
     const totalForms = formularios.length;
     const totalPages = Math.ceil(totalForms / formsPerPage);
+    const { getCdpById } = useCdpService();
+    const [dataHead, setDataHead] = useState<FormHeadInfo>({
+        date: '',
+        cdpSapConsecutive: '',
+        cdpAuroraConsecutive: '',
+        contractObject: '',
+    });
+    const [objectFinal, setObjectFinal] = useState([])
+    const [idCdp, setIdCdp] = useState(0);
+
+    const handleAgregarFormulario = () => {
+        const newFormulario = { id: formCount };
+        setFormularios([...formularios, newFormulario]);
+        setFormCount(formCount + 1);
+    };
+
+    const [cdpPosition, setCdpPosition] = useState(0);
+
     const handleEliminar = (formNumber) => {
         setFormCount((prevCount) => prevCount - 1);
     };
+
     useEffect(() => {
-        if (Object.keys(formInfo).length > 0) {
-            if ('id' in formInfo) {
-                const id = typeof formInfo.id === 'number' ? formInfo.id : 0; // Asegura que id sea un número
+        if (Object.keys(amountInfo).length > 0) {
+            if ('id' in amountInfo) {
+                const id = typeof amountInfo.id === 'number' ? amountInfo.id : 0; // Asegura que id sea un número
                 const isExisting = formularios.some((item) => item.id === id);
                 if (isExisting) {
                     const updatedFormularios = formularios.map((item) => {
                         if (item.id === id) {
-                            return formInfo;
+                            return amountInfo;
                         }
                         return item;
                     });
                     setFormularios(updatedFormularios);
                 } else {
-                    const updatedFormularios = [...formularios, { ...formInfo, id: id }]; // Asegura que el objeto tenga la propiedad id
+                    const updatedFormularios = [...formularios, { ...amountInfo, id: id }]; // Asegura que el objeto tenga la propiedad id
                     setFormularios(updatedFormularios);
                 }
             }
@@ -77,30 +95,157 @@ const CdpAmountAssoc = () => {
 
 
         let finalObj = {
-            date: formHeadInfo['date'],
-            contractObject: formHeadInfo['contractObject'],
-            exercise: formHeadInfo['exercise'],
-            icdArr: formularios
+            amounts: formularios
         }
         setTimeout(() => {
             setObjectSendData(finalObj)
-            console.log(formHeadInfo);
+            console.log(finalObj);
 
         }, 1000);
-    }, [formInfo]);
+    }, [amountInfo]);
+
+
+    const handleCancel = () => {
+        setMessage({
+          title: "Cancelar",
+          description: "¿Estás segur@ de cancelar?",
+          show: true,
+          OkTitle: "Aceptar",
+          cancelTitle: "Cancelar",
+          onOk: () => {
+            //onCancelNew();
+            navigate("./../");
+            setMessage({});
+          },
+          onCancel() {
+            setMessage({});
+          },
+          background: true,
+        });
+    
+      }
+
+    const handleGuardar = async () => {
+        setFormSubmitted(true);
+        
+        let nuevoObjeto;
+        const onCancelNew = () => {
+            navigate("./");
+        };
+        try {
+            console.log(objectSendData);
+            
+            const icdArrWithBalanceCheck = objectSendData["amounts"];
+
+            const invalidBalances = icdArrWithBalanceCheck.filter(
+                (item) => parseInt(item.valorInicial) >= parseInt(item.balance)
+            );
+
+            if (invalidBalances.length !== 0) {
+                setMessage({
+                    title: "Validar valor inicial",
+                    description: "Recuerda que el valor inicial no puede ser mayor o igual al balance disponible de la ruta presupuestal",
+                    show: true,
+                    OkTitle: "Aceptar",
+                    onOk: () => {
+                        setMessage({});
+                    },
+                    background: true,
+                });
+
+                return;
+            }
+
+            if (invalidBalances.length === 0) {
+                const updatedIcdArr = icdArrWithBalanceCheck.map(({ balance, ...rest }) => rest);
+
+                nuevoObjeto = {
+                    ...objectSendData,
+                    cdpId: idCdp,
+                    amounts: updatedIcdArr.map(({ proyecto, posicion, valorInicial, id, ...rest }) => ({
+                        idRppCode: parseInt(proyecto),
+                        cdpPosition: parseInt(posicion),
+                        amount: parseFloat(valorInicial),
+                        ...rest,
+                    })),
+                };
+                console.log(nuevoObjeto);
+                
+
+                await new Promise((resolve) => {
+                    setObjectSendData(nuevoObjeto);
+                    resolve('success');
+                });
+                setMessage({
+                    title: "Guardar",
+                    description: `¿Estas seguro de guardar la informacion?`,
+                    show: true,
+                    OkTitle: "Aceptar",
+                    cancelTitle: "Cancelar",
+                    onOk: async () => {
+                        try {
+                            const response = await cdpService.associateCdpAmounts(nuevoObjeto);
+                            console.log(response['operation']['code']);
+
+                            setTimeout(() => {
+                                if (response['operation']['code'] == "OK") {
+                                    setMessage({
+                                        title: "Guardado",
+                                        description: "Guardado Exitosamente!",
+                                        show: true,
+                                        OkTitle: "Cerrar",
+                                        onOk: () => {
+                                            //onCancelNew();
+                                            navigate("../../");
+                                        },
+                                        background: true,
+                                    });
+                                }
+
+                                if (response['operation']['code'] === "FAIL") {
+                                    setMessage({
+                                        title: "Error al asociar rutas",
+                                        description: response['operation']['message'],
+                                        show: true,
+                                        OkTitle: "Aceptar",
+                                        onOk: () => {
+                                            onCancelNew();
+                                            setMessage({});
+                                        },
+                                        background: true,
+                                    });
+                                    return
+                                }
+                            }, 1500);
+
+                        } catch (error) {
+                            console.error("Error al enviar los datos:", error);
+                        }
+                        setMessage({});
+                    }, onCancel() {
+                        onCancelNew();
+                    },
+                    background: true,
+                });
+                return;
+            }
+        } catch (error) {
+            console.error("Error al enviar los datos:", error);
+        }
+    };
 
     const renderFormsForCurrentPage = () => {
         const indexOfLastForm = currentPage * formsPerPage;
         const indexOfFirstForm = indexOfLastForm - formsPerPage;
         return formularios.slice(indexOfFirstForm, indexOfLastForm).map((_, index) => (
             <FormCreateRutaCDPComponent
-            key={indexOfFirstForm + index}
-            isRequired={indexOfFirstForm + index === 0}
-            formNumber={indexOfFirstForm + index}
-            handleEliminar={handleEliminar}
-            formSubmitted={formSubmitted}
-            amountInfo={amountInfo}
-            setAmountInfo={setAmountInfo}
+                key={indexOfFirstForm + index}
+                isRequired={indexOfFirstForm + index === 0}
+                formNumber={cdpPosition + index}
+                handleEliminar={handleEliminar}
+                formSubmitted={formSubmitted}
+                amountInfo={amountInfo}
+                setAmountInfo={setAmountInfo}
             />
         ));
     };
@@ -108,21 +253,43 @@ const CdpAmountAssoc = () => {
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
+
+    useEffect(() => {
+        getCdpById(lastSegment).then((res) => {
+            setIdCdp(res.data[0].id);
+            setDataHead({
+                'date': res.data[0].date,
+                'contractObject': res.data[0].contractObject,
+                'cdpAuroraConsecutive': res.data[0].consecutive,
+                'cdpSapConsecutive': res.data[0].sapConsecutive,
+            });
+            
+            const amounts = res.data[0].amounts;
+            if (amounts && amounts.length > 0) {
+                const lastAmount = amounts[amounts.length - 1];
+                if (lastAmount && lastAmount.cdpPosition) {
+                    setCdpPosition(lastAmount.cdpPosition);
+                }
+            }
+            console.log(res.data[0]);
+        });
+    }, []);
     return (
         <div className='container-principal'>
-              <div className="agregar-ruta-container">
-        <h2>Asociar ruta CDP</h2>
-        <button onClick={handleAgregarFormulario} className='agregar-ruta'>
-          <div className="button-content">
-            <Icons />
-            <span>Agregar Ruta</span>
-          </div>
-        </button>
-      </div>
+            <div className="agregar-ruta-container">
+                <h2>Asociar ruta CDP</h2>
+                <button onClick={handleAgregarFormulario} className='agregar-ruta'>
+                    <div className="button-content">
+                        <Icons />
+                        <span>Agregar Ruta</span>
+                    </div>
+                </button>
+            </div>
             <CdpAssociation
                 isDisabled={false}
                 setFormHeadInfo={(data) => console.log(data)}
                 formSubmitted={false}
+                information={dataHead}
             />
             {renderFormsForCurrentPage()}
             <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -133,6 +300,15 @@ const CdpAmountAssoc = () => {
                 />
 
             </div>
+            <div className="button-container component-container-create">
+                <button onClick={handleCancel} className="cancel-btn">
+                    Cancelar
+                </button>
+                <p onClick={handleGuardar} className="btn-guardar">
+                    Guardar
+                </p>
+            </div>
+
         </div>
     );
 };
