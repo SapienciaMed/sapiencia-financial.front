@@ -283,7 +283,7 @@ export function useAssociatePac() {
                                     title: "Validación",
                                     description: response.operation.message,
                                     show: true,
-                                    OkTitle: "Aceptar",
+                                    OkTitle: "Cerrar",
                                     onOk: () => {
                                         setMessage({});
                                     },
