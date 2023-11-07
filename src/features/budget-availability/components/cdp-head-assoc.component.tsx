@@ -12,14 +12,24 @@ interface FormHeadInfo {
     contractObject: string;
 }
 
+
+/* interface Props {
+    isDisabled: boolean;
+    setFormHeadInfo?: (data: FormHeadInfo) => void;
+    information?: (data: FormHeadInfo) => void;
+    formSubmitted?: boolean;
+} */
+
 interface Props {
     isDisabled: boolean;
     setFormHeadInfo?: (data: FormHeadInfo) => void;
+    information?: FormHeadInfo; 
     formSubmitted?: boolean;
 }
 
+
 function CdpAssociation(props: Props) {
-    const { isDisabled, setFormHeadInfo = () => { }, formSubmitted } = props;
+    const { isDisabled, setFormHeadInfo = () => { }, formSubmitted, information } = props;
 
     const [formHeadInfo, setFormHeadInfoState] = useState<FormHeadInfo>({
         date: '',
@@ -67,6 +77,7 @@ function CdpAssociation(props: Props) {
         setFormHeadInfo(objCdp);
     }, [cdpSapConsecutive, cdpAuroraConsecutive, date, formHeadInfo.contractObject]);
 
+    
     const validateField = (field: string) => {
         if (formSubmitted && !field) {
             return 'campo-obligatorio';
@@ -74,69 +85,89 @@ function CdpAssociation(props: Props) {
         return '';
     };
 
+    useEffect(() => {
+        if (information) {
+            setDate(information.date || '');
+            setCdpSapConsecutive(information.cdpSapConsecutive || '');
+            setCdpAuroraConsecutive(information.cdpAuroraConsecutive || '');
+            setFormHeadInfoState(information);
+        }
+    }, [information]);
+    
     return (
         <>
             <div className='container-head-form-cdp'>
                 <section className="grid-form-3-container-area mt-5px" style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
                     <div className="date-container">
-                        <label className="date-label text-black weight-500 biggest">Fecha de Documento: <span>*</span></label>
-                        <input
-                            type="date"
+                        <label className="text-black weight-500 biggest" style={{ color: "black" }}>
+                            Fecha de documento:
+                            <span style={{ color: "red" }}> *</span>
+                        </label>
+                        <InputComponent
+                            id="date"
+                            idInput="date"
                             value={date}
-                            onChange={(e) => setDate(e.target.value)}
-                            className={`date-input ${validateField(date)}`}
-                            readOnly={isDisabled}
+                            className={`input-basic medium ${validateField(date)}`}
+                            typeInput="text"
+                            onChange={(e) => handleInputChange("date", e.target.value)}
+                            classNameLabel="text-black weight-500 biggest"
+                            direction={EDirection.column}
+                            errors={errors}
+                            disabled={true}
                         />
-                        {formSubmitted && date === "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
+                        {formSubmitted && date === "" && (
+                            <p className="aviso-campo" style={{ color: "red" }}>
+                                Este campo es obligatorio
+                            </p>
+                        )}
                     </div>
-              {/*       <div className="cdp-sap-consecutive-container">
-                        <Controller
-                            control={control}
-                            name="cdpSapConsecutive"
-                            defaultValue={""}
-                            render={({ field }) => (
-                                <InputComponent
-                                    id={field.name}
-                                    idInput={field.name}
-                                    value={cdpSapConsecutive}
-                                    className={`input-basic medium ${validateField(cdpSapConsecutive)}`}
-                                    typeInput="text"
-                                    register={register}
-                                    label="Consecutivo CDP SAP"
-                                    classNameLabel="text-black weight-500 biggest"
-                                    direction={EDirection.column}
-                                    errors={errors}
-                                    onChange={(e) => handleInputChange(field.name, e.target.value)}
-                                    disabled={isDisabled}
-                                />
-                            )}
+                    <div className="cdp-sap-consecutive-container">
+                        <label className="text-black weight-500 biggest" style={{ color: "black" }}>
+                            Consecutivo CDP SAP
+                            <span style={{ color: "red" }}> *</span>
+                        </label>
+                        <InputComponent
+                            id="cdpSapConsecutive"
+                            idInput="cdpSapConsecutive"
+                            value={cdpSapConsecutive}
+                            className={`input-basic medium ${validateField(cdpSapConsecutive)}`}
+                            typeInput="text"
+                            onChange={(e) => handleInputChange("cdpSapConsecutive", e.target.value)}
+                            classNameLabel="text-black weight-500 biggest"
+                            direction={EDirection.column}
+                            errors={errors}
+                            disabled={true}
                         />
-                        {formSubmitted && cdpSapConsecutive === "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
+                        {formSubmitted && cdpSapConsecutive === "" && (
+                            <p className="aviso-campo" style={{ color: "red" }}>
+                                Este campo es obligatorio
+                            </p>
+                        )}
                     </div>
                     <div className="cdp-aurora-consecutive-container">
-                        <Controller
-                            control={control}
-                            name="cdpAuroraConsecutive"
-                            defaultValue={""}
-                            render={({ field }) => (
-                                <InputComponent
-                                    id={field.name}
-                                    idInput={field.name}
-                                    value={cdpAuroraConsecutive}
-                                    className={`input-basic medium ${validateField(cdpAuroraConsecutive)}`}
-                                    typeInput="text"
-                                    register={register}
-                                    label="Consecutivo CDP Aurora"
-                                    classNameLabel="text-black weight-500 biggest"
-                                    direction={EDirection.column}
-                                    errors={errors}
-                                    onChange={(e) => handleInputChange(field.name, e.target.value)}
-                                    disabled={isDisabled}
-                                />
-                            )}
+                        <label className="text-black weight-500 biggest" style={{ color: "black" }}>
+                            Consecutivo CDP Aurora
+                            <span style={{ color: "red" }}> *</span>
+                        </label>
+                        <InputComponent
+                            id="cdpAuroraConsecutive"
+                            idInput="cdpAuroraConsecutive"
+                            value={cdpAuroraConsecutive}
+                            className={`input-basic medium ${validateField(cdpAuroraConsecutive)}`}
+                            typeInput="text"
+                            onChange={(e) => handleInputChange("cdpAuroraConsecutive", e.target.value)}
+                            classNameLabel="text-black weight-500 biggest"
+                            direction={EDirection.column}
+                            errors={errors}
+                            disabled={true}
                         />
-                        {formSubmitted && cdpAuroraConsecutive === "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
-                    </div> */}
+                        {formSubmitted && cdpAuroraConsecutive === "" && (
+                            <p className="aviso-campo" style={{ color: "red" }}>
+                                Este campo es obligatorio
+                            </p>
+                        )}
+                    </div>
+
                 </section>
 
                 <TextAreaComponent
@@ -150,7 +181,7 @@ function CdpAssociation(props: Props) {
                     direction={EDirection.column}
                     errors={errors}
                     rows={2}
-                    disabled={isDisabled}
+                    disabled={true}
                     onChange={(e) => handleInputChange("contractObject", e.target.value)}
                 />
                 {formSubmitted && formHeadInfo.contractObject === "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
