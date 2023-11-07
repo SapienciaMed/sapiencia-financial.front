@@ -6,6 +6,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useCdpService } from './cdp-service';
 import { EResponseCodes } from '../../../common/constants/api.enum';
 import { AppContext } from '../../../common/contexts/app.context';
+import { useNavigate } from 'react-router-dom';
 
 interface IArrayMgaAssoc {
     id: number,
@@ -27,6 +28,7 @@ export function useCdpMgaAssoc(cdpId?: string) {
     const [arrayMgaAssoc, setArrayMgaAssoc ] = useState<IArrayMgaAssoc[]>([])
     const [nextId, setNextId] = useState(1); 
     const [ disableAddButton, setDisableAddButton ] = useState(false)
+    const navigate = useNavigate();
     
     const {
         register,
@@ -92,7 +94,7 @@ export function useCdpMgaAssoc(cdpId?: string) {
         } else if(sumaPercentage + parseInt(data.percentageAffected) <= 100){
             const mgaAssoc = {
                 id: nextId,
-                mgaProduct: '5555555',
+                mgaProduct: '********',
                 mgaActivity: data.DetailedActivityMGA,
                 detailedMgaActivity: data.DetailedActivityMGA,
                 cpc: data.cpc,
@@ -109,6 +111,28 @@ export function useCdpMgaAssoc(cdpId?: string) {
         setArrayMgaAssoc(nuevoArray);
     };
 
+    const onCancel = () => {
+        setMessage({
+            title: "Cancelar traslado",
+            show: true,
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
+            description: '¿Estás segur@ que desea cancelar el traslado?',
+            onOk: () => {
+                
+                setMessage({})
+                navigate(-1);
+            },
+            background: true
+        })
+    };
+
+    const onAddvalues = async (data: any) => {
+        console.log("🚀 ~  ~ data:", data)
+    };
+    
+    const handleSaveSubmit = () => handleSubmit(onAddvalues)();
+
     return {
         errors,
         control,
@@ -118,6 +142,8 @@ export function useCdpMgaAssoc(cdpId?: string) {
         register,
         onSubmit,
         deleteElement,
+        handleSaveSubmit,
+        onCancel
     }
     
 }

@@ -1,30 +1,46 @@
 import React from "react";
-import { Controller, useForm } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { ButtonComponent, FormComponent, InputComponent, SelectComponent } from "../../../common/components/Form";
-import { useCdpCrud } from "../hooks/use-cdp";
 import { EDirection } from "../../../common/constants/input.enum";
-import { useCdpMgaAssoc } from "../hooks/cdp-mga-assoc.hook";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import * as Icons from "react-icons/fa";
 import { useWidth } from "../../../common/hooks/use-width";
 import { DataView } from "primereact/dataview";
+import { ICdpMgaAssocFromProps } from "../interfaces/budgetAvailabilityInterfaces";
 
-interface Props {
-    cdpId?: string;
-}
-
-function CdpMgaAssocFormComponent(props: Props) {
-    const { cdpId } = props;
-    
-    const { control, errors, arrayDataSelect, disableAddButton, arrayMgaAssoc, register, onSubmit, deleteElement } = useCdpMgaAssoc(cdpId)
+function CdpMgaAssocFormComponent(props: ICdpMgaAssocFromProps) {
+    const { control, errors, arrayDataSelect, disableAddButton, arrayMgaAssoc, register, onSubmit, deleteElement } = props;
     const { width } = useWidth();
 
+    const headerMobil = [
+        {
+            field:"mgaProduct",
+            header:"Producto MGA",
+        },
+        {
+            field: "mgaActivity",
+            header: "Actividad MGA",
+        },
+        {
+            field:"detailedMgaActivity",
+            header:"Actividad detallada MGA"
+
+        },
+        {
+            field:"cpc",
+            header:"CPC"
+        },
+        {
+            field:"percentage",
+            header:"Porcentaje"
+        }
+    ]
     const actionBodyTemplate = (row) => {
         return (
             <div className="spc-table-action-button">
                 <div
-                onClick={() => deleteElement(row.id)}
+                    onClick={() => deleteElement(row.id)}
                 >
                    <Icons.FaTrashAlt className="button grid-button button-delete" />
                 </div>
@@ -32,25 +48,32 @@ function CdpMgaAssocFormComponent(props: Props) {
         );
     };
 
+    //TODO: Falta
     const mobilTemplate = (item) => {
         return (
           <div className="card-grid-item">
             <div className="card-header">
-              {arrayMgaAssoc.map((column,index) => {
-                
-                return (
-                  <div key={item} className="item-value-container">
-                    
-                  </div>
-                );
-              })}
+              { 
+                arrayMgaAssoc.map((column, index) => { 
+                    delete column.id;
+                    const a = headerMobil.find(u => u.field == Object.keys(column).find(us => us))?.header      
+                    return (
+                        <div key={item} className="item-value-container">
+                            <p className="text-black bold text-center">{a}</p>
+                            <p> { Object.values(column) } </p>
+                        </div>
+                    );
+                })
+              }
             </div>
             <div className="card-footer">
               <section className="position-absolute top text-black bold text-center">
                 {" "}
                 Acciones{" "}
               </section>
-                { actionBodyTemplate(item) }
+              <section className="section-action">
+                 { actionBodyTemplate(item) }
+              </section>
             </div>
           </div>
         );

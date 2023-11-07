@@ -1,12 +1,12 @@
 import { ButtonComponent } from "../../../common/components/Form";
 import CdpMgaAssocFormComponent from "../components/cdp-mga-assoc-form.component";
 import { useParams } from "react-router-dom";
-import { useCdpMgaAssocCrud } from "../hooks/use-cdp-mga-assoc";
-
+import { useCdpMgaAssoc } from "../hooks/cdp-mga-assoc.hook";
 
 const CdpMgaAssocPage = () => {
     const { id: cdpId } = useParams();
-    const { isBtnDisable, onCancel } = useCdpMgaAssocCrud(cdpId); 
+    const { control, errors, arrayDataSelect, disableAddButton, arrayMgaAssoc, 
+        register, onSubmit, deleteElement, onCancel, handleSaveSubmit } = useCdpMgaAssoc(cdpId)
 
     return (
         <div className="crud-page full-height ">
@@ -15,7 +15,16 @@ const CdpMgaAssocPage = () => {
                     <div className="text-black weight-500 extra-large">Asociar MGA</div>
                 </section>
                 
-                <CdpMgaAssocFormComponent cdpId={cdpId} /> 
+                <CdpMgaAssocFormComponent 
+                    control={control}
+                    errors={errors}
+                    arrayDataSelect={arrayDataSelect}
+                    disableAddButton={disableAddButton}
+                    arrayMgaAssoc={arrayMgaAssoc}
+                    register={register}
+                    onSubmit={onSubmit}
+                    deleteElement={deleteElement}
+                /> 
 
             </div>
             <section className="container-button-bot-2">
@@ -24,6 +33,8 @@ const CdpMgaAssocPage = () => {
                 <span
                     className="bold text-center button"
                     onClick={onCancel}
+                    onKeyDown={(e) => e.key === 'Enter' && onCancel() }
+                    tabIndex={0}
                 >
                     Cancelar
                 </span>
@@ -31,8 +42,8 @@ const CdpMgaAssocPage = () => {
                     className="button-main huge hover-three"
                     value="Guardar"
                     type="submit"
-                    // action={() => handleSaveSubmit() }
-                    disabled={!isBtnDisable}
+                    action={() => handleSaveSubmit() }
+                    disabled={!disableAddButton}
                 />
             </div>
             </section>
