@@ -17,7 +17,7 @@ export function useCdpService() {
         const endpoint: string = "/upload-pac";
         return postFormData(`${roleUrl}${endpoint}`, data);
     }
-    
+
     async function getOneRpp(data: Object): Promise<ApiResponse<any[]>> {
         const endpoint: string = "/get-info-filter";
         return postFormData(`${roleUrlA}${endpoint}`, data);
@@ -43,6 +43,10 @@ export function useCdpService() {
         return put(`${roleUrl}${endpoint}`, data);
     }
 
+    async function associateCdpAmounts(data: Object): Promise<ApiResponse<any[]>> {
+        const endpoint: string = "/asociate-amounts";
+        return postFormData(`${roleUrl}${endpoint}`, data);
+    }
     return {
         createCdp,
         createCdp_,
@@ -50,7 +54,8 @@ export function useCdpService() {
         getOneRpp,
         cancelAmount,
         getRouteCDPId,
-        updateRouteCdp
+        updateRouteCdp,
+        associateCdpAmounts
      }
     };
 
