@@ -6,7 +6,6 @@ import { IBudgetsAvailabilityFilters } from "../interfaces/budgetAvailabilityInt
 import { useCdpServices } from "./useCdpServices";
 import { clearRequestFilters, filterDataSelect } from "../utils/filtersSearch";
 import { useNavigate } from "react-router-dom";
-import { DateTime } from "luxon";
 
 export const useSearchCdp = () => {
   const { GetRoutesByValidity } = useCdpServices();
@@ -44,9 +43,6 @@ export const useSearchCdp = () => {
     {
       fieldName: "date",
       header: "Fecha documento",
-      // renderCell: (row) => {
-      //   return <>{DateTime.(row.date).toLocaleString()}</>;
-      // },
     },
     {
       fieldName: "countRpp",
@@ -89,7 +85,9 @@ export const useSearchCdp = () => {
     },
     {
       icon: "Rp",
-      onClick: (row) => {},
+      onClick: (row) => {
+        navigate(`/gestion-financiera/cdp/rp/${row.id}`);
+      },
     },
   ];
 

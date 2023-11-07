@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const DatePickerCdp = ({ setYear, setMonth, setDate, selected, placeholder, disabled, id = "", className }) => {
-    const [value, setValue] = useState(selected || null);
+    const [value, setValue] = useState(selected || "");
 
-    const mothsYear = [
+    const monthsYear = [
         "meses",
         "enero",
         "febrero",
@@ -19,19 +19,35 @@ const DatePickerCdp = ({ setYear, setMonth, setDate, selected, placeholder, disa
         "diciembre"
     ];
 
-    const handleChange = (newValue) => {
+    const getCurrentDate =  () => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = today.getMonth() + 1;
+        const formattedMonth = month < 10 ? `0${month}` : month;
+        const day = today.getDate();
+        setMonth(monthsYear[month])
+        setYear(year)
+       
+        
+        const formattedDay = day < 10 ? `0${day}` : day;
+        return `${year}-${formattedMonth}-${formattedDay}`;
+    }
+
+    const handleChange = (event) => {
         let dateSelected = event.target['value'];
         const arrData = dateSelected.split("-");
 
-        setYear(arrData[0]);
-        setMonth(mothsYear[parseInt(arrData[1])]);
+        setYear(parseInt(arrData[0]));
+        setMonth(monthsYear[parseInt(arrData[1]) - 1]);
         setDate(dateSelected);
-        if (newValue instanceof Date) {
-            setValue(newValue);
-        }
-
+        setValue(dateSelected);
+        
     };
 
+    useEffect(() => {
+        setValue(getCurrentDate());
+        setDate(getCurrentDate());
+    }, []);
 
     return (
         <input

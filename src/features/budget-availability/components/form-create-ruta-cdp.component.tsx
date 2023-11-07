@@ -2,23 +2,29 @@ import React, { useState, useEffect, useContext } from 'react';
 import '../../../styles/from-create-cdp.scss';
 import { useCdpService } from '../hooks/cdp-service';
 import SelectSearch from './select-create-cdp.component';
-
+import { AppContext } from '../../../common/contexts/app.context';
 import { useBudgetRoutesCrudData } from '../../budget-routes/hooks/budget-routes-crud.hook';
+
+
+export interface FormInfoType {
+  idRppCode: string;
+  posicion: string;
+  valorInicial: string;
+  balance: string;
+  id: number;
+}
 
 interface FormularioProps {
   isRequired?: boolean;
   formNumber: number;
   handleEliminar: (formNumber: number) => void;
-  setFormInfo: (data: {
-    proyecto: string;
-    posicion: string;
-    valorInicial: string;
-    balance: string;
-  }) => void;
   formSubmitted?: boolean;
+  setAmountInfo: React.Dispatch<React.SetStateAction<FormInfoType>>;
+  amountInfo: FormInfoType;
 }
 
-const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, isRequired = false, formNumber, handleEliminar, setFormInfo }) => {
+const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, isRequired = false, formNumber, handleEliminar, setAmountInfo, amountInfo }) => {
+  const { setFormInfo, formInfo } = useContext(AppContext);
   const cdpService = useCdpService();
   const [proyecto, setProyecto] = useState('');
   const [nombreProyecto, setNombreProyecto] = useState('');
@@ -32,28 +38,22 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
   const [valorInicial, setValorInicial] = useState('0');
   const [balance, setBalance] = useState('0');
   const [idRpp, setIdRpp] = useState('0');
- 
 
   const onDeleteClick = () => {
     handleEliminar(formNumber);
   };
 
   const formValues = {
-    proyecto: idRpp,
+    idRppCode: idRpp,
     posicion: posicion,
     valorInicial: valorInicial,
-    id: formNumber,
+    id: Number(formNumber),
     balance: balance,
   };
 
   const { pospreSapienciaDataCdp, projectsVinculateData, projectsData, fundsData, pospreSapienciaData, budgetData, register, errors, controlRegister, projectVinculationSelected, setValueRegister } = useBudgetRoutesCrudData('');
 
   const convertedOptionsPosPre = pospreSapienciaDataCdp.map((item) => ({
-    value: String(item.value),
-    name: item.name,
-  }));
-
-  const convertedFondo = fundsData.map((item) => ({
     value: String(item.value),
     name: item.name,
   }));
@@ -66,13 +66,34 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
     return '';
   };
 
+  /*   const loadInfo = () => {
+      setAmountInfo(formValues);
+      setTimeout(() => {
+        console.log("fromValCrud", amountInfo);
+      }, 2000);
+      
+    }; */
+
+  /*  const loadInfo = () => {
+     setAmountInfo(formValues);
+     console.log("idRpp actual:", formValues.idRppCode);
+   }; */
+
   const loadInfo = () => {
-    setFormInfo(formValues);
+    setAmountInfo((prevAmountInfo) => ({
+      ...prevAmountInfo,
+      idRppCode: idRpp,
+      posicion: posicion,
+      valorInicial: valorInicial,
+      id: Number(formNumber),
+      balance: balance,
+    }));
+    console.log("idRpp actual:", idRpp);
   };
 
   useEffect(() => {
     loadInfo();
-  }, [proyecto, nombreProyecto, fondo, pospre, areaFuncional, centroGestor, div, posicion, valorInicial]);
+  }, [proyecto, nombreProyecto, fondo, pospre, posicion, valorInicial, idRpp]);
 
   const formatToColombianPesos = (value) => {
     const formatter = new Intl.NumberFormat('es-CO', {
@@ -90,7 +111,8 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
   };
 
   const handleNombreProyectoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNombreProyecto(event.target.value);
+    let arrName = event.target.value.split('-');
+    setNombreProyecto(arrName[2]);
   };
 
   const handleFondoChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -132,7 +154,8 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
   useEffect(() => {
     const selectedProject = projectsData.find((project) => {
       if (project.value === parseInt(proyecto)) {
-        setNombreProyecto(project.name);
+        let arrName = project.name.split('-');
+        setNombreProyecto(arrName[2]);
         projectsVinculateData.find((area) => {
           if (project['areaFuncional'] === area.functionalAreaId) {
             setAreaFuncional(area.areaFuntional.number);
@@ -151,9 +174,25 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
           projectId: parseInt(proyecto),
         };
         const response = await cdpService.getOneRpp(objectSendData);
-        setValorInicial(response['balance']);
-        setBalance(response['balance']);
-        setIdRpp(response['id']);
+        let totalAmountsAssoc = parseFloat(response['totalIdc']);
+        let balanceFloat = parseFloat(response['balance']);
+        let totalAmountAvalible = balanceFloat - totalAmountsAssoc;
+        setValorInicial(totalAmountAvalible.toFixed(2));
+        setBalance(totalAmountAvalible.toFixed(2));
+        let tryJsonInfo = JSON.stringify(response);
+        tryJsonInfo = JSON.parse(tryJsonInfo)['id'].toString();
+        setIdRpp(tryJsonInfo);
+        console.log(tryJsonInfo);
+        const updatedFormInfo = {
+          idRppCode: tryJsonInfo,
+          posicion: posicion,
+          valorInicial: totalAmountAvalible.toFixed(2),
+          id: Number(formNumber),
+          balance: totalAmountAvalible.toFixed(2),
+        };
+
+        setAmountInfo(updatedFormInfo);
+
       } catch (error) {
         console.error('Error al obtener los datos:', error);
       }
@@ -164,11 +203,33 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
     fetchData();
   }, [pospreNewV, fondo, proyecto]);
 
+
   return (
     <div className='containerOne'>
       <div className="formulario">
         <div className="grid-form">
-          <h2 className="h3-style">{formNumber + 1}. Ruta</h2>
+          <h2 className="h3-style" style={{ flex: 1 }}>
+            {formNumber + 1}. Ruta
+          </h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {!isRequired && (
+              <button
+                className="agregar-btn btn-delete"
+                onClick={onDeleteClick}
+                style={{
+                  marginLeft: 'auto',
+                  backgroundColor: 'transparent',
+                  color: 'red',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                Eliminar
+              </button>
+            )}
+          </div>
+
+
           <h2>Ruta presupuestal</h2>
           <div className={`col-4`}>
             <label>Proyecto <span>*</span></label>
@@ -182,6 +243,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
               style={{ border: formSubmitted && !nombreProyecto ? '1px solid red' : 'none' }}
               className={`estilo-input bgSecondary ${validateField(nombreProyecto)}`}
               value={nombreProyecto}
+              onChange={handleNombreProyectoChange}
               readOnly
             />
             {formSubmitted && !nombreProyecto && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
@@ -228,11 +290,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
             />
             {formSubmitted && !valorInicial && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
           </div>
-{/*           {!isRequired && (
-            <button className="agregar-btn" onClick={onDeleteClick}>
-              Eliminar
-            </button>
-          )} */}
+
         </div>
 
       </div>

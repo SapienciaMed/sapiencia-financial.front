@@ -259,15 +259,122 @@ export interface IEditPac  {
     version?: number;
     resourceType?: string;
     pacType?: string;
-
     idProjectVinculation?: number;
     idFund?: number;
     idPospreSapiencia?: number;
     idBudget?: number;
-
     budgetSapiencia?: number;
     totalProgramming?: number;
     totalCollected?: number;
     annProgrammingPac?: IAnnualRoute;
     annCollectyerPac?: IAnnualRoute;
+    dataCondensed?: ISearchGeneralPac;
+}
+
+export interface ISearchGeneralPac {
+
+    projectName: string;
+    numberFund: string | number;
+    posPreSapi: string | number;
+    budgetSapi: string | number;
+    budgetCollected: string | number;
+    percentExecute: number;
+  
+    pacId?: number;
+    routeId?: number;
+    posPreOrig?: string | number;
+  
+    projectVinculationId?: number;
+    fundId?: number;
+    posPreSapiId?: number;
+    posPreOrigId?: number;
+  
+}
+
+export interface IViewPacComplete {
+
+    managementCenter: string;
+    fundNumber: string;
+    posPreSapiNumber: string;
+    projectCode: string;
+    projectName: string;
+    posPreOrig: string;
+    functionalAreaNumber: string;
+    totalProgrammingAnnual: number;
+    totalCollectedAnnual: number;
+    percentExecuteAnnual: number;
+    forCollected: number;
+    Jan : {
+      totalProgrammingJan: number;
+      totalCollectedJan: number;
+      executeJan: number;
+      diferenceJan: number;
+    },
+    Feb : {
+      totalProgrammingFeb: number;
+      totalCollectedFeb: number;
+      executeFeb: number;
+      diferenceFeb: number;
+    },
+    Mar : {
+      totalProgrammingMar: number;
+      totalCollectedMar: number;
+      executeMar: number;
+      diferenceMar: number;
+    },
+    Abr : {
+      totalProgrammingAbr: number;
+      totalCollectedAbr: number;
+      executeAbr: number;
+      diferenceAbr: number;
+    },
+    May : {
+      totalProgrammingMay: number;
+      totalCollectedMay: number;
+      executeMay: number;
+      diferenceMay: number;
+    },
+    Jun : {
+      totalProgrammingJun: number;
+      totalCollectedJun: number;
+      executeJun: number;
+      diferenceJun: number;
+    },
+    Jul : {
+      totalProgrammingJul: number;
+      totalCollectedJul: number;
+      executeJul: number;
+      diferenceJul: number;
+    },
+    Ago : {
+      totalProgrammingAgo: number;
+      totalCollectedAgo: number;
+      executeAgo: number;
+      diferenceAgo: number;
+    },
+    Sep : {
+      totalProgrammingSep: number;
+      totalCollectedSep: number;
+      executeSep: number;
+      diferenceSep: number;
+    },
+    Oct : {
+      totalProgrammingOct: number;
+      totalCollectedOct: number;
+      executeOct: number;
+      diferenceOct: number;
+    },
+    Nov : {
+      totalProgrammingNov: number;
+      totalCollectedNov: number;
+      executeNov: number;
+      diferenceNov: number;
+    },
+    Dec : {
+      totalProgrammingDec: number;
+      totalCollectedDec: number;
+      executeDec: number;
+      diferenceDec: number;
+    }
+  
 }
