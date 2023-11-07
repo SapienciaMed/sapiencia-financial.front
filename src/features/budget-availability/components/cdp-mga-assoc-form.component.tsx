@@ -11,14 +11,13 @@ import { useWidth } from "../../../common/hooks/use-width";
 import { DataView } from "primereact/dataview";
 
 interface Props {
-    isDisabled: boolean;
     cdpId?: string;
 }
 
 function CdpMgaAssocFormComponent(props: Props) {
-    const { isDisabled, cdpId } = props;
+    const { cdpId } = props;
     
-    const {control, errors, arrayDataSelect, disableAddButton, arrayMgaAssoc, register, onSubmit, deleteElement } = useCdpMgaAssoc(cdpId)
+    const { control, errors, arrayDataSelect, disableAddButton, arrayMgaAssoc, register, onSubmit, deleteElement } = useCdpMgaAssoc(cdpId)
     const { width } = useWidth();
 
     const actionBodyTemplate = (row) => {

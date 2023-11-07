@@ -2,9 +2,10 @@ import { useForm } from 'react-hook-form';
 import {  ICdpMgaAssoc } from '../interfaces/budgetAvailabilityInterfaces';
 import useYupValidationResolver from '../../../common/hooks/form-validator.hook';
 import { cdpMgaAssoc } from '../../../common/schemas/cdp-crud-validator';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useCdpService } from './cdp-service';
 import { EResponseCodes } from '../../../common/constants/api.enum';
+import { AppContext } from '../../../common/contexts/app.context';
 
 interface IArrayMgaAssoc {
     id: number,
@@ -18,6 +19,7 @@ interface IArrayMgaAssoc {
 export function useCdpMgaAssoc(cdpId?: string) {
 
     const resolver = useYupValidationResolver(cdpMgaAssoc);
+    const { setMessage } = useContext(AppContext);
     const { getCdpById } = useCdpService()
     const [arrayDataSelect, setArrayDataSelect] = useState({
         listDetailedActivityMGA: []
@@ -25,7 +27,7 @@ export function useCdpMgaAssoc(cdpId?: string) {
     const [arrayMgaAssoc, setArrayMgaAssoc ] = useState<IArrayMgaAssoc[]>([])
     const [nextId, setNextId] = useState(1); 
     const [ disableAddButton, setDisableAddButton ] = useState(false)
-
+    
     const {
         register,
         formState: { errors },
@@ -69,7 +71,6 @@ export function useCdpMgaAssoc(cdpId?: string) {
             return acumulador + elemento.percentage;
         }, 0);
         setDisableAddButton(sumaPercentage == 100)
-
     },[arrayMgaAssoc])
 
     const onSubmit = handleSubmit(async (data: ICdpMgaAssoc) => {
@@ -81,7 +82,13 @@ export function useCdpMgaAssoc(cdpId?: string) {
         const percentageTotalValue = (parseInt(data.percentageAffected ) * parseInt(data.finalValue)) / 100
 
         if (percentageTotalValue > parseInt(valorActividad)) {
-            //muestra un mensaje de error
+            setMessage({
+                title: 'Validacion',
+                show: true,
+                description: "No se podra asociar, supera el valor del costo de la MGA.",
+                OkTitle: "Aceptar",
+                background: true,
+              });
         } else if(sumaPercentage + parseInt(data.percentageAffected) <= 100){
             const mgaAssoc = {
                 id: nextId,
@@ -93,9 +100,7 @@ export function useCdpMgaAssoc(cdpId?: string) {
             }
             setArrayMgaAssoc([...arrayMgaAssoc, mgaAssoc])
             setNextId(nextId + 1); 
-        } else{
-
-        }
+        } 
 
     })
 
@@ -112,7 +117,7 @@ export function useCdpMgaAssoc(cdpId?: string) {
         disableAddButton,
         register,
         onSubmit,
-        deleteElement
+        deleteElement,
     }
     
 }
