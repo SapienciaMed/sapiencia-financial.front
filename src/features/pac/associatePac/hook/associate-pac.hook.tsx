@@ -35,7 +35,7 @@ export function useAssociatePac() {
         control,
         register,
         handleSubmit,
-        formState: { errors, touchedFields },
+        formState: { errors },
         reset,
         setValue,
         watch,
@@ -245,9 +245,13 @@ export function useAssociatePac() {
                 OkTitle: "Aceptar",
                 onOk: () => {
                     setMessage({});
+                    reset();
+                    navigate(-1)
                 },
                 onClose: () => {
                     setMessage({});
+                    reset();
+                    navigate(-1)
                 },
                 background: true
         });  
@@ -286,7 +290,14 @@ export function useAssociatePac() {
                                     OkTitle: "Cerrar",
                                     onOk: () => {
                                         setMessage({});
+                                        reset();
+                                        navigate(-1)
                                     },
+                                    onClose: () => {
+                                        setMessage({});
+                                        reset();
+                                        navigate(-1)
+                                    }, 
                                     background: true
                                 });
                             }
