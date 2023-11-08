@@ -50,7 +50,7 @@ function DisplayPacPages() {
                         value: dinamicData?.posPreSapiNumber
                     },
                     {
-                        title: 'Fondo Sapiencia',
+                        title: 'Fondo',
                         value: dinamicData?.fundNumber
                     },
                     {

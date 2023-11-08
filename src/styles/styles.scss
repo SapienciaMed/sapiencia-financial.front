@@ -314,6 +314,11 @@ div[id="single-spa-application:@sapiencia/financial"] {
   }
 }
 
+.detail-table-scroll{
+  display: block;
+  overflow: auto;
+}
+
 .container-button-descripcion-modal {
   display: flex;
   align-items: center;
