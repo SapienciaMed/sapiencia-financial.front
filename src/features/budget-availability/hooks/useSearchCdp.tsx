@@ -81,7 +81,9 @@ export const useSearchCdp = () => {
     },
     {
       icon: "Add",
-      onClick: (row) => {},
+      onClick: (row) => {
+        navigate(`./assoc-amounts/${row.id}`);
+      },
     },
     {
       icon: "Rp",
