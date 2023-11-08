@@ -53,8 +53,6 @@ const CdpCrudPage = () => {
 
   const handleAgregarFormulario = () => {
     const newFormulario = { id: formCount };
-    console.log();
-
     setFormularios([...formularios, newFormulario]);
     setFormCount(formCount + 1);
   };
@@ -94,9 +92,6 @@ const CdpCrudPage = () => {
       icdArr: formularios
     }
     setObjectSendData(finalObj)
-    console.log(formHeadInfo);
-    console.log("la informacion del amount", amountInfo);
-    console.log("la informacion final", finalObj);
   }
 
   useEffect(() => {
@@ -311,10 +306,6 @@ const CdpCrudPage = () => {
       console.error("Error al enviar los datos:", error);
     }
   };
-
-
-
-
 
   const formsPerPage = 2;
   const [currentPage, setCurrentPage] = useState(1);

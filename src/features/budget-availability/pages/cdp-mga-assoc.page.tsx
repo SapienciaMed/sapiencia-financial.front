@@ -1,62 +1,54 @@
 import { ButtonComponent } from "../../../common/components/Form";
-import TableDataPropComponent from "../../../common/components/tableDataProp.component";
-import CdpHeadFormComponent from "../components/cdp-head-form.component";
-import CdpHeadMgaAssocComponent from "../components/cdp-head-mga-assoc.component";
 import CdpMgaAssocFormComponent from "../components/cdp-mga-assoc-form.component";
-import { useCdpCrud } from "../hooks/use-cdp";
 import { useParams } from "react-router-dom";
-import { useCdpMgaAssocCrud } from "../hooks/use-cdp-mga-assoc";
-
+import { useCdpMgaAssoc } from "../hooks/cdp-mga-assoc.hook";
 
 const CdpMgaAssocPage = () => {
     const { id: cdpId } = useParams();
-    const { isBtnDisable, onCancel } = useCdpMgaAssocCrud(cdpId);
-
+    const { control, errors, arrayDataSelect, disableAddButton, arrayMgaAssoc, 
+        register, onSubmit, deleteElement, onCancel, handleSaveSubmit } = useCdpMgaAssoc(cdpId)
 
     return (
-        <div className="main-page">
-            <div className="card-table gap-0">
+        <div className="crud-page full-height ">
+            <div className='main-page core-container full-height gap-1'>
                 <section className="title-area">
                     <div className="text-black weight-500 extra-large">Asociar MGA</div>
                 </section>
-                <section className="card-user">
-                    <CdpHeadMgaAssocComponent isDisabled={true} cdpId={cdpId} />
-                </section>
-            </div>
-            <br />
-            <div className="card-table gap-0">
-                <section className="title-area">
-                    <div className="text-black weight-500 extra-large">MGA</div>
-                </section>
-                <CdpMgaAssocFormComponent isDisabled={true} cdpId={cdpId} />
+                
+                <CdpMgaAssocFormComponent 
+                    control={control}
+                    errors={errors}
+                    arrayDataSelect={arrayDataSelect}
+                    disableAddButton={disableAddButton}
+                    arrayMgaAssoc={arrayMgaAssoc}
+                    register={register}
+                    onSubmit={onSubmit}
+                    deleteElement={deleteElement}
+                /> 
 
             </div>
             <section className="container-button-bot-2">
-                {/* <div className='content-label'>
-                    <label className="text-black biggest"> Total Traslado:</label>
-                    <label className="text-black biggest" style={{ color: '#533893' }}> $ {totalTransfer} </label>
-                </div> */}
-                <div className="buttons-bot">
-                    <span
-                        className="bold text-center button"
-                        onClick={onCancel}
-                    >
-                        Cancelar
-                    </span>
-                    <ButtonComponent
-                        className="button-main huge hover-three"
-                        value="Guardar"
-                        type="submit"
-                        form="transfer-form"
-                        disabled={!isBtnDisable}
-                    />
-                </div>
+            <div></div>
+            <div className="buttons-bot">
+                <span
+                    className="bold text-center button"
+                    onClick={onCancel}
+                    onKeyDown={(e) => e.key === 'Enter' && onCancel() }
+                    tabIndex={0}
+                >
+                    Cancelar
+                </span>
+                <ButtonComponent
+                    className="button-main huge hover-three"
+                    value="Guardar"
+                    type="submit"
+                    action={() => handleSaveSubmit() }
+                    disabled={!disableAddButton}
+                />
+            </div>
             </section>
         </div>
     )
-
-
-
 }
 
 export default CdpMgaAssocPage;

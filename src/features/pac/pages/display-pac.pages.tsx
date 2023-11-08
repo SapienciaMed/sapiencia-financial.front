@@ -43,15 +43,11 @@ function DisplayPacPages() {
                     },
                     {
                         title: 'Pospre',
-                        value: dinamicData?.posPreSapiNumber
+                        value: `${condensedQueryData?.dataCondensed?.posPreOrig}`
                     },
                     {
                         title: 'Pospre Sapiencia',
                         value: dinamicData?.posPreSapiNumber
-                    },
-                    {
-                        title: 'Fondo Sapiencia',
-                        value: dinamicData?.fundNumber
                     },
                     {
                         title: 'Fondo',
@@ -120,7 +116,7 @@ function DisplayPacPages() {
                 showSpinner ? 
                     <ProgressSpinner style={{width: '20px', height: '20px'}}  animationDuration=".5s" />
                 :
-                <table className="details-table">
+                <table className="details-table detail-table-scroll">
                     {
                         dataCondensedService?.map(data => {
                             return (

@@ -111,7 +111,8 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
   };
 
   const handleNombreProyectoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNombreProyecto(event.target.value);
+    let arrName = event.target.value.split('-');
+    setNombreProyecto(arrName[2]);
   };
 
   const handleFondoChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -153,7 +154,8 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
   useEffect(() => {
     const selectedProject = projectsData.find((project) => {
       if (project.value === parseInt(proyecto)) {
-        setNombreProyecto(project.name);
+        let arrName = project.name.split('-');
+        setNombreProyecto(arrName[2]);
         projectsVinculateData.find((area) => {
           if (project['areaFuncional'] === area.functionalAreaId) {
             setAreaFuncional(area.areaFuntional.number);
@@ -191,8 +193,6 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
 
         setAmountInfo(updatedFormInfo);
 
-
-
       } catch (error) {
         console.error('Error al obtener los datos:', error);
       }
@@ -228,7 +228,6 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
               </button>
             )}
           </div>
-
 
 
           <h2>Ruta presupuestal</h2>

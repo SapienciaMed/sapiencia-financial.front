@@ -9,6 +9,7 @@ interface Props {
     cdpId?: string;
 }
 
+//TODO: ELIMINAR COMPONENTE
 
 function CdpHeadMgaAssocComponent(props: Props) {
     const { isDisabled, cdpId } = props;

@@ -22,7 +22,7 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
     const { setMessage } = useContext(AppContext);
 
     //services
-    const { getRouteCDPId, getOneRpp, updateRouteCdp } = useCdpService()
+    const { getRouteCDPId, getOneRpp, updateRouteCdp, getTotalValuesImport } = useCdpService()
     const { GetProjectsList } = useAdditionsTransfersService()
     const { GetAllFunctionalAreas } = useFunctionalAreaService()
 
@@ -37,21 +37,13 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
     const [centroGestor, setCentroGestor] = useState('91500000');
     const [idcFinalValue, setIdcFinalValue] = useState(0);
     const [balance, setBalance] = useState(0);
+    const [totalRp, setTotalRp] = useState(0);
+    const [totalICD, setTotalICD] = useState(0);
+    const [totalFinalICD, setTotalFinalICD] = useState(0);
     const [disable, setDisable] = useState(false);
 
-
     //Form
-    const {
-        control,
-        handleSubmit,
-        register,
-        watch,
-        setValue,
-        reset,
-
-        formState: { errors },
-    } = useForm({});
-
+    const { control, handleSubmit, register, watch, setValue, reset, formState: { errors }, } = useForm({});
 
     useEffect(() => {
         if (idRoute) {
@@ -62,8 +54,7 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
             });
         }
         GetProjectsList().then((response) => {
-            if (response.operation.code === EResponseCodes.OK) {
-                //console.log('datos',response.data)       
+            if (response.operation.code === EResponseCodes.OK) {                     
                 const projectDetails = response.data.map((project) => ({
                     id: project.id,
                     functionalAreaId: project.functionalAreaId,
@@ -92,6 +83,8 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
                 setAreaData(areaDetails);
             }
         });
+
+
     }, [idRoute]);
 
 
@@ -126,11 +119,14 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
         setIdcFinalValue(resultFinal);
 
 
-    }, [dataRoutesCDP, idcModifiedCredit, modifiedIdcCountercredit, idcFixedCompleted]); // Incluye todas las dependencias relevantes aquí
+        setValue("idcFinalValue", Number(resultFinal));
 
+
+    }, [dataRoutesCDP, idcModifiedCredit, modifiedIdcCountercredit, idcFixedCompleted]);
 
     //validar por valores
     const fetchBalance = async () => {
+
         if (dataRoutesCDP) {
             try {
                 const objectSendData = {
@@ -138,47 +134,59 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
                     foundId: dataRoutesCDP.budgetRoute.fund.id,
                     projectId: dataRoutesCDP.budgetRoute.idProjectVinculation,
                 };
-                console.log(objectSendData)
+
                 const res = await getOneRpp(objectSendData);
-                setBalance(parseInt(res['balance']));
+                const resRP = await getTotalValuesImport(dataRoutesCDP.id);
+
+                setBalance(Number(res['balance']));
+                setTotalICD(Number(res['totalIdc']));
+
+                setTotalRp(resRP.data.totalImport)
+
+                setTotalFinalICD(balance - totalICD)
+
             } catch (error) {
                 console.error('Error al obtener los datos:', error);
             }
         }
     };
+   
+    const [debouncedIdcModifiedCredit, setDebouncedIdcModifiedCredit] = useState(idcModifiedCredit);
+    const [debouncedIdcModifiedCounterCredit, setDebouncedIdcModifiedCounterCredit] = useState(modifiedIdcCountercredit);
+    const [debouncedIdcFixedCompleted, setDebouncedIdcFixedCompleted] = useState(idcFixedCompleted);
 
     useEffect(() => {
-        fetchBalance()
-        console.log('balance', balance)
-        if (idcModifiedCredit >= idcFinalValue) {
-            setDisable(true)
+        const handler = setTimeout(() => {
+            setDebouncedIdcModifiedCredit(idcModifiedCredit);
+            setDebouncedIdcModifiedCounterCredit(modifiedIdcCountercredit);
+            setDebouncedIdcFixedCompleted(idcFixedCompleted);
+        }, 300);  // Retraso de 300ms
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [idcModifiedCredit, modifiedIdcCountercredit, idcFixedCompleted]);
+
+    useEffect(() => {
+        fetchBalance();
+        const isCondition1 = Number(debouncedIdcModifiedCredit) > Number(totalFinalICD);
+        const isCondition2 = Number(debouncedIdcModifiedCounterCredit) > Number(totalRp);
+        const isCondition3 = Number(debouncedIdcFixedCompleted) > Number(totalRp);
+
+        if (isCondition1 || isCondition2 || isCondition3) {
+            setDisable(true);
         } else {
-            setDisable(false)
+            setDisable(false);
         }
-    })
 
+    }, [totalRp, totalFinalICD, debouncedIdcModifiedCredit, debouncedIdcModifiedCounterCredit, debouncedIdcFixedCompleted]);
 
-    // Este efecto se ejecutará cada vez que cambien idcModifiedCredit, modifiedIdcCountercredit, o idcFixedCompleted.
-    useEffect(() => {
-        // Solo recalcula si dataRoutesCDP ya ha sido cargado
-        if (dataRoutesCDP) {
-            if (dataRoutesCDP.idcFinalValue || Number(dataRoutesCDP.idcFinalValue) > 0) {
-                const recalculatedValue = Math.max(0, (Number(dataRoutesCDP.idcFinalValue) + idcModifiedCredit) - modifiedIdcCountercredit - idcFixedCompleted);
-                setIdcFinalValue(recalculatedValue); // Actualiza el estado con el nuevo valor calculado
-                setValue("idcFinalValue", recalculatedValue); // Actualiza el valor en el formulario
-            } else {
-                const recalculatedValue = Math.max(0, (Number(dataRoutesCDP.amount) + idcModifiedCredit) - modifiedIdcCountercredit - idcFixedCompleted);
-                setIdcFinalValue(recalculatedValue); // Actualiza el estado con el nuevo valor calculado
-                setValue("idcFinalValue", recalculatedValue); // Actualiza el valor en el formulario
-            }
-        }
-    }, [idcModifiedCredit, modifiedIdcCountercredit, idcFixedCompleted, dataRoutesCDP, setValue]);
-    
 
 
     //setear valores
     useEffect(() => {
         if (!dataRoutesCDP) return;
+
 
         //Obtener mes
         const date = new Date(dataRoutesCDP.budgetAvailability.date);
@@ -201,7 +209,7 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
         setValue("areaNumber", areaNumber);
         setValue("managementCenter", centroGestor);
         setValue("div", dataRoutesCDP.budgetRoute.div);
-        setValue("amount", dataRoutesCDP.amount);
+        setValue("amount", Number(dataRoutesCDP.amount));
 
         setValue("modifiedIdcCountercredit", Number(dataRoutesCDP.modifiedIdcCountercredit));
         setValue("idcModifiedCredit", Number(dataRoutesCDP.idcModifiedCredit));
@@ -212,8 +220,7 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
 
     }, [dataRoutesCDP, projectNumber, projectName, areaNumber, centroGestor]);
 
-    const onSubmiteditRouteCDP = handleSubmit(async (data: IUpdateRoutesCDP) => {
-
+    const onSubmiteditRouteCDP = handleSubmit(async (data: IUpdateRoutesCDP) => {        
         setMessage({
             show: true,
             title: "Guardar",
@@ -225,11 +232,6 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
             },
             background: true,
         });
-
-
-
-
-
     });
 
     const confirmEdit = async (data: IUpdateRoutesCDP) => {
@@ -242,9 +244,7 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
             idcModifiedCredit: data.idcModifiedCredit,
             idcFixedCompleted: data.idcFixedCompleted,
             idcFinalValue: idcFinalValue
-        }
-
-        console.log('llego', datos)
+        }      
 
         const res = await updateRouteCdp(parseInt(idRoute), datos);
 
