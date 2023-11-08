@@ -141,50 +141,17 @@ export function useCdpCrud(cdpId?: string) {
 
     const tableActions: ITableAction<any>[] = [
         {
-            icon: "Link",
-            onClick: (row) => {
-                navigate(`./mga-assoc/${row.id}`);
-                /* const rows = [
-                    {
-                        title: "Entidad CP",
-                        value: `${row.entity.name}`
-                    },
-                    {
-                        title: "Fondo",
-                        value: `${row.number}`
-                    },
-                    {
-                        title: "Validez de",
-                        value: `${''}`
-                    },
-                    {
-                        title: "Validez a",
-                        value: `${''}`
-                    },
-                    {
-                        title: "Denominación",
-                        value: `${row.denomination}`
-                    },
-                    {
-                        title: "Descripción",
-                        value: `${row.description}`
-                    }
-                ] */
-                /* setMessage({
-                    title: "titulo",
-                    show: true,
-                    OkTitle: "Aceptar",
-                    description: <>Hola</>,
-                    background: true
-                }) */
-            },
-        },
-        {
             icon: "Edit",
             onClick: (row) => {
                 navigate(`./edit/${row.id}`);
             },
-        }
+        },
+        {
+            icon: "LinkMga",
+            onClick: (row) => {
+                navigate(`./mga-assoc/${row.id}`);
+            },
+        },
     ];
 
 

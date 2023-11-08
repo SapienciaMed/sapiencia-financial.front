@@ -1,4 +1,5 @@
 import { DateTime } from "luxon";
+import { UseFormRegister, FieldErrors, Control } from 'react-hook-form';
 
 export interface IBudgetsAvailabilityFilters {
   page: number;
@@ -67,4 +68,28 @@ export interface IBudgetAvalaibilityDataBasicModifiedDataEdit {
   contractObject?: string;
   date?: string;
   sapConsecutive?: number;
+}
+
+export interface ICdpMgaAssoc{
+  projectId?: string,
+  fundsSapiencia?: string,
+  pospreSapiencia?: string,
+  idBudget?: string,
+  finalValue?: string,
+  DetailedActivityMGA: string,
+  cpc: string,
+  percentageAffected: string
+}
+
+export interface ICdpMgaAssocFromProps {
+  control: Control<ICdpMgaAssoc, any>,
+  errors: FieldErrors<ICdpMgaAssoc>,
+  arrayDataSelect: {
+      listDetailedActivityMGA: any[];
+  },
+  disableAddButton: boolean,
+  arrayMgaAssoc: any[],
+  register: UseFormRegister<ICdpMgaAssoc>,
+  onSubmit: (e?: React.BaseSyntheticEvent<object, any, any>) => Promise<void>,
+  deleteElement: (idToDelete: any) => void
 }
