@@ -175,10 +175,11 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
         };
         const response = await cdpService.getOneRpp(objectSendData);
         let totalAmountsAssoc = parseFloat(response['totalIdc']);
-        let balanceFloat = parseFloat(response['balance']);
-        let totalAmountAvalible = balanceFloat - totalAmountsAssoc;
-        setValorInicial(totalAmountAvalible.toFixed(2));
-        setBalance(totalAmountAvalible.toFixed(2));
+        let balanceFloat = parseFloat(response['balance']).toString().split('.');
+        let parteEntera = parseInt(balanceFloat[0]);        
+        let totalAmountAvalible = parteEntera - totalAmountsAssoc;
+        setValorInicial(totalAmountAvalible.toString());
+        setBalance(totalAmountAvalible.toString());
         let tryJsonInfo = JSON.stringify(response);
         tryJsonInfo = JSON.parse(tryJsonInfo)['id'].toString();
         setIdRpp(tryJsonInfo);
@@ -286,7 +287,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
               className={`estilo-input ${validateField(valorInicial)}`}
               value={valorInicial}
               onChange={handleValorInicialChange}
-              onBlur={handleBlur}
+              //onBlur={handleBlur}
             />
             {formSubmitted && !valorInicial && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
           </div>

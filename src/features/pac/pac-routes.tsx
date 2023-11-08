@@ -9,12 +9,14 @@ export const PacRoutes = () => {
     const PacPages = lazy(()  => import("./pages/pac.pages"));
     const AssociatePacPages = lazy(() => import('./associatePac/pages/associate-pac.pages'))
     const PacEditPages = lazy(() => import('./pages/pac-edit.pages'))
+    const PacLoadPays = lazy(()  => import("./pages/pac-load-pays.pages"));
 
     return (
         <Routes>
             <Route path={'/creacion-modificacion'} element={<PacPages/>} />
             <Route path={'/creacion-modificacion/traslado'} element={<TransferPacPage/>} />
             <Route path={'/creacion-modificacion/cargar'} element={<PacCrud/>} /> 
+            <Route path={'/creacion-modificacion/cargar-pago'} element={<PacLoadPays/>} /> 
             <Route path={'/creacion-modificacion/asociar'} element={<AssociatePacPages/>} /> 
             <Route path={'/creacion-modificacion/edit/:idPac/:budgetRouteId'} element={<PacEditPages/>} />
         </Routes>
