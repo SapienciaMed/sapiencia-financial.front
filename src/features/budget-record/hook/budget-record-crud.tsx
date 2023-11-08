@@ -291,7 +291,7 @@ export function useBudgeRecordCrud() {
                                                Object(res).data.data[0]?.secondSurname;
 
                         setValueRegister('supplierName', contractorName)
-                        setValueRegister('supplierId', Object(res).data.data[0]?.id)
+                        setValueRegister('supplierId', null)
                     })
 
                 )
