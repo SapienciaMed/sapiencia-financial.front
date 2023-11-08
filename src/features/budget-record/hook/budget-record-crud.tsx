@@ -231,7 +231,7 @@ export function useBudgeRecordCrud() {
         }
         let amountRouteToSave = [];
         selectedAmounts?.forEach(e => {
-            let matchAmount = amountRoute.find(el => el.id == e.id)
+            let matchAmount = amountRoute?.find(el => el.id == e.id)
             if (matchAmount) {
                 delete matchAmount.id;
                 amountRouteToSave.push(matchAmount)
@@ -269,7 +269,7 @@ export function useBudgeRecordCrud() {
         return () => subscription.unsubscribe();
     }, [watch]);
 
-    const { supplierType } = watch()
+    const { supplierType, componentId, dependencyId, linksRp, dateValidity, documentDate } = watch()
 
     useEffect(() => {
         if (!supplierType) return;
@@ -380,6 +380,32 @@ export function useBudgeRecordCrud() {
         });
     };
 
+
+    useEffect(() => {
+
+        if(
+            contractorDocumentSt.length>0 &&
+            contractualObjectSt.length>0 &&
+            supplierType !="" && 
+            componentId!=null &&
+            dependencyId!=null &&
+            linksRp.length>0 &&
+            dateValidity!="" &&
+            documentDate!=""
+        ){
+            setIsAllowSave(true)
+        }
+    }, [
+        contractorDocumentSt,
+        contractualObjectSt,
+        supplierType, 
+        componentId, 
+        dependencyId, 
+        linksRp, 
+        dateValidity, 
+        documentDate
+    ])
+    
 
     return {
         control,
