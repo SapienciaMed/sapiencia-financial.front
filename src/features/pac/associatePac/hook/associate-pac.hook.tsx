@@ -242,7 +242,7 @@ export function useAssociatePac() {
                 title: "Validación",
                 description: "El valor del presupuesto es diferente de la suma de todos los programados",
                 show: true,
-                OkTitle: "Aceptar",
+                OkTitle: "Cerrar",
                 onOk: () => {
                     setMessage({});
                     reset();
