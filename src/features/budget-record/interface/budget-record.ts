@@ -15,7 +15,10 @@ export interface IBudgetRecord {
     userModify?: string;
     dateCreate?: Date;
     dateModify?: string;
-    linksRp?: ILinkRPCDP[]
+    consecutiveCdpSap?:number;
+    consecutiveCdpAurora?:number;
+    newAmount?:any;
+    linksRp?: ILinkRPCDP[];
 }
 
 
