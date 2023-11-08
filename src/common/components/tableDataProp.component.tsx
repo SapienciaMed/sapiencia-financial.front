@@ -27,6 +27,7 @@ import * as Icons from "react-icons/fa";
 import { Dropdown } from "primereact/dropdown";
 import { useWidth } from "../hooks/use-width";
 import { AppContext } from "../contexts/app.context";
+import { BiSolidFileExport } from "react-icons/bi";
 
 interface IProps<T> {
   dataTable: any[];
@@ -338,6 +339,12 @@ function getIconElement(icon: string, element: "name" | "src") {
         "Vincular"
       ) : (
         <Icons.FaLink className="button grid-button button-link" />
+      );
+    case "LinkMga":
+      return element == "name" ? (
+        "Mga"
+      ) : (
+        <BiSolidFileExport  className="button grid-button button-link button-edit"/>
       );
     default:
       return "";
