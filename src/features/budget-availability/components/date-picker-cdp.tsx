@@ -4,7 +4,6 @@ const DatePickerCdp = ({ setYear, setMonth, setDate, selected, placeholder, disa
     const [value, setValue] = useState(selected || "");
 
     const monthsYear = [
-        "meses",
         "enero",
         "febrero",
         "marzo",
@@ -22,7 +21,7 @@ const DatePickerCdp = ({ setYear, setMonth, setDate, selected, placeholder, disa
     const getCurrentDate =  () => {
         const today = new Date();
         const year = today.getFullYear();
-        const month = today.getMonth() + 1;
+        const month = today.getMonth();
         const formattedMonth = month < 10 ? `0${month}` : month;
         const day = today.getDate();
         setMonth(monthsYear[month])
