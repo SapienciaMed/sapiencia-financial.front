@@ -55,6 +55,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@hookform/resolvers": "^3.1.0",
+    "@lottiefiles/react-lottie-player": "^3.5.3",
     "@mui/icons-material": "^5.14.14",
     "@mui/lab": "^5.0.0-alpha.151",
     "@mui/material": "^5.14.14",
@@ -78,6 +79,7 @@
     "single-spa-react": "^4.3.1",
     "update": "^0.7.4",
     "url-loader": "^4.1.1",
+    "uuid": "^9.0.1",
     "yup": "^1.2.0"
   },
   "types": "dist/sapiencia-financial.d.ts"

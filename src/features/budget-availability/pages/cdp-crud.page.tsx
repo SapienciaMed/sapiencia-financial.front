@@ -205,7 +205,7 @@ const CdpCrudPage = () => {
       if (invalidBalances.length !== 0) {
         setMessage({
           title: "Validar valor inicial",
-          description: "Recuerda que el valor inicial no puede ser mayor o igual al balance disponible de la ruta presupuestal",
+          description: "Recuerda que el valor inicial no puede ser mayor o igual al saldo disponible de la ruta presupuestal",
           show: true,
           OkTitle: "Aceptar",
           onOk: () => {
@@ -242,7 +242,7 @@ const CdpCrudPage = () => {
         });
         setMessage({
           title: "Crear CDP",
-          description: `Recuerda que al aceptar se guardaran los datos en el sistema`,
+          description: `¿Estás segur@ de guardar la informacion ?`,
           show: true,
           OkTitle: "Aceptar",
           cancelTitle: "Cancelar",
@@ -274,7 +274,22 @@ const CdpCrudPage = () => {
                     background: true,
                   });
                 }
-
+              
+                if (response['operation']['message'].indexOf("Ya existe") !== -1) {
+                  setMessage({
+                    title: "Validación de datos",
+                    description: "¡El dato ya existe!",
+                    show: true,
+                    OkTitle: "Cerrar",
+                    onOk: () => {
+                      onCancelNew();
+                      setMessage({});
+                    },
+                    background: true,
+                  });
+                  return
+                }
+              
                 if (response['operation']['code'] === "FAIL") {
                   setMessage({
                     title: "Error al crear CDP",
@@ -372,7 +387,6 @@ const CdpCrudPage = () => {
       </div>
       <CdpheadCreate formSubmitted={formSubmitted} isDisabled={false} setFormHeadInfo={setFormHeadInfo} />
       {formularios.length > 0 && (
-
         <div>
           {renderFormsForCurrentPage()}
           <div style={{ display: 'flex', justifyContent: 'center' }}>

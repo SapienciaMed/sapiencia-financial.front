@@ -119,6 +119,43 @@ export function usePacCrud() {
 
 
   });
+  const onSubmitPagPays = handleSubmit(async (data: IHeadPac) => {
+
+    let formData = new FormData()
+    console.log(data);
+    
+    formData.append('exercise', `${data.exercise}`)
+    //formData.append('mes', data)
+    formData.append('file', data.file)
+    formData.append('userCreate', authorization.user.numberDocument)
+    const userModify = data.typePac=='Carga inicial' || data.typePac=='Nueva version' ? '' : authorization.user.numberDocument
+    formData.append('userModify', userModify)
+    showModal({
+      title: "Guardar",
+      description: "¿Está segur@ de guardar el proyecto?",
+      show: true,
+      OkTitle: "Aceptar",
+      cancelTitle: "Cancelar",
+      onOk: () => {
+        setMessage({})
+        messageConfirmSave(formData)
+        setIsLoading(true)
+      },
+      onCancel: () => {
+        setMessage({})
+        onCancelNew()
+        setIsLoading(false)
+      },
+      onClose: () => {
+        setMessage({})
+        onCancelNew()
+        setIsLoading(false)
+      },
+      background: true
+    })
+
+
+  });
 
   const [errorsPac, setErrorsPac] = useState<any[]>([])
   const messageConfirmSave = async (data: any) => {
@@ -238,6 +275,7 @@ export function usePacCrud() {
     tableColumns,
     tableComponentRef,
     errorsPac,
-    isLoading
+    isLoading,
+    onSubmitPagPays
   };
 }

@@ -6,6 +6,9 @@ import { useReportService } from "./report.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { ReportValidator } from "../../../common/schemas/report-schema";
+import { typesReports } from "../constants";
+import { Player } from "@lottiefiles/react-lottie-player";
+import GenerateReportLoading from "../../../public/animations/GenerateReportLoading.json";
 
 const useReports = () => {
   // Servicios
@@ -63,10 +66,34 @@ const useReports = () => {
     });
   };
 
+  const showGenerateReportLoading = (loading: boolean) => {
+    if (loading) {
+      return setMessage({
+        title: "Generando Reporte...",
+        show: true,
+        description: (
+          <div style={{ width: "100%" }}>
+            <Player
+              autoplay
+              loop
+              src={GenerateReportLoading}
+              style={{ height: "300px", width: "300px" }}
+            ></Player>
+          </div>
+        ),
+        background: true,
+      });
+    }
+
+    return setMessage({});
+  };
+
   // Método para manejar la presentación del formulario
   const onSubmit = handleSubmit(async (data: any) => {
+    showGenerateReportLoading(true);
     const { exercise } = data;
 
+    const nameFile = typesReports.find((i) => i.name === selectedReport);
     const res = await generateExcelReport(selectedReport, +exercise);
     if (res.operation.code == EResponseCodes.OK) {
       // Convertir la matriz de búfer a Uint8Array
@@ -75,10 +102,11 @@ const useReports = () => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${selectedReport}.xlsx`;
+      a.download = `${nameFile.title}.xlsx`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
+      showGenerateReportLoading(false);
       showMesageSuccessful();
     }
   });

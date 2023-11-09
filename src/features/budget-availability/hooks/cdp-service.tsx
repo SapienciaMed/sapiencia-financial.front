@@ -54,6 +54,13 @@ export function useCdpService() {
         const endpoint: string = "/asociate-amounts";
         return postFormData(`${roleUrl}${endpoint}`, data);
     }
+    
+    //get Rps asociados
+    async function getRpsCDPId(id:number): Promise<ApiResponse<IBudgetAvalaibility>> {
+        const endpoint: string = "/get-CDPRp-id/"+id;
+        return get(`${roleUrl}${endpoint}`);
+    }
+
     return {
         createCdp,
         createCdp_,
@@ -63,7 +70,8 @@ export function useCdpService() {
         getRouteCDPId,
         updateRouteCdp,
         associateCdpAmounts,
-        getTotalValuesImport
+        getTotalValuesImport,       
+        getRpsCDPId
      }
     };
 
