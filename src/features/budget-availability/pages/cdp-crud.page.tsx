@@ -387,7 +387,6 @@ const CdpCrudPage = () => {
       </div>
       <CdpheadCreate formSubmitted={formSubmitted} isDisabled={false} setFormHeadInfo={setFormHeadInfo} />
       {formularios.length > 0 && (
-
         <div>
           {renderFormsForCurrentPage()}
           <div style={{ display: 'flex', justifyContent: 'center' }}>
