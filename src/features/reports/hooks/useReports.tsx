@@ -6,6 +6,7 @@ import { useReportService } from "./report.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { ReportValidator } from "../../../common/schemas/report-schema";
+import { typesReports } from "../constants";
 
 const useReports = () => {
   // Servicios
@@ -33,6 +34,7 @@ const useReports = () => {
   // Estados
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false);
   const [selectedReport, setSelectedReport] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   // Observar cambios en los datos del formulario
   useEffect(() => {
@@ -65,8 +67,10 @@ const useReports = () => {
 
   // Método para manejar la presentación del formulario
   const onSubmit = handleSubmit(async (data: any) => {
+    setLoading(true);
     const { exercise } = data;
 
+    const nameFile = typesReports.find((i) => i.name === selectedReport);
     const res = await generateExcelReport(selectedReport, +exercise);
     if (res.operation.code == EResponseCodes.OK) {
       // Convertir la matriz de búfer a Uint8Array
@@ -75,11 +79,12 @@ const useReports = () => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${selectedReport}.xlsx`;
+      a.download = `${nameFile.title}.xlsx`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       showMesageSuccessful();
+      setLoading(false);
     }
   });
 
@@ -94,6 +99,7 @@ const useReports = () => {
     isValid,
     selectedReport,
     setSelectedReport,
+    loading
   };
 };
 
