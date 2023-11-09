@@ -18,8 +18,11 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
 
     //params url
     const navigate = useNavigate();
-    const { id: idRoute } = useParams();
+    const { id, idRoute } = useParams();
     const { setMessage } = useContext(AppContext);
+
+    /* console.log('id', id);
+    console.log('idRoute', idRoute); */
 
     //services
     const { getRouteCDPId, getOneRpp, updateRouteCdp, getTotalValuesImport } = useCdpService()
