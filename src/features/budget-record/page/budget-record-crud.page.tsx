@@ -4,6 +4,7 @@ import { ButtonComponent, ButtonLoadingComponent, DatePickerComponent, FormCompo
 import { EDirection } from "../../../common/constants/input.enum";
 import TableDataPropComponent from "../../../common/components/tableDataProp.component";
 import { Controller } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 function BudgetRecordCrudPage() {
   const {
@@ -22,13 +23,17 @@ function BudgetRecordCrudPage() {
     setContractorDocumentSt,
     setContractualObjectSt,
     setFindAmountsSt,
-    isAllowSave
+    isAllowSave,
+    setMessage
   } = useBudgeRecordCrud();
+
+  const navigate = useNavigate();
 
   const btnUploadFileRef = useRef(null);
 
   const [consecutiveSapSt, setConsecutiveSapSt] = useState(null)
   const [consecutiveAuroraSt, setConsecutiveAuroraSt] = useState(null)
+  const [isSeachAmountActive, setIsSeachAmountActive] = useState(false)
 
   return (
     <div className="crud-page">
@@ -105,7 +110,7 @@ function BudgetRecordCrudPage() {
                 control={control}
                 label={"Fecha vencimiento"}
                 errors={errors}
-                classNameLabel="text-black biggest bold text-required"
+                classNameLabel="text-black biggest bold"
                 className="dataPicker-basic medium"
                 placeholder="DD/MM/YYYY"
                 dateFormat="dd/mm/yy"
@@ -186,7 +191,7 @@ function BudgetRecordCrudPage() {
                     typeInput="number"
                     register={register}
                     label="Consecutivo CDP Aurora"
-                    classNameLabel="text-black big bold text-required"
+                    classNameLabel="text-black big bold"
                     direction={EDirection.column}
                     errors={errors}
                     onChange={(e) => setConsecutiveAuroraSt(e.target.value)}
@@ -195,11 +200,13 @@ function BudgetRecordCrudPage() {
               <div>
 
                 <div style={{ marginTop: '15px', display: 'flex', justifyContent: 'flex-end' }}>
+
                   <ButtonComponent
                     value="Buscar"
                     type="button"
                     className="button-main medium"
                     action={() => setFindAmountsSt({ sab: consecutiveSapSt, aurora: consecutiveAuroraSt })}
+                    disabled={consecutiveSapSt?.length>0 ? false : true}
                   />
                 </div>
 
@@ -237,6 +244,34 @@ function BudgetRecordCrudPage() {
       </div>
 
       <div className="container-button-bot">
+        <ButtonComponent
+          form="useQueryForm"
+          value="Cancelar"
+          type="button"
+          className="button-clean-fields bold"
+          action={() => {
+            setMessage({
+              title: "Cancelar",
+              show: true,
+              cancelTitle: "Cancelar",
+              OkTitle: "Aceptar",
+              description: (
+                <div style={{ width: "100%" }}>
+                  <label>¿Estas segur@ de cancelar?</label>
+                </div>
+              ),
+              background: true,
+              onOk: () => {
+                navigate("/gestion-financiera/rp");
+                setMessage({});
+              },
+              onCancel: () => {
+                setMessage({});
+              },
+            });
+          }}
+        />
+
         <div className="buttons-bot">
           <ButtonLoadingComponent
             className="button-main huge hover-three"
