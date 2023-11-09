@@ -87,13 +87,14 @@ function CdpAssociation(props: Props) {
 
     useEffect(() => {
         if (information) {
-            setDate(information.date || '');
+            let dateOne = information.date.split("T")[0];
+            setDate(dateOne|| '');
             setCdpSapConsecutive(information.cdpSapConsecutive || '');
             setCdpAuroraConsecutive(information.cdpAuroraConsecutive || '');
             setFormHeadInfoState(information);
         }
     }, [information]);
-    
+
     return (
         <>
             <div className='container-head-form-cdp'>

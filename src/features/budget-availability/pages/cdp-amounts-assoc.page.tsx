@@ -7,6 +7,7 @@ import { useCdpService } from '../hooks/cdp-service';
 import { useNavigate } from "react-router-dom";
 import { AppContext } from '../../../common/contexts/app.context';
 import Icons from '../components/Icons';
+import { v4 as uuidv4 } from 'uuid';
 
 interface FormInfoType {
     id: number;
@@ -60,12 +61,20 @@ const CdpAmountAssoc = () => {
     });
     const [objectFinal, setObjectFinal] = useState([])
     const [idCdp, setIdCdp] = useState(0);
+    const [formId, setFormId] = useState(0);
+
 
     const handleAgregarFormulario = () => {
         const newFormulario = { id: formCount };
         setFormularios([...formularios, newFormulario]);
-        setFormCount(formCount + 1);
+        setFormCount(formCount);
     };
+
+/*     const handleAgregarFormulario = () => {
+        const newFormulario = { id: uuidv4() };
+        setFormularios([...formularios, newFormulario]);
+        setFormCount(formCount + 1);
+    }; */
 
     const [cdpPosition, setCdpPosition] = useState(0);
 
@@ -96,45 +105,45 @@ const CdpAmountAssoc = () => {
 
         let finalObj = {
             amounts: formularios
-        }
+        };
+        
+        setFormId(finalObj.amounts.length);
+
+
         setTimeout(() => {
             setObjectSendData(finalObj)
-            console.log(finalObj);
-
         }, 1000);
     }, [amountInfo]);
 
 
     const handleCancel = () => {
         setMessage({
-          title: "Cancelar",
-          description: "¿Estás segur@ de cancelar?",
-          show: true,
-          OkTitle: "Aceptar",
-          cancelTitle: "Cancelar",
-          onOk: () => {
-            //onCancelNew();
-            navigate("./../");
-            setMessage({});
-          },
-          onCancel() {
-            setMessage({});
-          },
-          background: true,
+            title: "Cancelar",
+            description: "¿Estás segur@ de cancelar?",
+            show: true,
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
+            onOk: () => {
+                //onCancelNew();
+                navigate("./../");
+                setMessage({});
+            },
+            onCancel() {
+                setMessage({});
+            },
+            background: true,
         });
-    
-      }
+
+    }
 
     const handleGuardar = async () => {
         setFormSubmitted(true);
-        
+
         let nuevoObjeto;
         const onCancelNew = () => {
             navigate("./");
         };
         try {
-            console.log(objectSendData);
-            
             const icdArrWithBalanceCheck = objectSendData["amounts"];
 
             const invalidBalances = icdArrWithBalanceCheck.filter(
@@ -169,9 +178,6 @@ const CdpAmountAssoc = () => {
                         ...rest,
                     })),
                 };
-                console.log(nuevoObjeto);
-                
-
                 await new Promise((resolve) => {
                     setObjectSendData(nuevoObjeto);
                     resolve('success');
@@ -234,7 +240,9 @@ const CdpAmountAssoc = () => {
         }
     };
 
-    const renderFormsForCurrentPage = () => {
+   /*  const renderFormsForCurrentPage = () => {
+        console.log("hola nose que pasa");
+
         const indexOfLastForm = currentPage * formsPerPage;
         const indexOfFirstForm = indexOfLastForm - formsPerPage;
         return formularios.slice(indexOfFirstForm, indexOfLastForm).map((_, index) => (
@@ -248,7 +256,24 @@ const CdpAmountAssoc = () => {
                 setAmountInfo={setAmountInfo}
             />
         ));
-    };
+    }; */
+
+    const renderFormsForCurrentPage = () => {
+        const indexOfLastForm = currentPage * formsPerPage;
+        const indexOfFirstForm = indexOfLastForm - formsPerPage;
+        return formularios.slice(indexOfFirstForm, indexOfLastForm).map((_, index) => (
+          <FormCreateRutaCDPComponent
+            key={indexOfFirstForm + index}
+            isRequired={indexOfFirstForm + index === 0}
+            formNumber={indexOfFirstForm + index}
+            handleEliminar={handleEliminar}
+            formSubmitted={formSubmitted}
+            amountInfo={amountInfo}
+            setAmountInfo={setAmountInfo}
+            posicionCdp={indexOfLastForm > cdpPosition ? indexOfLastForm+index : cdpPosition + index}
+          />
+        ));
+      };
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -263,15 +288,12 @@ const CdpAmountAssoc = () => {
                 'cdpAuroraConsecutive': res.data[0].consecutive,
                 'cdpSapConsecutive': res.data[0].sapConsecutive,
             });
-            
+
             const amounts = res.data[0].amounts;
             if (amounts && amounts.length > 0) {
-                const lastAmount = amounts[amounts.length - 1];
-                if (lastAmount && lastAmount.cdpPosition) {
-                    setCdpPosition(lastAmount.cdpPosition);
-                }
+                const lastAmount = amounts.length;
+                setCdpPosition(lastAmount);
             }
-            console.log(res.data[0]);
         });
     }, []);
     return (
@@ -291,15 +313,18 @@ const CdpAmountAssoc = () => {
                 formSubmitted={false}
                 information={dataHead}
             />
-            {renderFormsForCurrentPage()}
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <CdpPaginator
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                />
-
-            </div>
+            {formularios.length > 0 && (
+                <div>
+                    {renderFormsForCurrentPage()}
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <CdpPaginator
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={handlePageChange}
+                        />
+                    </div>
+                </div>
+            )}
             <div className="button-container component-container-create">
                 <button onClick={handleCancel} className="cancel-btn">
                     Cancelar
