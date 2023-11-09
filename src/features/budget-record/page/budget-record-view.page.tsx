@@ -30,7 +30,9 @@ function BudgetRecordViewPage() {
         /* setContractorDocumentSt, */
         dataFindRpSt,
         dataRouteBudgetsSt,
-        reset
+        reset,
+        setDataFindRpSt,
+        setDataRouteBudgetsSt
     } = useBudgeRecordView();
 
     return (
@@ -145,6 +147,8 @@ function BudgetRecordViewPage() {
                         <div className="funcionality-buttons-container">
                             <span className="bold text-center button" onClick={() => {
                                 reset()
+                                setDataFindRpSt({})
+                                setDataRouteBudgetsSt([])
                                 /* reset();
                                 if(showTable)  {
                                     tableComponentRef.current.emptyData();
@@ -162,31 +166,41 @@ function BudgetRecordViewPage() {
                     </div>
                 </FormComponent>
                 <br />
-                <div className="card-user">
-                    <div className="text-black weight-500 extra-large">Datos basicos</div>
-                    <DataTable value={[dataFindRpSt]} tableStyle={{ minWidth: '50rem' }}>
-                        <Column field="consecutiveRpSap" header="No. RP SAP"></Column>
-                        <Column field="consecutiveRpAurora" header="No. RP Aurora"></Column>
-                        <Column field="taxIdentificationId" header="ID Fiscal"></Column>
-                        <Column field="identification" header="Identificación"></Column>
-                        <Column field="contractName" header="Contratista"></Column>
-                        <Column field="dependencieName" header="Dependencia"></Column>
-                        <Column field="" header="Acciones"></Column>
-                    </DataTable>
-                </div>
+                {
+                    Object.entries(dataFindRpSt)?.length > 0 && (
+                        <div className="card-user">
+                            <div className="text-black weight-500 extra-large">Datos basicos</div>
+                            <DataTable value={[dataFindRpSt]} tableStyle={{ minWidth: '50rem' }}>
+                                <Column field="consecutiveRpSap" header="No. RP SAP"></Column>
+                                <Column field="consecutiveRpAurora" header="No. RP Aurora"></Column>
+                                <Column field="taxIdentificationId" header="ID Fiscal"></Column>
+                                <Column field="identification" header="Identificación"></Column>
+                                <Column field="contractName" header="Contratista"></Column>
+                                <Column field="dependencieName" header="Dependencia"></Column>
+                                <Column field="" header="Acciones"></Column>
+                            </DataTable>
+                        </div>
+                    )
+                }
+
 
                 <br />
-                <div className="card-user">
-                    <TableDataPropComponent
-                        ref={tableComponentRef}
-                        dataTable={dataRouteBudgetsSt}
-                        columns={tableColumns}
-                        actions={tableActions}
-                        isShowModal={false}
-                        titleMessageModalNoResult={"No se encontraron registros"}
-                        secondaryTitle="Rutas"
-                    />
-                </div>
+                {
+                    dataRouteBudgetsSt.length > 0 && (
+                        <div className="card-user">
+                            <TableDataPropComponent
+                                ref={tableComponentRef}
+                                dataTable={dataRouteBudgetsSt}
+                                columns={tableColumns}
+                                actions={tableActions}
+                                isShowModal={false}
+                                titleMessageModalNoResult={"No se encontraron registros"}
+                                secondaryTitle="Rutas"
+                            />
+                        </div>
+                    )
+                }
+
             </div>
         </div>
     )

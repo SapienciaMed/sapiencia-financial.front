@@ -150,7 +150,9 @@ export function useBudgeRecordView() {
         tableComponentRef,
         dataFindRpSt,
         dataRouteBudgetsSt,
-        reset
+        reset,
+        setDataFindRpSt,
+        setDataRouteBudgetsSt
     };
 
 
