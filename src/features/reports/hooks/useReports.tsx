@@ -7,6 +7,8 @@ import { EResponseCodes } from "../../../common/constants/api.enum";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { ReportValidator } from "../../../common/schemas/report-schema";
 import { typesReports } from "../constants";
+import { Player } from "@lottiefiles/react-lottie-player";
+import GenerateReportLoading from "../../../public/animations/GenerateReportLoading.json";
 
 const useReports = () => {
   // Servicios
@@ -34,7 +36,6 @@ const useReports = () => {
   // Estados
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false);
   const [selectedReport, setSelectedReport] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
 
   // Observar cambios en los datos del formulario
   useEffect(() => {
@@ -65,9 +66,31 @@ const useReports = () => {
     });
   };
 
+  const showGenerateReportLoading = (loading: boolean) => {
+    if (loading) {
+      return setMessage({
+        title: "Generando Reporte...",
+        show: true,
+        description: (
+          <div style={{ width: "100%" }}>
+            <Player
+              autoplay
+              loop
+              src={GenerateReportLoading}
+              style={{ height: "300px", width: "300px" }}
+            ></Player>
+          </div>
+        ),
+        background: true,
+      });
+    }
+
+    return setMessage({});
+  };
+
   // Método para manejar la presentación del formulario
   const onSubmit = handleSubmit(async (data: any) => {
-    setLoading(true);
+    showGenerateReportLoading(true);
     const { exercise } = data;
 
     const nameFile = typesReports.find((i) => i.name === selectedReport);
@@ -83,8 +106,8 @@ const useReports = () => {
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
+      showGenerateReportLoading(false);
       showMesageSuccessful();
-      setLoading(false);
     }
   });
 
@@ -99,7 +122,6 @@ const useReports = () => {
     isValid,
     selectedReport,
     setSelectedReport,
-    loading
   };
 };
 
