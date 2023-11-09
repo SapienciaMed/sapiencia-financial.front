@@ -1,6 +1,7 @@
 import useReports from "../../hooks/useReports";
 import {
   ButtonComponent,
+  ButtonLoadingComponent,
   FormComponent,
   InputComponent,
 } from "../../../../common/components/Form";
@@ -20,11 +21,12 @@ const HomeReports = () => {
     setMessage,
     navigate,
     selectedReport,
+    loading,
   } = useReports();
 
   return (
     <div>
-      <FormComponent action={onSubmit}>
+      <FormComponent action={onSubmit} id="form-report">
         <div className="one-filter-container">
           <Controller
             control={control}
@@ -126,10 +128,12 @@ const HomeReports = () => {
               });
             }}
           />
-          <ButtonComponent
+          <ButtonLoadingComponent
             className="button-main huge hover-three"
             value="Generar"
+            form="form-report"
             type="submit"
+            isLoading={loading}
             disabled={!isBtnDisable}
           />
         </div>
