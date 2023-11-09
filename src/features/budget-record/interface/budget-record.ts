@@ -30,3 +30,11 @@ export interface ILinkRPCDP {
     isActive?: boolean;
     reasonCancellation?: string;
 }
+
+export interface IBudgetRecordFilter {
+    consecutivoRpSap?:number;
+    consecutiveRpAurora?:number;
+    supplierType?:string;
+    contractorDocument?:string;
+    supplierName?:string;
+}

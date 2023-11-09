@@ -18,10 +18,9 @@ import { useCreditorsServices } from "../../creditors/hook/creditors-service.hoo
 import { usePayrollExternalServices } from "./payroll-external-services.hook";
 
 
-
 export function useBudgeRecordCrud() {
 
-    /* const resolver = useYupValidationResolver(budgetRecordCrudValidator); */
+    const resolver = useYupValidationResolver(budgetRecordCrudValidator);
     const { CreateBudgetRecord, GetAllComponents } = useBudgetRecordServices();
     const { GetRoutesByValidity } = useCdpServices()
     const { GetCreditorsByFilters } = useCreditorsServices()
@@ -48,6 +47,28 @@ export function useBudgeRecordCrud() {
     const [mountEditSt, setMountEditSt] = useState({ id: null, amount: null })
     const [confirmChangeAmountSt, setConfirmChangeAmountSt] = useState({ id: null, amount: null })
 
+    // se suma un dia adicional por ajuste
+    const lastDayPerMont = {
+        "01": 32,
+        "02": 29,
+        "03": 32,
+        "04": 31,
+        "05": 32,
+        "06": 31,
+        "07": 32,
+        "08": 32,
+        "09": 31,
+        "10": 32,
+        "11": 31,
+        "12": 32,
+    }
+
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const formattedMonth = month < 10 ? `0${month}` : month;
+    const lastDayMonth = `${year}-${formattedMonth}-${lastDayPerMont[formattedMonth]}`
+
     const {
         handleSubmit,
         register,
@@ -63,15 +84,15 @@ export function useBudgeRecordCrud() {
             supplierId: null,
             supplierName: "",
             contractorDocument: "",
-            documentDate: "",
-            dateValidity: "",
+            documentDate: today,
+            dateValidity: new Date(lastDayMonth),
             dependencyId: null,
             contractualObject: "",
             componentId: null,
-            userCreate: "",
+            userCreate: authorization?.user?.numberDocument,
             userModify: "",
             dateModify: "",
-            newAmount:"",
+            newAmount: "",
             linksRp: [
                 {
                     id: null,
@@ -84,7 +105,7 @@ export function useBudgeRecordCrud() {
             ]
         },
         mode: 'onChange',
-        /* resolver, */
+        resolver,
     });
 
     useEffect(() => {
@@ -98,15 +119,6 @@ export function useBudgeRecordCrud() {
             setDependeciesData(dependencies)
         })
 
-
-        /* setDependeciesData(
-            [
-                { id: 1, name: "Dependencia 1", value: 1 },
-                { id: 2, name: "Dependencia 2", value: 2 },
-                { id: 3, name: "Dependencia 3", value: 3 },
-                { id: 4, name: "Dependencia 4", value: 4 }
-            ]
-        ) */
     }, [])
 
     const showModalChangeAmount = (id: number) => {
@@ -144,7 +156,7 @@ export function useBudgeRecordCrud() {
 
     const tableColumns: ITableElement<any>[] = [
         {
-            fieldName: "budgetRoute.fund.number",
+            fieldName: "cdpPosition",
             header: "Consecutivo CDP SAP"
         },
         {
@@ -191,12 +203,12 @@ export function useBudgeRecordCrud() {
 
 
     useEffect(() => {
-        if (findAmountsSt.sab > 0 && findAmountsSt.aurora > 0) {
+        if (findAmountsSt.sab > 0) {
             GetRoutesByValidity({
                 page: 1,
                 perPage: 20,
                 consecutiveSap: findAmountsSt.sab,
-                consecutiveAurora: findAmountsSt.aurora,
+                consecutiveAurora: findAmountsSt?.aurora,
             }).then(res => {
                 res.data?.array && setDataAmounts(res.data.array[0]?.amounts?.filter(e => e.isActive == true))
                 setSelectedAmounts(res.data.array[0]?.amounts.filter(e => e.isActive == true))
@@ -209,21 +221,21 @@ export function useBudgeRecordCrud() {
     const [newDataAmountSt, setDataNewAmountSt] = useState([])
     useEffect(() => {
         let amountRoute = dataAmounts?.map(e => {
-            if(confirmChangeAmountSt?.amount){
+            if (confirmChangeAmountSt?.amount) {
                 setIsChangeAmount(!isChangeAmount)
             }
             return ({
                 id: e.id,
                 amountCdpId: e.cdpCode,
-                initialAmount: confirmChangeAmountSt?.amount && confirmChangeAmountSt.id == e.id ? confirmChangeAmountSt.amount : e.amount ,
+                initialAmount: confirmChangeAmountSt?.amount && confirmChangeAmountSt.id == e.id ? confirmChangeAmountSt.amount : e.amount,
                 isActive: e.isActive,
                 reasonCancellation: "",
                 rpId: null
             })
         })
-        if(confirmChangeAmountSt?.amount){
-            const newAmounts = dataAmounts.map(e=>{
-                let amountModify = amountRoute.find(el=>el.id == e.id)    
+        if (confirmChangeAmountSt?.amount) {
+            const newAmounts = dataAmounts.map(e => {
+                let amountModify = amountRoute.find(el => el.id == e.id)
                 e.amount = amountModify.initialAmount
                 return e;
             })
@@ -240,7 +252,7 @@ export function useBudgeRecordCrud() {
         setValueRegister('linksRp', amountRouteToSave)
     }, [dataAmounts, selectedAmounts, confirmChangeAmountSt])
 
-    
+
     const onAmountChange = (e) => {
         let _selectedAmounts = [...selectedAmounts];
         if (e.checked) {
@@ -285,10 +297,10 @@ export function useBudgeRecordCrud() {
                             setValueRegister('supplierId', null)
                             return;
                         }
-                        const contractorName = Object(res).data.data[0]?.firstName + " "+
-                                               Object(res).data.data[0]?.secondName + " "+         
-                                               Object(res).data.data[0]?.surname + " "+         
-                                               Object(res).data.data[0]?.secondSurname;
+                        const contractorName = Object(res).data.data[0]?.firstName + " " +
+                            Object(res).data.data[0]?.secondName + " " +
+                            Object(res).data.data[0]?.surname + " " +
+                            Object(res).data.data[0]?.secondSurname;
 
                         setValueRegister('supplierName', contractorName)
                         setValueRegister('supplierId', null)
@@ -354,6 +366,27 @@ export function useBudgeRecordCrud() {
                     description: "¡Guardado exitosamente!",
                     onOk: (() => {
                         setMessage({})
+                        showAuroraCodeConfirmSave(data)
+                    }),
+                    OkTitle: "Aceptar",
+                })
+                : showModal({
+                    title: "Falla en almacenamiento",
+                    description: "Falla en creación",
+                    onOk: (() => setMessage({})),
+                    OkTitle: "Aceptar",
+                })
+        })
+    }
+    
+    const showAuroraCodeConfirmSave = (data: any) => {
+        CreateBudgetRecord(data).then(res => {
+            Object(res).operation.code == 'OK'
+                ? showModal({
+                    title: "Consecutivo RP Aurora",
+                    description: `Al RP se le asignó el consucutivo ${ Object(res).data.id }`,
+                    onOk: (() => {
+                        setMessage({})
                         navigate('../')
                     }),
                     OkTitle: "Aceptar",
@@ -383,30 +416,30 @@ export function useBudgeRecordCrud() {
 
     useEffect(() => {
 
-        if(
-            contractorDocumentSt.length>0 &&
-            contractualObjectSt.length>0 &&
-            supplierType !="" && 
-            componentId!=null &&
-            dependencyId!=null &&
-            linksRp.length>0 &&
-            dateValidity!="" &&
-            documentDate!=""
-        ){
+        if (
+            contractorDocumentSt.length > 0 &&
+            contractualObjectSt.length > 0 &&
+            supplierType != "" &&
+            componentId != null &&
+            dependencyId != null &&
+            linksRp.length > 0 &&
+            dateValidity != "" &&
+            documentDate != ""
+        ) {
             setIsAllowSave(true)
         }
     }, [
         contractorDocumentSt,
         contractualObjectSt,
-        supplierType, 
-        componentId, 
-        dependencyId, 
-        linksRp, 
-        dateValidity, 
+        supplierType,
+        componentId,
+        dependencyId,
+        linksRp,
+        dateValidity,
         documentDate
     ])
-    
 
+    
     return {
         control,
         errors,

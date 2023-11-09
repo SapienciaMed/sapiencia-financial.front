@@ -16,10 +16,16 @@ export const useBudgetRecordServices = () => {
         const endpoint: string = `/get-components`;
         return get(`${roleUrl}${endpoint}`);
     }
+    
+    async function GetRpByFilters(data: Object): Promise<ApiResponse<{id:number, name:string}[]>> {
+        const endpoint: string = `/get-rp-by-filters`;
+        return post(`${roleUrl}${endpoint}`, data);
+    }
 
     return{
         CreateBudgetRecord,
-        GetAllComponents
+        GetAllComponents,
+        GetRpByFilters
     }
 
 }
