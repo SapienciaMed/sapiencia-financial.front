@@ -1,7 +1,6 @@
 import useReports from "../../hooks/useReports";
 import {
   ButtonComponent,
-  ButtonLoadingComponent,
   FormComponent,
   InputComponent,
 } from "../../../../common/components/Form";
@@ -21,7 +20,6 @@ const HomeReports = () => {
     setMessage,
     navigate,
     selectedReport,
-    loading,
   } = useReports();
 
   return (
@@ -102,7 +100,6 @@ const HomeReports = () => {
         </div>
         <div className="funcionality-buttons-container">
           <ButtonComponent
-            form="useQueryForm"
             value="Cancelar"
             type="button"
             className="button-clean-fields bold"
@@ -128,12 +125,11 @@ const HomeReports = () => {
               });
             }}
           />
-          <ButtonLoadingComponent
-            className="button-main huge hover-three"
+          <ButtonComponent
             value="Generar"
-            form="form-report"
             type="submit"
-            isLoading={loading}
+            form="form-report"
+            className="button-main huge hover-three"
             disabled={!isBtnDisable}
           />
         </div>

@@ -21,9 +21,10 @@ interface FormularioProps {
   formSubmitted?: boolean;
   setAmountInfo: React.Dispatch<React.SetStateAction<FormInfoType>>;
   amountInfo: FormInfoType;
+  posicionCdp?: number;
 }
 
-const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, isRequired = false, formNumber, handleEliminar, setAmountInfo, amountInfo }) => {
+const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, isRequired = false, formNumber, handleEliminar, setAmountInfo, amountInfo, posicionCdp }) => {
   const { setFormInfo, formInfo } = useContext(AppContext);
   const cdpService = useCdpService();
   const [proyecto, setProyecto] = useState('');
@@ -38,6 +39,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
   const [valorInicial, setValorInicial] = useState('0');
   const [balance, setBalance] = useState('0');
   const [idRpp, setIdRpp] = useState('0');
+  const { setMessage } = useContext(AppContext);
 
   const onDeleteClick = () => {
     handleEliminar(formNumber);
@@ -65,19 +67,6 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
     }
     return '';
   };
-
-  /*   const loadInfo = () => {
-      setAmountInfo(formValues);
-      setTimeout(() => {
-        console.log("fromValCrud", amountInfo);
-      }, 2000);
-      
-    }; */
-
-  /*  const loadInfo = () => {
-     setAmountInfo(formValues);
-     console.log("idRpp actual:", formValues.idRppCode);
-   }; */
 
   const loadInfo = () => {
     setAmountInfo((prevAmountInfo) => ({
@@ -174,25 +163,40 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
           projectId: parseInt(proyecto),
         };
         const response = await cdpService.getOneRpp(objectSendData);
-        let totalAmountsAssoc = parseFloat(response['totalIdc']);
-        let balanceFloat = parseFloat(response['balance']).toString().split('.');
-        let parteEntera = parseInt(balanceFloat[0]);        
-        let totalAmountAvalible = parteEntera - totalAmountsAssoc;
-        setValorInicial(totalAmountAvalible.toString());
-        setBalance(totalAmountAvalible.toString());
-        let tryJsonInfo = JSON.stringify(response);
-        tryJsonInfo = JSON.parse(tryJsonInfo)['id'].toString();
-        setIdRpp(tryJsonInfo);
-        console.log(tryJsonInfo);
-        const updatedFormInfo = {
-          idRppCode: tryJsonInfo,
-          posicion: posicion,
-          valorInicial: totalAmountAvalible.toFixed(2),
-          id: Number(formNumber),
-          balance: totalAmountAvalible.toFixed(2),
-        };
+        if(typeof(response) === "object") {
+          let totalAmountsAssoc = parseFloat(response['totalIdc']);
+          let balanceFloat = parseFloat(response['balance']).toString().split('.');
+          let parteEntera = parseInt(balanceFloat[0]);
+          let totalAmountAvalible = parteEntera - totalAmountsAssoc;
+          setValorInicial(totalAmountAvalible.toString());
+          setBalance(totalAmountAvalible.toString());
+          let tryJsonInfo = JSON.stringify(response);
+          tryJsonInfo = JSON.parse(tryJsonInfo)['id'].toString();
+          setIdRpp(tryJsonInfo);
+          const updatedFormInfo = {
+            idRppCode: tryJsonInfo,
+            posicion: posicion,
+            valorInicial: totalAmountAvalible.toFixed(2),
+            id: Number(formNumber),
+            balance: totalAmountAvalible.toFixed(2),
+          };
+  
+          setAmountInfo(updatedFormInfo);
+        }else{
+          setMessage({
+            title: "!No hay datos relacionados!",
+            description: "No encontramos una ruta presupuestal con los datos que proporcionaste, intentalo de otra vez con nuevos datos",
+            show: true,
+            OkTitle: "cerrar",
+            onOk: () => {
+                setMessage({});
+            },
+            background: true,
+        });
 
-        setAmountInfo(updatedFormInfo);
+        setValorInicial('0')
+        return;
+        }
 
       } catch (error) {
         console.error('Error al obtener los datos:', error);
@@ -204,33 +208,36 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
     fetchData();
   }, [pospreNewV, fondo, proyecto]);
 
+  const renderedFormNumber = (posicionCdp && posicionCdp !== 0) ?
+    (formNumber > posicionCdp ? formNumber : posicionCdp) :
+    formNumber;
 
   return (
     <div className='containerOne'>
       <div className="formulario">
-        <div className="grid-form">
-          <h2 className="h3-style" style={{ flex: 1 }}>
-            {formNumber + 1}. Ruta
-          </h2>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            {!isRequired && (
-              <button
-                className="agregar-btn btn-delete"
-                onClick={onDeleteClick}
-                style={{
-                  marginLeft: 'auto',
-                  backgroundColor: 'transparent',
-                  color: 'red',
-                  border: 'none',
-                  cursor: 'pointer'
-                }}
-              >
-                Eliminar
-              </button>
-            )}
+          <div>
+            <h2 className="h3-style" style={{ flex: 1 }}>
+              {renderedFormNumber + 1}. Ruta
+            </h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              {!isRequired && (
+                <button
+                  className="agregar-btn btn-delete"
+                  onClick={onDeleteClick}
+                  style={{
+                    marginLeft: 'auto',
+                    backgroundColor: 'transparent',
+                    color: 'red',
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Eliminar
+                </button>
+              )}
+            </div>
           </div>
-
-
+        <div className="grid-form">
           <h2>Ruta presupuestal</h2>
           <div className={`col-4`}>
             <label>Proyecto <span>*</span></label>
@@ -276,8 +283,8 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
           </div>
           <div className={`col-4`}>
             <label>Posición <span>*</span></label>
-            <input type="text" readOnly className={`estilo-input bgSecondary`} value={formNumber + 1} onChange={handlePosicionChange} />
-            {formSubmitted && !(formNumber + 1) && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
+            <input type="text" readOnly className={`estilo-input bgSecondary`} value={renderedFormNumber + 1} onChange={handlePosicionChange} />
+            {formSubmitted && !(renderedFormNumber + 1) && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
           </div>
           <h3>Importe</h3>
           <div className={`col-3 ${validateField(valorInicial)}`}>
@@ -287,7 +294,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
               className={`estilo-input ${validateField(valorInicial)}`}
               value={valorInicial}
               onChange={handleValorInicialChange}
-              //onBlur={handleBlur}
+            //onBlur={handleBlur}
             />
             {formSubmitted && !valorInicial && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
           </div>
