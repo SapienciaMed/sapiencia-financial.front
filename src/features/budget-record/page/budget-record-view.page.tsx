@@ -11,6 +11,7 @@ import { Controller } from "react-hook-form";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { useBudgeRecordView } from "../hook/budget-record-view";
+import * as Icons from "react-icons/fa";
 
 
 function BudgetRecordViewPage() {
@@ -32,7 +33,8 @@ function BudgetRecordViewPage() {
         dataRouteBudgetsSt,
         reset,
         setDataFindRpSt,
-        setDataRouteBudgetsSt
+        setDataRouteBudgetsSt,
+        isAllowSearchCdp
     } = useBudgeRecordView();
 
     return (
@@ -161,6 +163,7 @@ function BudgetRecordViewPage() {
                                 className="button-main huge hover-three"
                                 value="Buscar"
                                 type="submit"
+                                disabled={!isAllowSearchCdp}
                             />
                         </div>
                     </div>
@@ -177,7 +180,9 @@ function BudgetRecordViewPage() {
                                 <Column field="identification" header="Identificación"></Column>
                                 <Column field="contractName" header="Contratista"></Column>
                                 <Column field="dependencieName" header="Dependencia"></Column>
-                                <Column field="" header="Acciones"></Column>
+                                <Column rowEditor field="" header="Acciones" headerStyle={{ width: '10%', minWidth: '8rem' }}>
+                                    {/* <i className="pi pi-check"></i> */}
+                                </Column>
                             </DataTable>
                         </div>
                     )
@@ -193,7 +198,7 @@ function BudgetRecordViewPage() {
                                 dataTable={dataRouteBudgetsSt}
                                 columns={tableColumns}
                                 actions={tableActions}
-                                isShowModal={false}
+                                isShowModal={true}
                                 titleMessageModalNoResult={"No se encontraron registros"}
                                 secondaryTitle="Rutas"
                             />
