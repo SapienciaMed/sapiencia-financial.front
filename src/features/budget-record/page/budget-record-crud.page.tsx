@@ -79,19 +79,27 @@ function BudgetRecordCrudPage() {
                     direction={EDirection.column}
                     errors={errors}
                     onBlur={(e) => setContractorDocumentSt(Object(e).target.value)}
+                    onChange={(value) => field.onChange(value)}
                   />
                 )} />
-              <InputComponent
-                idInput="supplierName"
-                className="input-basic medium"
-                typeInput="text"
-                register={register}
-                label="Nombre"
-                classNameLabel="text-black big bold text-required"
-                direction={EDirection.column}
-                disabled={true}
-                errors={errors}
-              />
+              <Controller
+                control={control}
+                name={"supplierName"}
+                render={({ field }) => (
+                  <InputComponent
+                    id={field.name}
+                    idInput={field.name}
+                    className="input-basic medium"
+                    typeInput="text"
+                    register={register}
+                    label="Nombre"
+                    classNameLabel="text-black big bold text-required"
+                    direction={EDirection.column}
+                    disabled={true}
+                    errors={errors}
+                    onChange={(value) => field.onChange(value)}
+                  />
+                )} />
             </section>
 
             <section className="grid-form-3-container-area mt-5px">
@@ -131,17 +139,24 @@ function BudgetRecordCrudPage() {
                 errors={errors}
                 direction={EDirection.column}
               />
-              <InputComponent
-                idInput="contractualObject"
-                className={'input-basic medium'}
-                typeInput="text"
-                register={register}
-                label="Actividad del objeto contractual"
-                classNameLabel="text-black big bold text-required"
-                direction={EDirection.column}
-                errors={errors}
-                onBlur={(e) => setContractualObjectSt(Object(e).target.value)}
-              />
+              <Controller
+                control={control}
+                name={"contractualObject"}
+                render={({ field }) => (
+                  <InputComponent
+                    id={field.name}
+                    idInput={field.name}
+                    className={'input-basic medium'}
+                    typeInput="text"
+                    register={register}
+                    label="Actividad del objeto contractual"
+                    classNameLabel="text-black big bold text-required"
+                    direction={EDirection.column}
+                    errors={errors}
+                    onBlur={(e) => setContractualObjectSt(Object(e).target.value)}
+                    onChange={(value) => field.onChange(value)}
+                  />
+                )} />
 
               <SelectComponent
                 idInput="componentId"
@@ -206,7 +221,7 @@ function BudgetRecordCrudPage() {
                     type="button"
                     className="button-main medium"
                     action={() => setFindAmountsSt({ sab: consecutiveSapSt, aurora: consecutiveAuroraSt })}
-                    disabled={consecutiveSapSt?.length>0 ? false : true}
+                    disabled={consecutiveSapSt?.length > 0 ? false : true}
                   />
                 </div>
 

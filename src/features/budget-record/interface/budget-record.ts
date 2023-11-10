@@ -37,4 +37,6 @@ export interface IBudgetRecordFilter {
     supplierType?:string;
     contractorDocument?:string;
     supplierName?:string;
+    rpId?:number;
+    reasonCancellation?:string;
 }
