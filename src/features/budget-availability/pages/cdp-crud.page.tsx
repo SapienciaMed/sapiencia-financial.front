@@ -195,6 +195,17 @@ const CdpCrudPage = () => {
     const onCancelNew = () => {
       navigate("./");
     };
+      // Validar campos vacíos
+  const hasEmptyFields = Object.values(objectSendData).some((value) => {
+    // Puedes ajustar esta lógica según tus necesidades específicas
+    return typeof value === "string" && value.trim() === "";
+  });
+
+  if (hasEmptyFields) {
+    // Muestra un mensaje o realiza alguna acción para manejar los campos vacíos
+    console.log("Hay campos vacíos. No se puede continuar.");
+    return;
+  }
     try {
       const icdArrWithBalanceCheck = objectSendData["icdArr"];
 

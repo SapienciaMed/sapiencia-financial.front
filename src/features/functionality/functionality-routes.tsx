@@ -18,6 +18,8 @@ export const FunctionalityRoutes = () => {
     const ProjectsLinkPage = lazy(()  => import("./pages/projects-link.page"));
     const FunctionalAreaCrudPage = lazy(()  => import("./pages/functional-area-crud.page"));
     const FunctionalAreaPage = lazy(() => import ("./pages/functional-area.page"));
+    const BulkLoad = lazy(() => import ("./pages/bulk-load.page"));
+    const GetPaysPage = lazy(() => import("./pages/get-pays.page"));
 
     const PosPreSapienciaForm = lazy(()  => import("./pages/pospre-sapiencia-crud.page"));
     const BudgetsView = lazy(()  => import("./budgetPosition/pages/budgets-view.page"));
@@ -34,6 +36,10 @@ export const FunctionalityRoutes = () => {
         <Route path={"/fondos"} element={<FoundsPage/>} />
         <Route path={"/fondos/create"} element={<FundsCrud action="new"/>} />
         <Route path={"/fondos/edit/:id"} element={<FundsCrud action="edit"/>} />
+
+
+        <Route path={"/pays/carga-masiva"} element={<BulkLoad/>} />
+        <Route path={"/pays"} element={<GetPaysPage/>} />
        
 
         <Route path={"/posicion-presupuestaria/"} element={<BudgetsPage/>} />
