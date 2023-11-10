@@ -2,8 +2,11 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { useBudgetRecordServices } from "./budget-record-services.hook";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { IBudgetRecord, IBudgetRecordFilter } from "../interface/budget-record";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { AppContext } from "../../../common/contexts/app.context";
+import { Checkbox } from "primereact/checkbox";
+import { TextAreaComponent } from "../../../common/components/Form";
+import { EDirection } from "../../../common/constants/input.enum";
 import { useNavigate } from "react-router-dom";
 
 
@@ -15,6 +18,7 @@ export function useBudgeRecordView() {
 
     const [dataFindRpSt, setDataFindRpSt] = useState({})
     const [dataRouteBudgetsSt, setDataRouteBudgetsSt] = useState([])
+    const [isAllowSearchCdp, setIsAllowSearchCdp] = useState(false)
 
     const navigate = useNavigate();
 
@@ -33,11 +37,30 @@ export function useBudgeRecordView() {
             consecutiveRpAurora: null,
             contractorDocument: '',
             supplierType: '',
-            supplierName: ''
+            supplierName: '',
+            rpId:null,
+            reasonCancellation:''
         },
         mode: 'onChange',
         /* resolver, */
     });
+
+    const { consecutivoRpSap, consecutiveRpAurora, supplierType, contractorDocument } = watch()
+
+
+    useEffect(() => {
+        console.log({ consecutivoRpSap })
+        Number(consecutivoRpSap) > 0 || Number(consecutiveRpAurora) > 0
+            ? setIsAllowSearchCdp(true)
+            : setIsAllowSearchCdp(false)
+
+        supplierType.length > 0 && contractorDocument.length > 2
+            ? setIsAllowSearchCdp(true)
+            : Number(consecutivoRpSap) > 0 || Number(consecutiveRpAurora) > 0
+                ? setIsAllowSearchCdp(true)
+                : setIsAllowSearchCdp(false)
+    }, [consecutivoRpSap, consecutiveRpAurora, supplierType, contractorDocument])
+
 
 
     const onSubmitFiltersRp = handleSubmit(async (data: IBudgetRecordFilter) => {
@@ -62,25 +85,30 @@ export function useBudgeRecordView() {
                     }
 
 
-                    const routeBudgets = Object(res).data[0]?.linksRp?.map(link => {
-                        return ({
-                            rpId: link.rpId,
-                            cdpCode: link.amountBudgetAvailability.cdpCode,
-                            cdpPosition: link.amountBudgetAvailability.cdpPosition,
-                            project: "Nombre proyecto",
-                            fundCode: link.amountBudgetAvailability.budgetRoute.fund.number,
-                            pospreCode: link.amountBudgetAvailability.budgetRoute.pospreSapiencia.number,
-                            initialAmount: 2000,
-                        }
-                        )
+                    const routeBudgets = Object(res).data?.map(e=>{
+                        return e.linksRp?.map(link => {
+                            return ({
+                                rpId: link.rpId,
+                                cdpCode: link.amountBudgetAvailability.cdpCode,
+                                cdpPosition: link.amountBudgetAvailability.cdpPosition,
+                                project: link.projectName,
+                                fundCode: link.amountBudgetAvailability.budgetRoute.fund.number,
+                                pospreCode: link.amountBudgetAvailability.budgetRoute.pospreSapiencia.number,
+                                initialAmount: link.initialAmount,
+                                actions:()=>{
+                                    
+                                }
+                            }
+                            )
+                        }) 
                     })
 
                     setDataFindRpSt(data)
-                    setDataRouteBudgetsSt(routeBudgets)
+                    setDataRouteBudgetsSt(routeBudgets.flat())
                 } else {
                     setDataFindRpSt([])
                     setDataRouteBudgetsSt([])
-                    
+
                 }
             } catch (error) {
                 alert(error)
@@ -116,12 +144,11 @@ export function useBudgeRecordView() {
         },
         {
             fieldName: "rpId",
-            header: "Vincular",
+            header: "Anular",
             renderCell: (row) => {
                 return (
                     <div className="flex align-items-center">
-                        {row.rpId}
-                        {/* <Checkbox inputId={row.id} name="row" value={row} onChange={onAmountChange} checked={selectedAmounts?.some((item) => item.id == row.id)} /> */}
+                        <Checkbox onChange={() => showModalCancelAmount(row)}  /* onChange={onAmountChange} */ checked={false} />
                     </div>)
             }
         },
@@ -132,13 +159,78 @@ export function useBudgeRecordView() {
         {
             icon: "Edit",
             onClick: (row) => {
-                {row.rpId}
+                { row.rpId }
                 /* showModalChangeAmount(row.id) */
                 navigate(`./edit/${row.rpId}`); 
             },
         }
     ];
 
+
+    const showModalCancelAmount = (row: object) => {
+        setMessage({
+            title: "Observación anulado",
+            show: true,
+            OkTitle: "Guardar",
+            onOk: () => {
+                const { reasonCancellation, rpId } = watch()
+                setMessage({})
+                setValueRegister('reasonCancellation','')
+                //alert(reasonCancellation)
+                //alert(Object(row).rpId)
+                //amountWatch.amounts[0].reasonCancellation != ""
+                //    ? (cancelAmount({
+                //        id,
+                //        reasonCancellation: amountWatch.amounts[0].reasonCancellation
+                //    }).then(res => {
+                //        getCdpById(cdpId).then(res => {
+                //            setCdpFoundSt(res.data[0])
+                //        })
+                //        setMessage({})
+                //        setValueRegister('amounts.0.reasonCancellation','')
+                //    }))
+                //    : ''
+
+            },
+            onClose() {
+                setMessage({})
+            },
+            description: <div style={{ width: '100%' }}>
+                <label>Digite el motivo de la anulación</label>
+                <div>
+                    <Controller
+                        control={control}
+                        name={'reasonCancellation'}
+                        render={({ field }) => {
+                            return (
+                                <TextAreaComponent
+                                    id={field.name}
+                                    idInput={field.name}
+                                    value={`${field.value}`}
+                                    className="text-area-basic"
+                                    register={register}
+                                    label="Motivo"
+                                    classNameLabel="text-black biggest bold"
+                                    direction={EDirection.column}
+                                    errors={errors}
+                                    onChange={field.onChange}
+                                />
+                            );
+                        }}
+                    />
+
+                </div>
+                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                    <div className="title-button font-big">
+                        Max. 500 caracteres
+                    </div>
+                </div>
+
+            </div>,
+            background: true
+        })
+
+    }
 
 
     return {
@@ -154,7 +246,10 @@ export function useBudgeRecordView() {
         tableComponentRef,
         dataFindRpSt,
         dataRouteBudgetsSt,
-        reset
+        reset,
+        setDataFindRpSt,
+        setDataRouteBudgetsSt,
+        isAllowSearchCdp
     };
 
 
