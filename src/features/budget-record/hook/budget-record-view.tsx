@@ -4,6 +4,7 @@ import { ITableAction, ITableElement } from "../../../common/interfaces/table.in
 import { IBudgetRecord, IBudgetRecordFilter } from "../interface/budget-record";
 import { useForm } from "react-hook-form";
 import { AppContext } from "../../../common/contexts/app.context";
+import { useNavigate } from "react-router-dom";
 
 
 export function useBudgeRecordView() {
@@ -14,6 +15,8 @@ export function useBudgeRecordView() {
 
     const [dataFindRpSt, setDataFindRpSt] = useState({})
     const [dataRouteBudgetsSt, setDataRouteBudgetsSt] = useState([])
+
+    const navigate = useNavigate();
 
     const {
         handleSubmit,
@@ -131,6 +134,7 @@ export function useBudgeRecordView() {
             onClick: (row) => {
                 {row.rpId}
                 /* showModalChangeAmount(row.id) */
+                navigate(`./edit/${row.rpId}`); 
             },
         }
     ];
