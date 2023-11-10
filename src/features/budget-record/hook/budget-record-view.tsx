@@ -88,7 +88,7 @@ export function useBudgeRecordView() {
                                 rpId: link.rpId,
                                 cdpCode: link.amountBudgetAvailability.cdpCode,
                                 cdpPosition: link.amountBudgetAvailability.cdpPosition,
-                                project: "Nombre proyecto",
+                                project: link.projectName,
                                 fundCode: link.amountBudgetAvailability.budgetRoute.fund.number,
                                 pospreCode: link.amountBudgetAvailability.budgetRoute.pospreSapiencia.number,
                                 initialAmount: link.initialAmount,
