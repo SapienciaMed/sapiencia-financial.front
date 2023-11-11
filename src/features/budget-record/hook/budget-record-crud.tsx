@@ -84,15 +84,14 @@ export function useBudgeRecordCrud() {
             supplierId: null,
             supplierName: "",
             contractorDocument: "",
-            documentDate: today,
+            documentDate: new Date(today),
             dateValidity: new Date(lastDayMonth),
             dependencyId: null,
             contractualObject: "",
             componentId: null,
-            userCreate: authorization?.user?.numberDocument,
+            userCreate: authorization?.user?.numberDocument!,
             userModify: "",
             dateModify: "",
-            newAmount: "",
             linksRp: [
                 {
                     id: null,
@@ -118,7 +117,6 @@ export function useBudgeRecordCrud() {
             const dependencies = Object(res).data.data?.map(e => ({ id: e.id, name: e.name, value: e.id }))
             setDependeciesData(dependencies)
         })
-
     }, [])
 
     const showModalChangeAmount = (id: number) => {
@@ -283,6 +281,23 @@ export function useBudgeRecordCrud() {
 
     const { supplierType, componentId, dependencyId, linksRp, dateValidity, documentDate } = watch()
 
+
+    const messageValidateSupplier = (type: string) => {
+        setMessage({
+            title: `${type} no existe`,
+            show: true,
+            OkTitle: "Aceptar",
+            onOk: () => {
+                setMessage({})
+            },
+            onClose() {
+                setMessage({})
+            }
+        }
+        )
+    }
+
+
     useEffect(() => {
         if (!supplierType) return;
         if (contractorDocumentSt.length > 0) {
@@ -292,7 +307,7 @@ export function useBudgeRecordCrud() {
                         documentList: [contractorDocumentSt]
                     }).then(res => {
                         if (Object(res).data.data.length == 0) {
-                            alert("Contratista no existe")
+                            messageValidateSupplier('Contratista')
                             setValueRegister('supplierName', '')
                             setValueRegister('supplierId', null)
                             return;
@@ -316,7 +331,7 @@ export function useBudgeRecordCrud() {
                         perPage: 1000
                     }).then(res => {
                         if (Object(res).data.array.length == 0) {
-                            alert("Acreededor no existe")
+                            messageValidateSupplier('Acreedor')
                             setValueRegister('supplierName', '')
                             setValueRegister('supplierId', null)
                             return;
@@ -378,13 +393,13 @@ export function useBudgeRecordCrud() {
                 })
         })
     }
-    
+
     const showAuroraCodeConfirmSave = (data: any) => {
         CreateBudgetRecord(data).then(res => {
             Object(res).operation.code == 'OK'
                 ? showModal({
                     title: "Consecutivo RP Aurora",
-                    description: `Al RP se le asignó el consucutivo ${ Object(res).data.id }`,
+                    description: `Al RP se le asignó el consucutivo ${Object(res).data.id}`,
                     onOk: (() => {
                         setMessage({})
                         navigate('../')
@@ -439,7 +454,7 @@ export function useBudgeRecordCrud() {
         documentDate
     ])
 
-    
+
     return {
         control,
         errors,

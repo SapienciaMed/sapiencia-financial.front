@@ -4,22 +4,32 @@ export interface IBudgetRecord {
     id?: number;
     supplierType: string;
     supplierId: number;
+    
     supplierName?:string;
+    
     contractorDocument: string;
     documentDate: any;
     dateValidity: any;
     dependencyId: number;
     contractualObject: string;
     componentId: number;
-    userCreate?: string;
-    userModify?: string;
-    dateCreate?: Date;
-    dateModify?: string;
+    
     consecutiveCdpSap?:number;
     consecutiveCdpAurora?:number;
-    newAmount?:any;
+    consecutiveSap?:number;
+    //newAmount?:any;
+    contractNumber?:string;
+    responsibleDocument?:string;
+    supervisorDocument?:string;
+    userCreate?:string;
+    userModify?:string;
+    dateCreate?:string;
+    dateModify?:string;
+    
     linksRp?: ILinkRPCDP[];
 }
+
+
 
 
 export interface ILinkRPCDP {
@@ -37,6 +47,20 @@ export interface IBudgetRecordFilter {
     supplierType?:string;
     contractorDocument?:string;
     supplierName?:string;
+    supplierId?:number;
     rpId?:number;
     reasonCancellation?:string;
 }
+
+/* export interface IBudgetRecordEditBasic {
+    id:number;
+    dependencyId?:number;
+    contractualObject?:string;
+    componentId?:number;
+    consecutiveRpSap?:number;
+    documentDate?:any;
+    dateValidity?:any;
+    contractNumber?:string;
+    responsibleDocument?:string;
+    supervisorDocument?:string;
+} */

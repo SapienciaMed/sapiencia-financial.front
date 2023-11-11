@@ -17,15 +17,27 @@ export const useBudgetRecordServices = () => {
         return get(`${roleUrl}${endpoint}`);
     }
     
-    async function GetRpByFilters(data: Object): Promise<ApiResponse<{id:number, name:string}[]>> {
+    async function GetRpByFilters(data: Object): Promise<ApiResponse<IBudgetRecord[]>> {
         const endpoint: string = `/get-rp-by-filters`;
+        return post(`${roleUrl}${endpoint}`, data);
+    }
+    
+    async function CancelLinkCdp(id:string,data: Object): Promise<ApiResponse<any>> {
+        const endpoint: string = `/update-data/${id}`;
+        return post(`${roleUrl}${endpoint}`, data);
+    }
+    
+    async function UpdateDataBasicRp(data: Object): Promise<ApiResponse<any>> {
+        const endpoint: string = `/update-data-basic-rp`;
         return post(`${roleUrl}${endpoint}`, data);
     }
 
     return{
         CreateBudgetRecord,
         GetAllComponents,
-        GetRpByFilters
+        GetRpByFilters,
+        CancelLinkCdp,
+        UpdateDataBasicRp
     }
 
 }
