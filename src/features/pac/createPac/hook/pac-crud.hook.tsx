@@ -120,7 +120,11 @@ export function usePacCrud() {
 
   });
   const onSubmitPagPays = handleSubmit(async (data: IHeadPac) => {
+  
+    console.log("hola mundo");
+    
 
+    return;
     let formData = new FormData()
     console.log(data);
     
