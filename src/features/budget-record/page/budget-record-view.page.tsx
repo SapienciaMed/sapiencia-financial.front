@@ -34,7 +34,9 @@ function BudgetRecordViewPage() {
         reset,
         setDataFindRpSt,
         setDataRouteBudgetsSt,
-        isAllowSearchCdp
+        isAllowSearchCdp,
+        isConfirmCancel,
+        actionTemplate
     } = useBudgeRecordView();
 
     return (
@@ -47,7 +49,7 @@ function BudgetRecordViewPage() {
                 >
                     <section className="title-area">
                         <div className="text-black weight-500 extra-large">Consultar RP</div>
-
+                        <>{isConfirmCancel}</>
                         <div className={`${width < 800 ? 'display-justify-space-between-pac' : 'display-align-flex-end'} gap-0 gap-05`}>
                             <div
                                 className="title-button font-big"
@@ -134,17 +136,23 @@ function BudgetRecordViewPage() {
                                         onChange={(value) => field.onChange(value)}
                                     />
                                 )} />
-                            <InputComponent
-                                idInput="supplierName"
-                                className="input-basic medium"
-                                typeInput="text"
-                                register={register}
-                                label="Nombre"
-                                classNameLabel="text-black big bold text-required"
-                                direction={EDirection.column}
-                                disabled={true}
-                                errors={errors}
-                            />
+                            <Controller
+                                control={control}
+                                name={"supplierName"}
+                                render={({ field }) => (
+                                    <InputComponent
+                                        id={field.name}
+                                        idInput={field.name}
+                                        className="input-basic medium"
+                                        typeInput="text"
+                                        register={register}
+                                        label="Nombre"
+                                        classNameLabel="text-black big bold text-required"
+                                        direction={EDirection.column}
+                                        disabled={true}
+                                        errors={errors}
+                                    />
+                                )} />
                         </section>
                         <div className="funcionality-buttons-container">
                             <span className="bold text-center button" onClick={() => {
@@ -169,6 +177,12 @@ function BudgetRecordViewPage() {
                     </div>
                 </FormComponent>
                 <br />
+                {/* {
+                    Object.entries(dataFindRpSt)?.length > 0 && (
+                        <DataTableRp data={[dataFindRpSt]} />
+
+                    )
+                } */}
                 {
                     Object.entries(dataFindRpSt)?.length > 0 && (
                         <div className="card-user">
@@ -180,8 +194,7 @@ function BudgetRecordViewPage() {
                                 <Column field="identification" header="Identificación"></Column>
                                 <Column field="contractName" header="Contratista"></Column>
                                 <Column field="dependencieName" header="Dependencia"></Column>
-                                <Column rowEditor field="" header="Acciones" headerStyle={{ width: '10%', minWidth: '8rem' }}>
-                                    {/* <i className="pi pi-check"></i> */}
+                                <Column body={actionTemplate}  rowEditor field="" header="Acciones" headerStyle={{ width: '10%', minWidth: '8rem' }}>
                                 </Column>
                             </DataTable>
                         </div>
