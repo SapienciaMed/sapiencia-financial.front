@@ -64,7 +64,7 @@ export function useBudgeRecordView() {
             ? setIsAllowSearchCdp(true)
             : setIsAllowSearchCdp(false)
 
-        supplierType.length > 0 && contractorDocument.length > 2
+        supplierType?.length > 0 && contractorDocument?.length > 2
             ? setIsAllowSearchCdp(true)
             : Number(consecutivoRpSap) > 0 || Number(consecutiveRpAurora) > 0
                 ? setIsAllowSearchCdp(true)
@@ -267,13 +267,14 @@ export function useBudgeRecordView() {
                     GetContractorsByDocuments({
                         documentList: [contractorDocument]
                     }).then(res => {
-                        if (Object(res).data.data.length == 0) {
+                        if (Object(res).data.data?.length == 0) {
                             messageValidateSupplier('Contratista')
                             setValueRegister('supplierName', '')
                             setValueRegister('supplierId', null)
                             return;
                         }
-                        const contractorName = Object(res).data.data[0]?.firstName + " " +
+                        console.log({res})
+                        const contractorName = Object(res).data?.data[0]?.firstName + " " +
                             Object(res).data.data[0]?.secondName + " " +
                             Object(res).data.data[0]?.surname + " " +
                             Object(res).data.data[0]?.secondSurname;

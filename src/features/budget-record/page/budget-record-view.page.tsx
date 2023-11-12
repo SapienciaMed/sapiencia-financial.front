@@ -76,7 +76,7 @@ function BudgetRecordViewPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Consecutivo RP SAP"
-                                        classNameLabel="text-black big bold text-required"
+                                        classNameLabel="text-black big bold"
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
@@ -93,7 +93,7 @@ function BudgetRecordViewPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Consecutivo RP Aurora"
-                                        classNameLabel="text-black big bold text-required"
+                                        classNameLabel="text-black big bold"
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
@@ -108,7 +108,7 @@ function BudgetRecordViewPage() {
                                 control={control}
                                 label="Tipo"
                                 className="select-basic medium"
-                                classNameLabel="text-black big bold text-required"
+                                classNameLabel="text-black big bold"
                                 placeholder={"Seleccionar"}
                                 data={[
                                     { id: 1, name: "Contratista", value: "Contratista" },
@@ -130,7 +130,7 @@ function BudgetRecordViewPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Numero de documento"
-                                        classNameLabel="text-black big bold text-required"
+                                        classNameLabel="text-black big bold"
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
@@ -147,7 +147,7 @@ function BudgetRecordViewPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Nombre"
-                                        classNameLabel="text-black big bold text-required"
+                                        classNameLabel="text-black big bold"
                                         direction={EDirection.column}
                                         disabled={true}
                                         errors={errors}
