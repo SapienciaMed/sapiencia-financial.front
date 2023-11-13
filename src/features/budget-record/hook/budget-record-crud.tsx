@@ -105,7 +105,7 @@ export function useBudgeRecordCrud() {
             ]
         },
         mode: 'onChange',
-        /* resolver, */
+        resolver,
     });
 
     useEffect(() => {
