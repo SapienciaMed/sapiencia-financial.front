@@ -1,20 +1,18 @@
 import { useForm } from "react-hook-form";
-//import { IBudgetRecordEditBasic } from "../interface/budget-record";
-import { useContext, useEffect, useState } from "react";
-import { useBudgetRecordServices } from "./budget-record-services.hook";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AppContext } from "../../../common/contexts/app.context";
-import { IBudgetRecord } from "../interface/budget-record";
-import { usePayrollExternalServices } from "./payroll-external-services.hook";
 import { IDropdownProps } from "../../../common/interfaces/select.interface";
 import { IMessage } from "../../../common/interfaces/global.interface";
 import { useNavigate } from "react-router-dom";
+import { useCreditorsServices } from "./creditors-service.hook";
+import { ICreditor } from "../interface/creditor";
+import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 
 
-export function useBudgeRecordEdit(id) {
+export function useCreditorCrud(id) {
 
     const navigate = useNavigate();
-    const { GetRpByFilters, GetAllComponents, UpdateDataBasicRp } = useBudgetRecordServices();
-    const { GetAllDependencies, GetContractorsByDocuments } = usePayrollExternalServices()
+    const { GetCreditorsByFilters, CreateCreditor, UpdateCreditor } = useCreditorsServices();
     const { setMessage, authorization } = useContext(AppContext);
 
     const [componentsData, setComponentsData] = useState<IDropdownProps[]>([]);
@@ -24,16 +22,26 @@ export function useBudgeRecordEdit(id) {
     const [isUploadData, setIsUploadData] = useState(false)
 
     useEffect(() => {
-        GetAllComponents().then(res => {
-            const componentes = res.data?.map(e => ({ id: e.id, name: e.name, value: e.id }))
-            setComponentsData(componentes)
+        if(!id) return;
+        setValueRegister('id', Number(id))
+        
+        GetCreditorsByFilters({
+            id,
+            page:1,
+            perPage:1
+        }).then(res=>{
+            setValueRegister('typeDocument',Object(res).data?.array[0].typeDocument);
+            setValueRegister('document',Object(res).data?.array[0].document);
+            setValueRegister('taxIdentification',Object(res).data?.array[0].taxIdentification);
+            setValueRegister('name',Object(res).data?.array[0].name);
+            setValueRegister('city',Object(res).data?.array[0].city);
+            setValueRegister('address',Object(res).data?.array[0].address);
+            setValueRegister('phone',Object(res).data?.array[0].phone);
+            setValueRegister('email',Object(res).data?.array[0].email);   
         })
 
-        GetAllDependencies().then(res => {
-            const dependencies = Object(res).data.data?.map(e => ({ id: e.id, name: e.name, value: e.id }))
-            setDependeciesData(dependencies)
-        })
-    }, [])
+    }, [id])
+
 
 
     const {
@@ -45,21 +53,21 @@ export function useBudgeRecordEdit(id) {
         watch,
         getValues,
         reset
-    } = useForm<IBudgetRecord>({
+    } = useForm<ICreditor>({
         defaultValues: {
-            id: id,
-            supplierName: '',
-            contractorDocument: '',
-            documentDate: '',
-            dateValidity: '',
-            dependencyId: null,
-            contractualObject: '',
-            componentId: null,
-            consecutiveSap: null,
-            consecutiveCdpAurora: null,
-            contractNumber: '',
-            responsibleDocument: '',
-            supervisorDocument: '',
+            'id': null,
+            'typeDocument': '',
+            'document': '',
+            'taxIdentification': '',
+            'name': '',
+            'city': '',
+            'address': '',
+            'phone': null,
+            'email': '',
+            'userModify': '',
+            'userCreate': '',
+            'dateCreate': '',
+            'dateModify': '',
         },
         mode: 'onChange',
         /* resolver, */
@@ -69,11 +77,12 @@ export function useBudgeRecordEdit(id) {
 
     useEffect(() => {
         if (!isUploadData) return;
+        console.log("Actualizando")
         setIsAllowSave(true)
     }, [formData])
 
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (id != "") {
             GetRpByFilters({
                 consecutiveRpAurora: Number(id)
@@ -97,10 +106,10 @@ export function useBudgeRecordEdit(id) {
                 }
             })
         }
-    }, [id])
+    }, [id]) */
 
-    const onSubmitEditRp = handleSubmit(async (data: IBudgetRecord) => {
-        
+    const onSubmitCreditor = handleSubmit(async (data: ICreditor) => {
+        console.log({ data })
         showModal({
             title: "Guardar",
             description: "¿Está segur@ de guardar la información?",
@@ -123,24 +132,46 @@ export function useBudgeRecordEdit(id) {
     })
 
     const messageConfirmSave = (data: any) => {
-        UpdateDataBasicRp(data).then(res => {
-            Object(res).operation.code == 'OK'
-                ? showModal({
-                    title: "Guardado",
-                    description: "¡Guardado exitosamente!",
-                    onOk: (() => {
-                        setMessage({})
-                        navigate('../')
-                    }),
-                    OkTitle: "Aceptar",
-                })
-                : showModal({
-                    title: "Falla en almacenamiento",
-                    description: "Falla en creación",
-                    onOk: (() => setMessage({})),
-                    OkTitle: "Aceptar",
-                })
-        })
+        if (data.id) {
+            UpdateCreditor(data).then(res => {
+                Object(res).operation.code == 'OK'
+                    ? showModal({
+                        title: "Guardado",
+                        description: "¡Guardado exitosamente!",
+                        onOk: (() => {
+                            setMessage({})
+                            navigate('../')
+                        }),
+                        OkTitle: "Aceptar",
+                    })
+                    : showModal({
+                        title: "Falla en actualización",
+                        description: "Falla en creación",
+                        onOk: (() => setMessage({})),
+                        OkTitle: "Aceptar",
+                    })
+            })
+        } else {
+            CreateCreditor(data).then(res => {
+                Object(res).operation.code == 'OK'
+                    ? showModal({
+                        title: "Guardado",
+                        description: "¡Guardado exitosamente!",
+                        onOk: (() => {
+                            setMessage({})
+                            navigate('../')
+                        }),
+                        OkTitle: "Aceptar",
+                    })
+                    : showModal({
+                        title: "Falla en almacenamiento",
+                        description: "Falla en creación",
+                        onOk: (() => setMessage({})),
+                        OkTitle: "Aceptar",
+                    })
+            })
+
+        }
     }
 
 
@@ -164,7 +195,7 @@ export function useBudgeRecordEdit(id) {
         setMessage,
         getValues,
         reset,
-        onSubmitEditRp,
+        onSubmitCreditor,
         componentsData,
         dependeciesData,
         isAllowSave

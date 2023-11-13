@@ -11,14 +11,20 @@ export const useCreditorsServices = () => {
         const endpoint: string = "/get-creditors-by-filters"; 
         return post(`${roleUrl}${endpoint}`, data);
     }
+    async function CreateCreditor(data: ICreditor): Promise<ApiResponse<ICreditor>> {
+        const endpoint: string = "/create-creditor"; 
+        return post(`${roleUrl}${endpoint}`, data);
+    }
+    async function UpdateCreditor(data: ICreditor): Promise<ApiResponse<ICreditor>> {
+        const endpoint: string = "/update-creditor"; 
+        return post(`${roleUrl}${endpoint}`, data);
+    }
 
-    /* async function GetCreditorsByFilters(): Promise<ApiResponse<any>> {
-        const endpoint: string = `/get-creditors-by-filters`;
-        return get(`${roleUrl}${endpoint}`);
-    } */
-
+    
     return{
-        GetCreditorsByFilters
+        GetCreditorsByFilters,
+        CreateCreditor,
+        UpdateCreditor
     }
 
 }
