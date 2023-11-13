@@ -1,14 +1,14 @@
 
 export interface ICreditor {
-    id: number | null;
-    typeDocument: string;
-    document: string;
-    taxIdentification: string;
-    name: string;
-    city: string;
-    address: string;
-    phone: number | null;
-    email: string;
+    id?: number;
+    typeDocument?: string;
+    document?: string;
+    taxIdentification?: string;
+    name?: string;
+    city?: string;
+    address?: string;
+    phone?: number;
+    email?: string;
     userModify?: string;
     userCreate?: string;
     dateCreate?: string;
@@ -18,8 +18,11 @@ export interface ICreditor {
 
 
 export interface ICreditorsFilter {
-    id: number | null;
-    document?: string;
+    id?: number;
+    typeDocument?:string;
+    document?:string;
+    taxIdentification?:string;
+    name?:string;
     page: number;
     perPage: number;
 }

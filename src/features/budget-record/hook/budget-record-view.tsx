@@ -30,7 +30,7 @@ export function useBudgeRecordView() {
     const [isConfirmCancel, setIsConfirmCancel] = useState(false)
 
     const [componentsData, setComponentsData] = useState<IDropdownProps[]>([]);
-
+    const [contractorDocumentSt, setContractorDocumentSt] = useState('')
 
     const {
         handleSubmit,
@@ -56,7 +56,7 @@ export function useBudgeRecordView() {
         /* resolver, */
     });
 
-    const { consecutivoRpSap, consecutiveRpAurora, supplierType, contractorDocument, reasonCancellation } = watch()
+    const { consecutivoRpSap, consecutiveRpAurora, supplierType, reasonCancellation } = watch()
     
     useEffect(() => {
         console.log({ consecutivoRpSap })
@@ -64,12 +64,12 @@ export function useBudgeRecordView() {
             ? setIsAllowSearchCdp(true)
             : setIsAllowSearchCdp(false)
 
-        supplierType?.length > 0 && contractorDocument?.length > 2
+        supplierType?.length > 0 && contractorDocumentSt?.length > 2
             ? setIsAllowSearchCdp(true)
             : Number(consecutivoRpSap) > 0 || Number(consecutiveRpAurora) > 0
                 ? setIsAllowSearchCdp(true)
                 : setIsAllowSearchCdp(false)
-    }, [consecutivoRpSap, consecutiveRpAurora, supplierType, contractorDocument])
+    }, [consecutivoRpSap, consecutiveRpAurora, supplierType, contractorDocumentSt])
 
     
     useEffect(() => {
@@ -82,6 +82,8 @@ export function useBudgeRecordView() {
 
 
     const onSubmitFiltersRp = handleSubmit(async (data: IBudgetRecordFilter) => {
+
+        data.contractorDocument = contractorDocumentSt
 
         GetRpByFilters({
             consecutiveRpSap: data.consecutivoRpSap,
@@ -130,7 +132,19 @@ export function useBudgeRecordView() {
 
                 }
             } catch (error) {
-                alert(error)
+                setMessage({
+                    title: `Sin coincidencia`,
+                    description:'No existen resultados de búsqueda',
+                    show: true,
+                    OkTitle: "Aceptar",
+                    onOk: () => {
+                        setMessage({})
+                    },
+                    onClose() {
+                        setMessage({})
+                    }
+                }
+                )
             }
         })
 
@@ -139,7 +153,7 @@ export function useBudgeRecordView() {
     const tableColumns: ITableElement<any>[] = [
         {
             fieldName: "cdpCode",
-            header: "Consecutivo CDP SAP"
+            header: "Consecutivo RP SAP"
         },
         {
             fieldName: "cdpPosition",
@@ -261,11 +275,11 @@ export function useBudgeRecordView() {
 
     useEffect(() => {
         if (!supplierType) return;
-        if (contractorDocument.length > 0) {
+        if (contractorDocumentSt.length > 0) {
             supplierType == 'Contratista'
                 ? (
                     GetContractorsByDocuments({
-                        documentList: [contractorDocument]
+                        documentList: [contractorDocumentSt]
                     }).then(res => {
                         if (Object(res).data.data?.length == 0) {
                             messageValidateSupplier('Contratista')
@@ -288,7 +302,7 @@ export function useBudgeRecordView() {
                 (
                     GetCreditorsByFilters({
                         id: null,
-                        document: contractorDocument,
+                        document: contractorDocumentSt,
                         page: 1,
                         perPage: 1000
                     }).then(res => {
@@ -304,13 +318,14 @@ export function useBudgeRecordView() {
                     })
                 )
         }
-    }, [supplierType, contractorDocument])
+    }, [supplierType, contractorDocumentSt])
 
     
     const actionTemplate = (rowData) => {
         return (
             <Icons.FaPencilAlt 
-            className="button grid-button button-edit" 
+            className="button grid-button button-edit"
+            style={{color:'#4caf50', fontSize:'1.5em'}} 
             onClick={() => navigate(`editar-rp/${JSON.stringify(rowData.consecutiveRpAurora)}`)}
             />
             
@@ -336,7 +351,8 @@ export function useBudgeRecordView() {
         setDataRouteBudgetsSt,
         isAllowSearchCdp,
         isConfirmCancel,
-        actionTemplate
+        actionTemplate,
+        setContractorDocumentSt
     };
 
 

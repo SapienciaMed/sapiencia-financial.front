@@ -67,7 +67,7 @@ export function useBudgeRecordCrud() {
     const year = today.getFullYear();
     const month = today.getMonth() + 1;
     const formattedMonth = month < 10 ? `0${month}` : month;
-    const lastDayMonth = `${year}-${formattedMonth}-${lastDayPerMont[formattedMonth]}`
+    const lastDateMonth = `${year}-${formattedMonth}-${lastDayPerMont[formattedMonth]}`
 
     const {
         handleSubmit,
@@ -84,14 +84,15 @@ export function useBudgeRecordCrud() {
             supplierId: null,
             supplierName: "",
             contractorDocument: "",
-            documentDate: new Date(today),
-            dateValidity: new Date(lastDayMonth),
+            documentDate: new Date(today).toISOString(),
+            dateValidity: new Date(lastDateMonth).toISOString(),
             dependencyId: null,
             contractualObject: "",
             componentId: null,
             userCreate: authorization?.user?.numberDocument!,
             userModify: "",
             dateModify: "",
+            newAmount:null,
             linksRp: [
                 {
                     id: null,
@@ -104,7 +105,7 @@ export function useBudgeRecordCrud() {
             ]
         },
         mode: 'onChange',
-        resolver,
+        /* resolver, */
     });
 
     useEffect(() => {
@@ -119,33 +120,59 @@ export function useBudgeRecordCrud() {
         })
     }, [])
 
-    const showModalChangeAmount = (id: number) => {
+    const showModalChangeAmount = (row: any) => {
         setMessage({
             title: "Editar valor inicial",
             show: true,
             OkTitle: "Guardar",
             onOk: () => {
                 setMessage({})
-                setConfirmChangeAmountSt({ id: mountEditSt.id, amount: mountEditSt.amount })
-                //setMountEditSt({id:null,amount:null})
+                const { newAmount } = watch()
+                const linksCdp = getValues('linksRp')
+                const initialAmount = (linksCdp.find((el:any)=>el.key==row.id)).initialAmount
+                if(newAmount > 0 && Number(newAmount).toFixed(2)<=Number(initialAmount).toFixed(2)){
+                    setConfirmChangeAmountSt({ id: row.id, amount: Number(newAmount).toFixed(2) })
+                }else{
+                    setConfirmChangeAmountSt({ id: row.id, amount: null })
+                    setMessage({
+                        title: `Valor no valido`,
+                        description:'El monto modificado debe ser mayor que cero y menor o igual que el monto inicial',
+                        show: true,
+                        OkTitle: "Aceptar",
+                        onOk: () => {
+                            setMessage({})
+                        },
+                        onClose() {
+                            setMessage({})
+                        }
+                    }
+                    )
+                }
             },
             onClose() {
                 setMessage({})
             },
             description: <div style={{ width: '100%' }}>
-                <label>Digite el valor inicial</label>
+                <label>Digite el valor inicial {row.amount}</label>
                 <div>
-                    <InputComponent
-                        idInput="newAmount"
-                        className="input-basic medium"
-                        typeInput="number"
-                        register={register}
-                        label="Valor"
-                        classNameLabel="text-black big bold text-required"
-                        direction={EDirection.column}
-                        errors={errors}
-                        onBlur={(e) => setMountEditSt({ id, amount: Object(e).target.value })}
-                    />
+                    <Controller
+                        control={control}
+                        name={"newAmount"}
+                        render={({ field }) => (
+                            <InputComponent
+                                id={field.name}
+                                idInput={field.name}
+                                className="input-basic medium"
+                                typeInput="number"
+                                register={register}
+                                label="Valor"
+                                classNameLabel="text-black big bold text-required"
+                                direction={EDirection.column}
+                                errors={errors}
+                                onChange={(value) => field.onChange(value)}
+                                //onBlur={(e) => setMountEditSt({ id: row.id, amount: Object(e).target.value })}
+                            />
+                        )} />
                 </div>
             </div>,
             background: true
@@ -194,7 +221,7 @@ export function useBudgeRecordCrud() {
         {
             icon: "Edit",
             onClick: (row) => {
-                showModalChangeAmount(row.id)
+                showModalChangeAmount(row)
             },
         }
     ];
@@ -218,17 +245,20 @@ export function useBudgeRecordCrud() {
     const [isChangeAmount, setIsChangeAmount] = useState(false)
     const [newDataAmountSt, setDataNewAmountSt] = useState([])
     useEffect(() => {
-        let amountRoute = dataAmounts?.map(e => {
+        let amountRoute = dataAmounts?.map((e: any, index: number) => {
             if (confirmChangeAmountSt?.amount) {
                 setIsChangeAmount(!isChangeAmount)
             }
+            setValueRegister('newAmount',null)
             return ({
                 id: e.id,
+                key:e.id,
                 amountCdpId: e.cdpCode,
                 initialAmount: confirmChangeAmountSt?.amount && confirmChangeAmountSt.id == e.id ? confirmChangeAmountSt.amount : e.amount,
                 isActive: e.isActive,
                 reasonCancellation: "",
-                rpId: null
+                rpId: null,
+                position: index + 1
             })
         })
         if (confirmChangeAmountSt?.amount) {
@@ -381,7 +411,7 @@ export function useBudgeRecordCrud() {
                     description: "¡Guardado exitosamente!",
                     onOk: (() => {
                         setMessage({})
-                        showAuroraCodeConfirmSave(data)
+                        showAuroraCodeConfirmSave(res.data)
                     }),
                     OkTitle: "Aceptar",
                 })
@@ -395,23 +425,14 @@ export function useBudgeRecordCrud() {
     }
 
     const showAuroraCodeConfirmSave = (data: any) => {
-        CreateBudgetRecord(data).then(res => {
-            Object(res).operation.code == 'OK'
-                ? showModal({
-                    title: "Consecutivo RP Aurora",
-                    description: `Al RP se le asignó el consucutivo ${Object(res).data.id}`,
-                    onOk: (() => {
-                        setMessage({})
-                        navigate('../')
-                    }),
-                    OkTitle: "Aceptar",
-                })
-                : showModal({
-                    title: "Falla en almacenamiento",
-                    description: "Falla en creación",
-                    onOk: (() => setMessage({})),
-                    OkTitle: "Aceptar",
-                })
+        showModal({
+            title: "Consecutivo RP Aurora",
+            description: `Al RP se le asignó el consucutivo ${data.id}`,
+            onOk: (() => {
+                setMessage({})
+                navigate('../')
+            }),
+            OkTitle: "Aceptar",
         })
     }
 

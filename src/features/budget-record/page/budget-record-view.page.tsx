@@ -36,7 +36,8 @@ function BudgetRecordViewPage() {
         setDataRouteBudgetsSt,
         isAllowSearchCdp,
         isConfirmCancel,
-        actionTemplate
+        actionTemplate,
+        setContractorDocumentSt,
     } = useBudgeRecordView();
 
     return (
@@ -133,7 +134,8 @@ function BudgetRecordViewPage() {
                                         classNameLabel="text-black big bold"
                                         direction={EDirection.column}
                                         errors={errors}
-                                        onChange={(value) => field.onChange(value)}
+                                        //onChange={(value) => field.onChange(value)}
+                                        onBlur={(e) => setContractorDocumentSt(Object(e).target.value)}
                                     />
                                 )} />
                             <Controller
@@ -177,23 +179,18 @@ function BudgetRecordViewPage() {
                     </div>
                 </FormComponent>
                 <br />
-                {/* {
-                    Object.entries(dataFindRpSt)?.length > 0 && (
-                        <DataTableRp data={[dataFindRpSt]} />
-
-                    )
-                } */}
+                
                 {
                     Object.entries(dataFindRpSt)?.length > 0 && (
                         <div className="card-user">
                             <div className="text-black weight-500 extra-large">Datos basicos</div>
                             <DataTable value={[dataFindRpSt]} tableStyle={{ minWidth: '50rem' }}>
-                                <Column field="consecutiveRpSap" header="No. RP SAP"></Column>
-                                <Column field="consecutiveRpAurora" header="No. RP Aurora"></Column>
-                                <Column field="taxIdentificationId" header="ID Fiscal"></Column>
-                                <Column field="identification" header="Identificación"></Column>
-                                <Column field="contractName" header="Contratista"></Column>
-                                <Column field="dependencieName" header="Dependencia"></Column>
+                                <Column  bodyStyle={{textAlign: 'center'}} field="consecutiveRpSap" header="No. RP SAP"></Column>
+                                <Column  bodyStyle={{textAlign: 'center'}} field="consecutiveRpAurora" header="No. RP Aurora"></Column>
+                                <Column  bodyStyle={{textAlign: 'center'}} field="taxIdentificationId" header="ID Fiscal"></Column>
+                                <Column  bodyStyle={{textAlign: 'center'}} field="identification" header="Identificación"></Column>
+                                <Column  bodyStyle={{textAlign: 'center'}} field="contractName" header="Contratista"></Column>
+                                <Column  bodyStyle={{textAlign: 'center'}} field="dependencieName" header="Dependencia"></Column>
                                 <Column body={actionTemplate}  rowEditor field="" header="Acciones" headerStyle={{ width: '10%', minWidth: '8rem' }}>
                                 </Column>
                             </DataTable>
