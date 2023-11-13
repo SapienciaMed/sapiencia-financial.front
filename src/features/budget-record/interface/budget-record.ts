@@ -25,7 +25,7 @@ export interface IBudgetRecord {
     userModify?:string;
     dateCreate?:string;
     dateModify?:string;
-    
+    newAmount?:number;
     linksRp?: ILinkRPCDP[];
 }
 

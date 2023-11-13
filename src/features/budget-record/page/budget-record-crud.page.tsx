@@ -232,7 +232,7 @@ function BudgetRecordCrudPage() {
           {
             dataAmounts?.length > 0 && (
               <div className="card-user">
-                <section className="grid-form-3-container-area mt-5px">
+                {/* <section className="grid-form-3-container-area mt-5px"> */}
                   <TableDataPropComponent
                     ref={tableComponentRef}
                     dataTable={dataAmounts}
@@ -243,7 +243,7 @@ function BudgetRecordCrudPage() {
                     secondaryTitle="CDP"
                   />
 
-                </section>
+                {/* </section> */}
               </div>
             )
           }

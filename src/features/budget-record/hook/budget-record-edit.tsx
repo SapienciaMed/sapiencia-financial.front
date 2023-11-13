@@ -69,7 +69,6 @@ export function useBudgeRecordEdit(id) {
 
     useEffect(() => {
         if (!isUploadData) return;
-        console.log("Actualizando")
         setIsAllowSave(true)
     }, [formData])
 
@@ -101,8 +100,7 @@ export function useBudgeRecordEdit(id) {
     }, [id])
 
     const onSubmitEditRp = handleSubmit(async (data: IBudgetRecord) => {
-        console.log({ data })
-
+        
         showModal({
             title: "Guardar",
             description: "¿Está segur@ de guardar la información?",
