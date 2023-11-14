@@ -26,6 +26,8 @@ export interface IBudgetRecord {
     dateCreate?:string;
     dateModify?:string;
     newAmount?:number;
+    maxAMount?:number;
+    mountSelected?:number;
     linksRp?: ILinkRPCDP[];
 }
 

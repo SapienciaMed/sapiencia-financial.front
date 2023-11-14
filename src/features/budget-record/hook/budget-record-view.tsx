@@ -106,16 +106,16 @@ export function useBudgeRecordView() {
 
 
                     const routeBudgets = Object(res).data?.map(e => {
+                        console.log({e})
                         return e.linksRp?.map(link => {
                             return ({
                                 id: link.id,
-                                rpId: link.rpId,
-                                cdpCode: link.amountBudgetAvailability.cdpCode,
+                                rpId: link.rpId, // rp Aurora
+                                rpSap: e.consecutiveSap,//link.amountBudgetAvailability.cdpCode,
                                 cdpPosition: link.amountBudgetAvailability.cdpPosition,
-                                project: link.projectName,
-                                fundCode: link.amountBudgetAvailability.budgetRoute.fund.number,
-                                pospreCode: link.amountBudgetAvailability.budgetRoute.pospreSapiencia.number,
+                                budgetRouteCode: link.amountBudgetAvailability.budgetRoute.budget.number,
                                 initialAmount: link.initialAmount,
+                                finalAmount: link.finalAmount,
                                 actions: () => {
 
                                 }
@@ -152,32 +152,32 @@ export function useBudgeRecordView() {
 
     const tableColumns: ITableElement<any>[] = [
         {
-            fieldName: "cdpCode",
-            header: "Consecutivo RP SAP"
-        },
-        {
-            fieldName: "cdpPosition",
-            header: "Posicion CDP",
-        },
-        {
-            fieldName: "project",
-            header: "Proyecto",
-        },
-        {
-            fieldName: "fundCode",
-            header: "Fondo",
-        },
-        {
-            fieldName: "pospreCode",
-            header: "Pospre",
-        },
-        {
-            fieldName: "initialAmount",
-            header: "Valor inicial RP",
+            fieldName: "rpSap",
+            header: "No RP SAP"
         },
         {
             fieldName: "rpId",
-            header: "Anular",
+            header: "No RP Aurora",
+        },
+        {
+            fieldName: "cdpPosition",
+            header: "Posicion",
+        },
+        {
+            fieldName: "budgetRouteCode",
+            header: "Ruta presupuestal",
+        },
+        {
+            fieldName: "initialAmount",
+            header: "Valor inicial",
+        },
+        {
+            fieldName: "finalAmount",
+            header: "Valor final",
+        },
+        {
+            fieldName: "rpId",
+            header: "Anular posición",
             renderCell: (row) => {
                 return (
                     <div className="flex align-items-center">
