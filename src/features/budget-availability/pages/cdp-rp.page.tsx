@@ -48,7 +48,7 @@ const CdpRp = () => {
                             typeInput="text"
                             register={register}
                             label="Consecutivo CDP Aurora"
-                            classNameLabel="text-black biggest text-required"
+                            classNameLabel="text-black biggest"
                             disabled
                         />
                     </section>
