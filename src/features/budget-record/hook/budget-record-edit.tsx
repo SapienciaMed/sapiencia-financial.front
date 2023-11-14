@@ -8,10 +8,13 @@ import { usePayrollExternalServices } from "./payroll-external-services.hook";
 import { IDropdownProps } from "../../../common/interfaces/select.interface";
 import { IMessage } from "../../../common/interfaces/global.interface";
 import { useNavigate } from "react-router-dom";
+import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
+import { budgetRecordEditCrudValidator } from "../../../common/schemas/budget-record-edit-validator";
 
 
 export function useBudgeRecordEdit(id) {
 
+    const resolver = useYupValidationResolver(budgetRecordEditCrudValidator);
     const navigate = useNavigate();
     const { GetRpByFilters, GetAllComponents, UpdateDataBasicRp } = useBudgetRecordServices();
     const { GetAllDependencies, GetContractorsByDocuments } = usePayrollExternalServices()
@@ -62,7 +65,7 @@ export function useBudgeRecordEdit(id) {
             supervisorDocument: '',
         },
         mode: 'onChange',
-        /* resolver, */
+        resolver,
     });
 
     const formData = watch()
@@ -73,6 +76,19 @@ export function useBudgeRecordEdit(id) {
     }, [formData])
 
 
+    function pad(num) {
+        return num < 10 ? '0' + num : num;
+    }
+
+
+    const formatDate = (dateUTC:Date)=>{
+        let year = dateUTC.getUTCFullYear();
+        let month = dateUTC.getUTCMonth() + 1; // Los meses en JavaScript van de 0 a 11
+        let day = dateUTC.getUTCDate()+1;
+        let fechaFormateada = year + '-' + pad(month) + '-' + pad(day)
+        return fechaFormateada
+    }
+
     useEffect(() => {
         if (id != "") {
             GetRpByFilters({
@@ -82,8 +98,8 @@ export function useBudgeRecordEdit(id) {
                     setValueRegister('id', res.data[0].id)
                     setValueRegister('supplierName', res.data[0].supplierType == 'Acreedor' ? Object(res).data[0].creditor.name : '')
                     setValueRegister('contractorDocument', res.data[0].contractorDocument)
-                    setValueRegister('documentDate', res.data[0].documentDate)
-                    setValueRegister('dateValidity', res.data[0].dateValidity)
+                    setValueRegister('documentDate', formatDate(new Date(res.data[0].documentDate)))
+                    setValueRegister('dateValidity', formatDate(new Date(res.data[0].dateValidity)))
                     setValueRegister('dependencyId', res.data[0].dependencyId)
                     setValueRegister('contractualObject', res.data[0].contractualObject)
                     setValueRegister('componentId', res.data[0].componentId)
