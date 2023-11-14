@@ -23,7 +23,8 @@ function BudgetRecordEditRpPage() {
         onSubmitEditRp,
         componentsData,
         dependeciesData,
-        isAllowSave
+        isAllowSave,
+        contractorListSt
     } = useBudgeRecordEdit(id);
 
     return (
@@ -172,10 +173,7 @@ function BudgetRecordEditRpPage() {
                                 className="select-basic medium"
                                 classNameLabel="text-black big bold text-required"
                                 placeholder={"Seleccionar"}
-                                data={[
-                                    { id: 1, name: "Lider1", value: "Lider1" },
-                                    { id: 2, name: "Lider2", value: "Lider2" }
-                                ]}
+                                data={contractorListSt}
                                 filter={true}
                                 errors={errors}
                                 direction={EDirection.column}
@@ -207,10 +205,7 @@ function BudgetRecordEditRpPage() {
                                 className="select-basic medium"
                                 classNameLabel="text-black big bold text-required"
                                 placeholder={"Seleccionar"}
-                                data={[
-                                    { id: 1, name: "Lider1", value: "Lider1" },
-                                    { id: 2, name: "Lider2", value: "Lider2" }
-                                ]}
+                                data={contractorListSt}
                                 filter={true}
                                 errors={errors}
                                 direction={EDirection.column}
