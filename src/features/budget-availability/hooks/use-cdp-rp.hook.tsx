@@ -97,8 +97,8 @@ export const useCdpRp = () => {
       header: "Pospre",
     },
     {
-      fieldName: "amount",
-      header: "Valor",
+      fieldName: "idcFinalValue",
+      header: "Valor final",
     },
   ]
 
