@@ -2,9 +2,12 @@ import React from "react";
 import { ButtonComponent, FormComponent, InputComponent } from "../../../common/components/Form";
 import { TextAreaCountComponent } from "../../../common/components/Form/input-text-area-count.component";
 import { Controller } from 'react-hook-form';
+import { useBudgeRecordEdit } from "../hook/budget-record-edit.hook";
 
 
 function BudgetRecordEditPage() {
+
+    const { control, register } = useBudgeRecordEdit();
 
     return (
         <div className="crud-page">
@@ -20,28 +23,28 @@ function BudgetRecordEditPage() {
                         <section className="grid-form-3-container-area mt-5px"><h3>Tercero</h3></section>
                         <section className="grid-form-3-container-area mt-5px">
                             <InputComponent
-                                idInput="numberProject"
+                                idInput="taxIdentification"
                                 className="input-basic "
                                 typeInput="text"
-                                //register={register}
+                                register={register}
                                 label="Acreedor e ID fiscal"
                                 classNameLabel="text-black biggest text-required"
                                 disabled
                             />
                             <InputComponent
-                                idInput="numberProject"
+                                idInput="document"
                                 className="input-basic "
                                 typeInput="text"
-                                //register={register}
+                                register={register}
                                 label="Identificación"
                                 classNameLabel="text-black biggest text-required"
                                 disabled
                             />
                             <InputComponent
-                                idInput="numberProject"
+                                idInput="name"
                                 className="input-basic "
                                 typeInput="text"
-                                //register={register}
+                                register={register}
                                 label="Contratista"
                                 classNameLabel="text-black biggest text-required"
                                 disabled
@@ -91,16 +94,16 @@ function BudgetRecordEditPage() {
                                 idInput="numberProject"
                                 className="input-basic "
                                 typeInput="text"
-                                //register={register}
+                                register={register}
                                 label="Proyecto"
                                 classNameLabel="text-black biggest text-required"
                                 disabled
                             />
                             <InputComponent
-                                idInput="nameProject"
+                                idInput="projectName"
                                 className="input-basic"
                                 typeInput="text"
-                                //register={register}
+                                register={register}
                                 label="Nombre proyecto"
                                 classNameLabel="text-black biggest text-required"
                                 disabled
@@ -108,19 +111,19 @@ function BudgetRecordEditPage() {
                         </div>
                         <section className='grid-form-3-container-area mt-5px'>
                             <InputComponent
-                                idInput="numberFound"
+                                idInput="fund"
                                 className="input-basic"
                                 typeInput="text"
-                                //register={register}
+                                register={register}
                                 label="Fondo"
                                 classNameLabel="text-black biggest text-required"
                                 disabled
                             />
                             <InputComponent
-                                idInput="numberPospre"
+                                idInput="pospreSapiencia"
                                 className="input-basic"
                                 typeInput="text"
-                                //  register={register}
+                                register={register}
                                 label="Pospre"
                                 classNameLabel="text-black biggest text-required"
                                 disabled
@@ -129,7 +132,7 @@ function BudgetRecordEditPage() {
                                 idInput="areaNumber"
                                 className="input-basic"
                                 typeInput="text"
-                                //register={register}
+                                register={register}
                                 label="Área funcional"
                                 classNameLabel="text-black biggest text-required"
                                 disabled
@@ -141,7 +144,7 @@ function BudgetRecordEditPage() {
                                 idInput="managementCenter"
                                 className="input-basic"
                                 typeInput="text"
-                                //register={register}
+                                register={register}
                                 label="Centro gestor"
                                 classNameLabel="text-black biggest text-required"
                                 disabled
@@ -150,7 +153,7 @@ function BudgetRecordEditPage() {
                                 idInput="div"
                                 className="input-basic"
                                 typeInput="text"
-                                //register={register}
+                                register={register}
                                 label="DIV"
                                 classNameLabel="text-black biggest text-required"
                                 disabled
@@ -159,7 +162,7 @@ function BudgetRecordEditPage() {
                                 idInput="cdpPosition"
                                 className="input-basic"
                                 typeInput="text"
-                                //register={register}
+                                register={register}
                                 label="Posición"
                                 classNameLabel="text-black biggest text-required"
                                 disabled
