@@ -18,7 +18,7 @@ export function useBudgeRecordView() {
 
     const navigate = useNavigate()
     const { GetRpByFilters, CancelLinkCdp, GetAllComponents } = useBudgetRecordServices();
-    const { GetContractorsByDocuments } = usePayrollExternalServices()
+    const { GetContractorsByDocuments, GetAllDependencies } = usePayrollExternalServices()
     const { GetCreditorsByFilters } = useCreditorsServices()
 
     const { setMessage, authorization } = useContext(AppContext);
@@ -29,7 +29,7 @@ export function useBudgeRecordView() {
     const [isAllowSearchCdp, setIsAllowSearchCdp] = useState(false)
     const [isConfirmCancel, setIsConfirmCancel] = useState(false)
 
-    const [componentsData, setComponentsData] = useState<IDropdownProps[]>([]);
+    const [dependenciesData, setDependenciesData] = useState<IDropdownProps[]>([]);
     const [contractorDocumentSt, setContractorDocumentSt] = useState('')
 
     const {
@@ -59,7 +59,6 @@ export function useBudgeRecordView() {
     const { consecutivoRpSap, consecutiveRpAurora, supplierType, reasonCancellation } = watch()
     
     useEffect(() => {
-        console.log({ consecutivoRpSap })
         Number(consecutivoRpSap) > 0 || Number(consecutiveRpAurora) > 0
             ? setIsAllowSearchCdp(true)
             : setIsAllowSearchCdp(false)
@@ -73,9 +72,10 @@ export function useBudgeRecordView() {
 
     
     useEffect(() => {
-        GetAllComponents().then(res => {
-            const componentes = res.data?.map(e => ({ id: e.id, name: e.name, value: e.id }))
-            setComponentsData(componentes)
+        GetAllDependencies().then(res => {
+            console.log({res})
+            const componentes = Object(res).data.data?.map(e => ({ id: e.id, name: e.name, value: e.id }))
+            setDependenciesData(componentes)
         })
 
     }, [])
@@ -101,7 +101,7 @@ export function useBudgeRecordView() {
                         taxIdentificationId: Object(res)?.data[0]?.creditor.taxIdentification,
                         identification: Object(res)?.data[0]?.contractorDocument,
                         contractName: Object(res)?.data[0]?.creditor.name,
-                        dependencieName: componentsData.find(e=>e.id==Object(res)?.data[0]?.dependencyId).name
+                        dependencieName: dependenciesData.find(e=>e.id==Object(res)?.data[0]?.dependencyId).name
                     }
 
 
