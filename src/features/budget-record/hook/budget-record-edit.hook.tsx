@@ -183,6 +183,7 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCr
             // Si todos los inputs están vacíos o son 0, usa el valor de finalAmount
             if (inputIdcModifiedCredit <= 0 && inputModifiedIdcCountercredit <= 0 && inputIdcFixedCompleted <= 0) {
                 setValue("idcFinalValue", dataRp.linksRp[0].finalAmount);
+
             } else {
                 // Realiza el cálculo con los valores actuales, independientemente de si están completos o no
                 const initialAmount = dataRp.linksRp[0].initialAmount || 0;
@@ -228,11 +229,11 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCr
         setValue("creditAmount", dataRp.linksRp[0].creditAmount);
         setValue("fixedCompleted", dataRp.linksRp[0].fixedCompleted);
 
-        setValue("idcFinalValue", dataRp.linksRp[0].finalAmount);
+        setValue("finalAmount", dataRp.linksRp[0].finalAmount);
     }, [dataRp, areaNumber, projectNumber]);
 
-    const onSubmiteditRp = handleSubmit(async (data: any) => {        
-        console.log(data)
+    const onSubmiteditRp = handleSubmit(async (data: IUpdateRP) => {        
+        console.log('llego',data)
         setMessage({
             show: true,
             title: "Guardar",
@@ -247,19 +248,19 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCr
     });
 
 
-   const confirmEdit = async (data: any) => {
+   const confirmEdit = async (data: IUpdateRP) => {
 
-        const datos: any = {
-            againtsAmount:data.againtsAmount,
-            finalAmount: calculatedValue,
-           // fixedCompleted: data.idcFixedCompleted,
-            //creditAmount: data.idcModifiedCredit,
+        const datos = {
+            againtsAmount:modifiedIdcCountercredit,
+            creditAmount: idcModifiedCredit,
+            finalAmount: data.finalAmount,
+            fixedCompleted: idcFixedCompleted,
             observation: data.observation
         }   
         
         console.log(datos)
 
-       const res = await editRp(dataRp.linksRp[0].id, datos);
+    const res = await editRp(dataRp.linksRp[0].id, datos);
 
         if (res && res?.operation?.code === EResponseCodes.OK) {
             setMessage({
@@ -290,7 +291,7 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCr
                 background: true,
             });
         }  
-    } 
+    }  
 
 
 

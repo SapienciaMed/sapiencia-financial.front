@@ -41,7 +41,7 @@ function BudgetRecordEditPage() {
                                 typeInput="text"
                                 register={register}
                                 label="Identificación"
-                                classNameLabel="text-black biggest text-required"
+                                classNameLabel="text-black biggest"
                                 disabled
                             />
                             <InputComponent
@@ -50,7 +50,7 @@ function BudgetRecordEditPage() {
                                 typeInput="text"
                                 register={register}
                                 label="Contratista"
-                                classNameLabel="text-black biggest text-required"
+                                classNameLabel="text-black biggest"
                                 disabled
                             />
                         </section>
@@ -62,7 +62,7 @@ function BudgetRecordEditPage() {
                                 control={control}
                                 label="Dependencia"
                                 className="select-basic"
-                                classNameLabel="text-black biggest text-required"
+                                classNameLabel="text-black biggest"
                                 placeholder={"Seleccionar"}
                                 data={dependeciesData}
                                 filter={true}
@@ -74,7 +74,7 @@ function BudgetRecordEditPage() {
                                 typeInput="text"
                                 register={register}
                                 label="Actividad del objeto contractual"
-                                classNameLabel="text-black biggest text-required"
+                                classNameLabel="text-black biggest"
                                 disabled
                             />
                             <SelectComponent
@@ -82,7 +82,7 @@ function BudgetRecordEditPage() {
                                 control={control}
                                 label="Componente"
                                 className="select-basic"
-                                classNameLabel="text-black biggest text-required"
+                                classNameLabel="text-black biggest"
                                 placeholder={"Seleccionar"}
                                 data={componentsData}
                                 filter={true}
@@ -105,7 +105,7 @@ function BudgetRecordEditPage() {
                                 typeInput="text"
                                 register={register}
                                 label="Proyecto"
-                                classNameLabel="text-black biggest text-required"
+                                classNameLabel="text-black biggest "
                                 disabled
                             />
                             <InputComponent
@@ -114,7 +114,7 @@ function BudgetRecordEditPage() {
                                 typeInput="text"
                                 register={register}
                                 label="Nombre proyecto"
-                                classNameLabel="text-black biggest text-required"
+                                classNameLabel="text-black biggest "
                                 disabled
                             />
                         </div>
@@ -125,7 +125,7 @@ function BudgetRecordEditPage() {
                                 typeInput="text"
                                 register={register}
                                 label="Fondo"
-                                classNameLabel="text-black biggest text-required"
+                                classNameLabel="text-black biggest "
                                 disabled
                             />
                             <InputComponent
@@ -134,7 +134,7 @@ function BudgetRecordEditPage() {
                                 typeInput="text"
                                 register={register}
                                 label="Pospre"
-                                classNameLabel="text-black biggest text-required"
+                                classNameLabel="text-black biggest "
                                 disabled
                             />
                             <InputComponent
@@ -143,7 +143,7 @@ function BudgetRecordEditPage() {
                                 typeInput="text"
                                 register={register}
                                 label="Área funcional"
-                                classNameLabel="text-black biggest text-required"
+                                classNameLabel="text-black biggest "
                                 disabled
                             />
                         </section>
@@ -155,7 +155,7 @@ function BudgetRecordEditPage() {
                                 typeInput="text"
                                 register={register}
                                 label="Centro gestor"
-                                classNameLabel="text-black biggest text-required"
+                                classNameLabel="text-black biggest "
                                 disabled
                             />
                             <InputComponent
@@ -164,7 +164,7 @@ function BudgetRecordEditPage() {
                                 typeInput="text"
                                 register={register}
                                 label="DIV"
-                                classNameLabel="text-black biggest text-required"
+                                classNameLabel="text-black biggest "
                                 disabled
                             />
                             <InputComponent
@@ -173,7 +173,7 @@ function BudgetRecordEditPage() {
                                 typeInput="text"
                                 register={register}
                                 label="Posición"
-                                classNameLabel="text-black biggest text-required"
+                                classNameLabel="text-black biggest "
                                 disabled
                             />
                         </section>
@@ -186,7 +186,7 @@ function BudgetRecordEditPage() {
                                 typeInput="text"
                                 register={register}
                                 label="Valor inicial"
-                                classNameLabel="text-black biggest text-required"
+                                classNameLabel="text-black biggest "
                                 disabled
                             />
                             <InputComponent
@@ -199,7 +199,7 @@ function BudgetRecordEditPage() {
                                 onChange={(e) => setModifiedIdcCountercredit(Number(e.target.value))}
                                 
                                 />
-                                
+
                             <InputComponent
                                 idInput="creditAmount"
                                 className="input-basic"
@@ -228,7 +228,7 @@ function BudgetRecordEditPage() {
                                 typeInput="text"
                                 register={register}
                                 label="Valor final"
-                                classNameLabel="text-black biggest text-required"
+                                classNameLabel="text-black biggest "
                                 disabled
                                 //value={String(idcFinalValue)}
                             />
