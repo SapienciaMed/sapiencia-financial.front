@@ -328,6 +328,7 @@ export function usePacEdit() {
                 OkTitle: "Cerrar",
                 onOk: () => {
                     setMessage({});
+                    navigate(-1)
                 },
                 onClose() {
                     setMessage({});
@@ -341,9 +342,13 @@ export function usePacEdit() {
                 description: "El valor del presupuesto es menor al valor recaudado",
                 show: true,
                 OkTitle: "Cerrar",
-                cancelTitle: "Cancelar",
                 onOk: () => {
                     setMessage({});
+                    navigate(-1)
+                },
+                onClose() {
+                    setMessage({});
+                    navigate(-1)
                 },
                 background: true
             });
