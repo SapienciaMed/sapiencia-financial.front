@@ -166,12 +166,16 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCr
         }    
      
         if (!shouldDisableButton && totalCautation !== undefined && RP !== undefined) {
-            shouldDisableButton = totalCautation >= RP;
+            shouldDisableButton = totalCautation > RP;
         }    
+        
+       /*  if (totalCautation !== undefined && idcFixedCompleted !== undefined) {
+            shouldDisableButton = idcFixedCompleted > totalCautation;
+        }    */
         
         setDisabledButton(shouldDisableButton);
     
-    }, [totalCautation, RP, modifiedIdcCountercredit, idcModifiedCredit]);
+    }, [totalCautation, RP, modifiedIdcCountercredit, idcModifiedCredit,idcFixedCompleted]);
     
     //total
     useEffect(() => {
@@ -233,7 +237,7 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCr
     }, [dataRp, areaNumber, projectNumber]);
 
     const onSubmiteditRp = handleSubmit(async (data: IUpdateRP) => {        
-        console.log('llego',data)
+        //console.log('llego',data)
         setMessage({
             show: true,
             title: "Guardar",
@@ -293,6 +297,21 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCr
         }  
     }  
 
+    const CancelFunction = () => {
+        setMessage({
+            show: true,
+            title: "Cancelar",
+            description: "¿Estas segur@ de cancelar?",
+            cancelTitle: "Cancelar",
+            OkTitle: "Aceptar",
+            onOk() {
+                navigate("/gestion-financiera/rp");
+                setMessage((prev) => ({ ...prev, show: false }));
+            },
+            background: true,
+        });
+    };
+
 
 
     return {
@@ -301,7 +320,10 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCr
         dependeciesData,
         componentsData,
         disabledButton,
-        onSubmiteditRp
+        onSubmiteditRp,
+        CancelFunction,
+        totalCautation,
+        RP
 
     };
 }

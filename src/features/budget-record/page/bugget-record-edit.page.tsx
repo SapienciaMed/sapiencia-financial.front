@@ -11,7 +11,7 @@ function BudgetRecordEditPage() {
     const [idcModifiedCredit, setIdcModifiedCredit] = useState(0)
     const [idcFixedCompleted, setIdcFixedCompleted] = useState(0)
 
-    const { control, register, dependeciesData,componentsData,disabledButton,onSubmiteditRp } = useBudgeRecordEdit(modifiedIdcCountercredit,idcModifiedCredit,idcFixedCompleted);
+    const { control, register, dependeciesData,componentsData,disabledButton,onSubmiteditRp,CancelFunction, totalCautation, RP } = useBudgeRecordEdit(modifiedIdcCountercredit,idcModifiedCredit,idcFixedCompleted);
 
     return (
         <div className="crud-page">
@@ -258,6 +258,15 @@ function BudgetRecordEditPage() {
                                     );
                                 }}
                             />
+                                <label>RP: {RP}</label>
+                                <br />
+                                <label>Causación: {totalCautation}</label>
+                                <br />
+                                <br />
+
+                                <label>Modificado contracrédito no puede ser mayor a la Causación</label><br />
+                                <label>Modificado crédito no puede ser mayor al RP</label><br />
+                                <label>El total causacion debe ser menor al RP</label><br />
                         </div> 
                     </section>
 
@@ -271,7 +280,7 @@ function BudgetRecordEditPage() {
                                     value="Cancelar"
                                     type="button"
                                     className="button-clean-fields bold"
-                                //action={() => CancelFunction()}
+                                    action={() => CancelFunction()}
                                 />
                                 <ButtonComponent
                                     form="editRp"
@@ -285,7 +294,6 @@ function BudgetRecordEditPage() {
                             </>
                         </div>
                     </section>
-
                 </FormComponent>
             </div>
         </div>
