@@ -14,12 +14,15 @@ import { IFunctionalArea } from "../../functionality/interfaces/Functional-Area"
 import { AppContext } from "../../../common/contexts/app.context";
 
 
-export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCredit: number, idcFixedCompleted: number) {
+export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCredit: any, idcFixedCompleted: number) {
 
     //params url
     const navigate = useNavigate();
-    const { id: idRoute } = useParams();
+    const { id, idRoute } = useParams();
     const { setMessage } = useContext(AppContext);
+
+    /* console.log('id', id);
+    console.log('idRoute', idRoute); */
 
     //services
     const { getRouteCDPId, getOneRpp, updateRouteCdp, getTotalValuesImport } = useCdpService()
@@ -111,9 +114,9 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
 
     useEffect(() => {
         const amount = dataRoutesCDP?.amount ?? 0;
-        const idcModifiedCreditNumber = idcModifiedCredit ?? 0;
-        const modifiedIdcCountercreditNumber = modifiedIdcCountercredit ?? 0;
-        const idcFixedCompletedNumber = idcFixedCompleted ?? 0;
+        const idcModifiedCreditNumber = idcModifiedCredit ;
+        const modifiedIdcCountercreditNumber = modifiedIdcCountercredit ;
+        const idcFixedCompletedNumber = idcFixedCompleted ;
 
         const resultFinal = Math.max(0, (Number(amount) + idcModifiedCreditNumber) - modifiedIdcCountercreditNumber - idcFixedCompletedNumber);
         setIdcFinalValue(resultFinal);
@@ -125,6 +128,10 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
     }, [dataRoutesCDP, idcModifiedCredit, modifiedIdcCountercredit, idcFixedCompleted]);
 
     //validar por valores
+
+
+
+    
     const fetchBalance = async () => {
 
         if (dataRoutesCDP) {
@@ -150,6 +157,9 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
             }
         }
     };
+
+   /*  console.log('balance',totalRp)
+    console.log('totales',totalFinalICD) */
    
     const [debouncedIdcModifiedCredit, setDebouncedIdcModifiedCredit] = useState(idcModifiedCredit);
     const [debouncedIdcModifiedCounterCredit, setDebouncedIdcModifiedCounterCredit] = useState(modifiedIdcCountercredit);
@@ -173,10 +183,12 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
         const isCondition2 = Number(debouncedIdcModifiedCounterCredit) > Number(totalRp);
         const isCondition3 = Number(debouncedIdcFixedCompleted) > Number(totalRp);
 
-        if (isCondition1 || isCondition2 || isCondition3) {
+        if (isCondition1  || isCondition2  || isCondition3 ) {
+           // console.log('es menor')
             setDisable(true);
         } else {
             setDisable(false);
+            //console.log('es mayor')
         }
 
     }, [totalRp, totalFinalICD, debouncedIdcModifiedCredit, debouncedIdcModifiedCounterCredit, debouncedIdcFixedCompleted]);
@@ -211,9 +223,17 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
         setValue("div", dataRoutesCDP.budgetRoute.div);
         setValue("amount", Number(dataRoutesCDP.amount));
 
-        setValue("modifiedIdcCountercredit", Number(dataRoutesCDP.modifiedIdcCountercredit));
-        setValue("idcModifiedCredit", Number(dataRoutesCDP.idcModifiedCredit));
-        setValue("idcFixedCompleted", Number(dataRoutesCDP.idcFixedCompleted));
+        const modifiedCreditValue = dataRoutesCDP.idcModifiedCredit;
+        const modifiedIdcCountercreditValue = dataRoutesCDP.modifiedIdcCountercredit;
+        const idcFixedCompletedValue = dataRoutesCDP.idcFixedCompleted;
+
+       // setValue("modifiedIdcCountercredit", Number(dataRoutesCDP.modifiedIdcCountercredit));
+
+        setValue("modifiedIdcCountercredit", modifiedIdcCountercreditValue ? Number(modifiedIdcCountercreditValue) : '');
+        setValue("idcModifiedCredit", modifiedCreditValue ? Number(modifiedCreditValue) : '');
+        setValue("idcFixedCompleted", idcFixedCompletedValue ? Number(idcFixedCompletedValue) : '');
+
+       // setValue("idcFixedCompleted", Number(dataRoutesCDP.idcFixedCompleted));
         setValue("idcFinalValue", Number(dataRoutesCDP.idcFinalValue));
 
 
@@ -301,7 +321,10 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
         onSubmiteditRouteCDP,
         idcFinalValue,
         disable,
-        CancelFunction
+        CancelFunction,
+
+        totalRp,
+        totalFinalICD
     };
 
 }

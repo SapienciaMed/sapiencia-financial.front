@@ -13,12 +13,15 @@ import { PacRoutes } from "./features/pac/pac-routes";
 import { EditCdp, HomeCdp,RpCdp } from "./features/budget-availability/pages";
 import Reports from "./features/reports/pages";
 import { BudgetRecordRoutes } from "./features/budget-record/budget-record-routes";
+import CreditorViewPage from "./features/creditors/pages/creditor-view.page";
+import { CreditorRoutes } from "./features/creditors/creditor-routes";
 
 const Home = lazy(() => import("./features/home/pages/home.page"));
 const BudgetRoutes = lazy(()  => import("./features/budget-routes/pages/budget-routes.page"));
 const BudgetRoutesCrudPage = lazy(()  => import("./features/budget-routes/pages/budget-routes-crud.page"));
 const BudgetAvailabilityRoutes = lazy(()  => import("./features/budget-availability/budget-availability-routes"));
 const PaysRoutes = lazy(() => import("./features/pays/pays-routes"));
+//const CreditorRoutes = lazy(()  => import("./features/creditors/creditor-routes"));
 
 function App() {
   const { publish } = useAppCominicator();
@@ -55,6 +58,8 @@ function App() {
               <Route path={"/gestion-financiera/cdp/edit/:id"} element={EditCdp} />
               <Route path={"/gestion-financiera/reportes"} element={<Reports/>}/>
               <Route path={"/gestion-financiera/cdp/rp/:id"} element={RpCdp} />
+              
+              <Route path={"/gestion-financiera/acreedor/*"} element={<CreditorRoutes/>} />
             </Routes>
           </Suspense>
         </Router>

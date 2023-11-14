@@ -1,12 +1,14 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useBudgeRecordCrud } from "../hook/budget-record-crud";
 import { ButtonComponent, ButtonLoadingComponent, DatePickerComponent, FormComponent, InputComponent, SelectComponent } from "../../../common/components/Form";
 import { EDirection } from "../../../common/constants/input.enum";
 import TableDataPropComponent from "../../../common/components/tableDataProp.component";
 import { Controller } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 function BudgetRecordCrudPage() {
   const {
+    watch,
     errors,
     onSubmitRP,
     register,
@@ -19,16 +21,28 @@ function BudgetRecordCrudPage() {
     tableActions,
     componentsData,
     dependeciesData,
+    activityObjectContractData,
     setContractorDocumentSt,
     setContractualObjectSt,
     setFindAmountsSt,
-    isAllowSave
+    isAllowSave,
+    setMessage
   } = useBudgeRecordCrud();
+
+  const navigate = useNavigate();
 
   const btnUploadFileRef = useRef(null);
 
   const [consecutiveSapSt, setConsecutiveSapSt] = useState(null)
   const [consecutiveAuroraSt, setConsecutiveAuroraSt] = useState(null)
+  const [isSeachAmountActive, setIsSeachAmountActive] = useState(false)
+
+const { consecutiveCdpSap } = watch()
+
+  useEffect(() => {
+    setConsecutiveSapSt(consecutiveCdpSap)
+  }, [consecutiveCdpSap])
+  
 
   return (
     <div className="crud-page">
@@ -74,19 +88,27 @@ function BudgetRecordCrudPage() {
                     direction={EDirection.column}
                     errors={errors}
                     onBlur={(e) => setContractorDocumentSt(Object(e).target.value)}
+                    onChange={(value) => field.onChange(value)}
                   />
                 )} />
-              <InputComponent
-                idInput="supplierName"
-                className="input-basic medium"
-                typeInput="text"
-                register={register}
-                label="Nombre"
-                classNameLabel="text-black big bold text-required"
-                direction={EDirection.column}
-                disabled={true}
-                errors={errors}
-              />
+              <Controller
+                control={control}
+                name={"supplierName"}
+                render={({ field }) => (
+                  <InputComponent
+                    id={field.name}
+                    idInput={field.name}
+                    className="input-basic medium"
+                    typeInput="text"
+                    register={register}
+                    label="Nombre"
+                    classNameLabel="text-black big bold text-required"
+                    direction={EDirection.column}
+                    disabled={true}
+                    errors={errors}
+                    onChange={(value) => field.onChange(value)}
+                  />
+                )} />
             </section>
 
             <section className="grid-form-3-container-area mt-5px">
@@ -105,7 +127,7 @@ function BudgetRecordCrudPage() {
                 control={control}
                 label={"Fecha vencimiento"}
                 errors={errors}
-                classNameLabel="text-black biggest bold text-required"
+                classNameLabel="text-black biggest bold"
                 className="dataPicker-basic medium"
                 placeholder="DD/MM/YYYY"
                 dateFormat="dd/mm/yy"
@@ -126,17 +148,36 @@ function BudgetRecordCrudPage() {
                 errors={errors}
                 direction={EDirection.column}
               />
-              <InputComponent
+              <SelectComponent
                 idInput="contractualObject"
-                className={'input-basic medium'}
-                typeInput="text"
-                register={register}
+                control={control}
                 label="Actividad del objeto contractual"
+                className="select-basic medium"
                 classNameLabel="text-black big bold text-required"
-                direction={EDirection.column}
+                placeholder={"Seleccionar"}
+                data={activityObjectContractData}
+                filter={true}
                 errors={errors}
-                onBlur={(e) => setContractualObjectSt(Object(e).target.value)}
+                direction={EDirection.column}
               />
+              {/* <Controller
+                control={control}
+                name={"contractualObject"}
+                render={({ field }) => (
+                  <InputComponent
+                    id={field.name}
+                    idInput={field.name}
+                    className={'input-basic medium'}
+                    typeInput="text"
+                    register={register}
+                    label="Actividad del objeto contractual"
+                    classNameLabel="text-black big bold text-required"
+                    direction={EDirection.column}
+                    errors={errors}
+                    onBlur={(e) => setContractualObjectSt(Object(e).target.value)}
+                    onChange={(value) => field.onChange(value)}
+                  />
+                )} /> */}
 
               <SelectComponent
                 idInput="componentId"
@@ -170,7 +211,7 @@ function BudgetRecordCrudPage() {
                     label="Consecutivo CDP SAP"
                     classNameLabel="text-black big bold text-required"
                     direction={EDirection.column}
-                    onChange={(e) => setConsecutiveSapSt(e.target.value)}
+                    onChange={(value) => {field.onChange(value);setConsecutiveSapSt(value.target.value)}}
                     errors={errors}
                   />
                 )} />
@@ -186,20 +227,22 @@ function BudgetRecordCrudPage() {
                     typeInput="number"
                     register={register}
                     label="Consecutivo CDP Aurora"
-                    classNameLabel="text-black big bold text-required"
+                    classNameLabel="text-black big bold"
                     direction={EDirection.column}
                     errors={errors}
-                    onChange={(e) => setConsecutiveAuroraSt(e.target.value)}
+                    onChange={(value) => {field.onChange(value);setConsecutiveAuroraSt(value.target.value)}}
                   />
                 )} />
               <div>
 
                 <div style={{ marginTop: '15px', display: 'flex', justifyContent: 'flex-end' }}>
+
                   <ButtonComponent
                     value="Buscar"
                     type="button"
                     className="button-main medium"
                     action={() => setFindAmountsSt({ sab: consecutiveSapSt, aurora: consecutiveAuroraSt })}
+                    disabled={consecutiveCdpSap > 0 ? false : true}
                   />
                 </div>
 
@@ -210,7 +253,7 @@ function BudgetRecordCrudPage() {
           {
             dataAmounts?.length > 0 && (
               <div className="card-user">
-                <section className="grid-form-3-container-area mt-5px">
+                {/* <section className="grid-form-3-container-area mt-5px"> */}
                   <TableDataPropComponent
                     ref={tableComponentRef}
                     dataTable={dataAmounts}
@@ -221,7 +264,7 @@ function BudgetRecordCrudPage() {
                     secondaryTitle="CDP"
                   />
 
-                </section>
+                {/* </section> */}
               </div>
             )
           }
@@ -237,6 +280,34 @@ function BudgetRecordCrudPage() {
       </div>
 
       <div className="container-button-bot">
+        <ButtonComponent
+          form="useQueryForm"
+          value="Cancelar"
+          type="button"
+          className="button-clean-fields bold"
+          action={() => {
+            setMessage({
+              title: "Cancelar",
+              show: true,
+              cancelTitle: "Cancelar",
+              OkTitle: "Aceptar",
+              description: (
+                <div style={{ width: "100%" }}>
+                  <label>¿Estas segur@ de cancelar?</label>
+                </div>
+              ),
+              background: true,
+              onOk: () => {
+                navigate("/gestion-financiera/rp");
+                setMessage({});
+              },
+              onCancel: () => {
+                setMessage({});
+              },
+            });
+          }}
+        />
+
         <div className="buttons-bot">
           <ButtonLoadingComponent
             className="button-main huge hover-three"

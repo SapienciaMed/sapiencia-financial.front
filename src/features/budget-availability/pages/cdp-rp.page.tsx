@@ -7,11 +7,12 @@ import { Controller } from 'react-hook-form';
 import { TextAreaCountComponent } from "../../../common/components/Form/input-text-area-count.component";
 import { useCdpRp } from "../hooks/use-cdp-rp.hook";
 import TableComponent from "../../../common/components/table.component";
+import TableDataPropComponent from "../../../common/components/tableDataProp.component";
 
 const CdpRp = () => {
     const { width } = useWidth();
 
-    const {control, register,tableActionsCdp,tableColumnsCdp,tableComponentRef} = useCdpRp();
+    const { control, register, /* tableActions ,*/ tableColumns, tableComponentRef, showTable,dataRoutesCDP} = useCdpRp();
 
     return (
         <div className="main-page">
@@ -21,31 +22,31 @@ const CdpRp = () => {
                 </section>
                 <section className="card-user">
                     <section className='grid-form-3-container-area mt-5px'>
-                    <DatePickerComponent
-                                idInput="date"
-                                control={control}
-                                label={"Fecha documento"}
-                                // errors={errors}
-                                classNameLabel="text-black biggest text-required"
-                                className="dataPicker-basic"
-                                placeholder="DD/MM/YYYY"
-                                dateFormat="dd/mm/yy"
-                                disabled
-                            />
+                        <DatePickerComponent
+                            idInput="date"
+                            control={control}
+                            label={"Fecha documento"}
+                            // errors={errors}
+                            classNameLabel="text-black biggest text-required"
+                            className="dataPicker-basic"
+                            placeholder="DD/MM/YYYY"
+                            dateFormat="dd/mm/yy"
+                            disabled
+                        />
                         <InputComponent
-                            idInput="numberPospre"
+                            idInput="sapConsecutive"
                             className="input-basic"
                             typeInput="text"
-                            //register={register}
+                            register={register}
                             label="Consecutivo CDP SAP"
                             classNameLabel="text-black biggest text-required"
                             disabled
                         />
                         <InputComponent
-                            idInput="areaNumber"
+                            idInput="consecutive"
                             className="input-basic"
                             typeInput="text"
-                            //register={register}
+                            register={register}
                             label="Consecutivo CDP Aurora"
                             classNameLabel="text-black biggest text-required"
                             disabled
@@ -77,19 +78,19 @@ const CdpRp = () => {
                         />
                     </div>
                 </section>
-              {/*   {showTable && (
-            )} */}
-            <div className="card-user mt-2rem">
-                <TableComponent
-                    ref={tableComponentRef}
-                    url={`${process.env.urlApiFinancial}/api/v1/cdp/search-cdps`}
-                    columns={tableColumnsCdp}
-                    actions={tableActionsCdp}
-                    isShowModal={true}
-                    titleMessageModalNoResult="No hay resultados"
-                    secondaryTitle="RP"
-                />
-            </div>
+
+                <div className="card-table gap-0 mt-24px">
+                 <TableDataPropComponent
+                        ref={tableComponentRef}
+                        dataTable={Object(dataRoutesCDP).amounts }
+                        columns={tableColumns}
+                        //actions={tableActions}
+                        isShowModal={false}
+                        titleMessageModalNoResult={"No se encontraron registros"}
+                        secondaryTitle="RP"
+                    />  
+                </div>
+
             </div>
         </div>
     );

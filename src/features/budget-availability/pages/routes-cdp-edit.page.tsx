@@ -12,7 +12,7 @@ function RoutesCDPEditPage() {
     const [idcModifiedCredit, setIdcModifiedCredit] = useState(0)
     const [idcFixedCompleted, setIdcFixedCompleted] = useState(0)
 
-    const { onSubmiteditRouteCDP, register, control, idcFinalValue, disable,CancelFunction } = useEditrouteCDP(modifiedIdcCountercredit, idcModifiedCredit, idcFixedCompleted);
+    const { onSubmiteditRouteCDP, register, control, idcFinalValue, disable,CancelFunction,totalRp, totalFinalICD } = useEditrouteCDP(modifiedIdcCountercredit, idcModifiedCredit, idcFixedCompleted);
 
     return (
         <div className="main-page">
@@ -80,9 +80,9 @@ function RoutesCDPEditPage() {
                                             id={field.name}
                                             idInput={field.name}
                                             value={`${field.value}`}
-                                            label="Descripción"
+                                            label="Objeto contractual"
                                             className="text-area-basic"
-                                            classNameLabel="text-black biggest"
+                                            classNameLabel="text-black biggest text-required"
                                             rows={4}
                                             placeholder="Escribe aquí"
                                             register={register}
@@ -244,7 +244,13 @@ function RoutesCDPEditPage() {
                         </section>
 
                     </section>
+                                <label>RP: {totalRp}</label>
+                                <label>Balance: {totalFinalICD}</label>
 
+
+                                <label>Modificado contracrédito no puede ser mayor al RP</label>
+                                <label>Modificado crédito no puede ser mayor al Balance</label>
+                                <label>Fijado concluídoo no puede ser mayor al RP</label>
                 </FormComponent>
             </div>
             <hr />
