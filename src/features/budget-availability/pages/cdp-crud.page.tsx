@@ -323,6 +323,7 @@ const CdpCrudPage = () => {
             setMessage({});
           }, onCancel() {
             onCancelNew();
+            setMessage({})
           },
           background: true,
         });

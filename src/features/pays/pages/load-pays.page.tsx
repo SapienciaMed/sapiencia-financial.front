@@ -11,10 +11,9 @@ import {
 } from "../../../common/components/Form";
 import { EDirection } from "../../../common/constants/input.enum";
 import TableDataPropComponent from "../../../common/components/tableDataProp.component";
-import { usePacCrud } from "../createPac/hook/pac-crud.hook";
-import UploadComponent from "../createPac/components/UploadComponent";
-
-function PacLoadPays() {
+import { usePacCrud } from "../../pac/createPac/hook/pac-crud.hook";
+import UploadComponent from "../../pac/createPac/components/UploadComponent";
+function LoadPays() {
   const {
     errors,
     onSubmitPac,
@@ -305,4 +304,4 @@ function PacLoadPays() {
   );
 }
 
-export default React.memo(PacLoadPays);
+export default React.memo(LoadPays);
