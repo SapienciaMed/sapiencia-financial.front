@@ -118,77 +118,6 @@ const CdpCrudPage = () => {
 
   }
 
-  /*  const handleGuardar = async () => {
- 
- 
-     // setFormSubmitted(true);
-     let nuevoObjeto;
-     const onCancelNew = () => {
-       navigate("./");
-     };
-     try {
-       const icdArrWithBalanceCheck = objectSendData["icdArr"];
- 
-       const invalidBalances = icdArrWithBalanceCheck.filter(
-         (item) => parseInt(item.valorInicial) >= parseInt(item.balance)
-       );
- 
-       if (invalidBalances.length === 0) {
-         const updatedIcdArr = icdArrWithBalanceCheck.map(({ balance, ...rest }) => rest);
- 
-         nuevoObjeto = {
-           ...objectSendData,
-           exercise: objectSendData["exercise"],
-           date: objectSendData["date"] && typeof objectSendData["date"] === "string" ? objectSendData["date"].split("/").join("-") : null,
-           contractObject: objectSendData["contractObject"],
-           consecutive: 10,
-           icdArr: updatedIcdArr.map(({ idRppCode, posicion, valorInicial, id, ...rest }) => ({
-             idRppCode: parseInt(idRppCode),
-             cdpPosition: parseInt(posicion),
-             amount: parseFloat(valorInicial),
-             ...rest,
-           })),
-         };
- 
-         await new Promise((resolve) => {
-           setObjectSendData(nuevoObjeto);
-           resolve('success');
-         });
- 
-         const response = await cdpService.createCdp_(nuevoObjeto);
- 
-         if (response && response['operation']['code'] === "FAIL") {
-           setMessage({
-             title: "Error al crear CDP",
-             description: response['operation']['message'],
-             show: true,
-             OkTitle: "Aceptar",
-             onOk: () => {
-               onCancelNew();
-               setMessage({});
-             },
-             background: true,
-           });
-         } else {
-           setMessage({
-             title: "Guardado",
-             description: "Guardado Exitosamente!!",
-             show: true,
-             OkTitle: "Aceptar",
-             onOk: () => {
-               navigate("./../");
-               setMessage({});
-             },
-             background: true,
-           });
-         }
-         console.log('Response:', response);
-       }
-     } catch (error) {
-       console.error("Error al enviar los datos:", error);
-     }
-   };
-  */
   const handleGuardar = async () => {
     setFormSubmitted(true);
     let nuevoObjeto;
@@ -334,6 +263,16 @@ const CdpCrudPage = () => {
     }
   };
 
+/*   useEffect(() => {
+    
+  
+    console.log(formularios);
+    console.log(formularios.length);
+    return () => {
+      
+    }
+  }, [formularios]) */
+  
   const formsPerPage = 2;
   const [currentPage, setCurrentPage] = useState(1);
   const indexOfLastForm = currentPage * formsPerPage;
@@ -398,9 +337,9 @@ const CdpCrudPage = () => {
         </button>
       </div>
       <CdpheadCreate formSubmitted={formSubmitted} isDisabled={false} setFormHeadInfo={setFormHeadInfo} />
-      {formularios.length > 0 && (
+       
         <div>
-          {renderFormsForCurrentPage()}
+          {formularios.length > 0 && renderFormsForCurrentPage()}
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <CdpPaginator
               currentPage={currentPage}
@@ -409,8 +348,6 @@ const CdpCrudPage = () => {
             />
           </div>
         </div>
-      )}
-
 
       <div className="button-container component-container-create">
         <button onClick={handleCancel} className="cancel-btn">
@@ -423,5 +360,5 @@ const CdpCrudPage = () => {
     </div>
   );
 };
-
-export default CdpCrudPage;
+export default React.memo(CdpCrudPage);
+//export default CdpCrudPage;
