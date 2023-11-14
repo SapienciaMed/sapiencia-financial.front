@@ -12,7 +12,7 @@ export const BudgetRecordRoutes = () => {
         <Routes>
             <Route path={'/'} element={<BudgetRecordViewPage/>} />
             <Route path={'/crear'} element={<BudgetRecordCrudPage/>} />
-            <Route path={'/editar-rp'} element={<BudgetRecordEditRpPage/>} />
+            <Route path={'/editar-rp/:id'} element={<BudgetRecordEditRpPage/>} />
             <Route path={'/edit/:id'} element={<BudgetRecordEditPage/>} />
         </Routes>
   )

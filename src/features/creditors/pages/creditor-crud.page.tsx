@@ -1,15 +1,14 @@
 import React, { useEffect } from "react";
 import { ButtonComponent, ButtonLoadingComponent, DatePickerComponent, FormComponent, InputComponent, SelectComponent } from "../../../common/components/Form";
-import { useBudgeRecordView } from "../hook/budget-record-view";
 import { useNavigate } from "react-router";
 import { useWidth } from "../../../common/hooks/use-width";
 import { Controller } from "react-hook-form";
 import { EDirection } from "../../../common/constants/input.enum";
 import { useParams } from "react-router-dom";
-import { useBudgeRecordEdit } from "../hook/budget-record-edit";
+import { useCreditorCrud } from "../hook/creditor-crud";
 
 
-function BudgetRecordEditRpPage() {
+function CreditorCrudPage() {
     const { id } = useParams();
     const navigate = useNavigate()
     const { width } = useWidth()
@@ -20,30 +19,52 @@ function BudgetRecordEditRpPage() {
         register,
         control,
         setMessage,
-        onSubmitEditRp,
+        onSubmitCreditor,
         componentsData,
         dependeciesData,
         isAllowSave
-    } = useBudgeRecordEdit(id);
+    } = useCreditorCrud(id);
 
     return (
         <div className='main-page'>
             <div className='card-table gap-0'>
                 <section className="title-area">
-                    <div className="text-black weight-500 extra-large">Editar datos basicos RP</div>
+                    <div className="text-black weight-500 extra-large">
+                        {
+                            !id
+                                ? 'Crear acreedor'
+                                : 'Editar acreedor'
+                        }
+                    </div>
                 </section>
                 <FormComponent
-                    action={onSubmitEditRp}
+                    action={onSubmitCreditor}
                     id="form-pac"
                     className="form-pac"
                 >
                     <div className="card-user">
-                        <div className="text-black weight-500 extra-large">Tercero</div>
-
                         <section className="grid-form-3-container-area mt-5px">
+                            <SelectComponent
+                                idInput="typeDocument"
+                                control={control}
+                                label="Tipo de identificación"
+                                className="select-basic medium"
+                                classNameLabel="text-black big bold text-required"
+                                placeholder={"Seleccionar"}
+                                data={[
+                                    { id: 'CC', name: 'CC', value: 'CC' },
+                                    { id: 'Nit', name: 'Nit', value: 'Nit' }
+                                ]}
+                                filter={true}
+                                errors={errors}
+                                direction={EDirection.column}
+                                disabled={id ? true : false}
+                            />
+
+
                             <Controller
                                 control={control}
-                                name={"contractorDocument"}
+                                name={"document"}
                                 render={({ field }) => (
                                     <InputComponent
                                         id={field.name}
@@ -56,13 +77,13 @@ function BudgetRecordEditRpPage() {
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
-                                        disabled={true}
+                                        disabled={id ? true : false}
                                     />
                                 )} />
 
                             <Controller
                                 control={control}
-                                name={"supplierName"}
+                                name={"taxIdentification"}
                                 render={({ field }) => (
                                     <InputComponent
                                         id={field.name}
@@ -70,52 +91,38 @@ function BudgetRecordEditRpPage() {
                                         className="input-basic medium"
                                         typeInput="text"
                                         register={register}
-                                        label="Contratista"
+                                        label="Identificación fiscal"
                                         classNameLabel="text-black big bold text-required"
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
-                                        disabled={true}
-                                    />
-                                )} />
-
-                            <Controller
-                                control={control}
-                                name={"consecutiveCdpAurora"}
-                                render={({ field }) => (
-                                    <InputComponent
-                                        id={field.name}
-                                        idInput={field.name}
-                                        className="input-basic medium"
-                                        typeInput="text"
-                                        register={register}
-                                        label="Consecutivo RP Aurora"
-                                        classNameLabel="text-black big bold text-required"
-                                        direction={EDirection.column}
-                                        errors={errors}
-                                        onChange={(value) => field.onChange(value)}
-                                        disabled={true}
                                     />
                                 )} />
 
                         </section>
-                        <div className="text-black weight-500 extra-large">Dependencia</div>
-                        <section className="grid-form-3-container-area mt-5px">
-                            <SelectComponent
-                                idInput="dependencyId"
-                                control={control}
-                                label="Dependencia"
-                                className="select-basic medium"
-                                classNameLabel="text-black big bold text-required"
-                                placeholder={"Seleccionar"}
-                                data={dependeciesData}
-                                filter={true}
-                                errors={errors}
-                                direction={EDirection.column}
-                            />
+                        <section>
                             <Controller
                                 control={control}
-                                name={"contractualObject"}
+                                name={"name"}
+                                render={({ field }) => (
+                                    <InputComponent
+                                        id={field.name}
+                                        idInput={field.name}
+                                        className="input-basic medium"
+                                        typeInput="text"
+                                        register={register}
+                                        label="Razón social / Nombre"
+                                        classNameLabel="text-black big bold text-required"
+                                        direction={EDirection.column}
+                                        errors={errors}
+                                        onChange={(value) => field.onChange(value)}
+                                    />
+                                )} />
+                        </section>
+                        <section className="grid-form-3-container-area mt-5px">
+                            <Controller
+                                control={control}
+                                name={"city"}
                                 render={({ field }) => (
                                     <InputComponent
                                         id={field.name}
@@ -123,120 +130,65 @@ function BudgetRecordEditRpPage() {
                                         className={'input-basic medium'}
                                         typeInput="text"
                                         register={register}
-                                        label="Actividad del objeto contractual"
+                                        label="Ciudad"
                                         classNameLabel="text-black big bold text-required"
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
                                     />
                                 )} />
-
-                            <SelectComponent
-                                idInput="componentId"
-                                control={control}
-                                label="Componente"
-                                className="select-basic medium"
-                                classNameLabel="text-black big bold text-required"
-                                placeholder={"Seleccionar"}
-                                data={componentsData}
-                                filter={true}
-                                errors={errors}
-                                direction={EDirection.column}
-                            />
-
-                        </section>
-
-                        <section className="grid-form-3-container-area mt-5px">
                             <Controller
                                 control={control}
-                                name={"consecutiveSap"}
+                                name={"address"}
                                 render={({ field }) => (
                                     <InputComponent
                                         id={field.name}
                                         idInput={field.name}
-                                        className="input-basic medium"
+                                        className={'input-basic medium'}
                                         typeInput="text"
                                         register={register}
-                                        label="Consecutivo RP SAP"
+                                        label="Dirección"
                                         classNameLabel="text-black big bold text-required"
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
                                     />
                                 )} />
-
-                            <SelectComponent
-                                idInput="responsibleDocument"
-                                control={control}
-                                label="Líder del proceso"
-                                className="select-basic medium"
-                                classNameLabel="text-black big bold text-required"
-                                placeholder={"Seleccionar"}
-                                data={[
-                                    { id: 1, name: "Lider1", value: "Lider1" },
-                                    { id: 2, name: "Lider2", value: "Lider2" }
-                                ]}
-                                filter={true}
-                                errors={errors}
-                                direction={EDirection.column}
-                            />
-
                             <Controller
                                 control={control}
-                                name={"contractNumber"}
+                                name={"phone"}
                                 render={({ field }) => (
                                     <InputComponent
                                         id={field.name}
                                         idInput={field.name}
-                                        className="input-basic medium"
+                                        className={'input-basic medium'}
                                         typeInput="number"
                                         register={register}
-                                        label="No. contrato"
+                                        label="Teléfono"
                                         classNameLabel="text-black big bold text-required"
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
                                     />
                                 )} />
-                        </section>
-                        <section className="grid-form-3-container-area mt-5px">
-                            <SelectComponent
-                                idInput="supervisorDocument"
+                            <Controller
                                 control={control}
-                                label="Supervisor del contrato"
-                                className="select-basic medium"
-                                classNameLabel="text-black big bold text-required"
-                                placeholder={"Seleccionar"}
-                                data={[
-                                    { id: 1, name: "Lider1", value: "Lider1" },
-                                    { id: 2, name: "Lider2", value: "Lider2" }
-                                ]}
-                                filter={true}
-                                errors={errors}
-                                direction={EDirection.column}
-                            />
+                                name={"email"}
+                                render={({ field }) => (
+                                    <InputComponent
+                                        id={field.name}
+                                        idInput={field.name}
+                                        className={'input-basic medium'}
+                                        typeInput="text"
+                                        register={register}
+                                        label="Correo electrónico"
+                                        classNameLabel="text-black big bold text-required"
+                                        direction={EDirection.column}
+                                        errors={errors}
+                                        onChange={(value) => field.onChange(value)}
+                                    />
+                                )} />
 
-                            <DatePickerComponent
-                                idInput="documentDate"
-                                control={control}
-                                label={"Fecha documento"}
-                                errors={errors}
-                                classNameLabel="text-black biggest bold text-required"
-                                className="dataPicker-basic medium"
-                                placeholder="DD/MM/YYYY"
-                                dateFormat="dd/mm/yy"
-                            />
-                            <DatePickerComponent
-                                idInput="dateValidity"
-                                control={control}
-                                label={"Fecha vencimiento"}
-                                errors={errors}
-                                classNameLabel="text-black biggest bold"
-                                className="dataPicker-basic medium"
-                                placeholder="DD/MM/YYYY"
-                                dateFormat="dd/mm/yy"
-                            //minDate={new Date(startDate)}
-                            />
                         </section>
                     </div>
 
@@ -260,7 +212,7 @@ function BudgetRecordEditRpPage() {
                                     ),
                                     background: true,
                                     onOk: () => {
-                                        navigate("/gestion-financiera/rp");
+                                        navigate("/gestion-financiera/acreedor");
                                         setMessage({});
                                     },
                                     onCancel: () => {
@@ -276,7 +228,7 @@ function BudgetRecordEditRpPage() {
                                 value="Guardar"
                                 form="form-pac"
                                 type="submit"
-                                disabled={!isAllowSave}
+                            //disabled={!isAllowSave}
                             />
                         </div>
                     </div>
@@ -288,4 +240,4 @@ function BudgetRecordEditRpPage() {
 }
 
 
-export default React.memo(BudgetRecordEditRpPage);
+export default React.memo(CreditorCrudPage);
