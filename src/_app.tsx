@@ -20,6 +20,7 @@ const Home = lazy(() => import("./features/home/pages/home.page"));
 const BudgetRoutes = lazy(()  => import("./features/budget-routes/pages/budget-routes.page"));
 const BudgetRoutesCrudPage = lazy(()  => import("./features/budget-routes/pages/budget-routes-crud.page"));
 const BudgetAvailabilityRoutes = lazy(()  => import("./features/budget-availability/budget-availability-routes"));
+const PaysRoutes = lazy(() => import("./features/pays/pays-routes"));
 //const CreditorRoutes = lazy(()  => import("./features/creditors/creditor-routes"));
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
               <Route path={'/gestion-financiera/pac/*'} element={<PacRoutes/>} />
               <Route path={"/gestion-financiera/centro-gestor/*"} element={<ManagementCenterRoutes/>} />
               <Route path={"/gestion-financiera/cdp/*"} element={<BudgetAvailabilityRoutes/>} />
+              <Route path={"/gestion-financiera/ejecucion-financiera/consultar-pagos/*"} element={<PaysRoutes/>} />
               <Route path={"/gestion-financiera/rp/*"} element={<BudgetRecordRoutes/>} />
 
               <Route path={"/gestion-financiera/ruta-presupuestal"} element={<BudgetRoutes/>} />

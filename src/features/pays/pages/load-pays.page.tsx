@@ -11,15 +11,14 @@ import {
 } from "../../../common/components/Form";
 import { EDirection } from "../../../common/constants/input.enum";
 import TableDataPropComponent from "../../../common/components/tableDataProp.component";
-import { usePacCrud } from "../createPac/hook/pac-crud.hook";
-import UploadComponent from "../createPac/components/UploadComponent";
-
-function PacLoadPays() {
+import { usePacCrud } from "../../pac/createPac/hook/pac-crud.hook";
+import {usePaysCrud } from "../hooks/pays.crud.hook"
+import UploadComponent from "../../pac/createPac/components/UploadComponent";
+function LoadPays() {
   const {
     errors,
-    onSubmitPac,
     onSubmitPagPays,
-    showModal,
+   // showModal,
     setMessage,
     register,
     isAllowSave,
@@ -30,7 +29,7 @@ function PacLoadPays() {
     tableColumns,
     errorsPac,
     isLoading,
-  } = usePacCrud();
+  } = usePaysCrud();
 
   const btnUploadFileRef = useRef(null);
 
@@ -91,7 +90,7 @@ function PacLoadPays() {
               />
 
               <SelectComponent
-                idInput="tipo-archivo"
+                idInput="tipoArchivo"
                 control={control}
                 label="Tipo de archivo"
                 className="select-basic medium"
@@ -209,7 +208,7 @@ function PacLoadPays() {
                   }}
                 >
                   <Controller
-                    name="file"
+                    name="filedata"
                     control={control}
                     render={({ field, fieldState }) => (
                       <>
@@ -268,7 +267,18 @@ function PacLoadPays() {
           </div>
         )}
       </div>
-
+      <ButtonLoadingComponent
+            className="button-main huge hover-three"
+            value="Guardar"
+            form="form-load-pays"
+            type="button"
+            action={() => {
+              btnUploadFileRef.current.click();
+              /* setIsUploadFileSt(false) */
+            }}
+            disabled={!isUploadFileSt}
+            isLoading={isLoading}
+          />
       <div className="container-button-bot">
         <div className="buttons-bot">
           {/* <span
@@ -287,22 +297,11 @@ function PacLoadPays() {
               disabled={true}
             /> */}
 
-          <ButtonLoadingComponent
-            className="button-main huge hover-three"
-            value="Guardar"
-            form="form-load-pays"
-            type="button"
-            action={() => {
-              btnUploadFileRef.current.click();
-              /* setIsUploadFileSt(false) */
-            }}
-            disabled={!isUploadFileSt}
-            isLoading={isLoading}
-          />
+         
         </div>
       </div>
     </div>
   );
 }
 
-export default React.memo(PacLoadPays);
+export default React.memo(LoadPays);
