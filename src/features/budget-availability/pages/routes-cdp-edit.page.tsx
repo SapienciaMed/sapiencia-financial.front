@@ -80,9 +80,9 @@ function RoutesCDPEditPage() {
                                             id={field.name}
                                             idInput={field.name}
                                             value={`${field.value}`}
-                                            label="Descripción"
+                                            label="Objeto contractual"
                                             className="text-area-basic"
-                                            classNameLabel="text-black biggest"
+                                            classNameLabel="text-black biggest text-required"
                                             rows={4}
                                             placeholder="Escribe aquí"
                                             register={register}

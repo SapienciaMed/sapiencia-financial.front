@@ -41,8 +41,14 @@ export const useCdpRp = () => {
 
   useEffect(() => {
     if (!dataRoutesCDP) return;
+    
+    let newDate = new Date(dataRoutesCDP.date);
+    
+    newDate.setDate(newDate.getDate() + 1);
 
-    setValue("date", dataRoutesCDP.date);
+    console.log(newDate.toISOString().split('T')[0])
+
+    setValue("date", newDate.toISOString().split('T')[0]);
     setValue("sapConsecutive", dataRoutesCDP.sapConsecutive);
     setValue("consecutive", dataRoutesCDP.consecutive);
     setValue("contractObject", dataRoutesCDP.contractObject);
