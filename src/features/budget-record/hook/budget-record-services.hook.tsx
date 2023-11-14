@@ -38,13 +38,19 @@ export const useBudgetRecordServices = () => {
         return get(`${roleUrl}${endpoint}`);
     }
 
+    async function editRp(id:string,data: Object): Promise<ApiResponse<any>> {
+        const endpoint: string = `/update-data/${id}`;
+        return post(`${roleUrl}${endpoint}`, data);
+    }
+    
     return{
         CreateBudgetRecord,
         GetAllComponents,
         GetRpByFilters,
         CancelLinkCdp,
         UpdateDataBasicRp,
-        GetCausation
+        GetCausation,
+        editRp
     }
 
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ButtonComponent, FormComponent, InputComponent, SelectComponent } from "../../../common/components/Form";
 import { TextAreaCountComponent } from "../../../common/components/Form/input-text-area-count.component";
 import { Controller } from 'react-hook-form';
@@ -7,15 +7,19 @@ import { useBudgeRecordEdit } from "../hook/budget-record-edit.hook";
 
 function BudgetRecordEditPage() {
 
-    const { control, register, dependeciesData,componentsData } = useBudgeRecordEdit();
+    const [modifiedIdcCountercredit, setModifiedIdcCountercredit] = useState(0)
+    const [idcModifiedCredit, setIdcModifiedCredit] = useState(0)
+    const [idcFixedCompleted, setIdcFixedCompleted] = useState(0)
+
+    const { control, register, dependeciesData,componentsData,disabledButton,onSubmiteditRp } = useBudgeRecordEdit(modifiedIdcCountercredit,idcModifiedCredit,idcFixedCompleted);
 
     return (
         <div className="crud-page">
             <div className="main-page full-height">
                 <p className="text-black extra-large">Editar ruta RP</p>
                 <FormComponent
-                    action={"onSubmitRP"}
-                    id="form-pac"
+                    action={onSubmiteditRp}
+                    id="editRp"
                     className="form-pac"
                 >
 
@@ -58,7 +62,7 @@ function BudgetRecordEditPage() {
                                 control={control}
                                 label="Dependencia"
                                 className="select-basic"
-                                classNameLabel="text-black big bold text-required"
+                                classNameLabel="text-black biggest text-required"
                                 placeholder={"Seleccionar"}
                                 data={dependeciesData}
                                 filter={true}
@@ -78,7 +82,7 @@ function BudgetRecordEditPage() {
                                 control={control}
                                 label="Componente"
                                 className="select-basic"
-                                classNameLabel="text-black big bold text-required"
+                                classNameLabel="text-black biggest text-required"
                                 placeholder={"Seleccionar"}
                                 data={componentsData}
                                 filter={true}
@@ -186,30 +190,34 @@ function BudgetRecordEditPage() {
                                 disabled
                             />
                             <InputComponent
-                                idInput="modifiedIdcCountercredit"
+                                idInput="againtsAmount"
                                 className="input-basic"
                                 typeInput="number"
-                                //register={register}
+                                register={register}
                                 label="Modificado contracrédito"
                                 classNameLabel="text-black biggest"
-
-                            />
+                                onChange={(e) => setModifiedIdcCountercredit(Number(e.target.value))}
+                                
+                                />
+                                
                             <InputComponent
-                                idInput="idcModifiedCredit"
+                                idInput="creditAmount"
                                 className="input-basic"
-                                typeInput="text"
-                                //register={register}
+                                typeInput="number"
+                                register={register}
                                 label="Modificado crédito"
-                                classNameLabel="text-black biggest"
-
-                            />
+                                classNameLabel="text-black biggest"                             
+                                onChange={(e) => setIdcModifiedCredit(Number(e.target.value))}
+                                
+                                />
                             <InputComponent
-                                idInput="idcFixedCompleted"
+                                idInput="fixedCompleted"
                                 className="input-basic"
-                                typeInput="text"
-                                //register={register}
+                                typeInput="number"
+                                register={register}
                                 label="Fijado concluído"
                                 classNameLabel="text-black biggest"
+                                onChange={(e) => setIdcFixedCompleted(Number(e.target.value))}
 
                             />
                         </section>
@@ -218,18 +226,18 @@ function BudgetRecordEditPage() {
                                 idInput="idcFinalValue"
                                 className="input-basic"
                                 typeInput="text"
-                                //register={register}
+                                register={register}
                                 label="Valor final"
                                 classNameLabel="text-black biggest text-required"
                                 disabled
-                            //value={String(idcFinalValue)}
+                                //value={String(idcFinalValue)}
                             />
                         </section>
 
-                        {/*   <div className='mt-24px'>
+                       <div className='mt-24px'>
                             <Controller
-                                //control={control}
-                                name={"contractObject"}
+                                control={control}
+                                name={"observation"}
                                 defaultValue=""
                                 render={({ field }) => {
                                     return (
@@ -237,20 +245,20 @@ function BudgetRecordEditPage() {
                                             id={field.name}
                                             idInput={field.name}
                                             value={`${field.value}`}
-                                            label="Objeto contractual"
+                                            label="Observación"
                                             className="text-area-basic"
                                             classNameLabel="text-black biggest"
                                             rows={4}
                                             placeholder="Escribe aquí"
-                                            // register={register}
+                                            register={register}
                                             onChange={field.onChange}
-                                            characters={5000}
-                                            disabled
+                                            characters={500}
+                                            
                                         ></TextAreaCountComponent>
                                     );
                                 }}
                             />
-                        </div> */}
+                        </div> 
                     </section>
 
                     <hr />
@@ -259,18 +267,18 @@ function BudgetRecordEditPage() {
                         <div className="display-align-flex-center">
                             <>
                                 <ButtonComponent
-                                    form="editRouteCDP"
+                                    form="editRp"
                                     value="Cancelar"
                                     type="button"
                                     className="button-clean-fields bold"
                                 //action={() => CancelFunction()}
                                 />
                                 <ButtonComponent
-                                    form="editRouteCDP"
+                                    form="editRp"
                                     className="button-search"
                                     value="Guardar"
                                     type="submit"
-                                //disabled={disable}
+                                    disabled={disabledButton}
 
 
                                 />

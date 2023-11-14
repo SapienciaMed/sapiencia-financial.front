@@ -11,18 +11,23 @@ import { IProjectAdditionList } from "../../functionality/interfaces/AdditionsTr
 import { IFunctionalArea } from "../../functionality/interfaces/Functional-Area";
 import { usePayrollExternalServices } from "./payroll-external-services.hook";
 import { IDropdownProps } from "../../../common/interfaces/select.interface";
+import { useCdpService } from "../../budget-availability/hooks/cdp-service";
+import { IUpdateRP } from "../interface/updateRp";
 
 
-export function useBudgeRecordEdit() {
-
+export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCredit:number,idcFixedCompleted:number) {
+   /*  console.log('Modificado contracrédito', modifiedIdcCountercredit)
+    console.log('Modificado crédito', idcModifiedCredit)
+    console.log('Fijado concluído', idcFixedCompleted) */
     const navigate = useNavigate();
     const { id } = useParams();
     const { setMessage } = useContext(AppContext);
 
-    const { GetRpByFilters,GetAllComponents,GetCausation } = useBudgetRecordServices();
+    const { GetRpByFilters,GetAllComponents,GetCausation,editRp } = useBudgetRecordServices();
     const { GetProjectsList } = useAdditionsTransfersService();
     const { GetAllFunctionalAreas } = useFunctionalAreaService();
     const { GetAllDependencies } = usePayrollExternalServices();
+    const { getRouteCDPId, getOneRpp, updateRouteCdp, getTotalValuesImport } = useCdpService()
 
     const [dataRp, setDataRp] = useState<any>()
     const [projectsData, setProjectsData] = useState<IProjectAdditionList[]>([]);
@@ -32,6 +37,11 @@ export function useBudgeRecordEdit() {
     const [dependeciesData, setDependeciesData] = useState<IDropdownProps[]>([]);
     const [componentsData, setComponentssData] = useState<IDropdownProps[]>([]);
     const [totalCautation, setTotalCautation] = useState(0);
+    const [RP, setRP] = useState(0);
+    const [disabledButton, setDisabledButton] = useState(false);
+
+    const [calculatedValue, setCalculatedValue] = useState(0);
+
 
     //Form
     const { control, handleSubmit, register, watch, setValue, reset, formState: { errors }, } = useForm({});
@@ -102,10 +112,21 @@ export function useBudgeRecordEdit() {
             setTotalCautation(response.data.total)        
         })
 
+        if (dataRp && Array.isArray(dataRp.linksRp) && dataRp.linksRp.length > 0) {
+            getTotalValuesImport(dataRp.linksRp[0].amountBudgetAvailability.cdpCode).then(response => {
+                setRP(response.data.totalImport);
+            }).catch(error => {
+                console.error('Error al obtener valores totales:', error);
+            });
+        } else {
+            console.log('dataRp o dataRp.linksRp no están definidos o son un array vacío');
+        }
+ 
 
-    }, [id]);
+    }, [id,dataRp]);
+    
+   
 
-    console.log(totalCautation);
     
 
 
@@ -131,14 +152,58 @@ export function useBudgeRecordEdit() {
         }
     }, [dataRp, projectsData, areaData]);
 
+    //calculos
+    useEffect(() => {
+       
+        let shouldDisableButton = false;    
+   
+        if (totalCautation !== undefined && modifiedIdcCountercredit !== undefined) {
+            shouldDisableButton = modifiedIdcCountercredit > totalCautation;
+        }    
+      
+        if (!shouldDisableButton && RP !== undefined && idcModifiedCredit !== undefined) {
+            shouldDisableButton = idcModifiedCredit > RP;
+        }    
+     
+        if (!shouldDisableButton && totalCautation !== undefined && RP !== undefined) {
+            shouldDisableButton = totalCautation >= RP;
+        }    
+        
+        setDisabledButton(shouldDisableButton);
+    
+    }, [totalCautation, RP, modifiedIdcCountercredit, idcModifiedCredit]);
+    
+    //total
+    useEffect(() => {
+        if (dataRp && Array.isArray(dataRp.linksRp) && dataRp.linksRp.length > 0) {
+            const inputIdcModifiedCredit = idcModifiedCredit ?? 0;
+            const inputModifiedIdcCountercredit = modifiedIdcCountercredit ?? 0;
+            const inputIdcFixedCompleted = idcFixedCompleted ?? 0;
+    
+            // Si todos los inputs están vacíos o son 0, usa el valor de finalAmount
+            if (inputIdcModifiedCredit <= 0 && inputModifiedIdcCountercredit <= 0 && inputIdcFixedCompleted <= 0) {
+                setValue("idcFinalValue", dataRp.linksRp[0].finalAmount);
+            } else {
+                // Realiza el cálculo con los valores actuales, independientemente de si están completos o no
+                const initialAmount = dataRp.linksRp[0].initialAmount || 0;
+                const calculatedResult = initialAmount + inputIdcModifiedCredit - inputModifiedIdcCountercredit - inputIdcFixedCompleted;
+    
+                setCalculatedValue(calculatedResult);
+                setValue("idcFinalValue", calculatedResult);
+            }
+        }
+    }, [dataRp, idcModifiedCredit, modifiedIdcCountercredit, idcFixedCompleted]);
+    
+    
+    
+    
+    
+
+   
 
 
     useEffect(() => {
-        if (!dataRp) return;
-
-        /*  console.log(dataRp.linksRp[0].amountBudgetAvailability.budgetRoute.fund.number)
-         console.log(dataRp.linksRp[0].amountBudgetAvailability.budgetRoute.projectVinculation.functionalAreaId)
-         console.log('arwa funcional', areaNumber) */
+        if (!dataRp) return;  
 
         // Asignar los campos que siempre vienen
         setValue("document", dataRp.creditor.document);
@@ -158,8 +223,74 @@ export function useBudgeRecordEdit() {
         setValue("componentId", dataRp.componentId);
         setValue("amount", dataRp.linksRp[0].initialAmount);
 
+        setValue("observation", dataRp.linksRp[0].observation);
+        setValue("againtsAmount", dataRp.linksRp[0].againtsAmount );
+        setValue("creditAmount", dataRp.linksRp[0].creditAmount);
+        setValue("fixedCompleted", dataRp.linksRp[0].fixedCompleted);
 
+        setValue("idcFinalValue", dataRp.linksRp[0].finalAmount);
     }, [dataRp, areaNumber, projectNumber]);
+
+    const onSubmiteditRp = handleSubmit(async (data: any) => {        
+        console.log(data)
+        setMessage({
+            show: true,
+            title: "Guardar",
+            description: "¿Estás segur@ de guardar la información?",
+            cancelTitle: "Cancelar",
+            OkTitle: "Aceptar",
+            onOk() {
+                confirmEdit(data);
+            },
+            background: true,
+        });
+    });
+
+
+   const confirmEdit = async (data: any) => {
+
+        const datos: any = {
+            againtsAmount:data.againtsAmount,
+            finalAmount: calculatedValue,
+           // fixedCompleted: data.idcFixedCompleted,
+            //creditAmount: data.idcModifiedCredit,
+            observation: data.observation
+        }   
+        
+        console.log(datos)
+
+       const res = await editRp(dataRp.linksRp[0].id, datos);
+
+        if (res && res?.operation?.code === EResponseCodes.OK) {
+            setMessage({
+                OkTitle: "Cerrar",
+                description: "¡Guardado exitosamente!",
+                title: "Guardado",
+                show: true,
+                type: EResponseCodes.OK,
+                background: true,
+                onOk() {
+                    reset();
+                    setMessage({});
+                    navigate("/gestion-financiera/rp");
+                },
+                onClose() {
+                    reset();
+                    setMessage({});
+                },
+            });
+
+        } else {
+            setMessage({
+                type: EResponseCodes.FAIL,
+                title: "Guardar",
+                description: "El registro no se pudo actualizar",
+                show: true,
+                OkTitle: "Cerrar",
+                background: true,
+            });
+        }  
+    } 
 
 
 
@@ -167,7 +298,9 @@ export function useBudgeRecordEdit() {
         control,
         register,
         dependeciesData,
-        componentsData
+        componentsData,
+        disabledButton,
+        onSubmiteditRp
 
     };
 }
