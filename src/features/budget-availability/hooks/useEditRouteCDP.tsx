@@ -260,9 +260,9 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
             idRppCode: dataRoutesCDP.idRppCode,
             cdpPosition: data.cdpPosition,
             amount: Number(data.amount),
-            modifiedIdcCountercredit: data.modifiedIdcCountercredit,
-            idcModifiedCredit: data.idcModifiedCredit,
-            idcFixedCompleted: data.idcFixedCompleted,
+            modifiedIdcCountercredit: modifiedIdcCountercredit,
+            idcModifiedCredit: idcModifiedCredit,
+            idcFixedCompleted: idcFixedCompleted,
             idcFinalValue: idcFinalValue
         }      
 
