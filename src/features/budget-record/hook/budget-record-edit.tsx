@@ -26,6 +26,7 @@ export function useBudgeRecordEdit(id) {
     const [isAllowSave, setIsAllowSave] = useState(false)
     const [isUploadData, setIsUploadData] = useState(false)
 
+    const [contractorListSt, setContractorListSt] = useState([])
     useEffect(() => {
         GetAllComponents().then(res => {
             const componentes = res.data?.map(e => ({ id: e.id, name: e.name, value: e.id }))
@@ -36,6 +37,19 @@ export function useBudgeRecordEdit(id) {
             const dependencies = Object(res).data.data?.map(e => ({ id: e.id, name: e.name, value: e.id }))
             setDependeciesData(dependencies)
         })
+
+        GetContractorsByDocuments({}).then(res => {
+            const contractorList = res.data.data.map((e,index) => ({
+                id: e.numberDocument, name: Object(res).data.data[index]?.firstName + " " +
+                    Object(res).data.data[index]?.secondName + " " +
+                    Object(res).data.data[index]?.surname + " " +
+                    Object(res).data.data[index]?.secondSurname, value: e.numberDocument
+            }))
+
+            setContractorListSt(contractorList)
+        })
+
+
     }, [])
 
 
@@ -81,10 +95,10 @@ export function useBudgeRecordEdit(id) {
     }
 
 
-    const formatDate = (dateUTC:Date)=>{
+    const formatDate = (dateUTC: Date) => {
         let year = dateUTC.getUTCFullYear();
         let month = dateUTC.getUTCMonth() + 1; // Los meses en JavaScript van de 0 a 11
-        let day = dateUTC.getUTCDate()+1;
+        let day = dateUTC.getUTCDate() + 1;
         let fechaFormateada = year + '-' + pad(month) + '-' + pad(day)
         return fechaFormateada
     }
@@ -116,7 +130,7 @@ export function useBudgeRecordEdit(id) {
     }, [id])
 
     const onSubmitEditRp = handleSubmit(async (data: IBudgetRecord) => {
-        
+
         showModal({
             title: "Guardar",
             description: "¿Está segur@ de guardar la información?",
@@ -183,7 +197,8 @@ export function useBudgeRecordEdit(id) {
         onSubmitEditRp,
         componentsData,
         dependeciesData,
-        isAllowSave
+        isAllowSave,
+        contractorListSt
     };
 
 }
