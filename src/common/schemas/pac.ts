@@ -1,7 +1,7 @@
 import * as yup from "yup";
 
 export const pacCrudValidator = yup.object({
-    exercise: yup
+/*     exercise: yup
         .string()
         .matches(/^[0-9]+$/, "Solo se permiten numeros")
         .max(4, "Solo se permiten 4 caracteres")
@@ -23,7 +23,7 @@ export const pacCrudValidator = yup.object({
         .required("Este campo es obligatorio"),
     typeSource: yup
         .string()
-        .required("Este campo es obligatorio"),
+        .required("Este campo es obligatorio"), */
     /* file: yup
         .string()
         .required("Completa la información"), */
