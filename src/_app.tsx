@@ -45,7 +45,7 @@ function App() {
               <Route path={'/gestion-financiera/pac/*'} element={<PacRoutes/>} />
               <Route path={"/gestion-financiera/centro-gestor/*"} element={<ManagementCenterRoutes/>} />
               <Route path={"/gestion-financiera/cdp/*"} element={<BudgetAvailabilityRoutes/>} />
-              <Route path={"/gestion-financiera/pays/*"} element={<PaysRoutes/>} />
+              <Route path={"/gestion-financiera/ejecucion-financiera/consultar-pagos/*"} element={<PaysRoutes/>} />
               <Route path={"/gestion-financiera/rp/*"} element={<BudgetRecordRoutes/>} />
 
               <Route path={"/gestion-financiera/ruta-presupuestal"} element={<BudgetRoutes/>} />

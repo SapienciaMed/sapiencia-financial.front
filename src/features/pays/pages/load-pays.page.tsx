@@ -12,13 +12,13 @@ import {
 import { EDirection } from "../../../common/constants/input.enum";
 import TableDataPropComponent from "../../../common/components/tableDataProp.component";
 import { usePacCrud } from "../../pac/createPac/hook/pac-crud.hook";
+import {usePaysCrud } from "../hooks/pays.crud.hook"
 import UploadComponent from "../../pac/createPac/components/UploadComponent";
 function LoadPays() {
   const {
     errors,
-    onSubmitPac,
     onSubmitPagPays,
-    showModal,
+   // showModal,
     setMessage,
     register,
     isAllowSave,
@@ -29,7 +29,7 @@ function LoadPays() {
     tableColumns,
     errorsPac,
     isLoading,
-  } = usePacCrud();
+  } = usePaysCrud();
 
   const btnUploadFileRef = useRef(null);
 
@@ -90,7 +90,7 @@ function LoadPays() {
               />
 
               <SelectComponent
-                idInput="tipo-archivo"
+                idInput="tipoArchivo"
                 control={control}
                 label="Tipo de archivo"
                 className="select-basic medium"
@@ -208,7 +208,7 @@ function LoadPays() {
                   }}
                 >
                   <Controller
-                    name="file"
+                    name="filedata"
                     control={control}
                     render={({ field, fieldState }) => (
                       <>
@@ -267,7 +267,18 @@ function LoadPays() {
           </div>
         )}
       </div>
-
+      <ButtonLoadingComponent
+            className="button-main huge hover-three"
+            value="Guardar"
+            form="form-load-pays"
+            type="button"
+            action={() => {
+              btnUploadFileRef.current.click();
+              /* setIsUploadFileSt(false) */
+            }}
+            disabled={!isUploadFileSt}
+            isLoading={isLoading}
+          />
       <div className="container-button-bot">
         <div className="buttons-bot">
           {/* <span
@@ -286,18 +297,7 @@ function LoadPays() {
               disabled={true}
             /> */}
 
-          <ButtonLoadingComponent
-            className="button-main huge hover-three"
-            value="Guardar"
-            form="form-load-pays"
-            type="button"
-            action={() => {
-              btnUploadFileRef.current.click();
-              /* setIsUploadFileSt(false) */
-            }}
-            disabled={!isUploadFileSt}
-            isLoading={isLoading}
-          />
+         
         </div>
       </div>
     </div>

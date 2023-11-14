@@ -22,6 +22,12 @@ export interface IPagoDataBasicEdit {
   id?: number;
 }
 
+export interface IPagoDataSave {
+    tipoDocumento: string;
+    filedata: File;
+    tipoArchivo: string;
+}
+
 export interface IPagoDataBasicOriginalDataEdit {
   vinculacionRpCode: number;
   valorCausado: number;
