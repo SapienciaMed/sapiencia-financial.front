@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useBudgeRecordCrud } from "../hook/budget-record-crud";
 import { ButtonComponent, ButtonLoadingComponent, DatePickerComponent, FormComponent, InputComponent, SelectComponent } from "../../../common/components/Form";
 import { EDirection } from "../../../common/constants/input.enum";
@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 function BudgetRecordCrudPage() {
   const {
+    watch,
     errors,
     onSubmitRP,
     register,
@@ -20,6 +21,7 @@ function BudgetRecordCrudPage() {
     tableActions,
     componentsData,
     dependeciesData,
+    activityObjectContractData,
     setContractorDocumentSt,
     setContractualObjectSt,
     setFindAmountsSt,
@@ -34,6 +36,13 @@ function BudgetRecordCrudPage() {
   const [consecutiveSapSt, setConsecutiveSapSt] = useState(null)
   const [consecutiveAuroraSt, setConsecutiveAuroraSt] = useState(null)
   const [isSeachAmountActive, setIsSeachAmountActive] = useState(false)
+
+const { consecutiveCdpSap } = watch()
+
+  useEffect(() => {
+    setConsecutiveSapSt(consecutiveCdpSap)
+  }, [consecutiveCdpSap])
+  
 
   return (
     <div className="crud-page">
@@ -139,7 +148,19 @@ function BudgetRecordCrudPage() {
                 errors={errors}
                 direction={EDirection.column}
               />
-              <Controller
+              <SelectComponent
+                idInput="contractualObject"
+                control={control}
+                label="Actividad del objeto contractual"
+                className="select-basic medium"
+                classNameLabel="text-black big bold text-required"
+                placeholder={"Seleccionar"}
+                data={activityObjectContractData}
+                filter={true}
+                errors={errors}
+                direction={EDirection.column}
+              />
+              {/* <Controller
                 control={control}
                 name={"contractualObject"}
                 render={({ field }) => (
@@ -156,7 +177,7 @@ function BudgetRecordCrudPage() {
                     onBlur={(e) => setContractualObjectSt(Object(e).target.value)}
                     onChange={(value) => field.onChange(value)}
                   />
-                )} />
+                )} /> */}
 
               <SelectComponent
                 idInput="componentId"
@@ -190,7 +211,7 @@ function BudgetRecordCrudPage() {
                     label="Consecutivo CDP SAP"
                     classNameLabel="text-black big bold text-required"
                     direction={EDirection.column}
-                    onChange={(e) => setConsecutiveSapSt(e.target.value)}
+                    onChange={(value) => {field.onChange(value);setConsecutiveSapSt(value.target.value)}}
                     errors={errors}
                   />
                 )} />
@@ -209,7 +230,7 @@ function BudgetRecordCrudPage() {
                     classNameLabel="text-black big bold"
                     direction={EDirection.column}
                     errors={errors}
-                    onChange={(e) => setConsecutiveAuroraSt(e.target.value)}
+                    onChange={(value) => {field.onChange(value);setConsecutiveAuroraSt(value.target.value)}}
                   />
                 )} />
               <div>
@@ -221,7 +242,7 @@ function BudgetRecordCrudPage() {
                     type="button"
                     className="button-main medium"
                     action={() => setFindAmountsSt({ sab: consecutiveSapSt, aurora: consecutiveAuroraSt })}
-                    disabled={consecutiveSapSt?.length > 0 ? false : true}
+                    disabled={consecutiveCdpSap > 0 ? false : true}
                   />
                 </div>
 

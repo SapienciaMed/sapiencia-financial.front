@@ -21,7 +21,7 @@ import { usePayrollExternalServices } from "./payroll-external-services.hook";
 export function useBudgeRecordCrud() {
 
     const resolver = useYupValidationResolver(budgetRecordCrudValidator);
-    const { CreateBudgetRecord, GetAllComponents } = useBudgetRecordServices();
+    const { CreateBudgetRecord, GetAllComponents, GetAllActivityObjectContract } = useBudgetRecordServices();
     const { GetRoutesByValidity } = useCdpServices()
     const { GetCreditorsByFilters } = useCreditorsServices()
     const { GetAllDependencies, GetContractorsByDocuments } = usePayrollExternalServices()
@@ -34,6 +34,7 @@ export function useBudgeRecordCrud() {
     const [isLoading, setIsLoading] = useState(false)
     const [componentsData, setComponentsData] = useState<IDropdownProps[]>([]);
     const [dependeciesData, setDependeciesData] = useState<IDropdownProps[]>([]);
+    const [activityObjectContractData, setActivityObjectContractData] = useState<IDropdownProps[]>([]);
     const [contractorsData, setContractorsData] = useState<IDropdownProps[]>([]);
     const [creditorsData, setCreditorsData] = useState<IDropdownProps[]>([]);
     const [isAllowSave, setIsAllowSave] = useState(false)
@@ -92,7 +93,11 @@ export function useBudgeRecordCrud() {
             userCreate: authorization?.user?.numberDocument!,
             userModify: "",
             dateModify: "",
-            newAmount:null,
+            consecutiveCdpAurora: null,
+            consecutiveCdpSap: null,
+            newAmount: null,
+            maxAMount: null,
+            mountSelected: null,
             linksRp: [
                 {
                     id: null,
@@ -118,25 +123,80 @@ export function useBudgeRecordCrud() {
             const dependencies = Object(res).data.data?.map(e => ({ id: e.id, name: e.name, value: e.id }))
             setDependeciesData(dependencies)
         })
+
+        GetAllActivityObjectContract().then(res => {
+            const activities = Object(res).data?.map(e => ({ id: e.id, name: e.description, value: e.description }))
+            setActivityObjectContractData(activities)
+        })
     }, [])
 
+
     const showModalChangeAmount = (row: any) => {
+
+        const { newAmount, maxAMount, mountSelected } = watch()
+        const linksCdp = getValues('linksRp')
+        const initialAmount = (linksCdp.find((el: any) => el.key == row.id)).initialAmount
+        const initialAmountF = parseFloat(initialAmount.toString())
+
+        if (mountSelected == null) {
+            setValueRegister('mountSelected', row.id)
+            setValueRegister('maxAMount', initialAmountF)
+        } else {
+            mountSelected != row.id && setValueRegister('maxAMount', initialAmountF)
+        }
+
+        let maxAmountF = getValues('maxAMount')
+
+
         setMessage({
             title: "Editar valor inicial",
             show: true,
             OkTitle: "Guardar",
             onOk: () => {
                 setMessage({})
-                const { newAmount } = watch()
+
+                /* GetRoutesByValidity({
+                    page: 1,
+                    perPage: 20,
+                    consecutiveSap: null,
+                    consecutiveAurora: row.id,
+                }).then(res => {
+                    let mountFind = JSON.stringify(res.data.array[0]?.amounts.map((e: any, index: number) => {
+                        return ({
+                            id: e.id,
+                            key: e.id,
+                            amountCdpId: e.cdpCode,
+                            initialAmount: e.amount,
+                            isActive: e.isActive,
+                        })
+                    }));
+                }) */
+
+
+
+                const { newAmount, maxAMount, mountSelected } = watch()
                 const linksCdp = getValues('linksRp')
-                const initialAmount = (linksCdp.find((el:any)=>el.key==row.id)).initialAmount
-                if(newAmount > 0 && Number(newAmount).toFixed(2)<=Number(initialAmount).toFixed(2)){
+                const initialAmount = (linksCdp.find((el: any) => el.key == row.id)).initialAmount
+                const initialAmountF = parseFloat(initialAmount.toString())
+
+                if (mountSelected == null) {
+                    setValueRegister('mountSelected', row.id)
+                    setValueRegister('maxAMount', initialAmountF)
+                } else {
+                    mountSelected != row.id && setValueRegister('maxAMount', initialAmountF)
+                }
+
+                let maxAmountF = getValues('maxAMount')
+
+                console.log({ initialAmountF, new: parseFloat(newAmount.toString()) })
+                //let initialAmountFixed = parseFloat(Number(initialAmount).toFixed(2))
+                if (newAmount > 0 && parseFloat(newAmount.toString()) <= maxAMount) {
                     setConfirmChangeAmountSt({ id: row.id, amount: Number(newAmount).toFixed(2) })
-                }else{
+                } else {
                     setConfirmChangeAmountSt({ id: row.id, amount: null })
                     setMessage({
                         title: `Valor no valido`,
-                        description:'El monto modificado debe ser mayor que cero y menor o igual que el monto inicial',
+                        description: 'El monto modificado debe ser mayor que cero y menor o igual que el monto inicial',
                         show: true,
                         OkTitle: "Aceptar",
                         onOk: () => {
@@ -153,7 +213,7 @@ export function useBudgeRecordCrud() {
                 setMessage({})
             },
             description: <div style={{ width: '100%' }}>
-                <label>Digite el valor inicial {row.amount}</label>
+                <label>Digite el valor inicial</label>
                 <div>
                     <Controller
                         control={control}
@@ -170,7 +230,7 @@ export function useBudgeRecordCrud() {
                                 direction={EDirection.column}
                                 errors={errors}
                                 onChange={(value) => field.onChange(value)}
-                                //onBlur={(e) => setMountEditSt({ id: row.id, amount: Object(e).target.value })}
+                            //onBlur={(e) => setMountEditSt({ id: row.id, amount: Object(e).target.value })}
                             />
                         )} />
                 </div>
@@ -241,6 +301,26 @@ export function useBudgeRecordCrud() {
         }
     }, [findAmountsSt])
 
+    const { consecutiveCdpAurora } = watch()
+
+    useEffect(() => {
+        if (consecutiveCdpAurora) {
+            if (consecutiveCdpAurora) {
+                GetRoutesByValidity({
+                    page: 1,
+                    perPage: 1,
+                    consecutiveSap: null,
+                    consecutiveAurora: consecutiveCdpAurora,
+                }).then(res => {
+                    setValueRegister('consecutiveCdpSap', res.data.array[0]?.sapConsecutive)
+                })
+            }
+        }
+    }, [consecutiveCdpAurora])
+
+
+
+
 
     const [isChangeAmount, setIsChangeAmount] = useState(false)
     const [newDataAmountSt, setDataNewAmountSt] = useState([])
@@ -249,10 +329,10 @@ export function useBudgeRecordCrud() {
             if (confirmChangeAmountSt?.amount) {
                 setIsChangeAmount(!isChangeAmount)
             }
-            setValueRegister('newAmount',null)
+            setValueRegister('newAmount', null)
             return ({
                 id: e.id,
-                key:e.id,
+                key: e.id,
                 amountCdpId: e.cdpCode,
                 initialAmount: confirmChangeAmountSt?.amount && confirmChangeAmountSt.id == e.id ? confirmChangeAmountSt.amount : e.amount,
                 isActive: e.isActive,
@@ -477,10 +557,10 @@ export function useBudgeRecordCrud() {
 
 
     return {
+        watch,
         control,
         errors,
         register,
-        watch,
         onSubmitRP,
         setMessage,
         getValues,
@@ -493,6 +573,7 @@ export function useBudgeRecordCrud() {
         dataAmounts,
         componentsData,
         dependeciesData,
+        activityObjectContractData,
         contractorsData,
         creditorsData,
         setContractorDocumentSt,

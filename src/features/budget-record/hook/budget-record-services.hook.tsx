@@ -31,13 +31,19 @@ export const useBudgetRecordServices = () => {
         const endpoint: string = `/update-data-basic-rp`;
         return post(`${roleUrl}${endpoint}`, data);
     }
+    
+    async function GetAllActivityObjectContract(): Promise<ApiResponse<any>> {
+        const endpoint: string = `/get-all-activity-object-contracts`;
+        return get(`${roleUrl}${endpoint}`);
+    }
 
     return{
         CreateBudgetRecord,
         GetAllComponents,
         GetRpByFilters,
         CancelLinkCdp,
-        UpdateDataBasicRp
+        UpdateDataBasicRp,
+        GetAllActivityObjectContract
     }
 
 }
