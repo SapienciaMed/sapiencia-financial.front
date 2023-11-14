@@ -1,5 +1,6 @@
 import useCrudService from "../../../common/hooks/crud-service.hook";
 import { ApiResponse } from "../../../common/utils";
+import { ICautation } from "../interface/Cautation";
 import { IBudgetRecord } from "../interface/budget-record";
 
 export const useBudgetRecordServices = () => {
@@ -32,12 +33,18 @@ export const useBudgetRecordServices = () => {
         return post(`${roleUrl}${endpoint}`, data);
     }
 
+    async function GetCausation(id:number): Promise<ApiResponse<ICautation>> {
+        const endpoint: string = `/get-causation/${id}`;
+        return get(`${roleUrl}${endpoint}`);
+    }
+
     return{
         CreateBudgetRecord,
         GetAllComponents,
         GetRpByFilters,
         CancelLinkCdp,
-        UpdateDataBasicRp
+        UpdateDataBasicRp,
+        GetCausation
     }
 
 }

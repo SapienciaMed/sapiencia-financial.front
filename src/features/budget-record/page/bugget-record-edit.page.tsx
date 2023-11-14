@@ -1,5 +1,5 @@
 import React from "react";
-import { ButtonComponent, FormComponent, InputComponent } from "../../../common/components/Form";
+import { ButtonComponent, FormComponent, InputComponent, SelectComponent } from "../../../common/components/Form";
 import { TextAreaCountComponent } from "../../../common/components/Form/input-text-area-count.component";
 import { Controller } from 'react-hook-form';
 import { useBudgeRecordEdit } from "../hook/budget-record-edit.hook";
@@ -7,7 +7,7 @@ import { useBudgeRecordEdit } from "../hook/budget-record-edit.hook";
 
 function BudgetRecordEditPage() {
 
-    const { control, register } = useBudgeRecordEdit();
+    const { control, register, dependeciesData,componentsData } = useBudgeRecordEdit();
 
     return (
         <div className="crud-page">
@@ -52,33 +52,38 @@ function BudgetRecordEditPage() {
                         </section>
 
                         <section className="grid-form-3-container-area mt-5px"><h3>Dependencia</h3></section>
-                        <section className="grid-form-3-container-area mt-5px">
-                            <InputComponent
-                                idInput="numberProject"
-                                className="input-basic "
-                                typeInput="text"
-                                //register={register}
-                                label="Área - equipo"
-                                classNameLabel="text-black biggest text-required"
-                                disabled
+                        <section className="grid-form-3-container-area mt-5px">                           
+                            <SelectComponent
+                                idInput="dependencyId"
+                                control={control}
+                                label="Dependencia"
+                                className="select-basic"
+                                classNameLabel="text-black big bold text-required"
+                                placeholder={"Seleccionar"}
+                                data={dependeciesData}
+                                filter={true}
+                                disabled                               
                             />
                             <InputComponent
-                                idInput="numberProject"
-                                className="input-basic "
+                                idInput="contractualObject"
+                                className="input-basic"
                                 typeInput="text"
-                                //register={register}
+                                register={register}
                                 label="Actividad del objeto contractual"
                                 classNameLabel="text-black biggest text-required"
                                 disabled
                             />
-                            <InputComponent
-                                idInput="numberProject"
-                                className="input-basic "
-                                typeInput="text"
-                                //register={register}
+                            <SelectComponent
+                                idInput="componentId"
+                                control={control}
                                 label="Componente"
-                                classNameLabel="text-black biggest text-required"
-                                disabled
+                                className="select-basic"
+                                classNameLabel="text-black big bold text-required"
+                                placeholder={"Seleccionar"}
+                                data={componentsData}
+                                filter={true}
+                                disabled                             
+                                
                             />
                         </section>
                     </div>
@@ -175,7 +180,7 @@ function BudgetRecordEditPage() {
                                 idInput="amount"
                                 className="input-basic"
                                 typeInput="text"
-                                //register={register}
+                                register={register}
                                 label="Valor inicial"
                                 classNameLabel="text-black biggest text-required"
                                 disabled
@@ -221,7 +226,7 @@ function BudgetRecordEditPage() {
                             />
                         </section>
 
-                      {/*   <div className='mt-24px'>
+                        {/*   <div className='mt-24px'>
                             <Controller
                                 //control={control}
                                 name={"contractObject"}

@@ -12,7 +12,7 @@ import { useCreditorsServices } from "../../creditors/hook/creditors-service.hoo
 import { IDropdownProps } from "../../../common/interfaces/select.interface";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
-import * as Icons from "react-icons/fa";import { useNavigate } from "react-router-dom";
+import * as Icons from "react-icons/fa";
 
 
 export function useBudgeRecordView() {
@@ -33,7 +33,7 @@ export function useBudgeRecordView() {
     const [componentsData, setComponentsData] = useState<IDropdownProps[]>([]);
     const [contractorDocumentSt, setContractorDocumentSt] = useState('')
 
-    const navigate = useNavigate();
+  
 
     const {
         handleSubmit,

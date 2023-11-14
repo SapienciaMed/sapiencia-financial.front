@@ -9,6 +9,8 @@ import { EResponseCodes } from "../../../common/constants/api.enum";
 import { useFunctionalAreaService } from "../../functionality/hooks/functional-area-service.hook";
 import { IProjectAdditionList } from "../../functionality/interfaces/AdditionsTransfersInterfaces";
 import { IFunctionalArea } from "../../functionality/interfaces/Functional-Area";
+import { usePayrollExternalServices } from "./payroll-external-services.hook";
+import { IDropdownProps } from "../../../common/interfaces/select.interface";
 
 
 export function useBudgeRecordEdit() {
@@ -17,15 +19,19 @@ export function useBudgeRecordEdit() {
     const { id } = useParams();
     const { setMessage } = useContext(AppContext);
 
-    const { GetRpByFilters } = useBudgetRecordServices();
+    const { GetRpByFilters,GetAllComponents,GetCausation } = useBudgetRecordServices();
     const { GetProjectsList } = useAdditionsTransfersService();
     const { GetAllFunctionalAreas } = useFunctionalAreaService();
+    const { GetAllDependencies } = usePayrollExternalServices();
 
     const [dataRp, setDataRp] = useState<any>()
     const [projectsData, setProjectsData] = useState<IProjectAdditionList[]>([]);
     const [areaData, setAreaData] = useState<IFunctionalArea[]>([]);
     const [areaNumber, setAreaNumber] = useState("");
     const [projectNumber, setProjectNumber] = useState("");
+    const [dependeciesData, setDependeciesData] = useState<IDropdownProps[]>([]);
+    const [componentsData, setComponentssData] = useState<IDropdownProps[]>([]);
+    const [totalCautation, setTotalCautation] = useState(0);
 
     //Form
     const { control, handleSubmit, register, watch, setValue, reset, formState: { errors }, } = useForm({});
@@ -82,7 +88,25 @@ export function useBudgeRecordEdit() {
             }
         });
 
+        GetAllDependencies().then((res) => {
+            const dependencies = Object(res).data.data?.map(e => ({ id: e.id, name: e.name, value: e.id }))
+            setDependeciesData(dependencies)
+        })
+
+        GetAllComponents().then(res => {
+            const componentes = res.data?.map(e => ({ id: e.id, name: e.name, value: e.id }))
+            setComponentssData(componentes)
+        })
+
+        GetCausation(Number(id)).then(response => {
+            setTotalCautation(response.data.total)        
+        })
+
+
     }, [id]);
+
+    console.log(totalCautation);
+    
 
 
     useEffect(() => {
@@ -129,6 +153,10 @@ export function useBudgeRecordEdit() {
         setValue("div", dataRp.linksRp[0].amountBudgetAvailability.budgetRoute.div);
         setValue("cdpPosition", dataRp.linksRp[0].amountBudgetAvailability.cdpPosition);
         setValue("numberProject", projectNumber);
+        setValue("dependencyId", dataRp.dependencyId);
+        setValue("contractualObject", dataRp.contractualObject);
+        setValue("componentId", dataRp.componentId);
+        setValue("amount", dataRp.linksRp[0].initialAmount);
 
 
     }, [dataRp, areaNumber, projectNumber]);
@@ -137,7 +165,9 @@ export function useBudgeRecordEdit() {
 
     return {
         control,
-        register
+        register,
+        dependeciesData,
+        componentsData
 
     };
 }
