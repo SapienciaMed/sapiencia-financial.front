@@ -14,6 +14,7 @@ import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import * as Icons from "react-icons/fa";
 
+
 export function useBudgeRecordView() {
 
     const navigate = useNavigate()
@@ -31,6 +32,8 @@ export function useBudgeRecordView() {
 
     const [dependenciesData, setDependenciesData] = useState<IDropdownProps[]>([]);
     const [contractorDocumentSt, setContractorDocumentSt] = useState('')
+
+  
 
     const {
         handleSubmit,
@@ -194,6 +197,7 @@ export function useBudgeRecordView() {
             onClick: (row) => {
                 { row.rpId }
                 /* showModalChangeAmount(row.id) */
+                navigate(`./edit/${row.rpId}`); 
             },
         }
     ];
