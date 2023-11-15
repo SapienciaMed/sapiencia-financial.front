@@ -36,6 +36,7 @@ const CdpCrudPage = () => {
   const navigate = useNavigate();
   const [proyectoError, setProyectoError] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [deleteRouteTwo, setDeleteRouteTwo] = useState(false);
   const [amountInfo, setAmountInfo] = useState<FormInfoType>({
     idRppCode: "",
     posicion: "",
@@ -55,7 +56,14 @@ const CdpCrudPage = () => {
     const newFormulario = { id: formCount };
     setFormularios([...formularios, newFormulario]);
     setFormCount(formCount + 1);
+    if(!deleteRouteTwo){
+      setTimeout(() => {
+        handleEliminar(1)
+        setDeleteRouteTwo(true);
+      }, 500);
+    }
   };
+
   const handleEliminar = (formNumber) => {
     setFormularios((prevFormularios) =>
       prevFormularios.filter((_, index) => indexOfFirstForm + index !== formNumber)
@@ -124,14 +132,12 @@ const CdpCrudPage = () => {
     const onCancelNew = () => {
       navigate("./");
     };
-      // Validar campos vacíos
+
   const hasEmptyFields = Object.values(objectSendData).some((value) => {
-    // Puedes ajustar esta lógica según tus necesidades específicas
     return typeof value === "string" && value.trim() === "";
   });
 
   if (hasEmptyFields) {
-    // Muestra un mensaje o realiza alguna acción para manejar los campos vacíos
     console.log("Hay campos vacíos. No se puede continuar.");
     return;
   }
@@ -156,8 +162,6 @@ const CdpCrudPage = () => {
 
         return;
       }
-
-
 
       if (invalidBalances.length === 0) {
         const updatedIcdArr = icdArrWithBalanceCheck.map(({ balance, ...rest }) => rest);
@@ -263,15 +267,6 @@ const CdpCrudPage = () => {
     }
   };
 
-/*   useEffect(() => {
-    
-  
-    console.log(formularios);
-    console.log(formularios.length);
-    return () => {
-      
-    }
-  }, [formularios]) */
   
   const formsPerPage = 2;
   const [currentPage, setCurrentPage] = useState(1);
