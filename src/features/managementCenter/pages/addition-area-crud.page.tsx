@@ -8,6 +8,7 @@ import TabManagerAdditionPage from "./tab-manager-addition.page";
 import { useAdditionAreaCrud } from "../hook/addition-area-crud.hook";
 import { useNavigate, useParams } from "react-router-dom";
 import { EDirection } from "../../../common/constants/input.enum";
+import { Controller } from "react-hook-form";
 interface IAppProps {
   actionForm: "new" | "edit" | "detail";
   typeMovement: "Adicion" | "Disminucion";
@@ -85,11 +86,12 @@ function AdditionAreaCrud({ actionForm, typeMovement }: IAppProps) {
           }
         </p>
 
+
         <div className="card-user" >
           <FormComponent action={onSubmitTab} id="form-acts">
             <div className="card-form">
               <div className="funcionality-filters-container">
-                <InputComponent
+               {/*  <InputComponent
                   idInput="actAdministrativeDistrict"
                   className="input-basic"
                   typeInput="text"
@@ -99,8 +101,31 @@ function AdditionAreaCrud({ actionForm, typeMovement }: IAppProps) {
                   direction={EDirection.column}
                   errors={errors}
                   disabled={actionForm === "edit" || actionForm === "detail"}
-                />
-                <InputComponent
+                /> */}
+                  <Controller
+                    control={control}
+                    name={"actAdministrativeDistrict"}
+                    defaultValue=""
+                    render={({ field }) => {
+                        return (
+                            <InputComponent
+                                id={field.name}
+                                idInput={field.name}
+                                value={`${field.value}`}
+                                className="input-basic"
+                                typeInput="text"
+                                register={register}
+                                label="Acto administrativo distrito"
+                                classNameLabel="text-black biggest bold text-required"
+                                direction={EDirection.column}
+                                errors={errors}
+                                onChange={field.onChange}
+                                disabled={actionForm === "edit" || actionForm === "detail"}
+                            /> 
+                        )
+                    }}
+                  />
+              {/*   <InputComponent
                   idInput="actAdministrativeSapiencia"
                   className="input-basic"
                   typeInput="text"
@@ -110,7 +135,30 @@ function AdditionAreaCrud({ actionForm, typeMovement }: IAppProps) {
                   direction={EDirection.column}
                   errors={errors}
                   disabled={actionForm === "edit" || actionForm === "detail"}
-                />
+                /> */}
+                 <Controller
+                    control={control}
+                    name={"actAdministrativeSapiencia"}
+                    defaultValue=""
+                    render={({ field }) => {
+                        return (
+                            <InputComponent
+                                id={field.name}
+                                idInput={field.name}
+                                value={`${field.value}`}
+                                className="input-basic"
+                                typeInput="text"
+                                register={register}
+                                label="Acto administrativo sapiencia"
+                                classNameLabel="text-black biggest bold text-required"
+                                direction={EDirection.column}
+                                errors={errors}
+                                onChange={field.onChange}
+                                disabled={actionForm === "edit" || actionForm === "detail"}
+                            /> 
+                        )
+                    }}
+                  />
               </div>
             </div>
             {
