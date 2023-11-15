@@ -16,7 +16,7 @@ export function useBudgeRecordEdit(id) {
 
     const resolver = useYupValidationResolver(budgetRecordEditCrudValidator);
     const navigate = useNavigate();
-    const { GetRpByFilters, GetAllComponents, UpdateDataBasicRp } = useBudgetRecordServices();
+    const { GetRpByFilters, GetAllComponents, UpdateDataBasicRp,GetAllActivityObjectContract } = useBudgetRecordServices();
     const { GetAllDependencies, GetContractorsByDocuments } = usePayrollExternalServices()
     const { setMessage, authorization } = useContext(AppContext);
 
@@ -25,6 +25,7 @@ export function useBudgeRecordEdit(id) {
 
     const [isAllowSave, setIsAllowSave] = useState(false)
     const [isUploadData, setIsUploadData] = useState(false)
+    const [activityObjectContractData, setActivityObjectContractData] = useState<IDropdownProps[]>([]);
 
     const [contractorListSt, setContractorListSt] = useState([])
     useEffect(() => {
@@ -49,6 +50,10 @@ export function useBudgeRecordEdit(id) {
             setContractorListSt(contractorList)
         })
 
+        GetAllActivityObjectContract().then(res => {
+            const activities = Object(res).data?.map(e => ({ id: e.id, name: e.description, value: e.description }))
+            setActivityObjectContractData(activities)
+        })
 
     }, [])
 
@@ -96,9 +101,9 @@ export function useBudgeRecordEdit(id) {
 
 
     const formatDate = (dateUTC: Date) => {
-        let year = dateUTC.getUTCFullYear();
-        let month = dateUTC.getUTCMonth() + 1; // Los meses en JavaScript van de 0 a 11
-        let day = dateUTC.getUTCDate() + 1;
+        let year = new Date(dateUTC).getUTCFullYear();
+        let month = new Date(dateUTC).getUTCMonth() + 1; // Los meses en JavaScript van de 0 a 11
+        let day = new Date(dateUTC).getUTCDate() + 1;
         let fechaFormateada = year + '-' + pad(month) + '-' + pad(day)
         return fechaFormateada
     }
@@ -112,8 +117,8 @@ export function useBudgeRecordEdit(id) {
                     setValueRegister('id', res.data[0].id)
                     setValueRegister('supplierName', res.data[0].supplierType == 'Acreedor' ? Object(res).data[0].creditor.name : '')
                     setValueRegister('contractorDocument', res.data[0].contractorDocument)
-                    setValueRegister('documentDate', formatDate(new Date(res.data[0].documentDate)))
-                    setValueRegister('dateValidity', formatDate(new Date(res.data[0].dateValidity)))
+                    setValueRegister('documentDate', formatDate(res.data[0].documentDate))
+                    setValueRegister('dateValidity', formatDate(res.data[0].dateValidity))
                     setValueRegister('dependencyId', res.data[0].dependencyId)
                     setValueRegister('contractualObject', res.data[0].contractualObject)
                     setValueRegister('componentId', res.data[0].componentId)
@@ -130,7 +135,9 @@ export function useBudgeRecordEdit(id) {
     }, [id])
 
     const onSubmitEditRp = handleSubmit(async (data: IBudgetRecord) => {
-
+        data.documentDate=formatDate(new Date(data.documentDate))
+        data.dateValidity=formatDate(new Date(data.dateValidity))
+        
         showModal({
             title: "Guardar",
             description: "¿Está segur@ de guardar la información?",
@@ -198,7 +205,8 @@ export function useBudgeRecordEdit(id) {
         componentsData,
         dependeciesData,
         isAllowSave,
-        contractorListSt
+        contractorListSt,
+        activityObjectContractData
     };
 
 }
