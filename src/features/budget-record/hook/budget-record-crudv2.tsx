@@ -1,6 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { IMessage } from "../../../common/interfaces/global.interface";
-import { IErrorTablePac } from "../../pac/interface/Pac";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { AppContext } from "../../../common/contexts/app.context";
@@ -11,7 +10,7 @@ import { budgetRecordCrudValidator } from "../../../common/schemas/budget-record
 import { useBudgetRecordServices } from "./budget-record-services.hook";
 import { useCdpServices } from "../../budget-availability/hooks/useCdpServices";
 import { Checkbox } from "primereact/checkbox";
-import { InputComponent, TextAreaComponent } from "../../../common/components/Form";
+import { InputComponent } from "../../../common/components/Form";
 import { EDirection } from "../../../common/constants/input.enum";
 import { IDropdownProps } from "../../../common/interfaces/select.interface";
 import { useCreditorsServices } from "../../creditors/hook/creditors-service.hook";
@@ -113,7 +112,7 @@ export function useBudgeRecordCrudv2() {
             ],
         },
         mode: 'onSubmit',
-        /* resolver, */
+        resolver,
     });
 
     useEffect(() => {
@@ -486,6 +485,7 @@ export function useBudgeRecordCrudv2() {
                 if (newAmountFloat > 0 && newAmountFloat <= maxAmountFloat) {
                     setConfirmChangeAmountSt({ id: idAmountToModify, amount: Number(newAmount) })
                     setMessage({})
+                    setValueRegister('newAmount', null)
                 } else {
                     setMessage({
                         title: `Valor no valido`,
@@ -494,9 +494,11 @@ export function useBudgeRecordCrudv2() {
                         OkTitle: "Aceptar",
                         onOk: () => {
                             setMessage({})
+                            setValueRegister('newAmount', null)
                         },
                         onClose() {
                             setMessage({})
+                            setValueRegister('newAmount', null)
                         }
                     })
                 }
