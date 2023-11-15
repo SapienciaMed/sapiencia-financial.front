@@ -52,6 +52,7 @@ const CdpAmountAssoc = () => {
     const currentForms = formularios.slice(indexOfFirstForm, indexOfLastForm);
     const totalForms = formularios.length;
     const totalPages = Math.ceil(totalForms / formsPerPage);
+    const [deleteRouteTwo, setDeleteRouteTwo] = useState(false);
     const { getCdpById } = useCdpService();
     const [dataHead, setDataHead] = useState<FormHeadInfo>({
         date: '',
@@ -68,6 +69,13 @@ const CdpAmountAssoc = () => {
         const newFormulario = { id: formCount };
         setFormularios([...formularios, newFormulario]);
         setFormCount(formCount);
+
+        if(!deleteRouteTwo){
+            setTimeout(() => {
+              handleEliminar(1)
+              setDeleteRouteTwo(true);
+            }, 500);
+          }
     };
 
 /*     const handleAgregarFormulario = () => {

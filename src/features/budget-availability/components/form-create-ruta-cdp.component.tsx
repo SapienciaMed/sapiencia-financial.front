@@ -143,7 +143,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
   useEffect(() => {
     const selectedProject = projectsData.find((project) => {
       if (project.value === parseInt(proyecto)) {
-        let arrName = project.name.split('-');
+        let arrName = project['nameProject'].split('-');
         setNombreProyecto(arrName[2]);
         projectsVinculateData.find((area) => {
           if (project['areaFuncional'] === area.functionalAreaId) {
