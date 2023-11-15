@@ -1,7 +1,7 @@
 import * as yup from "yup";
 
 export const budgetRecordCrudValidator = yup.object({
-    supplierType: yup
+   /*  supplierType: yup
         .string()
         .required("El campo es obligatorio"),
     contractorDocument: yup
@@ -21,5 +21,5 @@ export const budgetRecordCrudValidator = yup.object({
         .required("El campo es obligatorio"),
     componentId: yup
         .string()
-        .required("El campo es obligatorio"),
+        .required("El campo es obligatorio"), */
 });

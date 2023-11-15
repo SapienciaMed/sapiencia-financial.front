@@ -132,7 +132,6 @@ export function useBudgeRecordView() {
                 } else {
                     setDataFindRpSt([])
                     setDataRouteBudgetsSt([])
-
                 }
             } catch (error) {
                 setMessage({
@@ -142,6 +141,8 @@ export function useBudgeRecordView() {
                     OkTitle: "Aceptar",
                     onOk: () => {
                         setMessage({})
+                        setDataFindRpSt([])
+                        setDataRouteBudgetsSt([])
                     },
                     onClose() {
                         setMessage({})

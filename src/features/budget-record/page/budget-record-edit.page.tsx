@@ -24,7 +24,8 @@ function BudgetRecordEditRpPage() {
         componentsData,
         dependeciesData,
         isAllowSave,
-        contractorListSt
+        contractorListSt,
+        activityObjectContractData
     } = useBudgeRecordEdit(id);
 
     return (
@@ -114,24 +115,19 @@ function BudgetRecordEditRpPage() {
                                 errors={errors}
                                 direction={EDirection.column}
                             />
-                            <Controller
+                            <SelectComponent
+                                idInput="contractualObject"
                                 control={control}
-                                name={"contractualObject"}
-                                render={({ field }) => (
-                                    <InputComponent
-                                        id={field.name}
-                                        idInput={field.name}
-                                        className={'input-basic medium'}
-                                        typeInput="text"
-                                        register={register}
-                                        label="Actividad del objeto contractual"
-                                        classNameLabel="text-black big bold text-required"
-                                        direction={EDirection.column}
-                                        errors={errors}
-                                        onChange={(value) => field.onChange(value)}
-                                    />
-                                )} />
-
+                                label="Actividad del objeto contractual"
+                                className="select-basic medium"
+                                classNameLabel="text-black big bold text-required"
+                                placeholder={"Seleccionar"}
+                                data={activityObjectContractData}
+                                filter={true}
+                                errors={errors}
+                                direction={EDirection.column}
+                            />
+                            
                             <SelectComponent
                                 idInput="componentId"
                                 control={control}
@@ -159,7 +155,7 @@ function BudgetRecordEditRpPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Consecutivo RP SAP"
-                                        classNameLabel="text-black big bold text-required"
+                                        classNameLabel="text-black big bold"
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
@@ -171,7 +167,7 @@ function BudgetRecordEditRpPage() {
                                 control={control}
                                 label="Líder del proceso"
                                 className="select-basic medium"
-                                classNameLabel="text-black big bold text-required"
+                                classNameLabel="text-black big bold"
                                 placeholder={"Seleccionar"}
                                 data={contractorListSt}
                                 filter={true}
@@ -190,7 +186,7 @@ function BudgetRecordEditRpPage() {
                                         typeInput="number"
                                         register={register}
                                         label="No. contrato"
-                                        classNameLabel="text-black big bold text-required"
+                                        classNameLabel="text-black big bold"
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
@@ -203,7 +199,7 @@ function BudgetRecordEditRpPage() {
                                 control={control}
                                 label="Supervisor del contrato"
                                 className="select-basic medium"
-                                classNameLabel="text-black big bold text-required"
+                                classNameLabel="text-black big bold"
                                 placeholder={"Seleccionar"}
                                 data={contractorListSt}
                                 filter={true}
@@ -226,7 +222,7 @@ function BudgetRecordEditRpPage() {
                                 control={control}
                                 label={"Fecha vencimiento"}
                                 errors={errors}
-                                classNameLabel="text-black biggest bold"
+                                classNameLabel="text-black biggest bold text-required"
                                 className="dataPicker-basic medium"
                                 placeholder="DD/MM/YYYY"
                                 dateFormat="dd/mm/yy"
