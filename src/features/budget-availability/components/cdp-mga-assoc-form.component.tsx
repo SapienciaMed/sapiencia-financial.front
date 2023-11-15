@@ -165,17 +165,20 @@ function CdpMgaAssocFormComponent(props: ICdpMgaAssocFromProps) {
                         <Controller
                             control={control}
                             name={"percentageAffected"} 
+                            defaultValue=""
                             render={({ field }) => {
                                 return (
                                     <InputComponent
                                         id={field.name}
                                         idInput={field.name}
+                                        //value={`${field.value}`}
                                         className="input-basic big"  
                                         typeInput="number"
                                         register={register}
                                         label="Porcentaje de afectación"
                                         classNameLabel="text-black weight-500 biggest text-required"
                                         direction={EDirection.column}
+                                        onChange={field.onChange}
                                         errors={errors}
                                     />
                                 );
