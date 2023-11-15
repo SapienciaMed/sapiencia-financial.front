@@ -36,6 +36,7 @@ const CdpCrudPage = () => {
   const navigate = useNavigate();
   const [proyectoError, setProyectoError] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [deleteRouteTwo, setDeleteRouteTwo] = useState(false);
   const [amountInfo, setAmountInfo] = useState<FormInfoType>({
     idRppCode: "",
     posicion: "",
@@ -55,7 +56,14 @@ const CdpCrudPage = () => {
     const newFormulario = { id: formCount };
     setFormularios([...formularios, newFormulario]);
     setFormCount(formCount + 1);
+    if(!deleteRouteTwo){
+      setTimeout(() => {
+        handleEliminar(1)
+        setDeleteRouteTwo(true);
+      }, 500);
+    }
   };
+
   const handleEliminar = (formNumber) => {
     setFormularios((prevFormularios) =>
       prevFormularios.filter((_, index) => indexOfFirstForm + index !== formNumber)
@@ -118,83 +126,21 @@ const CdpCrudPage = () => {
 
   }
 
-  /*  const handleGuardar = async () => {
- 
- 
-     // setFormSubmitted(true);
-     let nuevoObjeto;
-     const onCancelNew = () => {
-       navigate("./");
-     };
-     try {
-       const icdArrWithBalanceCheck = objectSendData["icdArr"];
- 
-       const invalidBalances = icdArrWithBalanceCheck.filter(
-         (item) => parseInt(item.valorInicial) >= parseInt(item.balance)
-       );
- 
-       if (invalidBalances.length === 0) {
-         const updatedIcdArr = icdArrWithBalanceCheck.map(({ balance, ...rest }) => rest);
- 
-         nuevoObjeto = {
-           ...objectSendData,
-           exercise: objectSendData["exercise"],
-           date: objectSendData["date"] && typeof objectSendData["date"] === "string" ? objectSendData["date"].split("/").join("-") : null,
-           contractObject: objectSendData["contractObject"],
-           consecutive: 10,
-           icdArr: updatedIcdArr.map(({ idRppCode, posicion, valorInicial, id, ...rest }) => ({
-             idRppCode: parseInt(idRppCode),
-             cdpPosition: parseInt(posicion),
-             amount: parseFloat(valorInicial),
-             ...rest,
-           })),
-         };
- 
-         await new Promise((resolve) => {
-           setObjectSendData(nuevoObjeto);
-           resolve('success');
-         });
- 
-         const response = await cdpService.createCdp_(nuevoObjeto);
- 
-         if (response && response['operation']['code'] === "FAIL") {
-           setMessage({
-             title: "Error al crear CDP",
-             description: response['operation']['message'],
-             show: true,
-             OkTitle: "Aceptar",
-             onOk: () => {
-               onCancelNew();
-               setMessage({});
-             },
-             background: true,
-           });
-         } else {
-           setMessage({
-             title: "Guardado",
-             description: "Guardado Exitosamente!!",
-             show: true,
-             OkTitle: "Aceptar",
-             onOk: () => {
-               navigate("./../");
-               setMessage({});
-             },
-             background: true,
-           });
-         }
-         console.log('Response:', response);
-       }
-     } catch (error) {
-       console.error("Error al enviar los datos:", error);
-     }
-   };
-  */
   const handleGuardar = async () => {
     setFormSubmitted(true);
     let nuevoObjeto;
     const onCancelNew = () => {
       navigate("./");
     };
+
+  const hasEmptyFields = Object.values(objectSendData).some((value) => {
+    return typeof value === "string" && value.trim() === "";
+  });
+
+  if (hasEmptyFields) {
+    console.log("Hay campos vacíos. No se puede continuar.");
+    return;
+  }
     try {
       const icdArrWithBalanceCheck = objectSendData["icdArr"];
 
@@ -205,7 +151,7 @@ const CdpCrudPage = () => {
       if (invalidBalances.length !== 0) {
         setMessage({
           title: "Validar valor inicial",
-          description: "Recuerda que el valor inicial no puede ser mayor o igual al balance disponible de la ruta presupuestal",
+          description: "Recuerda que el valor inicial no puede ser mayor o igual al saldo disponible de la ruta presupuestal",
           show: true,
           OkTitle: "Aceptar",
           onOk: () => {
@@ -216,8 +162,6 @@ const CdpCrudPage = () => {
 
         return;
       }
-
-
 
       if (invalidBalances.length === 0) {
         const updatedIcdArr = icdArrWithBalanceCheck.map(({ balance, ...rest }) => rest);
@@ -242,7 +186,7 @@ const CdpCrudPage = () => {
         });
         setMessage({
           title: "Crear CDP",
-          description: `Recuerda que al aceptar se guardaran los datos en el sistema`,
+          description: `¿Estás segur@ de guardar la informacion ?`,
           show: true,
           OkTitle: "Aceptar",
           cancelTitle: "Cancelar",
@@ -274,7 +218,22 @@ const CdpCrudPage = () => {
                     background: true,
                   });
                 }
-
+              
+                if (response['operation']['message'].indexOf("Ya existe") !== -1) {
+                  setMessage({
+                    title: "Validación de datos",
+                    description: "¡El dato ya existe!",
+                    show: true,
+                    OkTitle: "Cerrar",
+                    onOk: () => {
+                      onCancelNew();
+                      setMessage({});
+                    },
+                    background: true,
+                  });
+                  return
+                }
+              
                 if (response['operation']['code'] === "FAIL") {
                   setMessage({
                     title: "Error al crear CDP",
@@ -297,6 +256,7 @@ const CdpCrudPage = () => {
             setMessage({});
           }, onCancel() {
             onCancelNew();
+            setMessage({})
           },
           background: true,
         });
@@ -307,6 +267,7 @@ const CdpCrudPage = () => {
     }
   };
 
+  
   const formsPerPage = 2;
   const [currentPage, setCurrentPage] = useState(1);
   const indexOfLastForm = currentPage * formsPerPage;
@@ -371,10 +332,9 @@ const CdpCrudPage = () => {
         </button>
       </div>
       <CdpheadCreate formSubmitted={formSubmitted} isDisabled={false} setFormHeadInfo={setFormHeadInfo} />
-      {formularios.length > 0 && (
-
+       
         <div>
-          {renderFormsForCurrentPage()}
+          {formularios.length > 0 && renderFormsForCurrentPage()}
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <CdpPaginator
               currentPage={currentPage}
@@ -383,8 +343,6 @@ const CdpCrudPage = () => {
             />
           </div>
         </div>
-      )}
-
 
       <div className="button-container component-container-create">
         <button onClick={handleCancel} className="cancel-btn">
@@ -397,5 +355,5 @@ const CdpCrudPage = () => {
     </div>
   );
 };
-
-export default CdpCrudPage;
+export default React.memo(CdpCrudPage);
+//export default CdpCrudPage;

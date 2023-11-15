@@ -20,6 +20,7 @@ interface IInputProps<T> {
   errors?: any;
   disabled?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (event: React.FocusEventHandler<HTMLInputElement>) => void;
   onKeyPress?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   id?: string;
   style?: React.CSSProperties;
@@ -49,6 +50,7 @@ function InputElement({
   value,
   disabled,
   onChange: onChangeProp,
+  onBlur: onBlurProp,
   defaultValue,
   id,
   optionsRegister,
@@ -68,6 +70,7 @@ function InputElement({
       defaultValue={defaultValue}
       disabled={disabled}
       onChange={onChangeProp}
+      onBlur={onBlurProp}
       value={value}
       max={max}
       min={min}
@@ -89,6 +92,7 @@ export function InputComponent({
   errors,
   disabled,
   onChange,
+  onBlur,
   onKeyPress,
   defaultValue,
   id,
@@ -136,6 +140,7 @@ export function InputComponent({
           value={value}
           disabled={disabled}
           onChange={onChange}
+          onBlur={onBlur}
           defaultValue={defaultValue}
           id={id}
           optionsRegister={optionsRegister}

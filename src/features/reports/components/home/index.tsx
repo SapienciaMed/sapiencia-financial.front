@@ -24,7 +24,7 @@ const HomeReports = () => {
 
   return (
     <div>
-      <FormComponent action={onSubmit}>
+      <FormComponent action={onSubmit} id="form-report">
         <div className="one-filter-container">
           <Controller
             control={control}
@@ -100,7 +100,6 @@ const HomeReports = () => {
         </div>
         <div className="funcionality-buttons-container">
           <ButtonComponent
-            form="useQueryForm"
             value="Cancelar"
             type="button"
             className="button-clean-fields bold"
@@ -127,9 +126,10 @@ const HomeReports = () => {
             }}
           />
           <ButtonComponent
-            className="button-main huge hover-three"
             value="Generar"
             type="submit"
+            form="form-report"
+            className="button-main huge hover-three"
             disabled={!isBtnDisable}
           />
         </div>

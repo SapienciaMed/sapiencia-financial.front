@@ -123,7 +123,7 @@ export function useCdpCrud(cdpId?: string) {
             header: "Pospre",
         },
         {
-            fieldName: "amount",
+            fieldName: "idcFinalValue",
             header: "Valor final",
         },
         {

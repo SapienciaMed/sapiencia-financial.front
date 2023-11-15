@@ -216,7 +216,7 @@ export function usePacData() {
         {
             icon: "Edit",
             onClick: (row) => {
-                const pacId = row?.dataCondensed.pacId
+                const pacId = row?.id
                 const budgetRouteId = row?.dataCondensed.routeId
                 navigate(`./edit/${pacId}/${budgetRouteId}`)
             },

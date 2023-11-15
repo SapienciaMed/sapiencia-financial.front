@@ -52,7 +52,7 @@ export function useBudgetRoutesCrudData(id: string) {
 
             const arrayProjects: IDropdownProps[] = viculateProjects.data.map((project) => {
 
-                return { name: `${project.projectId} - ${project.conceptProject}`, value: project.id, areaFuncional: project.functionalAreaId }
+                return { name: `${project.projectId}`, value: project.id, areaFuncional: project.functionalAreaId, nameProject: `${project.projectId} - ${project.conceptProject}`  }
             });
 
             setProjectsData(arrayProjects);

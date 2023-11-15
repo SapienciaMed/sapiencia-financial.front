@@ -144,33 +144,33 @@ export function usePacEdit() {
 
                     setPacAnnualizationsProgammedServices(dinamicData.resultPac.pacAnnualizations.filter(content => content.type == 'Programado'))
                     dinamicData.resultPac.pacAnnualizations.filter(content => content.type == 'Programado').map(value => {
-                        setValue(`programmed.january`, String(value.jan))
-                        setValue(`programmed.february`, String(value.feb))
-                        setValue(`programmed.march`, String(value.mar))
-                        setValue(`programmed.april`, String(value.abr))
-                        setValue(`programmed.may`, String(value.may))
-                        setValue(`programmed.june`, String(value.jun))
-                        setValue(`programmed.july`, String(value.jul))
-                        setValue(`programmed.august`, String(value.ago))
-                        setValue(`programmed.september`, String(value.sep))
-                        setValue(`programmed.october`, String(value.oct))
-                        setValue(`programmed.november`, String(value.nov))
-                        setValue(`programmed.december`, String(value.dec))
+                        setValue(`programmed.january`, String(value.jan || 0))
+                        setValue(`programmed.february`, String(value.feb || 0))
+                        setValue(`programmed.march`, String(value.mar || 0))
+                        setValue(`programmed.april`, String(value.abr || 0))
+                        setValue(`programmed.may`, String(value.may || 0))
+                        setValue(`programmed.june`, String(value.jun || 0))
+                        setValue(`programmed.july`, String(value.jul || 0))
+                        setValue(`programmed.august`, String(value.ago || 0))
+                        setValue(`programmed.september`, String(value.sep || 0))
+                        setValue(`programmed.october`, String(value.oct || 0))
+                        setValue(`programmed.november`, String(value.nov || 0))
+                        setValue(`programmed.december`, String(value.dec || 0))
                     })
                     setPacAnnualizationsCollectedServices(dinamicData.resultPac.pacAnnualizations.filter(content => content.type == 'Recaudado'))
                     dinamicData.resultPac.pacAnnualizations.filter(content => content.type == 'Recaudado').map(value => {
-                        setValue(`collected.january`, String(value.jan))
-                        setValue(`collected.february`, String(value.feb))
-                        setValue(`collected.march`, String(value.mar))
-                        setValue(`collected.april`, String(value.abr))
-                        setValue(`collected.may`, String(value.may))
-                        setValue(`collected.june`, String(value.jun))
-                        setValue(`collected.july`, String(value.jul))
-                        setValue(`collected.august`, String(value.ago))
-                        setValue(`collected.september`, String(value.sep))
-                        setValue(`collected.october`, String(value.oct))
-                        setValue(`collected.november`, String(value.nov))
-                        setValue(`collected.december`, String(value.dec))
+                        setValue(`collected.january`, String(value.jan || 0))
+                        setValue(`collected.february`, String(value.feb || 0))
+                        setValue(`collected.march`, String(value.mar || 0))
+                        setValue(`collected.april`, String(value.abr || 0))
+                        setValue(`collected.may`, String(value.may || 0))
+                        setValue(`collected.june`, String(value.jun || 0))
+                        setValue(`collected.july`, String(value.jul || 0))
+                        setValue(`collected.august`, String(value.ago || 0))
+                        setValue(`collected.september`, String(value.sep || 0))
+                        setValue(`collected.october`, String(value.oct || 0))
+                        setValue(`collected.november`, String(value.nov || 0))
+                        setValue(`collected.december`, String(value.dec || 0))
                     })
 
                     setValue('resourceType', dinamicData.resultPac.sourceType)
@@ -283,18 +283,18 @@ export function usePacEdit() {
                 id: pacAnnualizationsProgammedServices.find(us => us).id,
                 pacId: parseInt(id),
                 type: "Programado",
-                jan: parseInt(data.programmed.january),
-                feb: parseInt(data.programmed.february),
-                mar: parseInt(data.programmed.march),
-                abr: parseInt(data.programmed.april),
-                may: parseInt(data.programmed.may),
-                jun: parseInt(data.programmed.june),
-                jul: parseInt(data.programmed.july),
-                ago: parseInt(data.programmed.august),
-                sep: parseInt(data.programmed.september),
-                oct: parseInt(data.programmed.october),
-                nov: parseInt(data.programmed.november),
-                dec: parseInt(data.programmed.december),
+                jan: parseInt(data.programmed.january || "0"),
+                feb: parseInt(data.programmed.february || "0"),
+                mar: parseInt(data.programmed.march || "0"),
+                abr: parseInt(data.programmed.april || "0"),
+                may: parseInt(data.programmed.may || "0"),
+                jun: parseInt(data.programmed.june || "0"),
+                jul: parseInt(data.programmed.july || "0"),
+                ago: parseInt(data.programmed.august || "0"),
+                sep: parseInt(data.programmed.september || "0"),
+                oct: parseInt(data.programmed.october || "0"),
+                nov: parseInt(data.programmed.november || "0"),
+                dec: parseInt(data.programmed.december || "0"),
                 dateModify: new Date(authorization.user.dateModify).toISOString().split('T')[0],
                 dateCreate: new Date(authorization.user.dateCreate).toISOString().split('T')[0]
             },
@@ -302,33 +302,37 @@ export function usePacEdit() {
                 id: pacAnnualizationsCollectedServices.find(us => us).id,
                 pacId: parseInt(id),
                 type: "Recaudado",
-                jan: parseInt(data.collected.january),
-                feb: parseInt(data.collected.february),
-                mar: parseInt(data.collected.march),
-                abr: parseInt(data.collected.april),
-                may: parseInt(data.collected.may),
-                jun: parseInt(data.collected.june),
-                jul: parseInt(data.collected.july),
-                ago: parseInt(data.collected.august),
-                sep: parseInt(data.collected.september),
-                oct: parseInt(data.collected.october),
-                nov: parseInt(data.collected.november),
-                dec: parseInt(data.collected.december),
+                jan: parseInt(data.collected.january || "0"),
+                feb: parseInt(data.collected.february || "0"),
+                mar: parseInt(data.collected.march || "0"),
+                abr: parseInt(data.collected.april || "0"),
+                may: parseInt(data.collected.may || "0"),
+                jun: parseInt(data.collected.june || "0"),
+                jul: parseInt(data.collected.july || "0"),
+                ago: parseInt(data.collected.august || "0"),
+                sep: parseInt(data.collected.september || "0"),
+                oct: parseInt(data.collected.october || "0"),
+                nov: parseInt(data.collected.november || "0"),
+                dec: parseInt(data.collected.december || "0"),
                 dateModify: new Date(authorization.user.dateModify).toISOString().split('T')[0],
                 dateCreate: new Date(authorization.user.dateCreate).toISOString().split('T')[0]
             },
             
         }
-        
+
         if (watchAll.budgetSapi != watchAll.totalProgrammed) {
             setMessage({
                 title: "Validación",
                 description: "El valor del presupuesto es diferente de la suma de todos los programados",
                 show: true,
-                OkTitle: "Aceptar",
-                cancelTitle: "Cancelar",
+                OkTitle: "Cerrar",
                 onOk: () => {
                     setMessage({});
+                    navigate(-1)
+                },
+                onClose() {
+                    setMessage({});
+                    navigate(-1)
                 },
                 background: true
             });
@@ -337,10 +341,14 @@ export function usePacEdit() {
                 title: "Validación",
                 description: "El valor del presupuesto es menor al valor recaudado",
                 show: true,
-                OkTitle: "Aceptar",
-                cancelTitle: "Cancelar",
+                OkTitle: "Cerrar",
                 onOk: () => {
                     setMessage({});
+                    navigate(-1)
+                },
+                onClose() {
+                    setMessage({});
+                    navigate(-1)
                 },
                 background: true
             });
@@ -371,16 +379,18 @@ export function usePacEdit() {
                             });
                         } else {
                             setMessage({
-                                title: "Validación de datos",
+                                title: "Validación",
                                 description: response.operation.message,
                                 show: true,
-                                OkTitle: "Aceptar",
+                                OkTitle: "Cerrar",
                                 onOk: () => {
-                                  setMessage({});
+                                    setMessage({});
+                                    navigate(-1)
                                 },
                                 background: true,
                                 onClose: () => {
-                                  setMessage({});
+                                    setMessage({});
+                                    navigate(-1)
                                 },
                             });
                         }

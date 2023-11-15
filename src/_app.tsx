@@ -12,11 +12,16 @@ import { FunctionalityRoutes } from "./features/functionality/functionality-rout
 import { PacRoutes } from "./features/pac/pac-routes";
 import { EditCdp, HomeCdp,RpCdp } from "./features/budget-availability/pages";
 import Reports from "./features/reports/pages";
+import { BudgetRecordRoutes } from "./features/budget-record/budget-record-routes";
+import CreditorViewPage from "./features/creditors/pages/creditor-view.page";
+import { CreditorRoutes } from "./features/creditors/creditor-routes";
 
 const Home = lazy(() => import("./features/home/pages/home.page"));
 const BudgetRoutes = lazy(()  => import("./features/budget-routes/pages/budget-routes.page"));
 const BudgetRoutesCrudPage = lazy(()  => import("./features/budget-routes/pages/budget-routes-crud.page"));
 const BudgetAvailabilityRoutes = lazy(()  => import("./features/budget-availability/budget-availability-routes"));
+const PaysRoutes = lazy(() => import("./features/pays/pays-routes"));
+//const CreditorRoutes = lazy(()  => import("./features/creditors/creditor-routes"));
 
 function App() {
   const { publish } = useAppCominicator();
@@ -43,6 +48,8 @@ function App() {
               <Route path={'/gestion-financiera/pac/*'} element={<PacRoutes/>} />
               <Route path={"/gestion-financiera/centro-gestor/*"} element={<ManagementCenterRoutes/>} />
               <Route path={"/gestion-financiera/cdp/*"} element={<BudgetAvailabilityRoutes/>} />
+              <Route path={"/gestion-financiera/ejecucion-financiera/consultar-pagos/*"} element={<PaysRoutes/>} />
+              <Route path={"/gestion-financiera/rp/*"} element={<BudgetRecordRoutes/>} />
 
               <Route path={"/gestion-financiera/ruta-presupuestal"} element={<BudgetRoutes/>} />
               <Route path={"/gestion-financiera/ruta-presupuestal/create"} element={<BudgetRoutesCrudPage action="new"/>} />
@@ -51,6 +58,8 @@ function App() {
               <Route path={"/gestion-financiera/cdp/edit/:id"} element={EditCdp} />
               <Route path={"/gestion-financiera/reportes"} element={<Reports/>}/>
               <Route path={"/gestion-financiera/cdp/rp/:id"} element={RpCdp} />
+              
+              <Route path={"/gestion-financiera/acreedor/*"} element={<CreditorRoutes/>} />
             </Routes>
           </Suspense>
         </Router>

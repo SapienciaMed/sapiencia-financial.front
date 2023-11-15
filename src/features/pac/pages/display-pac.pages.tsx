@@ -50,7 +50,7 @@ function DisplayPacPages() {
                         value: dinamicData?.posPreSapiNumber
                     },
                     {
-                        title: 'Fondo Sapiencia',
+                        title: 'Fondo',
                         value: dinamicData?.fundNumber
                     },
                     {
@@ -67,38 +67,36 @@ function DisplayPacPages() {
                     },
                     {
                         title: 'Presupuesto Sapiencia',
-                        value: `$ ${dinamicData?.totalProgrammingAnnual.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
+                        value: `$ ${dinamicData?.totalProgrammingAnnual?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
                     },
                     
                 ];
-
+ 
                 const annualCollectionData  = [
                     {
                         title: 'Recaudado',
-                        value: `$ ${dinamicData?.totalCollectedAnnual.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
+                        value: `$ ${dinamicData?.totalCollectedAnnual?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
                     },
                     {
                         title: 'Por Recaudar',
-                        value: `$ ${dinamicData?.forCollected.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
+                        value: `$ ${dinamicData?.forCollected?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
                     },
                     {
                         title: 'Por Porcentaje Ejecución',
                         value: `${dinamicData?.percentExecuteAnnual}`
                     }
                 ]
-
                 const monthsData = monthsServices.map((month, index) => {
                     const data = propServices.map((prop, index2) => {
                         return {
                             title: `${months[index]} ${titleAnnual[index2]}`,
-                            value: `$ ${dinamicData?.[month]?.[`${prop}${month}`].toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
+                            value: `$ ${dinamicData?.[month]?.[`${prop}${month}`]?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
                         }
                     })
                     return data
                 })
 
                 const data = additionalData.concat(monthsData.flat()).concat(annualCollectionData)
-
                 setDataCondensedService(data)
 
             }else {
@@ -116,7 +114,7 @@ function DisplayPacPages() {
                 showSpinner ? 
                     <ProgressSpinner style={{width: '20px', height: '20px'}}  animationDuration=".5s" />
                 :
-                <table className="details-table">
+                <table className="details-table detail-table-scroll">
                     {
                         dataCondensedService?.map(data => {
                             return (
