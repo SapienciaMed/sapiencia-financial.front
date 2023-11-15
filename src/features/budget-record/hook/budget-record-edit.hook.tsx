@@ -15,15 +15,15 @@ import { useCdpService } from "../../budget-availability/hooks/cdp-service";
 import { IUpdateRP } from "../interface/updateRp";
 
 
-export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCredit:number,idcFixedCompleted:number) {
-   /*  console.log('Modificado contracrédito', modifiedIdcCountercredit)
-    console.log('Modificado crédito', idcModifiedCredit)
-    console.log('Fijado concluído', idcFixedCompleted) */
+export function useBudgeRecordEdit(modifiedIdcCountercredit: number, idcModifiedCredit: number, idcFixedCompleted: number) {
+    /*  console.log('Modificado contracrédito', modifiedIdcCountercredit)
+     console.log('Modificado crédito', idcModifiedCredit)
+     console.log('Fijado concluído', idcFixedCompleted) */
     const navigate = useNavigate();
     const { id } = useParams();
     const { setMessage } = useContext(AppContext);
 
-    const { GetRpByFilters,GetAllComponents,GetCausation,editRp } = useBudgetRecordServices();
+    const { GetRpByFilters, GetAllComponents, GetCausation, editRp } = useBudgetRecordServices();
     const { GetProjectsList } = useAdditionsTransfersService();
     const { GetAllFunctionalAreas } = useFunctionalAreaService();
     const { GetAllDependencies } = usePayrollExternalServices();
@@ -108,12 +108,18 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCr
             setComponentssData(componentes)
         })
 
-        GetCausation(Number(id)).then(response => {
-            setTotalCautation(response.data.total)        
-        })
+        if (dataRp && Array.isArray(dataRp.linksRp) && dataRp.linksRp.length > 0) {
+            GetCausation(dataRp.linksRp[0].id).then(response => {
+                setTotalCautation(response.data.total)
+            }).catch(error => {
+                console.error('Error al obtener valores totales:', error);
+            });
+        } else {
+            console.log('causacion no está definidos o son un array vacío');
+        }
 
         if (dataRp && Array.isArray(dataRp.linksRp) && dataRp.linksRp.length > 0) {
-            getTotalValuesImport(dataRp.linksRp[0].amountBudgetAvailability.cdpCode).then(response => {
+            getTotalValuesImport(dataRp.linksRp[0].amountCdpId).then(response => {
                 setRP(response.data.totalImport);
             }).catch(error => {
                 console.error('Error al obtener valores totales:', error);
@@ -121,13 +127,13 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCr
         } else {
             console.log('dataRp o dataRp.linksRp no están definidos o son un array vacío');
         }
- 
 
-    }, [id,dataRp]);
-    
-   
 
-    
+    }, [id, dataRp]);
+
+
+
+
 
 
     useEffect(() => {
@@ -138,7 +144,7 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCr
                 const foundProject = projectsData.find(project => project.id === linksRpFirstElement.amountBudgetAvailability.budgetRoute.projectVinculation.id);
 
                 if (foundProject) {
-                    setProjectNumber(String(foundProject.projectId));                    
+                    setProjectNumber(String(foundProject.projectId));
                 }
             }
 
@@ -154,36 +160,36 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCr
 
     //calculos
     useEffect(() => {
-       
-        let shouldDisableButton = false;    
-   
+
+        let shouldDisableButton = false;
+
         if (totalCautation !== undefined && modifiedIdcCountercredit !== undefined) {
-            shouldDisableButton = modifiedIdcCountercredit > totalCautation;
-        }    
-      
+            shouldDisableButton = modifiedIdcCountercredit > Number(totalCautation);
+        }
+
         if (!shouldDisableButton && RP !== undefined && idcModifiedCredit !== undefined) {
             shouldDisableButton = idcModifiedCredit > RP;
-        }    
-     
+        }
+
         if (!shouldDisableButton && totalCautation !== undefined && RP !== undefined) {
             shouldDisableButton = totalCautation > RP;
-        }    
-        
-       /*  if (totalCautation !== undefined && idcFixedCompleted !== undefined) {
-            shouldDisableButton = idcFixedCompleted > totalCautation;
-        }    */
-        
+        }
+
+        /*  if (totalCautation !== undefined && idcFixedCompleted !== undefined) {
+             shouldDisableButton = idcFixedCompleted > totalCautation;
+         }    */
+
         setDisabledButton(shouldDisableButton);
-    
-    }, [totalCautation, RP, modifiedIdcCountercredit, idcModifiedCredit,idcFixedCompleted]);
-    
+
+    }, [totalCautation, RP, modifiedIdcCountercredit, idcModifiedCredit, idcFixedCompleted]);
+
     //total
     useEffect(() => {
         if (dataRp && Array.isArray(dataRp.linksRp) && dataRp.linksRp.length > 0) {
             const inputIdcModifiedCredit = idcModifiedCredit ?? 0;
             const inputModifiedIdcCountercredit = modifiedIdcCountercredit ?? 0;
             const inputIdcFixedCompleted = idcFixedCompleted ?? 0;
-    
+
             // Si todos los inputs están vacíos o son 0, usa el valor de finalAmount
             if (inputIdcModifiedCredit <= 0 && inputModifiedIdcCountercredit <= 0 && inputIdcFixedCompleted <= 0) {
                 setValue("idcFinalValue", dataRp.linksRp[0].finalAmount);
@@ -192,23 +198,23 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCr
                 // Realiza el cálculo con los valores actuales, independientemente de si están completos o no
                 const initialAmount = dataRp.linksRp[0].initialAmount || 0;
                 const calculatedResult = initialAmount + inputIdcModifiedCredit - inputModifiedIdcCountercredit - inputIdcFixedCompleted;
-    
+
                 setCalculatedValue(calculatedResult);
                 setValue("idcFinalValue", calculatedResult);
             }
         }
     }, [dataRp, idcModifiedCredit, modifiedIdcCountercredit, idcFixedCompleted]);
-    
-    
-    
-    
-    
 
-   
+
+
+
+
+
+
 
 
     useEffect(() => {
-        if (!dataRp) return;  
+        if (!dataRp) return;
 
         // Asignar los campos que siempre vienen
         setValue("document", dataRp.creditor.document);
@@ -229,14 +235,14 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCr
         setValue("amount", dataRp.linksRp[0].initialAmount);
 
         setValue("observation", dataRp.linksRp[0].observation);
-        setValue("againtsAmount", dataRp.linksRp[0].againtsAmount );
+        setValue("againtsAmount", dataRp.linksRp[0].againtsAmount);
         setValue("creditAmount", dataRp.linksRp[0].creditAmount);
         setValue("fixedCompleted", dataRp.linksRp[0].fixedCompleted);
 
         setValue("finalAmount", dataRp.linksRp[0].finalAmount);
     }, [dataRp, areaNumber, projectNumber]);
 
-    const onSubmiteditRp = handleSubmit(async (data: IUpdateRP) => {        
+    const onSubmiteditRp = handleSubmit(async (data: IUpdateRP) => {
         //console.log('llego',data)
         setMessage({
             show: true,
@@ -252,19 +258,19 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCr
     });
 
 
-   const confirmEdit = async (data: IUpdateRP) => {
+    const confirmEdit = async (data: IUpdateRP) => {
 
         const datos = {
-            againtsAmount:modifiedIdcCountercredit,
+            againtsAmount: modifiedIdcCountercredit,
             creditAmount: idcModifiedCredit,
             finalAmount: data.finalAmount,
             fixedCompleted: idcFixedCompleted,
             observation: data.observation
-        }   
-        
-        console.log(datos)
+        }
 
-    const res = await editRp(dataRp.linksRp[0].id, datos);
+        //console.log(datos)
+
+        const res = await editRp(dataRp.linksRp[0].id, datos);
 
         if (res && res?.operation?.code === EResponseCodes.OK) {
             setMessage({
@@ -294,8 +300,8 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCr
                 OkTitle: "Cerrar",
                 background: true,
             });
-        }  
-    }  
+        }
+    }
 
     const CancelFunction = () => {
         setMessage({
@@ -312,7 +318,8 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit:number,idcModifiedCr
         });
     };
 
-
+    console.log(totalCautation,
+        RP)
 
     return {
         control,
