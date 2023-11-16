@@ -31,7 +31,8 @@ export function useCdpCrud(cdpId?: string) {
         defaultValues: {
             exercise: Object(cdpFoundSt).exercise,
             consecutive: Object(cdpFoundSt).consecutive,
-            rpAssoc:'No',
+            rpAssoc: '',
+            //rpAssoc:(Object(cdpFoundSt).amounts?.map(e=>e.linkRpcdps))?.length>0 ? 'Si' : 'No',
             amounts: [{
                 id: null,
                 reasonCancellation: ''
@@ -169,6 +170,7 @@ export function useCdpCrud(cdpId?: string) {
         setValueRegister('sapConsecutive', Object(cdpFoundSt).sapConsecutive)
         setValueRegister('date', Object(cdpFoundSt).date)
         setValueRegister('contractObject', Object(cdpFoundSt).contractObject)
+        setValueRegister('rpAssoc', (Object(cdpFoundSt).amounts.map(e=>e.linkRpcdps)).length >0 ? 'Si' : 'No')
     }, [cdpFoundSt])
 
     return {
