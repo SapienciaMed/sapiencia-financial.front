@@ -87,8 +87,11 @@ const CdpAmountAssoc = () => {
     const [cdpPosition, setCdpPosition] = useState(0);
 
     const handleEliminar = (formNumber) => {
+        setFormularios((prevFormularios) =>
+          prevFormularios.filter((_, index) => indexOfFirstForm + index !== formNumber)
+        );
         setFormCount((prevCount) => prevCount - 1);
-    };
+      };
 
     useEffect(() => {
         if (Object.keys(amountInfo).length > 0) {
