@@ -7,11 +7,13 @@ import { useNavigate } from "react-router-dom";
 import { useCreditorsServices } from "./creditors-service.hook";
 import { ICreditor } from "../interface/creditor";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
+import { useGenericListService } from "../../../common/hooks/generic-list-service.hook";
 
 
 export function useCreditorCrud(id) {
 
     const navigate = useNavigate();
+    const { getListByGrouper } = useGenericListService()
     const { GetCreditorsByFilters, CreateCreditor, UpdateCreditor } = useCreditorsServices();
     const { setMessage, authorization } = useContext(AppContext);
 
@@ -20,6 +22,17 @@ export function useCreditorCrud(id) {
 
     const [isAllowSave, setIsAllowSave] = useState(false)
     const [isUploadData, setIsUploadData] = useState(false)
+
+
+    const [documentTypeList, setDocumentTypeList] = useState([])
+    useEffect(() => {
+        getListByGrouper('TIPOS_DOCUMENTOS').then(res=>{
+            const docuTypeList = Object(res).data.map(e=>({ id: e.id, name: e.itemCode, value: e.itemCode}))
+            setDocumentTypeList(docuTypeList)
+        })
+    }, [])
+    
+
 
     useEffect(() => {
         if(!id) return;
@@ -198,7 +211,8 @@ export function useCreditorCrud(id) {
         onSubmitCreditor,
         componentsData,
         dependeciesData,
-        isAllowSave
+        isAllowSave,
+        documentTypeList
     };
 
 }
