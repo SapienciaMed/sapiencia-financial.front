@@ -133,23 +133,18 @@ export function useBudgeRecordCrudv2() {
     }, [])
 
 
-    const { supplierType, contractorDocument, consecutiveCdpAurora, consecutiveCdpSap, contractNumber, documentDate, dateValidity, linksRp, dependencyId, componentId } = watch()
+    const { supplierType, contractorDocument, consecutiveCdpAurora, consecutiveCdpSap} = watch()
 
     useEffect(() => {
         if (
-            supplierType != "" &&
-            contractorDocument != "" &&
-            documentDate != null &&
-            dateValidity != null &&
-            dependencyId != null &&
-            componentId != null &&
-            linksRp.length > 0
-        ) {
+            selectedAmounts?.length>0 && isBtnSearchAmountsSt
+            ) {
             setIsAllowSave(true)
+        }else{
+            setIsAllowSave(false)
         }
-    }, [supplierType, contractorDocument, documentDate, dateValidity, linksRp, dependencyId, componentId])
-
-
+    }, [selectedAmounts])
+    
 
     const messageValidateSupplier = (type: string) => {
         /* setMessage({
@@ -218,6 +213,9 @@ export function useBudgeRecordCrudv2() {
     // buscar el codigo cdpSAp a partir del codigo ahora cdp
     useEffect(() => {
         if (consecutiveCdpAurora) {
+            setDataAmounts([])
+            setIsAllowSave(false)
+            setIsBtnSearchAmountsSt(false)
             if (consecutiveCdpAurora) {
                 GetRoutesByValidity({
                     page: 1,

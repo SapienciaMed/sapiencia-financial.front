@@ -87,6 +87,7 @@ export interface IBudgetRecordFilter {
     supplierId?: number;
     rpId?: number;
     reasonCancellation?: string;
+    taxIdentificationId?:string;
 }
 
 /* export interface IBudgetRecordEditBasic {

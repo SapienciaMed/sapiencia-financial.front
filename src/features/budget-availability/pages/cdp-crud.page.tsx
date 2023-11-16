@@ -104,7 +104,7 @@ const CdpCrudPage = () => {
 
   useEffect(() => {
     setInfoData()
-  }, [amountInfo]);
+  }, [amountInfo,formHeadInfo]);
 
   const handleCancel = () => {
     setMessage({
@@ -292,30 +292,6 @@ const CdpCrudPage = () => {
     ));
   };
 
-  /* const renderFormsForCurrentPage = () => {
-      const indexOfLastForm = currentPage * formsPerPage;
-      const indexOfFirstForm = indexOfLastForm - formsPerPage;
-      return formularios
-        .slice(indexOfFirstForm, indexOfLastForm)
-        .map((form, index) => (
-          <FormCreateRutaCDPComponent
-          key={indexOfFirstForm + index}
-          isRequired={indexOfFirstForm + index === 0}
-          formNumber={indexOfFirstForm + index}
-          handleEliminar={handleEliminar}
-          formSubmitted={formSubmitted}
-          amountInfo={form}
-          setAmountInfo={(updatedFormInfo) => {
-            setFormularios((prevFormularios) => {
-              const updatedFormularios = [...prevFormularios];
-              updatedFormularios[indexOfFirstForm + index] = updatedFormInfo;
-              return updatedFormularios;
-            });
-          }}
-        />
-        ));
-    }; */
-
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -356,4 +332,3 @@ const CdpCrudPage = () => {
   );
 };
 export default React.memo(CdpCrudPage);
-//export default CdpCrudPage;

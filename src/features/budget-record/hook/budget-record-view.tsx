@@ -53,13 +53,14 @@ export function useBudgeRecordView() {
             supplierName: '',
             supplierId: null,
             rpId: null,
-            reasonCancellation: ''
+            reasonCancellation: '',
+            taxIdentificationId:''
         },
         mode: 'onChange',
         /* resolver, */
     });
 
-    const { consecutivoRpSap, consecutiveRpAurora, supplierType, reasonCancellation } = watch()
+    const { consecutivoRpSap, consecutiveRpAurora, supplierType, reasonCancellation, supplierName, taxIdentificationId } = watch()
     
     useEffect(() => {
         Number(consecutivoRpSap) > 0 || Number(consecutiveRpAurora) > 0
@@ -101,9 +102,9 @@ export function useBudgeRecordView() {
                     {
                         consecutiveRpSap: Object(res)?.data[0]?.consecutiveSap,
                         consecutiveRpAurora: Object(res)?.data[0]?.id,
-                        taxIdentificationId: Object(res)?.data[0]?.creditor.taxIdentification,
+                        taxIdentificationId: Object(res)?.data[0]?.creditor?.taxIdentification ?? taxIdentificationId,
                         identification: Object(res)?.data[0]?.contractorDocument,
-                        contractName: Object(res)?.data[0]?.creditor.name,
+                        contractName: Object(res)?.data[0]?.creditor?.name ?? supplierName,
                         dependencieName: dependenciesData.find(e=>e.id==Object(res)?.data[0]?.dependencyId).name
                     }
 
@@ -134,6 +135,7 @@ export function useBudgeRecordView() {
                     setDataRouteBudgetsSt([])
                 }
             } catch (error) {
+                console.log({error})
                 setMessage({
                     title: `Sin coincidencia`,
                     description:'No existen resultados de búsqueda',
@@ -299,6 +301,7 @@ export function useBudgeRecordView() {
                             Object(res).data.data[0]?.secondSurname;
 
                         setValueRegister('supplierName', contractorName)
+                        setValueRegister('taxIdentificationId',Object(res).data?.data[0]?.fiscalIdentification)
                         setValueRegister('supplierId', null)
                     })
 

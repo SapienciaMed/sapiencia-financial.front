@@ -77,7 +77,6 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
       id: Number(formNumber),
       balance: balance,
     }));
-    console.log("idRpp actual:", idRpp);
   };
 
   useEffect(() => {
