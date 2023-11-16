@@ -185,7 +185,7 @@ const CdpCrudPage = () => {
           resolve('success');
         });
         setMessage({
-          title: "Crear CDP",
+          title: "Guardar",
           description: `¿Estás segur@ de guardar la informacion ?`,
           show: true,
           OkTitle: "Aceptar",
