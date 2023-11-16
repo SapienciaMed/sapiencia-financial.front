@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import { useCreditorCrud } from "../hook/creditor-crud";
 import TableDataPropComponent from "../../../common/components/tableDataProp.component";
 import { useCreditorView } from "../hook/creditor-view";
+import { AiOutlinePlusCircle } from "react-icons/ai";
 
 function CreditorViewPage() {
     const { id } = useParams();
@@ -26,15 +27,20 @@ function CreditorViewPage() {
         tableComponentRef,
         tableColumns,
         tableActions,
-        creditorsSt
+        creditorsSt,
+        documentTypeList
     } = useCreditorView();
 
     return (
         <div className='main-page'>
             <div className='card-table gap-0'>
-                <section className="title-area">
+                <div className="title-area">
                     <div className="text-black weight-500 extra-large">Consultar acreedor</div>
-                </section>
+                    <div className="title-button text-three biggest">
+                        <span style={{ marginRight: '0.5em' }} onClick={() => { navigate('./crear') }}> Crear acreedor</span>
+                        {<AiOutlinePlusCircle size={20} color="533893" />}
+                    </div>
+                </div>
                 <FormComponent
                     action={onSubmitCreditor}
                     id="form-pac"
@@ -49,10 +55,7 @@ function CreditorViewPage() {
                                 className="select-basic medium"
                                 classNameLabel="text-black big bold text-required"
                                 placeholder={"Seleccionar"}
-                                data={[
-                                    { id: 1, name: 'CC', value: 'CC' },
-                                    { id: 2, name: 'Nit', value: 'Nit' }
-                                ]}
+                                data={documentTypeList}
                                 filter={true}
                                 errors={errors}
                                 direction={EDirection.column}
@@ -117,60 +120,60 @@ function CreditorViewPage() {
                     </div>
                     <br />
                     <section>
-                    <div className="container-button-bot">
-                        <ButtonComponent
-                            form="useQueryForm"
-                            value="Cancelar"
-                            type="button"
-                            className="button-clean-fields bold"
-                            action={() => {
-                                setMessage({
-                                    title: "Cancelar",
-                                    show: true,
-                                    cancelTitle: "Cancelar",
-                                    OkTitle: "Aceptar",
-                                    description: (
-                                        <div style={{ width: "100%" }}>
-                                            <label>¿Estas segur@ de cancelar?</label>
-                                        </div>
-                                    ),
-                                    background: true,
-                                    onOk: () => {
-                                        navigate("/gestion-financiera/rp");
-                                        setMessage({});
-                                    },
-                                    onCancel: () => {
-                                        setMessage({});
-                                    },
-                                });
-                            }}
-                        />
-
-                        <div className="buttons-bot">
-                            <ButtonLoadingComponent
-                                className="button-main huge hover-three"
-                                value="Buscar"
-                                form="form-pac"
-                                type="submit"
-                            /* disabled={!isAllowSave} */
+                        <div className="container-button-bot">
+                            <ButtonComponent
+                                form="useQueryForm"
+                                value="Cancelar"
+                                type="button"
+                                className="button-clean-fields bold"
+                                action={() => {
+                                    setMessage({
+                                        title: "Cancelar",
+                                        show: true,
+                                        cancelTitle: "Cancelar",
+                                        OkTitle: "Aceptar",
+                                        description: (
+                                            <div style={{ width: "100%" }}>
+                                                <label>¿Estas segur@ de cancelar?</label>
+                                            </div>
+                                        ),
+                                        background: true,
+                                        onOk: () => {
+                                            navigate("/gestion-financiera/rp");
+                                            setMessage({});
+                                        },
+                                        onCancel: () => {
+                                            setMessage({});
+                                        },
+                                    });
+                                }}
                             />
+
+                            <div className="buttons-bot">
+                                <ButtonLoadingComponent
+                                    className="button-main huge hover-three"
+                                    value="Buscar"
+                                    form="form-pac"
+                                    type="submit"
+                                /* disabled={!isAllowSave} */
+                                />
+                            </div>
                         </div>
-                    </div>
-                    
+
                         {
                             /* dataRouteBudgetsSt.length > 0 && ( */
-                                <div className="card-user">
-                                    <TableDataPropComponent
-                                        ref={tableComponentRef}
-                                        dataTable={creditorsSt}
-                                        columns={tableColumns}
-                                        actions={tableActions}
-                                        isShowModal={false}
-                                        titleMessageModalNoResult={"No se encontraron registros"}
-                                        secondaryTitle="Resultados de búsqueda"
-                                    />
-                                </div>
-                          /*   ) */
+                            <div className="card-user">
+                                <TableDataPropComponent
+                                    ref={tableComponentRef}
+                                    dataTable={creditorsSt}
+                                    columns={tableColumns}
+                                    actions={tableActions}
+                                    isShowModal={false}
+                                    titleMessageModalNoResult={"No se encontraron registros"}
+                                    secondaryTitle="Resultados de búsqueda"
+                                />
+                            </div>
+                            /*   ) */
                         }
                     </section>
                 </FormComponent>

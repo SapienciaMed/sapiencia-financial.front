@@ -50,7 +50,6 @@ function BudgetRecordViewPage() {
                 >
                     <section className="title-area">
                         <div className="text-black weight-500 extra-large">Consultar RP</div>
-                        <>{isConfirmCancel}</>
                         <div className={`${width < 800 ? 'display-justify-space-between-pac' : 'display-align-flex-end'} gap-0 gap-05`}>
                             <div
                                 className="title-button font-big"
@@ -201,7 +200,7 @@ function BudgetRecordViewPage() {
 
                 <br />
                 {
-                    dataRouteBudgetsSt.length > 0 && (
+                     dataRouteBudgetsSt.length > 0 && (
                         <div className="card-user">
                             <TableDataPropComponent
                                 ref={tableComponentRef}

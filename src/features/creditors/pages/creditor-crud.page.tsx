@@ -22,7 +22,8 @@ function CreditorCrudPage() {
         onSubmitCreditor,
         componentsData,
         dependeciesData,
-        isAllowSave
+        isAllowSave,
+        documentTypeList
     } = useCreditorCrud(id);
 
     return (
@@ -51,10 +52,7 @@ function CreditorCrudPage() {
                                 className="select-basic medium"
                                 classNameLabel="text-black big bold text-required"
                                 placeholder={"Seleccionar"}
-                                data={[
-                                    { id: 'CC', name: 'CC', value: 'CC' },
-                                    { id: 'Nit', name: 'Nit', value: 'Nit' }
-                                ]}
+                                data={documentTypeList}
                                 filter={true}
                                 errors={errors}
                                 direction={EDirection.column}
