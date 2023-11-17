@@ -138,7 +138,6 @@ const CdpAmountAssoc = () => {
             },
             background: true,
         });
-
     }
 
     const handleGuardar = async () => {
