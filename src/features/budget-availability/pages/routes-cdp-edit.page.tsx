@@ -1,18 +1,14 @@
 import React, { useState } from "react";
 import { ButtonComponent, DatePickerComponent, FormComponent, InputComponent } from "../../../common/components/Form";
-import { TextAreaComponent } from '../../../common/components/Form/input-text-area.component';
 import { Controller } from "react-hook-form";
 import { useEditrouteCDP } from "../hooks/useEditRouteCDP";
 import { TextAreaCountComponent } from "../../../common/components/Form/input-text-area-count.component";
+import { InputNumberComponent } from "../../../common/components/Form/input-number.component";
 
 
 function RoutesCDPEditPage() {
 
-    const [modifiedIdcCountercredit, setModifiedIdcCountercredit] = useState(0)
-    const [idcModifiedCredit, setIdcModifiedCredit] = useState(0)
-    const [idcFixedCompleted, setIdcFixedCompleted] = useState(0)
-
-    const { onSubmiteditRouteCDP, register, control, idcFinalValue, disable,CancelFunction,totalRp, totalFinalICD } = useEditrouteCDP(modifiedIdcCountercredit, idcModifiedCredit, idcFixedCompleted);
+    const { onSubmiteditRouteCDP, register, control, idcFinalValue, disable, CancelFunction, totalRp, totalFinalICD } = useEditrouteCDP();
 
     return (
         <div className="main-page">
@@ -193,64 +189,129 @@ function RoutesCDPEditPage() {
 
                         <label className="text-black biggest mt-24px">Importe</label>
                         <section className='funcionality-filters-container mt-24px'>
-                            <InputComponent
-                                idInput="amount"
-                                className="input-basic"
-                                typeInput="text"
-                                register={register}
-                                label="Valor inicial"
-                                classNameLabel="text-black biggest text-required"
-                                disabled
+                            <Controller
+                                control={control}
+                                name={"amount"}
+                                defaultValue='0'
+                                render={({ field }) => {
+                                    return (
+                                        <InputNumberComponent
+                                            control={control}
+                                            idInput={field.name}
+                                            label="Valor inicial"
+                                            className="inputNumber-basic"
+                                            classNameLabel="text-black biggest text-required"
+                                            mode="currency"
+                                            currency="COP"
+                                            locale="es-CO"
+                                            minFractionDigits={0}
+                                            maxFractionDigits={0}
+                                            //errors={errors}
+                                            disabled
+                                        />
+                                    )
+                                }}
                             />
-                            <InputComponent
-                                idInput="modifiedIdcCountercredit"
-                                className="input-basic"
-                                typeInput="number"
-                                register={register}
-                                label="Modificado contracrédito"
-                                classNameLabel="text-black biggest"
-                                onChange={(e) => setModifiedIdcCountercredit(Number(e.target.value))}
+                            <Controller
+                                control={control}
+                                name={"modifiedIdcCountercredit"}
+                                defaultValue='0'
+                                render={({ field }) => {
+                                    return (
+                                        <InputNumberComponent
+                                            control={control}
+                                            idInput={field.name}
+                                            label="Modificado contracrédito"
+                                            className="inputNumber-basic"
+                                            classNameLabel="text-black biggest text-required"
+                                            mode="currency"
+                                            currency="COP"
+                                            locale="es-CO"
+                                            minFractionDigits={0}
+                                            maxFractionDigits={0}
+                                        //errors={errors}                                            
+                                        />
+                                    )
+                                }}
                             />
-                            <InputComponent
-                                idInput="idcModifiedCredit"
-                                className="input-basic"
-                                typeInput="text"
-                                register={register}
-                                label="Modificado crédito"
-                                classNameLabel="text-black biggest"
-                                onChange={(e) => setIdcModifiedCredit(Number(e.target.value))}
-                            />
-                            <InputComponent
-                                idInput="idcFixedCompleted"
-                                className="input-basic"
-                                typeInput="text"
-                                register={register}
-                                label="Fijado concluído"
-                                classNameLabel="text-black biggest"
-                                onChange={(e) => setIdcFixedCompleted(Number(e.target.value))}
+                            <Controller
+                                control={control}
+                                name={"idcModifiedCredit"}
+                                defaultValue='0'
+                                render={({ field }) => {
+                                    return (
+                                        <InputNumberComponent
+                                            control={control}
+                                            idInput={field.name}
+                                            label="Modificado crédito"
+                                            className="inputNumber-basic"
+                                            classNameLabel="text-black biggest text-required"
+                                            mode="currency"
+                                            currency="COP"
+                                            locale="es-CO"
+                                            minFractionDigits={0}
+                                            maxFractionDigits={0}
+                                        //errors={errors}                                            
+                                        />
+                                    )
+                                }}
+                            />                           
+                            <Controller
+                                control={control}
+                                name={"idcFixedCompleted"}
+                                defaultValue='0'
+                                render={({ field }) => {
+                                    return (
+                                        <InputNumberComponent
+                                            control={control}
+                                            idInput={field.name}
+                                            label="Fijado concluído"
+                                            className="inputNumber-basic"
+                                            classNameLabel="text-black biggest text-required"
+                                            mode="currency"
+                                            currency="COP"
+                                            locale="es-CO"
+                                            minFractionDigits={0}
+                                            maxFractionDigits={0}
+                                        //errors={errors}                                            
+                                        />
+                                    )
+                                }}
                             />
                         </section>
                         <section className='one-filter-container'>
-                            <InputComponent
-                                idInput="idcFinalValue"
-                                className="input-basic"
-                                typeInput="text"
-                                register={register}
-                                label="Valor final"
-                                classNameLabel="text-black biggest text-required"
-                                disabled
-                                //value={String(idcFinalValue)}
+                            <Controller
+                                control={control}
+                                name={"idcFinalValue"}
+                                defaultValue='0'
+                                render={({ field }) => {
+                                    return (
+                                        <InputNumberComponent
+                                            control={control}
+                                            idInput={field.name}
+                                            label="Valor final"
+                                            className="inputNumber-basic"
+                                            classNameLabel="text-black biggest text-required"
+                                            mode="currency"
+                                            currency="COP"
+                                            locale="es-CO"
+                                            minFractionDigits={0}
+                                            maxFractionDigits={0}
+                                            disabled                                         
+                                        />
+                                    )
+                                }}
                             />
                         </section>
 
                     </section>
-                                <label>RP: {totalRp}</label>
-                                <label>Balance: {totalFinalICD}</label>
+                    <label>RP: {totalRp}</label>
+                    <label>Balance: {totalFinalICD}</label>
 
 
-                                <label>Modificado contracrédito no puede ser mayor al RP</label>
-                                <label>Modificado crédito no puede ser mayor al Balance</label>
-                                <label>Fijado concluídoo no puede ser mayor al RP</label>
+                    <label>Modificado contracrédito no puede ser mayor al RP</label>
+                    <label>Modificado crédito no puede ser mayor al Balance</label>
+                    <label>Fijado concluídoo no puede ser mayor al RP</label>
                 </FormComponent>
             </div>
             <hr />
