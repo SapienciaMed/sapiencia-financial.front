@@ -4,6 +4,7 @@ import { InputComponent, TextAreaComponent } from "../../../common/components/Fo
 import { useCdpCrud } from "../hooks/use-cdp";
 import { EDirection } from "../../../common/constants/input.enum";
 import '../../../styles/from-create-cdp.scss';
+import { Grid } from '@mui/material';
 
 interface FormHeadInfo {
     date: string;
@@ -23,7 +24,7 @@ interface FormHeadInfo {
 interface Props {
     isDisabled: boolean;
     setFormHeadInfo?: (data: FormHeadInfo) => void;
-    information?: FormHeadInfo; 
+    information?: FormHeadInfo;
     formSubmitted?: boolean;
 }
 
@@ -77,7 +78,7 @@ function CdpAssociation(props: Props) {
         setFormHeadInfo(objCdp);
     }, [cdpSapConsecutive, cdpAuroraConsecutive, date, formHeadInfo.contractObject]);
 
-    
+
     const validateField = (field: string) => {
         if (formSubmitted && !field) {
             return 'campo-obligatorio';
@@ -88,7 +89,7 @@ function CdpAssociation(props: Props) {
     useEffect(() => {
         if (information) {
             let dateOne = information.date.split("T")[0];
-            setDate(dateOne|| '');
+            setDate(dateOne || '');
             setCdpSapConsecutive(information.cdpSapConsecutive || '');
             setCdpAuroraConsecutive(information.cdpAuroraConsecutive || '');
             setFormHeadInfoState(information);
@@ -98,78 +99,83 @@ function CdpAssociation(props: Props) {
     return (
         <>
             <div className='container-head-form-cdp'>
-                <section className="grid-form-3-container-area mt-5px" style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
-                    <div className="date-container">
-                        <label className="text-black weight-500 biggest" style={{ color: "black" }}>
-                            Fecha de documento:
-                            <span style={{ color: "red" }}> *</span>
-                        </label>
-                        <InputComponent
-                            id="date"
-                            idInput="date"
-                            value={date}
-                            className={`input-basic medium ${validateField(date)}`}
-                            typeInput="text"
-                            onChange={(e) => handleInputChange("date", e.target.value)}
-                            classNameLabel="text-black weight-500 biggest"
-                            direction={EDirection.column}
-                            errors={errors}
-                            disabled={true}
-                        />
-                        {formSubmitted && date === "" && (
-                            <p className="aviso-campo" style={{ color: "red" }}>
-                                Este campo es obligatorio
-                            </p>
-                        )}
-                    </div>
-                    <div className="cdp-sap-consecutive-container">
-                        <label className="text-black weight-500 biggest" style={{ color: "black" }}>
-                            Consecutivo CDP SAP
-                            <span style={{ color: "red" }}> *</span>
-                        </label>
-                        <InputComponent
-                            id="cdpSapConsecutive"
-                            idInput="cdpSapConsecutive"
-                            value={cdpSapConsecutive}
-                            className={`input-basic medium ${validateField(cdpSapConsecutive)}`}
-                            typeInput="text"
-                            onChange={(e) => handleInputChange("cdpSapConsecutive", e.target.value)}
-                            classNameLabel="text-black weight-500 biggest"
-                            direction={EDirection.column}
-                            errors={errors}
-                            disabled={true}
-                        />
-                        {formSubmitted && cdpSapConsecutive === "" && (
-                            <p className="aviso-campo" style={{ color: "red" }}>
-                                Este campo es obligatorio
-                            </p>
-                        )}
-                    </div>
-                    <div className="cdp-aurora-consecutive-container">
-                        <label className="text-black weight-500 biggest" style={{ color: "black" }}>
-                            Consecutivo CDP Aurora
-                            <span style={{ color: "red" }}> *</span>
-                        </label>
-                        <InputComponent
-                            id="cdpAuroraConsecutive"
-                            idInput="cdpAuroraConsecutive"
-                            value={cdpAuroraConsecutive}
-                            className={`input-basic medium ${validateField(cdpAuroraConsecutive)}`}
-                            typeInput="text"
-                            onChange={(e) => handleInputChange("cdpAuroraConsecutive", e.target.value)}
-                            classNameLabel="text-black weight-500 biggest"
-                            direction={EDirection.column}
-                            errors={errors}
-                            disabled={true}
-                        />
-                        {formSubmitted && cdpAuroraConsecutive === "" && (
-                            <p className="aviso-campo" style={{ color: "red" }}>
-                                Este campo es obligatorio
-                            </p>
-                        )}
-                    </div>
-
-                </section>
+                <Grid container spacing={2} style={{ gap: '20px' }}>
+                    <Grid item xs={12} sm={12} md={3}>
+                        <div className="date-container">
+                            <label className="text-black weight-500 biggest" style={{ color: "black" }}>
+                                Fecha de documento:
+                                <span style={{ color: "red" }}> *</span>
+                            </label>
+                            <InputComponent
+                                id="date"
+                                idInput="date"
+                                value={date}
+                                className={`input-basic medium ${validateField(date)}`}
+                                typeInput="text"
+                                onChange={(e) => handleInputChange("date", e.target.value)}
+                                classNameLabel="text-black weight-500 biggest"
+                                direction={EDirection.column}
+                                errors={errors}
+                                disabled={true}
+                            />
+                            {formSubmitted && date === "" && (
+                                <p className="aviso-campo" style={{ color: "red" }}>
+                                    Este campo es obligatorio
+                                </p>
+                            )}
+                        </div>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={4}>
+                        <div className="cdp-sap-consecutive-container">
+                            <label className="text-black weight-500 biggest" style={{ color: "black" }}>
+                                Consecutivo CDP SAP
+                                <span style={{ color: "red" }}> *</span>
+                            </label>
+                            <InputComponent
+                                id="cdpSapConsecutive"
+                                idInput="cdpSapConsecutive"
+                                value={cdpSapConsecutive}
+                                className={`input-basic medium ${validateField(cdpSapConsecutive)}`}
+                                typeInput="text"
+                                onChange={(e) => handleInputChange("cdpSapConsecutive", e.target.value)}
+                                classNameLabel="text-black weight-500 biggest"
+                                direction={EDirection.column}
+                                errors={errors}
+                                disabled={true}
+                            />
+                            {formSubmitted && cdpSapConsecutive === "" && (
+                                <p className="aviso-campo" style={{ color: "red" }}>
+                                    Este campo es obligatorio
+                                </p>
+                            )}
+                        </div>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={4}>
+                        <div className="cdp-aurora-consecutive-container">
+                            <label className="text-black weight-500 biggest" style={{ color: "black" }}>
+                                Consecutivo CDP Aurora
+                                <span style={{ color: "red" }}> *</span>
+                            </label>
+                            <InputComponent
+                                id="cdpAuroraConsecutive"
+                                idInput="cdpAuroraConsecutive"
+                                value={cdpAuroraConsecutive}
+                                className={`input-basic medium ${validateField(cdpAuroraConsecutive)}`}
+                                typeInput="text"
+                                onChange={(e) => handleInputChange("cdpAuroraConsecutive", e.target.value)}
+                                classNameLabel="text-black weight-500 biggest"
+                                direction={EDirection.column}
+                                errors={errors}
+                                disabled={true}
+                            />
+                            {formSubmitted && cdpAuroraConsecutive === "" && (
+                                <p className="aviso-campo" style={{ color: "red" }}>
+                                    Este campo es obligatorio
+                                </p>
+                            )}
+                        </div>
+                    </Grid>
+                </Grid>
 
                 <TextAreaComponent
                     id="contractObject"
