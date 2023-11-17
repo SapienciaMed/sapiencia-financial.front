@@ -97,6 +97,18 @@
     .inactive-input {
         background-color: #E2E2E2;
     }
+
+    .grid-form-3-container-area {
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .date-picker-container,
+      .exercise-container,
+      .input-container {
+        width: 100%;
+        margin-bottom: 20px;
+      }
 }
 
 .componente-principal {
@@ -209,8 +221,7 @@
     }
 
     .grid-form {
-        display: grid;
-        grid-template-columns: repeat(12, 1fr); // Ajusta esto para permitir solo 12 columnas
+      
         grid-gap: 20px;
         align-items: center;
 
@@ -219,18 +230,6 @@
             grid-column: 1 / -1;
             font-size: 1.5em;
             margin-bottom: 10px;
-        }
-
-        .col-4 {
-            grid-column: span 4;
-        }
-
-        .col-8 {
-            grid-column: span 8;
-        }
-
-        .col-3 {
-            grid-column: span 3;
         }
 
         label {
@@ -270,3 +269,16 @@
         }
     }
 }
+
+@media screen and (min-width: 768px) {
+    .grid-form-3-container-area {
+      flex-direction: row;
+      gap: 20px;
+    }
+  
+    .date-picker-container,
+    .exercise-container {
+      width: auto;
+      margin-bottom: 0;
+    }
+  }
