@@ -85,6 +85,12 @@ const CdpAmountAssoc = () => {
           prevFormularios.filter((_, index) => indexOfFirstForm + index !== formNumber)
         );
         setFormCount((prevCount) => prevCount - 1);
+
+        
+    if (currentForms.length === 1 && currentPage > 1) {
+        setCurrentPage((prevPage) => prevPage - 1);
+      }
+      
       };
 
     useEffect(() => {
