@@ -10,14 +10,11 @@ import { DataView } from "primereact/dataview";
 import { ICdpMgaAssocFromProps } from "../interfaces/budgetAvailabilityInterfaces";
 
 function CdpMgaAssocFormComponent(props: ICdpMgaAssocFromProps) {
-    const { control, errors, arrayDataSelect, disableAddButton, arrayMgaAssoc, register, onSubmit, deleteElement } = props;
+    const { control, errors, arrayDataSelect, disableAddButton, arrayMgaAssoc, register, onSubmit, deleteElement,activities } = props;
     const { width } = useWidth();
 
     const headerMobil = [
-        {
-            field:"mgaProduct",
-            header:"Producto MGA",
-        },
+     
         {
             field: "mgaActivity",
             header: "Actividad MGA",
@@ -142,8 +139,9 @@ function CdpMgaAssocFormComponent(props: ICdpMgaAssocFromProps) {
                             className="select-basic big"
                             classNameLabel="text-black weight-500 biggest text-required"
                             placeholder={'Seleccionar'}
-                            data={arrayDataSelect.listDetailedActivityMGA}
+                            data={activities}
                             errors={errors}
+                            filter={true}
                         /> 
 
                         <SelectComponent
@@ -160,6 +158,7 @@ function CdpMgaAssocFormComponent(props: ICdpMgaAssocFromProps) {
                                 { id: "4", name: "CPC 3", value: "CPC 3" },
                             ]}
                             errors={errors}
+                            filter={true}
                         />
 
                         <Controller
@@ -217,10 +216,10 @@ function CdpMgaAssocFormComponent(props: ICdpMgaAssocFromProps) {
                                     className={`spc-table full-height`}
                                     value={arrayMgaAssoc}
                                     scrollable={true}
-                                >            
-                                    <Column field="mgaProduct" header="Producto MGA"></Column>
-                                    <Column field="mgaActivity" header="Actividad MGA"></Column>
-                                    <Column field="detailedMgaActivity" header="Actividad detallada MGA"></Column>
+                                >           
+                                    
+                                    <Column field="tabActivity" header="Actividad MGA"></Column>
+                                    <Column field="tabDetailedMgaActivity" header="Actividad detallada MGA"></Column>
                                     <Column field="cpc" header="CPC"></Column>
                                     <Column field="percentage" header="Porcentaje"></Column>
                                     <Column 
