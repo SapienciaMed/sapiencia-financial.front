@@ -5,4 +5,6 @@ export interface IDropdownProps {
     id?: string | number,
     area?: any[],
     projectId?: string | number,
+    activity?: string,
+    cost? : number,
 }
