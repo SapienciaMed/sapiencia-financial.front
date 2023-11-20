@@ -79,8 +79,8 @@ export interface ILinkRPCDP {
 }
 
 export interface IBudgetRecordFilter {
-    consecutivoRpSap?: number;
-    consecutiveRpAurora?: number;
+    consecutivoRpSap?: string;
+    consecutiveRpAurora?: string;
     supplierType?: string;
     contractorDocument?: string;
     supplierName?: string;
