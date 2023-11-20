@@ -109,7 +109,7 @@ function CdpHeadFormComponent(props: Props) {
                                 className="input-basic medium"
                                 typeInput="text"
                                 register={register}
-                                label="RP asociados1"
+                                label="RP asociados"
                                 classNameLabel="text-black weight-500 biggest"
                                 direction={EDirection.column}
                                 onChange={field.onChange}

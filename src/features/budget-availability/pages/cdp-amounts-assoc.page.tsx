@@ -78,17 +78,20 @@ const CdpAmountAssoc = () => {
           }
     };
 
-/*     const handleAgregarFormulario = () => {
-        const newFormulario = { id: uuidv4() };
-        setFormularios([...formularios, newFormulario]);
-        setFormCount(formCount + 1);
-    }; */
-
     const [cdpPosition, setCdpPosition] = useState(0);
 
     const handleEliminar = (formNumber) => {
+        setFormularios((prevFormularios) =>
+          prevFormularios.filter((_, index) => indexOfFirstForm + index !== formNumber)
+        );
         setFormCount((prevCount) => prevCount - 1);
-    };
+
+        
+    if (currentForms.length === 1 && currentPage > 1) {
+        setCurrentPage((prevPage) => prevPage - 1);
+      }
+      
+      };
 
     useEffect(() => {
         if (Object.keys(amountInfo).length > 0) {
@@ -133,7 +136,7 @@ const CdpAmountAssoc = () => {
             cancelTitle: "Cancelar",
             onOk: () => {
                 //onCancelNew();
-                navigate("./../");
+                navigate("../");
                 setMessage({});
             },
             onCancel() {
@@ -141,7 +144,6 @@ const CdpAmountAssoc = () => {
             },
             background: true,
         });
-
     }
 
     const handleGuardar = async () => {
@@ -174,8 +176,22 @@ const CdpAmountAssoc = () => {
             }
 
             if (invalidBalances.length === 0) {
-                const updatedIcdArr = icdArrWithBalanceCheck.map(({ balance, ...rest }) => rest);
 
+                const updatedIcdArr = icdArrWithBalanceCheck.map((item) => {
+                    const valuesAreValid = Object.values(item).every(value => value !== null && value !== undefined && value !== '');
+                
+                    if (!valuesAreValid) {
+                    return;
+                    }
+                
+                    const { balance, ...rest } = item;
+                    return rest;
+                });
+
+      
+
+/*                  updatedIcdArr = icdArrWithBalanceCheck.map(({ balance, ...rest }) => rest);
+ */
                 nuevoObjeto = {
                     ...objectSendData,
                     cdpId: idCdp,
@@ -238,6 +254,7 @@ const CdpAmountAssoc = () => {
                         setMessage({});
                     }, onCancel() {
                         onCancelNew();
+                        setMessage({});
                     },
                     background: true,
                 });
@@ -247,24 +264,6 @@ const CdpAmountAssoc = () => {
             console.error("Error al enviar los datos:", error);
         }
     };
-
-   /*  const renderFormsForCurrentPage = () => {
-        console.log("hola nose que pasa");
-
-        const indexOfLastForm = currentPage * formsPerPage;
-        const indexOfFirstForm = indexOfLastForm - formsPerPage;
-        return formularios.slice(indexOfFirstForm, indexOfLastForm).map((_, index) => (
-            <FormCreateRutaCDPComponent
-                key={indexOfFirstForm + index}
-                isRequired={indexOfFirstForm + index === 0}
-                formNumber={cdpPosition + index}
-                handleEliminar={handleEliminar}
-                formSubmitted={formSubmitted}
-                amountInfo={amountInfo}
-                setAmountInfo={setAmountInfo}
-            />
-        ));
-    }; */
 
     const renderFormsForCurrentPage = () => {
         const indexOfLastForm = currentPage * formsPerPage;

@@ -7,13 +7,15 @@ import { useNavigate } from "react-router-dom";
 import { useCreditorsServices } from "./creditors-service.hook";
 import { ICreditor } from "../interface/creditor";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
+import { useGenericListService } from "../../../common/hooks/generic-list-service.hook";
 
 
 export function useCreditorView() {
 
     const navigate = useNavigate();
+    const { getListByGrouper } = useGenericListService()
     const tableComponentRef = useRef(null);
-    const { GetCreditorsByFilters} = useCreditorsServices();
+    const { GetCreditorsByFilters } = useCreditorsServices();
     const { setMessage, authorization } = useContext(AppContext);
 
     const [componentsData, setComponentsData] = useState<IDropdownProps[]>([]);
@@ -21,6 +23,14 @@ export function useCreditorView() {
 
     const [isAllowSave, setIsAllowSave] = useState(false)
     const [isUploadData, setIsUploadData] = useState(false)
+    const [documentTypeList, setDocumentTypeList] = useState([])
+
+    useEffect(() => {
+        getListByGrouper('TIPOS_DOCUMENTOS').then(res => {
+            const docuTypeList = Object(res).data.map(e => ({ id: e.id, name: e.itemCode, value: e.itemCode }))
+            setDocumentTypeList(docuTypeList)
+        })
+    }, [])
 
     const {
         handleSubmit,
@@ -44,29 +54,40 @@ export function useCreditorView() {
 
     const formData = watch()
 
-    
+    useEffect(() => {
+        if (formData.typeDocument != null && formData.typeDocument != "") {
+            setIsAllowSave(true)
+        } else if (formData.name != "" || formData.taxIdentification != "" || formData.document != "") {
+            setIsAllowSave(true)
+        } else {
+            setIsAllowSave(false)
+        }
+    }, [formData])
+
+
+
     const [creditorsSt, setCreditorsSt] = useState([])
     const onSubmitCreditor = handleSubmit(async (data: ICreditor) => {
         console.log({ data })
         GetCreditorsByFilters({
-            id:null,
-            typeDocument:data.typeDocument,
-            document:data.document,
-            taxIdentification:data.taxIdentification,
-            name:data.name,
-            page:1,
-            perPage:10,
-        }).then(res=>{
-            console.log({res})
-            res.operation.code=='OK'
+            id: null,
+            typeDocument: data.typeDocument,
+            document: data.document,
+            taxIdentification: data.taxIdentification,
+            name: data.name,
+            page: 1,
+            perPage: 10,
+        }).then(res => {
+            console.log({ res })
+            res.operation.code == 'OK'
                 ? setCreditorsSt(Object(res).data.array)
                 : setCreditorsSt([])
         })
-        
+
 
     })
 
-    
+
     const showModal = (values: IMessage) => {
         setMessage({
             title: values.title,
@@ -117,10 +138,10 @@ export function useCreditorView() {
 
     const tableActions: ITableAction<any>[] = [
         {
-            customName:'Acciones',    
+            customName: 'Acciones',
             icon: "Edit",
             onClick: (row) => {
-                navigate(`/editar/${row.id}`)
+                navigate(`/gestion-financiera/acreedor/editar/${row.id}`)
             },
         }
     ];
@@ -142,7 +163,9 @@ export function useCreditorView() {
         tableComponentRef,
         tableColumns,
         tableActions,
-        creditorsSt
+        setCreditorsSt,
+        creditorsSt,
+        documentTypeList
     };
 
 }

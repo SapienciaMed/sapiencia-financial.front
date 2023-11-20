@@ -79,14 +79,15 @@ export interface ILinkRPCDP {
 }
 
 export interface IBudgetRecordFilter {
-    consecutivoRpSap?: number;
-    consecutiveRpAurora?: number;
+    consecutivoRpSap?: string;
+    consecutiveRpAurora?: string;
     supplierType?: string;
     contractorDocument?: string;
     supplierName?: string;
     supplierId?: number;
     rpId?: number;
     reasonCancellation?: string;
+    taxIdentificationId?:string;
 }
 
 /* export interface IBudgetRecordEditBasic {

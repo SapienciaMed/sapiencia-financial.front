@@ -5,6 +5,8 @@ import { useCdpCrud } from "../hooks/use-cdp";
 import { EDirection } from "../../../common/constants/input.enum";
 import DatePickerCdp from './date-picker-cdp';
 import '../../../styles/from-create-cdp.scss';
+import { Grid } from '@mui/material';
+
 interface FormHeadInfo {
     date: string | null;
     exercise: string;
@@ -79,27 +81,30 @@ function CdpheadCreate(prop: Props) {
                 <div>
                     <h2 className='tittles'>Fechas</h2>
                 </div>
-                <section className="grid-form-3-container-area mt-6px" style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
-                    <div className="date-picker-container">
-                        <label className="date-picker-label text-black weight-500 biggest">Fecha Documento: <span>*</span></label>
-                        <DatePickerCdp
-                            setYear={setYear}
-                            setMonth={setMonth}
-                            setDate={setDate}
-                            selected={date}
-                            placeholder="Elige una fecha"
-                            disabled={false}
-                            id="fecha-elegida"
-                            className={validateField(date)}
-                        />
-                        {formSubmitted && date === "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
-                    </div>
-                    <div className="exercise-container" style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
+                <Grid container spacing={2} style={{ gap: '20px' }}>
+                    <Grid item xs={12} sm={12} md={3}>
+                        <div className="date-picker-container">
+                            <label className="date-picker-label text-black weight-500 biggest">Fecha Documento: <span>*</span></label>
+                            <DatePickerCdp
+                                setYear={setYear}
+                                setMonth={setMonth}
+                                setDate={setDate}
+                                selected={date}
+                                placeholder="Elige una fecha"
+                                disabled={false}
+                                id="fecha-elegida"
+                                className={validateField(date)}
+                            />
+                            {formSubmitted && date === "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
+                        </div>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={4}>
                         <div className="input-container">
                             <Controller
                                 control={control}
                                 name={"exercise"}
                                 defaultValue={String(new Date().getFullYear())}
+
                                 render={({ field }) => (
                                     <div>
                                         <label className="text-black weight-500 biggest">
@@ -126,6 +131,8 @@ function CdpheadCreate(prop: Props) {
 
                             {formSubmitted && year === "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
                         </div>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={4}>
                         <div className="input-container">
                             <Controller
                                 control={control}
@@ -154,8 +161,9 @@ function CdpheadCreate(prop: Props) {
 
                             {formSubmitted && month === "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
                         </div>
-                    </div>
-                </section>
+                    </Grid>
+                </Grid>
+
                 <TextAreaComponent
                     id={'contractObject'}
                     idInput={'contractObject'}

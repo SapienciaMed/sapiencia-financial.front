@@ -16,7 +16,7 @@ export function useBudgeRecordEdit(id) {
 
     const resolver = useYupValidationResolver(budgetRecordEditCrudValidator);
     const navigate = useNavigate();
-    const { GetRpByFilters, GetAllComponents, UpdateDataBasicRp,GetAllActivityObjectContract } = useBudgetRecordServices();
+    const { GetRpByFilters, GetAllComponents, UpdateDataBasicRp, GetAllActivityObjectContract } = useBudgetRecordServices();
     const { GetAllDependencies, GetContractorsByDocuments } = usePayrollExternalServices()
     const { setMessage, authorization } = useContext(AppContext);
 
@@ -40,11 +40,12 @@ export function useBudgeRecordEdit(id) {
         })
 
         GetContractorsByDocuments({}).then(res => {
-            const contractorList = res.data.data.map((e,index) => ({
-                id: e.numberDocument, name: Object(res).data.data[index]?.firstName + " " +
-                    Object(res).data.data[index]?.secondName + " " +
-                    Object(res).data.data[index]?.surname + " " +
-                    Object(res).data.data[index]?.secondSurname, value: e.numberDocument
+            const contractorList = res.data.data.map((e, index) => ({
+                id: e.numberDocument,
+                name: e?.firstName + " " +
+                    e?.secondName + " " +
+                    e?.surname + " " +
+                    e?.secondSurname, value: e.numberDocument
             }))
 
             setContractorListSt(contractorList)
@@ -115,7 +116,7 @@ export function useBudgeRecordEdit(id) {
             }).then(res => {
                 if (res.operation.code == 'OK') {
                     setValueRegister('id', res.data[0].id)
-                    setValueRegister('supplierName', res.data[0].supplierType == 'Acreedor' ? Object(res).data[0].creditor.name : '')
+                    setValueRegister('supplierName', res.data[0].supplierType == 'Acreedor' ? Object(res).data[0].creditor.name : (contractorListSt.find(e=>e.value==res.data[0].contractorDocument)).name)
                     setValueRegister('contractorDocument', res.data[0].contractorDocument)
                     setValueRegister('documentDate', formatDate(res.data[0].documentDate))
                     setValueRegister('dateValidity', formatDate(res.data[0].dateValidity))
@@ -132,12 +133,12 @@ export function useBudgeRecordEdit(id) {
                 }
             })
         }
-    }, [id])
+    }, [id, contractorListSt])
 
     const onSubmitEditRp = handleSubmit(async (data: IBudgetRecord) => {
-        data.documentDate=formatDate(new Date(data.documentDate))
-        data.dateValidity=formatDate(new Date(data.dateValidity))
-        
+        data.documentDate = formatDate(new Date(data.documentDate))
+        data.dateValidity = formatDate(new Date(data.dateValidity))
+
         showModal({
             title: "Guardar",
             description: "¿Está segur@ de guardar la información?",

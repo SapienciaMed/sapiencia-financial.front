@@ -22,7 +22,8 @@ function CreditorCrudPage() {
         onSubmitCreditor,
         componentsData,
         dependeciesData,
-        isAllowSave
+        isAllowSave,
+        documentTypeList
     } = useCreditorCrud(id);
 
     return (
@@ -49,12 +50,9 @@ function CreditorCrudPage() {
                                 control={control}
                                 label="Tipo de identificación"
                                 className="select-basic medium"
-                                classNameLabel="text-black big bold text-required"
+                                classNameLabel="text-black big bold"
                                 placeholder={"Seleccionar"}
-                                data={[
-                                    { id: 'CC', name: 'CC', value: 'CC' },
-                                    { id: 'Nit', name: 'Nit', value: 'Nit' }
-                                ]}
+                                data={documentTypeList}
                                 filter={true}
                                 errors={errors}
                                 direction={EDirection.column}
@@ -73,7 +71,7 @@ function CreditorCrudPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Identificación"
-                                        classNameLabel="text-black big bold text-required"
+                                        classNameLabel="text-black big bold"
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
@@ -131,7 +129,7 @@ function CreditorCrudPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Ciudad"
-                                        classNameLabel="text-black big bold text-required"
+                                        classNameLabel="text-black big bold"
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
@@ -148,7 +146,7 @@ function CreditorCrudPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Dirección"
-                                        classNameLabel="text-black big bold text-required"
+                                        classNameLabel="text-black big bold"
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
@@ -165,7 +163,7 @@ function CreditorCrudPage() {
                                         typeInput="number"
                                         register={register}
                                         label="Teléfono"
-                                        classNameLabel="text-black big bold text-required"
+                                        classNameLabel="text-black big bold"
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
@@ -182,7 +180,7 @@ function CreditorCrudPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Correo electrónico"
-                                        classNameLabel="text-black big bold text-required"
+                                        classNameLabel="text-black big bold"
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}

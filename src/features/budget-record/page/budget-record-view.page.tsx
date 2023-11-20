@@ -38,6 +38,8 @@ function BudgetRecordViewPage() {
         isConfirmCancel,
         actionTemplate,
         setContractorDocumentSt,
+        setAuroraRPConsecutiveSt,
+        setSapRPConsecutiveSt
     } = useBudgeRecordView();
 
     return (
@@ -80,6 +82,7 @@ function BudgetRecordViewPage() {
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
+                                        onBlur={(e) => setSapRPConsecutiveSt(Object(e).target.value)}
                                     />
                                 )} />
                             <Controller
@@ -97,6 +100,7 @@ function BudgetRecordViewPage() {
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
+                                        onBlur={(e) => setAuroraRPConsecutiveSt(Object(e).target.value)}
                                     />
                                 )} />
 
@@ -160,11 +164,8 @@ function BudgetRecordViewPage() {
                                 reset()
                                 setDataFindRpSt({})
                                 setDataRouteBudgetsSt([])
-                                /* reset();
-                                if(showTable)  {
-                                    tableComponentRef.current.emptyData();
-                                    setShowTable(false)
-                                } */
+                                setAuroraRPConsecutiveSt('')
+                                setSapRPConsecutiveSt('')
                             }}>
                                 Limpiar campos
                             </span>

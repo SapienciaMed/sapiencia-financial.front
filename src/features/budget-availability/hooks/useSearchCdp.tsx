@@ -58,6 +58,13 @@ export const useSearchCdp = () => {
     {
       fieldName: "partnersRp",
       header: "RP asociados",
+      renderCell: (row) => {
+        const containRp = row.amounts.filter((amount) => {
+          return amount.linkRpcdps.filter(e=>e.isActive===1);
+        });
+
+        return <>{containRp.length >0 ? 'Si' : 'No'}</>;
+      },
     },
     {
       fieldName: "contractObject",
