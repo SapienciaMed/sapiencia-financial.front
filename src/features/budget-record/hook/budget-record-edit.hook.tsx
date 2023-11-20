@@ -204,32 +204,32 @@ export function useBudgeRecordEdit() {
 
 
     useEffect(() => {
-        if (!dataRp) return;
+        if (!dataRp ) return;
 
         // Asignar los campos que siempre vienen
-        setValue("document", dataRp.creditor.document);
-        setValue("name", dataRp.creditor.name);
-        setValue("taxIdentification", dataRp.creditor.taxIdentification);
-        setValue("dependencyId", dataRp.dependencyId);
-        setValue("fund", dataRp.linksRp[0].amountBudgetAvailability.budgetRoute.fund.number);
-        setValue("pospreSapiencia", dataRp.linksRp[0].amountBudgetAvailability.budgetRoute.pospreSapiencia.number);
-        setValue("projectName", dataRp.linksRp[0].projectName);
-        setValue("areaNumber", areaNumber);
-        setValue("managementCenter", dataRp.linksRp[0].amountBudgetAvailability.budgetRoute.managementCenter);
-        setValue("div", dataRp.linksRp[0].amountBudgetAvailability.budgetRoute.div);
-        setValue("cdpPosition", dataRp.linksRp[0].amountBudgetAvailability.cdpPosition);
-        setValue("numberProject", projectNumber);
-        setValue("dependencyId", dataRp.dependencyId);
-        setValue("contractualObject", dataRp.contractualObject);
-        setValue("componentId", dataRp.componentId);
-        setValue("amount", dataRp.linksRp[0].initialAmount);
-
-        setValue("observation", dataRp.linksRp[0].observation);
-        setValue("againtsAmount", dataRp.linksRp[0].againtsAmount);
-        setValue("creditAmount", dataRp.linksRp[0].creditAmount);
-        setValue("fixedCompleted", dataRp.linksRp[0].fixedCompleted);
-
-        setValue("finalAmount", dataRp.linksRp[0].finalAmount);
+        setValue("document", dataRp?.creditor?.document || "");
+        setValue("name", dataRp?.creditor?.name || "");
+        setValue("taxIdentification", dataRp?.creditor?.taxIdentification || "");
+        setValue("dependencyId", dataRp?.dependencyId || "");
+        setValue("fund", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.budgetRoute?.fund?.number || "");
+        setValue("pospreSapiencia", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.budgetRoute?.pospreSapiencia?.number || "");
+        setValue("projectName", dataRp?.linksRp?.[0]?.projectName || "");
+        setValue("areaNumber", areaNumber || "");
+        setValue("managementCenter", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.budgetRoute?.managementCenter || "");
+        setValue("div", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.budgetRoute?.div || "");
+        setValue("cdpPosition", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.cdpPosition || "");
+        setValue("numberProject", projectNumber || "");
+        setValue("dependencyId", dataRp?.dependencyId || "");
+        setValue("contractualObject", dataRp?.contractualObject || "");
+        setValue("componentId", dataRp?.componentId || "");
+        setValue("amount", dataRp?.linksRp?.[0]?.initialAmount || "");
+    
+        setValue("observation", dataRp?.linksRp?.[0]?.observation || "");
+        setValue("againtsAmount", dataRp?.linksRp?.[0]?.againtsAmount || "");
+        setValue("creditAmount", dataRp?.linksRp?.[0]?.creditAmount || "");
+        setValue("fixedCompleted", dataRp?.linksRp?.[0]?.fixedCompleted || "");
+    
+        setValue("finalAmount", dataRp?.linksRp?.[0]?.finalAmount || "");
     }, [dataRp, areaNumber, projectNumber]);
 
     const onSubmiteditRp = handleSubmit(async (data: IUpdateRP) => {
