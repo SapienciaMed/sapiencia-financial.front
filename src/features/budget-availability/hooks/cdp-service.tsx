@@ -8,6 +8,7 @@ export function useCdpService() {
     const roleUrl: string = "/api/v1/cdp";
     const roleUrlA: string = "/api/v1/additions";
     const totalValuesUrl: string = "/api/v1/budget-records";   
+    const getActivities: string = "/api/v1/vinculation-mga"
     const { get, post, postFormData, put } = useCrudService( baseURL);
 
     async function getCdpById(id:string): Promise<ApiResponse<IBudgetAvalaibility>> {
@@ -61,6 +62,21 @@ export function useCdpService() {
         return get(`${roleUrl}${endpoint}`);
     }
 
+    async function getActivitiesDetail(): Promise<ApiResponse<any>> {
+        const endpoint: string = "/get-activities-detail";
+        return post(`${getActivities}${endpoint}`);
+    }
+
+    async function validate(data:object): Promise<ApiResponse<any>> {
+        const endpoint: string = "/validate";
+        return post(`${getActivities}${endpoint}`,data);
+    }
+
+    async function createVinculationMGA(data:object): Promise<ApiResponse<any>> {
+        const endpoint: string = "/create-vinculation-mga";
+        return post(`${getActivities}${endpoint}`,data);
+    }
+
     return {
         createCdp,
         createCdp_,
@@ -71,7 +87,10 @@ export function useCdpService() {
         updateRouteCdp,
         associateCdpAmounts,
         getTotalValuesImport,       
-        getRpsCDPId
+        getRpsCDPId,
+        getActivitiesDetail,
+        validate,
+        createVinculationMGA
      }
     };
 

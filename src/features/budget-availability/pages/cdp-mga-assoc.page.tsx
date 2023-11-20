@@ -4,9 +4,11 @@ import { useParams } from "react-router-dom";
 import { useCdpMgaAssoc } from "../hooks/cdp-mga-assoc.hook";
 
 const CdpMgaAssocPage = () => {
-    const { id: cdpId } = useParams();
+    //const { id: cdpId } = useParams();
+    const { id, idRoute } = useParams();
+   
     const { control, errors, arrayDataSelect, disableAddButton, arrayMgaAssoc, 
-        register, onSubmit, deleteElement, onCancel, handleSaveSubmit } = useCdpMgaAssoc(cdpId)
+        register, onSubmit, deleteElement, onCancel, handleSaveSubmit,activities } = useCdpMgaAssoc(id,idRoute)
 
     return (
         <div className="crud-page full-height ">
@@ -21,6 +23,7 @@ const CdpMgaAssocPage = () => {
                     arrayDataSelect={arrayDataSelect}
                     disableAddButton={disableAddButton}
                     arrayMgaAssoc={arrayMgaAssoc}
+                    activities={activities}
                     register={register}
                     onSubmit={onSubmit}
                     deleteElement={deleteElement}
@@ -43,7 +46,7 @@ const CdpMgaAssocPage = () => {
                     value="Guardar"
                     type="submit"
                     action={() => handleSaveSubmit() }
-                    disabled={!disableAddButton}
+                    disabled={disableAddButton}
                 />
             </div>
             </section>
