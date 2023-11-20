@@ -7,4 +7,8 @@ export interface IDropdownProps {
     projectId?: string | number,
     activity?: string,
     cost? : number,
+    activitDetailyId?: number,
+    activitieMga?: number,
+    activityId?: number,
+
 }

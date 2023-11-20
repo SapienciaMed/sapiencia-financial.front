@@ -329,7 +329,7 @@ function BudgetRecordEditPage() {
                                     );
                                 }}
                             />
-                            <label>RP: {RP}</label>
+                            <label>CDP: {RP}</label>
                             <br />
                             <label>Causación: {totalCautation}</label>
                             <br />

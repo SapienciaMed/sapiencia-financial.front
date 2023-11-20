@@ -16,6 +16,8 @@ interface IArrayMgaAssoc {
     cpc: string,
     percentage: number,
     cdpCode: number,
+    /* mgaActivity: number,
+    detailedMgaActivity:number, */
 
     tabActivity: string,
     tabDetailedMgaActivity: string
@@ -66,8 +68,9 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
         }).catch((error) => console.log(error))
 
         getActivitiesDetail().then(res => {
-            const activities = Object(res).data?.map(d => ({ id: d.activity.id, name: d.activity.activityDescriptionMGA, value: d.activity.id, activityId: d.id, activity: d.detailActivity, cost: d.unitCost }))
+            const activities = Object(res).data?.map(d => ({ id: d.activity.id, name: d.activity.activityDescriptionMGA, value: d.activity.id, activityId: d.activityId, activity: d.detailActivity, cost: d.unitCost, activitieMga: d.id }))
             setActivities(activities)
+            console.log(activities)
         })
 
     }, [])
@@ -96,6 +99,8 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
     }, [arrayMgaAssoc])
 
     const onSubmit = handleSubmit(async (data: any) => {
+
+        console.log('datos i',data)
      
         const sumaPercentage = arrayMgaAssoc.reduce((acumulador, elemento) => {
             return acumulador + elemento.percentage;
@@ -106,6 +111,8 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
 
         //setear valores
         const selectActivitie = activities.find(activity => activity.id == data.DetailedActivityMGA);
+
+        console.log('select',selectActivitie)
 
 
         const datos = {
@@ -153,8 +160,8 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
         } else if (sumaPercentage + parseInt(data.percentageAffected) <= 100) {
             const mgaAssoc = {
                 id: nextId,
-                mgaActivity: data.activityId,
-                detailedMgaActivity: data.DetailedActivityMGA,
+                mgaActivity: String(selectActivitie.activitieMga),
+                detailedMgaActivity:  String(selectActivitie.activityId),
                 cpc: data.cpc,
                 percentage: parseInt(data.percentageAffected),
                 cdpCode: Number(id),
@@ -162,7 +169,7 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
                 tabActivity: selectActivitie.activity,
                 tabDetailedMgaActivity: selectActivitie.name,
             }
-            
+            console.log('Array',mgaAssoc)
             setArrayMgaAssoc([...arrayMgaAssoc, mgaAssoc])
             setNextId(nextId + 1);
         }
