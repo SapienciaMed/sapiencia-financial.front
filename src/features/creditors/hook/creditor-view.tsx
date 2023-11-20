@@ -54,6 +54,17 @@ export function useCreditorView() {
 
     const formData = watch()
 
+    useEffect(() => {
+        if (formData.typeDocument != null && formData.typeDocument != "") {
+            setIsAllowSave(true)
+        } else if (formData.name != "" || formData.taxIdentification != "" || formData.document != "") {
+            setIsAllowSave(true)
+        } else {
+            setIsAllowSave(false)
+        }
+    }, [formData])
+
+
 
     const [creditorsSt, setCreditorsSt] = useState([])
     const onSubmitCreditor = handleSubmit(async (data: ICreditor) => {
@@ -152,6 +163,7 @@ export function useCreditorView() {
         tableComponentRef,
         tableColumns,
         tableActions,
+        setCreditorsSt,
         creditorsSt,
         documentTypeList
     };

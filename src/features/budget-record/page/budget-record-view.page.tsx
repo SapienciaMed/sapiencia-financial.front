@@ -166,11 +166,6 @@ function BudgetRecordViewPage() {
                                 setDataRouteBudgetsSt([])
                                 setAuroraRPConsecutiveSt('')
                                 setSapRPConsecutiveSt('')
-                                /* reset();
-                                if(showTable)  {
-                                    tableComponentRef.current.emptyData();
-                                    setShowTable(false)
-                                } */
                             }}>
                                 Limpiar campos
                             </span>
