@@ -19,6 +19,7 @@ function CreditorViewPage() {
         errors,
         register,
         control,
+        reset,
         setMessage,
         onSubmitCreditor,
         componentsData,
@@ -28,6 +29,7 @@ function CreditorViewPage() {
         tableColumns,
         tableActions,
         creditorsSt,
+        setCreditorsSt,
         documentTypeList
     } = useCreditorView();
 
@@ -53,7 +55,7 @@ function CreditorViewPage() {
                                 control={control}
                                 label="Tipo de identificación"
                                 className="select-basic medium"
-                                classNameLabel="text-black big bold text-required"
+                                classNameLabel="text-black big bold"
                                 placeholder={"Seleccionar"}
                                 data={documentTypeList}
                                 filter={true}
@@ -72,7 +74,7 @@ function CreditorViewPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Identificación"
-                                        classNameLabel="text-black big bold text-required"
+                                        classNameLabel="text-black big bold"
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
@@ -90,7 +92,7 @@ function CreditorViewPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Identificación fiscal"
-                                        classNameLabel="text-black big bold text-required"
+                                        classNameLabel="text-black big bold"
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
@@ -108,7 +110,7 @@ function CreditorViewPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Razón social / Nombre"
-                                        classNameLabel="text-black big bold text-required"
+                                        classNameLabel="text-black big bold"
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
@@ -121,33 +123,12 @@ function CreditorViewPage() {
                     <br />
                     <section>
                         <div className="container-button-bot">
-                            <ButtonComponent
-                                form="useQueryForm"
-                                value="Cancelar"
-                                type="button"
-                                className="button-clean-fields bold"
-                                action={() => {
-                                    setMessage({
-                                        title: "Cancelar",
-                                        show: true,
-                                        cancelTitle: "Cancelar",
-                                        OkTitle: "Aceptar",
-                                        description: (
-                                            <div style={{ width: "100%" }}>
-                                                <label>¿Estas segur@ de cancelar?</label>
-                                            </div>
-                                        ),
-                                        background: true,
-                                        onOk: () => {
-                                            navigate("/gestion-financiera/rp");
-                                            setMessage({});
-                                        },
-                                        onCancel: () => {
-                                            setMessage({});
-                                        },
-                                    });
-                                }}
-                            />
+                            <span className="bold text-center button" onClick={() => {
+                                reset()
+                                setCreditorsSt([]);
+                            }}>
+                                Limpiar campos
+                            </span>
 
                             <div className="buttons-bot">
                                 <ButtonLoadingComponent
@@ -155,25 +136,25 @@ function CreditorViewPage() {
                                     value="Buscar"
                                     form="form-pac"
                                     type="submit"
-                                /* disabled={!isAllowSave} */
+                                    disabled={!isAllowSave}
                                 />
                             </div>
                         </div>
 
                         {
-                            /* dataRouteBudgetsSt.length > 0 && ( */
-                            <div className="card-user">
-                                <TableDataPropComponent
-                                    ref={tableComponentRef}
-                                    dataTable={creditorsSt}
-                                    columns={tableColumns}
-                                    actions={tableActions}
-                                    isShowModal={false}
-                                    titleMessageModalNoResult={"No se encontraron registros"}
-                                    secondaryTitle="Resultados de búsqueda"
-                                />
-                            </div>
-                            /*   ) */
+                            creditorsSt.length > 0 && (
+                                <div className="card-user">
+                                    <TableDataPropComponent
+                                        ref={tableComponentRef}
+                                        dataTable={creditorsSt}
+                                        columns={tableColumns}
+                                        actions={tableActions}
+                                        isShowModal={false}
+                                        titleMessageModalNoResult={"No se encontraron registros"}
+                                        secondaryTitle="Resultados de búsqueda"
+                                    />
+                                </div>
+                            )
                         }
                     </section>
                 </FormComponent>

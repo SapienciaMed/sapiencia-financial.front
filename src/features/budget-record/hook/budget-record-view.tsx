@@ -215,9 +215,10 @@ export function useBudgeRecordView() {
             fieldName: "rpId",
             header: "Anular posición",
             renderCell: (row) => {
+                console.log("=>>>>> ", row.rpSap)
                 return (
                     <div className="flex align-items-center">
-                        <Checkbox onChange={() => showModalCancelAmount(row)}  /* onChange={onAmountChange} */ checked={false} />
+                        <Checkbox onChange={() => showModalCancelAmount(row)}  /* onChange={onAmountChange} */ checked={false} disabled={row.rpSap>0 ? true : false}/>
                     </div>)
             }
         },
