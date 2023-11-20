@@ -22,10 +22,10 @@ interface IArrayMgaAssoc {
 }
 
 export function useCdpMgaAssoc(id?: string, idRoute?: string) {
-    console.log('idCdp', id)
+   
     const resolver = useYupValidationResolver(cdpMgaAssoc);
     const { setMessage } = useContext(AppContext);
-    const { getCdpById, getActivitiesDetail, validate, createVinculationMGA } = useCdpService()
+    const { getCdpById, getActivitiesDetail, validate, createVinculationMGA,validateCDP } = useCdpService()
     const [arrayDataSelect, setArrayDataSelect] = useState({
         listDetailedActivityMGA: []
     })
@@ -92,11 +92,11 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
         const sumaPercentage = arrayMgaAssoc.reduce((acumulador, elemento) => {
             return acumulador + elemento.percentage;
         }, 0);
-        setDisableAddButton(sumaPercentage == 100)
+        setDisableAddButton(sumaPercentage > 100)
     }, [arrayMgaAssoc])
 
     const onSubmit = handleSubmit(async (data: any) => {
-        console.log(data)
+     
         const sumaPercentage = arrayMgaAssoc.reduce((acumulador, elemento) => {
             return acumulador + elemento.percentage;
         }, 0);
@@ -111,12 +111,16 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
         const datos = {
             cdpId: id,
             costMGA: selectActivitie.cost
-        }
+        }      
 
+        const validateCDPData = {
+            activitieId: selectActivitie.id,
+            valueFinal: valorFinal,
+            activitieCost: selectActivitie.cost
+        };
 
-
-        const validation = await validate(datos);
-
+        const validation = await validate(datos);        
+        const validationCDP = await validateCDP(validateCDPData);        
 
         if (percentageTotalValue > selectActivitie.cost) {
             setMessage({
@@ -130,7 +134,7 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
 
         } else if (validation.operation.code === EResponseCodes.FAIL) {
             setMessage({
-                title: 'Validacion',
+                title: 'Validación',
                 show: true,
                 description: `${validation.operation.message}`,
                 OkTitle: "Aceptar",
@@ -138,21 +142,31 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
             });
 
 
+        } else if(validationCDP.operation.code === EResponseCodes.FAIL){
+            setMessage({
+                title: 'Validación',
+                show: true,
+                description: `${validationCDP.operation.message}`,
+                OkTitle: "Aceptar",
+                background: true,
+            });
         } else if (sumaPercentage + parseInt(data.percentageAffected) <= 100) {
             const mgaAssoc = {
                 id: nextId,
-                mgaActivity: data.DetailedActivityMGA,
+                mgaActivity: data.activityId,
                 detailedMgaActivity: data.DetailedActivityMGA,
                 cpc: data.cpc,
                 percentage: parseInt(data.percentageAffected),
                 cdpCode: Number(id),
-
+                
                 tabActivity: selectActivitie.activity,
                 tabDetailedMgaActivity: selectActivitie.name,
             }
+            
             setArrayMgaAssoc([...arrayMgaAssoc, mgaAssoc])
             setNextId(nextId + 1);
         }
+       
 
     })
 
