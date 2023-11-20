@@ -71,6 +71,10 @@ export function useCdpService() {
         const endpoint: string = "/validate";
         return post(`${getActivities}${endpoint}`,data);
     }
+    async function validateCDP(data:object): Promise<ApiResponse<any>> {
+        const endpoint: string = "/validate-all-Cdp";
+        return post(`${getActivities}${endpoint}`,data);
+    }
 
     async function createVinculationMGA(data:object): Promise<ApiResponse<any>> {
         const endpoint: string = "/create-vinculation-mga";
@@ -90,6 +94,7 @@ export function useCdpService() {
         getRpsCDPId,
         getActivitiesDetail,
         validate,
+        validateCDP,
         createVinculationMGA
      }
     };
