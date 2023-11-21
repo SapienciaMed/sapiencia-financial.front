@@ -28,6 +28,7 @@ export function useFunctionalAreaCrudData(id: string) {
   const { UnLinkVinculation, LinkVinculation, DeleteLinkVinculation } =
     useProjectsLinkService();
 
+    const { validateActionAccess } = useContext(AppContext)
   const resolver = useYupValidationResolver(functionalAreaCrud);
   const {
     handleSubmit,
@@ -157,6 +158,7 @@ export function useFunctionalAreaCrudData(id: string) {
   const tableActions: ITableAction<IProjectsVinculation>[] = [
     {
       icon: "Delete",
+      hide:!validateActionAccess('AREA_FUNCIONAL_ELIMINAR'),
       onClick: (row) => {
         setMessage({
           title: "Eliminar proyecto",

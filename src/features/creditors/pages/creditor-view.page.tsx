@@ -30,7 +30,8 @@ function CreditorViewPage() {
         tableActions,
         creditorsSt,
         setCreditorsSt,
-        documentTypeList
+        documentTypeList,
+        validateActionAccess
     } = useCreditorView();
 
     return (
@@ -38,10 +39,15 @@ function CreditorViewPage() {
             <div className='card-table gap-0'>
                 <div className="title-area">
                     <div className="text-black weight-500 extra-large">Consultar acreedor</div>
-                    <div className="title-button text-three biggest">
-                        <span style={{ marginRight: '0.5em' }} onClick={() => { navigate('./crear') }}> Crear acreedor</span>
-                        {<AiOutlinePlusCircle size={20} color="533893" />}
-                    </div>
+
+                    {
+                        validateActionAccess('ACREEDOR_CREAR') && (
+                            <div className="title-button text-three biggest">
+                                <span style={{ marginRight: '0.5em' }} onClick={() => { navigate('./crear') }}> Crear acreedor</span>
+                                {<AiOutlinePlusCircle size={20} color="533893" />}
+                            </div>
+                        )
+                    }
                 </div>
                 <FormComponent
                     action={onSubmitCreditor}

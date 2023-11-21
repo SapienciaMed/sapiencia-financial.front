@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { functionalArea } from "../../../common/schemas";
@@ -12,6 +12,7 @@ import {
   ITableElement,
 } from "../../../common/interfaces/table.interfaces";
 import { IProjectsVinculation } from "../interfaces/Projects";
+import { AppContext } from "../../../common/contexts/app.context";
 
 export function useFunctionalAreaData() {
   const tableComponentRef = useRef(null);
@@ -28,6 +29,8 @@ export function useFunctionalAreaData() {
 
   const [showTable, setShowTable] = useState(false);
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false);
+
+const { validateActionAccess } = useContext(AppContext)  
 
   const inputValue = watch(["number"]);
 
@@ -57,18 +60,21 @@ export function useFunctionalAreaData() {
   const tableActions: ITableAction<IFunctionalArea>[] = [
     {
       icon: "Detail",
+      hide:!validateActionAccess('AREA_FUNCIONAL_CONSULTAR'),
       onClick: (row) => {
         navigate(`./view/${row.id}`);
       },
     },
     {
       icon: "Edit",
+      hide:!validateActionAccess('AREA_FUNCIONAL_EDITAR'),
       onClick: (row) => {
         navigate(`./edit/${row.id}`);
       },
     },
     {
       icon: "Link",
+      hide:!validateActionAccess('AREA_FUNCIONAL_AGREGAR_PROYECTO'),
       onClick: (row) => {
         navigate(`./link/${row.id}`);
       },
@@ -106,5 +112,6 @@ export function useFunctionalAreaData() {
     errors,
     reset,
     onSubmit,
+    validateActionAccess
   };
 }

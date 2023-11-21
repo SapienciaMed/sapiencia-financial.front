@@ -20,7 +20,7 @@ export function useFundsData() {
   const tableComponentRef = useRef(null);
   const navigate = useNavigate();
   const resolver = useYupValidationResolver(fundsValidator);
-  const { setMessage } = useContext(AppContext);
+  const { setMessage, validateActionAccess } = useContext(AppContext);
   const { GetEntities } = useEntitiesService();
   const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
   const [isVisibleTable, setIsVisibleTable] = useState<Boolean>(false);
@@ -75,6 +75,7 @@ export function useFundsData() {
   const tableActions: ITableAction<IFunds>[] = [
     {
       icon: "Detail",
+      hide: !validateActionAccess('FONDOS_VISUALIZAR'),
       onClick: (row) => {
         const rows = [
           {
@@ -116,6 +117,7 @@ export function useFundsData() {
       onClick: (row) => {
         navigate(`./edit/${row.id}`);
       },
+      hide: !validateActionAccess('FONDOS_EDITAR')
     },
   ];
 
@@ -167,5 +169,6 @@ export function useFundsData() {
     validatorNumber,
     isValid,
     isBtnDisable,
+    validateActionAccess
   };
 }
