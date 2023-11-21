@@ -188,10 +188,6 @@ const CdpAmountAssoc = () => {
                     return rest;
                 });
 
-      
-
-/*                  updatedIcdArr = icdArrWithBalanceCheck.map(({ balance, ...rest }) => rest);
- */
                 nuevoObjeto = {
                     ...objectSendData,
                     cdpId: idCdp,
@@ -226,7 +222,7 @@ const CdpAmountAssoc = () => {
                                         OkTitle: "Cerrar",
                                         onOk: () => {
                                             //onCancelNew();
-                                            navigate("../../");
+                                            navigate("../");
                                         },
                                         background: true,
                                     });
