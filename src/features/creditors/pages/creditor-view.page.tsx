@@ -129,7 +129,7 @@ function CreditorViewPage() {
                     <br />
                     <section>
                         <div className="container-button-bot">
-                            <span className="bold text-center button" onClick={() => {
+                            <span className="bold text-center button" style={{marginRight:'10px'}} onClick={() => {
                                 reset()
                                 setCreditorsSt([]);
                             }}>
