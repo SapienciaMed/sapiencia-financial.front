@@ -216,7 +216,7 @@ function CdpMgaAssocFormComponent(props: ICdpMgaAssocFromProps) {
                                     
                                     <Column field="tabActivity" header="Actividad MGA"></Column>
                                     <Column field="tabDetailedMgaActivity" header="Actividad detallada MGA"></Column>
-                                    <Column field="cpc" header="CPC"></Column>
+                                    <Column field="tabSelectCpc" header="CPC"></Column>
                                     <Column field="percentage" header="Porcentaje"></Column>
                                     <Column 
                                         className="spc-table-actions" 

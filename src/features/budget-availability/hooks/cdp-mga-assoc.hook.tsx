@@ -17,11 +17,13 @@ interface IArrayMgaAssoc {
     cpc: string,
     percentage: number,
     cdpCode: number,
+    
     /* mgaActivity: number,
     detailedMgaActivity:number, */
 
     tabActivity: string,
-    tabDetailedMgaActivity: string
+    tabDetailedMgaActivity: string,
+    tabSelectCpc: string
 }
 
 export function useCdpMgaAssoc(id?: string, idRoute?: string) {
@@ -73,9 +75,14 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
             setActivities(activities)
         })
 
-        getAllCpc().then(res => {
+       /*  getAllCpc().then(res => {
             const cpc = Object(res).data?.map(c => ({ id: id, name: c.ejercise, value: c.id}))
             setCpc(cpc)           
+        }) */
+
+        getAllCpc().then(res => {
+            const cpc = Object(res).data?.map(c => ({ id: c.id, name: c.ejercise, value: c.id, entityId: c.entityId}))
+            setFilteredCpc(cpc)           
         })
 
     }, [])
@@ -83,22 +90,20 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
  
     const selecte = watch('DetailedActivityMGA')
     
-    const [filteredCpc, setFilteredCpc] = useState<IDropdownProps[]>([]);
+    const [filteredCpc, setFilteredCpc] = useState<any[]>([]);
+   
     
-    /* useEffect(() => {
+    useEffect(() => {
         if (selecte) {
-            const selectActivitie = activities.find(activity => activity.id == selecte);
+            const selectActivitie = activities.find(activity => activity.id == selecte);           
 
-            console.log(selectActivitie.pospre)
+            const filtered = filteredCpc.filter(item => item.entityId === selectActivitie.pospre);            
 
-            const filtered = cpc.filter(item => item.entityId === selectActivitie.pospre);
-
-            filtered.map(c => ({id: Number(c.id), name: String(c.ejercise)}))
-            setFilteredCpc(filtered); 
+            filtered.map(c => ({id: c.id, name: c.ejercise, value: c.id}))
+            setCpc(filtered);             
         }
-    }, [selecte, cpc]);
+    }, [selecte, filteredCpc]);
     
-    console.log(filteredCpc) */
 
     useEffect(() => {
         const dataMockServiceDetail = {
@@ -119,7 +124,7 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
         setDisableAddButton(sumaPercentage > 100)
     }, [arrayMgaAssoc])
 
-    const onSubmit = handleSubmit(async (data: any) => {       
+    const onSubmit = handleSubmit(async (data: any) => {   
      
         const sumaPercentage = arrayMgaAssoc.reduce((acumulador, elemento) => {
             return acumulador + elemento.percentage;
@@ -130,6 +135,9 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
 
         //setear valores
         const selectActivitie = activities.find(activity => activity.id == data.DetailedActivityMGA);
+
+        const selectCpc = cpc.find(cpc => cpc.id == data.cpc);
+       
 
         const datos = {
             cdpId: id,
@@ -184,6 +192,7 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
                 
                 tabActivity: selectActivitie.activity,
                 tabDetailedMgaActivity: selectActivitie.name,
+                tabSelectCpc: selectCpc.name
             }
             setArrayMgaAssoc([...arrayMgaAssoc, mgaAssoc])
             setNextId(nextId + 1);
@@ -267,7 +276,8 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
             activitieMga: Number(item.mgaActivity),
             activitieDetailMga: Number(item.detailedMgaActivity),
             percentageAfected: Number(item.percentage),
-            cdpCode: Number(item.cdpCode)
+            cdpCode: Number(item.cdpCode),
+            cpcCode: Number(item.cpc)
         }));
 
         const finalObject = { datos };
