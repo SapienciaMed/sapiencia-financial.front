@@ -13,7 +13,7 @@ import { EDirection } from "../../../common/constants/input.enum";
 
 export function useCdpCrud(cdpId?: string) {
     const resolver = useYupValidationResolver(cdpCrudValidator);
-    const { setMessage } = useContext(AppContext);
+    const { setMessage, validateActionAccess } = useContext(AppContext);
     const navigate = useNavigate();
     const { getCdpById, cancelAmount } = useCdpService()
 
@@ -37,7 +37,7 @@ export function useCdpCrud(cdpId?: string) {
                 id: null,
                 reasonCancellation: ''
             }],
-            contractObject:''
+            contractObject: ''
         },
         mode: 'onChange',
         resolver,
@@ -61,7 +61,7 @@ export function useCdpCrud(cdpId?: string) {
                             setCdpFoundSt(res.data[0])
                         })
                         setMessage({})
-                        setValueRegister('amounts.0.reasonCancellation','')
+                        setValueRegister('amounts.0.reasonCancellation', '')
                     }))
                     : ''
 
@@ -133,7 +133,12 @@ export function useCdpCrud(cdpId?: string) {
             renderCell: (row) => {
                 return (
                     <div className="flex align-items-center">
-                        <Checkbox checked={false} onChange={() => showModalCancelAmount(row.id)} disabled={amountWatch.sapConsecutive>0 ? true : false}/>
+                        {
+                            validateActionAccess('CDP_ANULAR_MONTO') && (
+                                <Checkbox checked={false} onChange={() => showModalCancelAmount(row.id)} disabled={amountWatch.sapConsecutive > 0 ? true : false} />
+                            )
+                        }
+
                     </div>)
             }
         },
@@ -149,6 +154,7 @@ export function useCdpCrud(cdpId?: string) {
         },
         {
             icon: "LinkMga",
+            hide: !validateActionAccess('CDP_MGA_VINCULAR'),
             onClick: (row) => {
                 navigate(`./mga-assoc/${row.id}`);
             },
@@ -170,7 +176,7 @@ export function useCdpCrud(cdpId?: string) {
         setValueRegister('sapConsecutive', Object(cdpFoundSt).sapConsecutive)
         setValueRegister('date', Object(cdpFoundSt).date)
         setValueRegister('contractObject', Object(cdpFoundSt).contractObject)
-        setValueRegister('rpAssoc', (Object(cdpFoundSt).amounts.map(e=>e.linkRpcdps)).length >0 ? 'Si' : 'No')
+        setValueRegister('rpAssoc', (Object(cdpFoundSt).amounts.map(e => e.linkRpcdps)).length > 0 ? 'Si' : 'No')
     }, [cdpFoundSt])
 
     return {

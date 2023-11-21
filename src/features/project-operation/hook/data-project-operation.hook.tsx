@@ -2,15 +2,10 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { DateTime } from "luxon";
 import { AppContext } from "../../../common/contexts/app.context";
 import { useNavigate } from "react-router-dom";
-/* import { IFundsFilters, IFunds } from "../../interfaces/Funds"; */
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
-import DetailsComponent from "../../../common/components/details.component";
 import { useForm } from "react-hook-form";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { fundsValidator } from "../../../common/schemas";
-/* import { useEntitiesService } from "./entities-service.hook";
-import { IEntities } from "../interfaces/Entities"; */
-import { EResponseCodes } from "../../../common/constants/api.enum";
 import { IDropdownProps } from "../../../common/interfaces/select.interface";
 import { IProjectOperation } from "../interface/ProjectOperation";
 
@@ -22,6 +17,7 @@ export function useDataProjectOperation() {
     const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
     const [isVisibleTable, setIsVisibleTable] = useState<boolean>(false);
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
+    const { validateActionAccess } = useContext(AppContext)
 
     const {
         handleSubmit,
@@ -81,6 +77,7 @@ export function useDataProjectOperation() {
     const tableActions: ITableAction<IProjectOperation>[] = [
        {
             icon: "Edit",
+            hide:!validateActionAccess('PROYECTO_FUNCIONAMIENTO_EDITAR'),
             onClick: (row) => {
                 navigate(`./edit/${row.id}`);
             },
@@ -122,6 +119,7 @@ export function useDataProjectOperation() {
       setIsVisibleTable,
       validatorNumber,
       isValid,
-      isBtnDisable
+      isBtnDisable,
+      validateActionAccess
     };
 } 

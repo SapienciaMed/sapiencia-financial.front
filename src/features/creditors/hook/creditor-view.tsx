@@ -16,8 +16,8 @@ export function useCreditorView() {
     const { getListByGrouper } = useGenericListService()
     const tableComponentRef = useRef(null);
     const { GetCreditorsByFilters } = useCreditorsServices();
-    const { setMessage, authorization } = useContext(AppContext);
-
+    const { setMessage, validateActionAccess } = useContext(AppContext);
+    
     const [componentsData, setComponentsData] = useState<IDropdownProps[]>([]);
     const [dependeciesData, setDependeciesData] = useState<IDropdownProps[]>([]);
 
@@ -139,6 +139,7 @@ export function useCreditorView() {
     const tableActions: ITableAction<any>[] = [
         {
             customName: 'Acciones',
+            hide:!validateActionAccess('ACREEDOR_EDITAR'),
             icon: "Edit",
             onClick: (row) => {
                 navigate(`/gestion-financiera/acreedor/editar/${row.id}`)
@@ -165,7 +166,8 @@ export function useCreditorView() {
         tableActions,
         setCreditorsSt,
         creditorsSt,
-        documentTypeList
+        documentTypeList,
+        validateActionAccess
     };
 
 }
