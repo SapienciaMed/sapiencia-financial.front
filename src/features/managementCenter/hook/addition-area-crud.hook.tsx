@@ -1,37 +1,47 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray } from "react-hook-form";
 import { Detail, IAdditionsForm } from "../interfaces/Additions";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { fundsAdditionalValidation } from "../../../common/schemas";
 import { AppContext } from "../../../common/contexts/app.context";
-import { IArrayDataSelect, IMessage } from "../../../common/interfaces/global.interface";
+import {
+  IArrayDataSelect,
+  IMessage,
+} from "../../../common/interfaces/global.interface";
 import { useAdditionsTransfersService } from "./additions-transfers-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAdditionAreaEdit } from "./addition-area-edit.hook";
 
-
-export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actionForm?: string) {
-  console.log(actionForm)
+export function useAdditionAreaCrud(
+  tabId?: string,
+  typeMovement?: string,
+  actionForm?: string
+) {
+  console.log(actionForm);
   const resolver = useYupValidationResolver(fundsAdditionalValidation);
   const { setMessage } = useContext(AppContext);
-  const { GetFundsList, GetProjectsList, GetPosPreSapienciaList, validateCreateAdition, createAdition, validateEditAdition, editAdition } = useAdditionsTransfersService()
+  const {
+    GetFundsList,
+    GetProjectsList,
+    GetPosPreSapienciaList,
+    validateCreateAdition,
+    createAdition,
+    validateEditAdition,
+    editAdition,
+  } = useAdditionsTransfersService();
   const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
     functionalArea: [],
     funds: [],
-    posPre: []
-  })
+    posPre: [],
+  });
   const navigate = useNavigate();
   const { id: idMovement } = useParams();
-  const [invalidCardsAdditionSt, setInvalidCardsAdditionSt] = useState([])
+  const [invalidCardsAdditionSt, setInvalidCardsAdditionSt] = useState([]);
   const [isfull, setIsFull] = useState(false);
 
-
   useEffect(() => {
-    setIsFull(todosObjetosLlenos(arrayDataSelect))
-
-
-
+    setIsFull(todosObjetosLlenos(arrayDataSelect));
   }, [arrayDataSelect]);
 
   const {
@@ -47,14 +57,18 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
     defaultValues: {
       ingreso: [],
       gasto: [],
-      actAdministrativeDistrict: '',
-      actAdministrativeSapiencia: ''
+      actAdministrativeDistrict: "",
+      actAdministrativeSapiencia: "",
     },
-    mode: 'onSubmit',
+    mode: "onSubmit",
     resolver,
   });
 
-  const validateButton = (values) => { return Object.values(values).every(campo => campo !== null && campo !== undefined && campo !== '') }
+  const validateButton = (values) => {
+    return Object.values(values).every(
+      (campo) => campo !== null && campo !== undefined && campo !== ""
+    );
+  };
   const fullFields = validateButton(defaultValues);
 
   // Effect que activa el watch que detecta los cambios en todo el form
@@ -65,27 +79,25 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
 
   const onSubmitTab = handleSubmit(async (data: IAdditionsForm) => {
     if (actionForm === "new") {
-      const ingresoFixed = data.ingreso.map(outcome => ({
+      const ingresoFixed = data.ingreso.map((outcome) => ({
         idCard: outcome.cardId,
-        type: 'Ingreso',
-        managerCenter: outcome.managerCenter,
-        projectId: outcome.projectId,
-        fundId: outcome.funds,
-        budgetPosition: outcome.posPre,
-        value: parseFloat(outcome.value)
-      })
-      )
-
-      const gastoFixed = data.gasto.map(outcome => ({
-        idCard: outcome.cardId,
-        type: 'Gasto',
+        type: "Ingreso",
         managerCenter: outcome.managerCenter,
         projectId: outcome.projectId,
         fundId: outcome.funds,
         budgetPosition: outcome.posPre,
         value: parseFloat(outcome.value),
-      })
-      )
+      }));
+
+      const gastoFixed = data.gasto.map((outcome) => ({
+        idCard: outcome.cardId,
+        type: "Gasto",
+        managerCenter: outcome.managerCenter,
+        projectId: outcome.projectId,
+        fundId: outcome.funds,
+        budgetPosition: outcome.posPre,
+        value: parseFloat(outcome.value),
+      }));
 
       let addition = {
         headAdditon: {
@@ -95,41 +107,49 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
           userCreate: "123456789",
           dateCreate: "2023-08-28",
           userModify: "123456789",
-          dateModify: "2023-08-28"
+          dateModify: "2023-08-28",
         },
-        additionMove: ingresoFixed.concat(gastoFixed)
-      }
-      let resValidate = await validateCreateAdition(addition)
+        additionMove: ingresoFixed.concat(gastoFixed),
+      };
+      let resValidate = await validateCreateAdition(addition);
 
-      if (resValidate.operation.code == 'FAIL') {
+      if (resValidate.operation.code == "FAIL") {
         showModal({
           //type?: EResponseCodes;
           title: "Validación de datos",
-          description: resValidate.operation.message.split('@@@').length == 1
-            ? resValidate.operation.message
-            : (JSON.parse((resValidate.operation.message.split('@@@'))[3]).length > 0
-              ? (resValidate.operation.message.split('@@@'))[1]
-              : JSON.parse((resValidate.operation.message.split('@@@'))[6]).length > 0
-                ? (resValidate.operation.message.split('@@@'))[4]
-                : (resValidate.operation.message.split('@@@'))[7]),
+          description:
+            resValidate.operation.message.split("@@@").length == 1
+              ? resValidate.operation.message
+              : JSON.parse(resValidate.operation.message.split("@@@")[3])
+                  .length > 0
+              ? resValidate.operation.message.split("@@@")[1]
+              : JSON.parse(resValidate.operation.message.split("@@@")[6])
+                  .length > 0
+              ? resValidate.operation.message.split("@@@")[4]
+              : resValidate.operation.message.split("@@@")[7],
           show: true,
           OkTitle: "Aceptar",
           //cancelTitle: "Cancerlar",
           onOk: () => {
-            setMessage({})
-            identifyInvalidcard(addition.additionMove, resValidate.operation.message)
+            setMessage({});
+            identifyInvalidcard(
+              addition.additionMove,
+              resValidate.operation.message
+            );
           },
           // onCancel?: () => void;
           // onClickOutClose?: boolean;
           onClose: () => {
-            setMessage({})
-            identifyInvalidcard(addition.additionMove, resValidate.operation.message)
-          }
+            setMessage({});
+            identifyInvalidcard(
+              addition.additionMove,
+              resValidate.operation.message
+            );
+          },
           // background?: boolean;
-        })
+        });
         //Editar
       } else {
-
         showModal({
           //type?: EResponseCodes;
           title: "Guardar",
@@ -138,45 +158,41 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
           OkTitle: "Aceptar",
           cancelTitle: "Cancelar",
           onOk: () => {
-            setMessage({})
-            messageConfirmSave(addition, resValidate)
+            setMessage({});
+            messageConfirmSave(addition, resValidate);
           },
           onCancel: () => {
-            setMessage({})
-            onCancelNew()
-
+            setMessage({});
+            onCancelNew();
           },
           // onClickOutClose?: boolean;
           onClose: () => {
-            setMessage({})
-            onCancelNew()
+            setMessage({});
+            onCancelNew();
           },
-          background: true
-        })
-
+          background: true,
+        });
       }
     } else if (actionForm === "edit" || actionForm === "detail") {
-      const ingresoFixed = data.ingreso.map(outcome => ({
+      const ingresoFixed = data.ingreso.map((outcome) => ({
         idCard: outcome.cardId,
-        type: 'Ingreso',
-        managerCenter: outcome.managerCenter,
-        projectId: outcome.projectId,
-        fundId: outcome.funds,
-        budgetPosition: outcome.posPre,
-        value: parseFloat(outcome.value)
-      })
-      )
-
-      const gastoFixed = data.gasto.map(outcome => ({
-        idCard: outcome.cardId,
-        type: 'Gasto',
+        type: "Ingreso",
         managerCenter: outcome.managerCenter,
         projectId: outcome.projectId,
         fundId: outcome.funds,
         budgetPosition: outcome.posPre,
         value: parseFloat(outcome.value),
-      })
-      )
+      }));
+
+      const gastoFixed = data.gasto.map((outcome) => ({
+        idCard: outcome.cardId,
+        type: "Gasto",
+        managerCenter: outcome.managerCenter,
+        projectId: outcome.projectId,
+        fundId: outcome.funds,
+        budgetPosition: outcome.posPre,
+        value: parseFloat(outcome.value),
+      }));
 
       let addition = {
         headAdditon: {
@@ -186,42 +202,49 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
           userCreate: "123456789",
           dateCreate: "2023-08-28",
           userModify: "123456789",
-          dateModify: "2023-08-28"
+          dateModify: "2023-08-28",
         },
-        additionMove: ingresoFixed.concat(gastoFixed)
-      }
+        additionMove: ingresoFixed.concat(gastoFixed),
+      };
 
-      let resValidate = await validateEditAdition(idMovement, addition)
+      let resValidate = await validateEditAdition(idMovement, addition);
 
-      if (resValidate.operation.code == 'FAIL') {
+      if (resValidate.operation.code == "FAIL") {
         showModal({
           //type?: EResponseCodes;
           title: "Validación de datos",
-          description: resValidate.operation.message.split('@@@').length == 1
-            ? resValidate.operation.message
-            : (JSON.parse((resValidate.operation.message.split('@@@'))[3]).length > 0
-              ? (resValidate.operation.message.split('@@@'))[1]
-              : JSON.parse((resValidate.operation.message.split('@@@'))[6]).length > 0
-                ? (resValidate.operation.message.split('@@@'))[4]
-                : (resValidate.operation.message.split('@@@'))[7]),
+          description:
+            resValidate.operation.message.split("@@@").length == 1
+              ? resValidate.operation.message
+              : JSON.parse(resValidate.operation.message.split("@@@")[3])
+                  .length > 0
+              ? resValidate.operation.message.split("@@@")[1]
+              : JSON.parse(resValidate.operation.message.split("@@@")[6])
+                  .length > 0
+              ? resValidate.operation.message.split("@@@")[4]
+              : resValidate.operation.message.split("@@@")[7],
           show: true,
           OkTitle: "Aceptar",
           //cancelTitle: "Cancerlar",
           onOk: () => {
-            setMessage({})
-            identifyInvalidcard(addition.additionMove, resValidate.operation.message)
+            setMessage({});
+            identifyInvalidcard(
+              addition.additionMove,
+              resValidate.operation.message
+            );
           },
           // onCancel?: () => void;
           // onClickOutClose?: boolean;
           onClose: () => {
-            setMessage({})
-            identifyInvalidcard(addition.additionMove, resValidate.operation.message)
-          }
+            setMessage({});
+            identifyInvalidcard(
+              addition.additionMove,
+              resValidate.operation.message
+            );
+          },
           // background?: boolean;
-        })
-
+        });
       } else {
-
         showModal({
           //type?: EResponseCodes;
           title: "Guardar",
@@ -230,87 +253,90 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
           OkTitle: "Aceptar",
           cancelTitle: "Cancelar",
           onOk: () => {
-            setMessage({})
-            messageConfirmEdit(addition, resValidate)
+            setMessage({});
+            messageConfirmEdit(addition, resValidate);
             /*    */
           },
           onCancel: () => {
-            setMessage({})
-            onCancelNew()
+            setMessage({});
+            onCancelNew();
           },
           // onClickOutClose?: boolean;
           onClose: () => {
-            setMessage({})
-            onCancelNew()
+            setMessage({});
+            onCancelNew();
           },
-          background: true
-        })
-
+          background: true,
+        });
       }
-
     }
   });
 
-
   const messageConfirmSave = async (addition: any, resValidate: any) => {
-    let res = await createAdition(addition)
-    showModal({
-      //type?: EResponseCodes;
-      title: "Guardado",
-      description: res.operation.message,
-      show: true,
-      OkTitle: "Aceptar",
-      onOk: () => {
-        setMessage({})
-        onCancelNew()
-      }
-    })
-  }
-  const messageConfirmEdit = async (addition: any, resValidate: any) => {
-    let res = await editAdition(idMovement, addition)
-    showModal({
-      //type?: EResponseCodes;
-      title: "Guardado",
-      description: res.operation.message,
-      show: true,
-      OkTitle: "Aceptar",
-      onOk: () => {
-        setMessage({})
-        onCancelNew()
-        const route = typeMovement === "Adicion"
-          ? "/gestion-financiera/centro-gestor/adicion"
-          : "/gestion-financiera/centro-gestor/disminucion";
-        navigate(route);
-      }
-    })
-  }
+    let res = await createAdition(addition);
 
+    showModal({
+      //type?: EResponseCodes;
+      title: res.operation.code === "OK" ? "Guardado" : "Error",
+      description: res.operation.message,
+      show: true,
+      OkTitle: "Aceptar",
+      onOk: () => {
+        setMessage({});
+        onCancelNew();
+      },
+    });
+  };
+  const messageConfirmEdit = async (addition: any, resValidate: any) => {
+    let res = await editAdition(idMovement, addition);
+    showModal({
+      //type?: EResponseCodes;
+      title: "Guardado",
+      description: res.operation.message,
+      show: true,
+      OkTitle: "Aceptar",
+      onOk: () => {
+        setMessage({});
+        onCancelNew();
+        const route =
+          typeMovement === "Adicion"
+            ? "/gestion-financiera/centro-gestor/adicion"
+            : "/gestion-financiera/centro-gestor/disminucion";
+        navigate(route);
+      },
+    });
+  };
 
   const identifyInvalidcard = (additionMove: any, message: string) => {
-    let messageSplit = message.split('@@@')
+    let messageSplit = message.split("@@@");
     let cardValidation = [];
     let invalidCard;
     if (messageSplit[3] && JSON.parse(messageSplit[3])?.length > 0) {
-      JSON.parse(messageSplit[3]).forEach(code => {
-        invalidCard = additionMove.find(addition => addition.idCard.includes(code))
-        cardValidation.push(invalidCard)
-      })
-      setInvalidCardsAdditionSt(cardValidation)
+      JSON.parse(messageSplit[3]).forEach((code) => {
+        invalidCard = additionMove.find((addition) =>
+          addition.idCard.includes(code)
+        );
+        cardValidation.push(invalidCard);
+      });
+      setInvalidCardsAdditionSt(cardValidation);
     } else if (messageSplit[6] && JSON.parse(messageSplit[6])?.length > 0) {
-      JSON.parse(messageSplit[6]).forEach(code => {
-        invalidCard = additionMove.find(addition => addition.idCard.includes(code))
-        cardValidation.push(invalidCard)
-        setInvalidCardsAdditionSt(cardValidation)
-      })
+      JSON.parse(messageSplit[6]).forEach((code) => {
+        invalidCard = additionMove.find((addition) =>
+          addition.idCard.includes(code)
+        );
+        cardValidation.push(invalidCard);
+        setInvalidCardsAdditionSt(cardValidation);
+      });
     } else if (messageSplit[9] && JSON.parse(messageSplit[9])?.length > 0) {
-      JSON.parse(messageSplit[9]).forEach(code => {
-        invalidCard = additionMove.find(addition => addition.idCard.includes(code))
-        cardValidation.push(invalidCard)
-        setInvalidCardsAdditionSt(cardValidation)
-      })
-
+      JSON.parse(messageSplit[9]).forEach((code) => {
+        invalidCard = additionMove.find((addition) =>
+          addition.idCard.includes(code)
+        );
+        cardValidation.push(invalidCard);
+        setInvalidCardsAdditionSt(cardValidation);
+      });
     }
-  }
+  };
 
   const onCancelNew = () => {
     navigate("./../");
@@ -323,17 +349,15 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
       show: true,
       OkTitle: values.OkTitle,
       onOk: values.onOk || (() => setMessage({})),
-      cancelTitle: values.cancelTitle
-
+      cancelTitle: values.cancelTitle,
     });
   };
 
-
   function todosObjetosLlenos(objeto) {
-    return Object.keys(objeto).every(propiedad => {
+    return Object.keys(objeto).every((propiedad) => {
       const valor = objeto[propiedad];
 
-      if (typeof valor === 'object' && valor !== null) {
+      if (typeof valor === "object" && valor !== null) {
         return todosObjetosLlenos(valor);
       } else {
         return valor !== null && valor !== undefined;
@@ -342,150 +366,166 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
   }
 
   useEffect(() => {
-    if (!arrayDataSelect.functionalArea.length && !arrayDataSelect.funds.length && !arrayDataSelect.posPre.length) {
-      GetProjectsList().then(response => {
-        if (response.operation.code === EResponseCodes.OK) {
-          const projectArray = response.data || [];
+    if (
+      !arrayDataSelect.functionalArea.length &&
+      !arrayDataSelect.funds.length &&
+      !arrayDataSelect.posPre.length
+    ) {
+      GetProjectsList()
+        .then((response) => {
+          if (response.operation.code === EResponseCodes.OK) {
+            const projectArray = response.data || [];
 
-          const seenNames = new Set();
-          const arrayEntitiesProject = projectArray.reduce((acc, item) => {
-            const description = item.conceptProject;
-            const name = item.projectId;
-            const value = item.id;
-            const id = item.id;
-            const area = [{
-              name: item.areaFuntional.number,
-              value: item.areaFuntional.id,
-              id: item.areaFuntional.id
-            }]
+            const seenNames = new Set();
+            const arrayEntitiesProject = projectArray.reduce((acc, item) => {
+              const description = item.conceptProject;
+              const name = item.projectId;
+              const value = item.id;
+              const id = item.id;
+              const area = [
+                {
+                  name: item.areaFuntional.number,
+                  value: item.areaFuntional.id,
+                  id: item.areaFuntional.id,
+                },
+              ];
 
-            if (!seenNames.has(name)) {
-              seenNames.add(name);
-              acc.push({ name, value, id, area, description });
-            }
+              if (!seenNames.has(name)) {
+                seenNames.add(name);
+                acc.push({ name, value, id, area, description });
+              }
 
-            return acc;
-          }, []);
+              return acc;
+            }, []);
 
-          setArrayDataSelect(prevState => ({
-            ...prevState,
-            functionalArea: arrayEntitiesProject
-          }));
-        }
-      }).catch((error) => console.log(error))
+            setArrayDataSelect((prevState) => ({
+              ...prevState,
+              functionalArea: arrayEntitiesProject,
+            }));
+          }
+        })
+        .catch((error) => console.log(error));
 
-      GetFundsList({ page: "1", perPage: "1" }).then(response => {
-        if (response.operation.code === EResponseCodes.OK) {
-          const typeTransfersFunds = response.data?.array || [];
+      GetFundsList({ page: "1", perPage: "1" })
+        .then((response) => {
+          if (response.operation.code === EResponseCodes.OK) {
+            const typeTransfersFunds = response.data?.array || [];
 
-          const seenNames = new Set();
-          const arrayEntitiesFund = typeTransfersFunds.reduce((acc, item) => {
-            const name = item.number;
-            const value = item.id;
-            const id = item.id;
+            const seenNames = new Set();
+            const arrayEntitiesFund = typeTransfersFunds.reduce((acc, item) => {
+              const name = item.number;
+              const value = item.id;
+              const id = item.id;
 
-            if (!seenNames.has(name)) {
-              seenNames.add(name);
-              acc.push({ name, value, id });
-            }
+              if (!seenNames.has(name)) {
+                seenNames.add(name);
+                acc.push({ name, value, id });
+              }
 
-            return acc;
-          }, []);
+              return acc;
+            }, []);
 
-          setArrayDataSelect(prevState => ({ ...prevState, funds: arrayEntitiesFund }));
+            setArrayDataSelect((prevState) => ({
+              ...prevState,
+              funds: arrayEntitiesFund,
+            }));
+          }
+        })
+        .catch((error) => console.log(error));
 
-        }
-      }).catch((error) => console.log(error))
+      GetPosPreSapienciaList()
+        .then((response) => {
+          if (response.operation.code === EResponseCodes.OK) {
+            const posPresapientes = response.data?.array || [];
 
-      GetPosPreSapienciaList().then(response => {
-        if (response.operation.code === EResponseCodes.OK) {
-          const posPresapientes = response.data?.array || [];
+            const seenNames = new Set();
+            const arrayEntitiesPosPres = posPresapientes.reduce((acc, item) => {
+              const name = item.number;
+              const value = item.id;
+              const id = item.id;
 
-          const seenNames = new Set();
-          const arrayEntitiesPosPres = posPresapientes.reduce((acc, item) => {
-            const name = item.number;
-            const value = item.id;
-            const id = item.id;
+              if (!seenNames.has(name)) {
+                seenNames.add(name);
+                acc.push({ name, value, id });
+              }
 
-            if (!seenNames.has(name)) {
-              seenNames.add(name);
-              acc.push({ name, value, id });
-            }
+              return acc;
+            }, []);
 
-            return acc;
-          }, []);
-
-          setArrayDataSelect(prevState => ({ ...prevState, posPre: arrayEntitiesPosPres }));
-        }
-      }).catch((error) => console.log(error))
+            setArrayDataSelect((prevState) => ({
+              ...prevState,
+              posPre: arrayEntitiesPosPres,
+            }));
+          }
+        })
+        .catch((error) => console.log(error));
     }
+  }, [arrayDataSelect]);
 
-  }, [arrayDataSelect])
-
-
-  let formData = watch()
+  let formData = watch();
 
   /*  useEffect(() => {
      console.log('form',formData.gasto)
      console.log('formde',defaultValues)
    }, [formData]) */
 
-  const [isAllowSave, setIsAllowSave] = useState(false)
+  const [isAllowSave, setIsAllowSave] = useState(false);
   /* const [tabIdSt, setTabIdSt] = useState(tabId)
   useEffect(() => {
     setIsAllowSave(false)
   }, [tabIdSt]) */
 
   useEffect(() => {
-    let formDataEmptyAddition = []
-    let formDataEmptyExpense = []
+    let formDataEmptyAddition = [];
+    let formDataEmptyExpense = [];
     formData.ingreso.forEach((element: any) => {
-      let objectWithValue = validateObjectsWithValue(element)
+      let objectWithValue = validateObjectsWithValue(element);
       if (!objectWithValue && !element.projectName) {
-        formDataEmptyAddition.push(true)
-
+        formDataEmptyAddition.push(true);
       }
-    })
+    });
     formData.gasto.forEach((element: any) => {
-      let objectWithValue = validateObjectsWithValue(element)
+      let objectWithValue = validateObjectsWithValue(element);
       if (!objectWithValue && !element.projectName) {
-        formDataEmptyExpense.push(true)
-
+        formDataEmptyExpense.push(true);
       }
-    })
-    if (tabId == 'ingreso') {
+    });
+    if (tabId == "ingreso") {
       if (formData.ingreso.length == 0) {
-        setIsAllowSave(false)
+        setIsAllowSave(false);
         return;
       }
-    } else if (tabId == 'gasto') {
+    } else if (tabId == "gasto") {
       if (formData.gasto.length == 0) {
-        setIsAllowSave(false)
+        setIsAllowSave(false);
         return;
       }
-
     }
 
     if (!formDataEmptyAddition.includes(true) && formData.ingreso.length > 0) {
-      setIsAllowSave(true)
+      setIsAllowSave(true);
     } else if (formData.ingreso.length > 0) {
-      setIsAllowSave(false)
+      setIsAllowSave(false);
     }
 
     if (!formDataEmptyExpense.includes(true) && formData.gasto.length > 0) {
-      setIsAllowSave(true)
+      setIsAllowSave(true);
     } else if (formData.gasto.length > 0) {
-      setIsAllowSave(false)
+      setIsAllowSave(false);
     }
-
-  }, [formData])
-
+  }, [formData]);
 
   function validateObjectsWithValue(objeto) {
     for (const propiedad in objeto) {
       if (objeto.hasOwnProperty(propiedad)) {
         const valor = objeto[propiedad];
-        if (propiedad != "projectName" && propiedad != "cardId" && valor !== null && valor !== undefined && valor !== "") {
+        if (
+          propiedad != "projectName" &&
+          propiedad != "cardId" &&
+          valor !== null &&
+          valor !== undefined &&
+          valor !== ""
+        ) {
           return true; // El objeto tiene al menos un campo con valor
         }
       }
@@ -499,38 +539,39 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
   if (actionForm == "edit" || actionForm == "detail") {
     useEffect(() => {
       function mapDetails(type) {
-        return aditionData?.details.map((item: Detail) => {
-          if (item.type == type) {
-            return {
-              managerCenter: item.budgetRoute.managementCenter,
-              projectId: item.budgetRoute.projectVinculation.id,
-              projectName: item.budgetRoute.projectVinculation.conceptProject,
-              functionalArea: item.budgetRoute.projectVinculation.areaFuntional.id,
-              funds: item.budgetRoute.fund.id,
-              posPre: item.budgetRoute.pospreSapiencia.id,
-              value: item.value,
-            };
-          }
-        }).filter(Boolean);
+        return aditionData?.details
+          .map((item: Detail) => {
+            if (item.type == type) {
+              return {
+                managerCenter: item.budgetRoute.managementCenter,
+                projectId: item.budgetRoute.projectVinculation.id,
+                projectName: item.budgetRoute.projectVinculation.conceptProject,
+                functionalArea:
+                  item.budgetRoute.projectVinculation.areaFuntional.id,
+                funds: item.budgetRoute.fund.id,
+                posPre: item.budgetRoute.pospreSapiencia.id,
+                value: item.value,
+              };
+            }
+          })
+          .filter(Boolean);
       }
 
-    /*  function hasAnyChange(mappedData, formData) {
+      /*  function hasAnyChange(mappedData, formData) {
         return Object.keys(mappedData?.[0] || {}).some(key => {
           return mappedData?.[0]?.[key] !== formData?.[0]?.[key];
         });
       }  */
 
-     /*  function hasAnyChange(mappedData, formData) {
+      /*  function hasAnyChange(mappedData, formData) {
         return formData.some((formEntry, index) => {
           return Object.keys(formEntry).some(key => {
             return formEntry[key] !== mappedData[index]?.[key];
           });
         });
       } */
-      
-      
 
-     /*  const ingreso = mapDetails("Ingreso");
+      /*  const ingreso = mapDetails("Ingreso");
       const gasto = mapDetails("Gasto");
 
       const hasAnyIngresoChange = hasAnyChange(ingreso, formData.ingreso);
@@ -538,21 +579,18 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
     
 
       setIsAllowSave(hasAnyIngresoChange || hasAnyGastoChange); */
-
     }, [aditionData, formData]);
-
   }
 
-
-
-
-  useEffect(() => {   
+  useEffect(() => {
     if (aditionData) {
       setValue("actAdministrativeDistrict", aditionData?.head.actAdminDistrict);
-      setValue("actAdministrativeSapiencia", aditionData?.head.actAdminSapiencia);
+      setValue(
+        "actAdministrativeSapiencia",
+        aditionData?.head.actAdminSapiencia
+      );
     }
   }, [aditionData]);
-
 
   return {
     control,
@@ -567,7 +605,6 @@ export function useAdditionAreaCrud(tabId?: string, typeMovement?: string, actio
     invalidCardsAdditionSt,
     setValue,
     isAllowSave,
-    isfull
-
+    isfull,
   };
 }
