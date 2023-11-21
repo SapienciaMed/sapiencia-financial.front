@@ -147,7 +147,7 @@ export function useBudgeRecordCrudv2() {
     
 
     const messageValidateSupplier = (type: string) => {
-        /* setMessage({
+        setMessage({
             title: `${type} no existe`,
             show: true,
             OkTitle: "Aceptar",
@@ -158,7 +158,7 @@ export function useBudgeRecordCrudv2() {
                 setMessage({})
             }
         }
-        ) */
+        )
     }
 
 
@@ -291,7 +291,19 @@ export function useBudgeRecordCrudv2() {
                 consecutiveSap: consecutiveCdpSap,
                 consecutiveAurora: consecutiveCdpAurora,
             }).then(res => {
-                console.log({ res: res.data.array })
+               
+                if(res.data.array.length==0){
+                    setMessage({
+                        title: `Datos no encontrados`,
+                        description: 'No existe CDP asociado a los valores de búsqueda',
+                        show: true,
+                        OkTitle: "Aceptar",
+                        onOk: () => {
+                            setMessage({})
+                            setValueRegister('newAmount', null)
+                        }
+                    })
+                }
 
                 const dataCdp = res.data.array.map(e => {
                     return e.amounts.map(el => {
@@ -302,7 +314,7 @@ export function useBudgeRecordCrudv2() {
                             projectName: el.projectName,
                             fundCode: el.budgetRoute.fund.number,
                             pospreCode: el.budgetRoute.fund.number,
-                            amount: el.amount,
+                            amount: parseFloat(el.amount).toFixed(2),
                             amountCdpId: el.id
                         })
                     })
@@ -325,7 +337,7 @@ export function useBudgeRecordCrudv2() {
                 projectName: el.projectName,
                 fundCode: el.fundCode,
                 pospreCode: el.pospreCode,
-                amount: confirmChangeAmountSt?.amount && confirmChangeAmountSt.id == el.id ? confirmChangeAmountSt.amount : el.amount,
+                amount: confirmChangeAmountSt?.amount && confirmChangeAmountSt.id == el.id ? parseFloat(confirmChangeAmountSt.amount).toFixed(2) : parseFloat(el.amount).toFixed(2),
                 amountCdpId: el.amountCdpId
             })
         })
