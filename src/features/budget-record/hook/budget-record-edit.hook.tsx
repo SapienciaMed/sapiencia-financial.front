@@ -274,10 +274,10 @@ export function useBudgeRecordEdit() {
     const confirmEdit = async (data: IUpdateRP) => {
 
         const datos = {
-            againtsAmount: data.againtsAmount === 0 || !data.againtsAmount ? null : data.againtsAmount,
-            creditAmount: data.creditAmount === 0 || !data.creditAmount ? null : data.creditAmount,
+            againtsAmount: data.againtsAmount === 0 || !data.againtsAmount ? 0 : data.againtsAmount,
+            creditAmount: data.creditAmount === 0 || !data.creditAmount ? 0 : data.creditAmount,
             finalAmount: calculatedValue,
-            fixedCompleted: data.fixedCompleted === 0 || !data.fixedCompleted ? null : data.fixedCompleted,
+            fixedCompleted: data.fixedCompleted === 0 || !data.fixedCompleted ? 0 : data.fixedCompleted,
             observation: data.observation
         }
 
