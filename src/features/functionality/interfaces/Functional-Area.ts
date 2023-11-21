@@ -1,9 +1,10 @@
 import { DateTime } from 'luxon';
+import { IProjectsVinculation } from './Projects';
 
 export interface IFunctionalAreaFilters {
   page: number;
   perPage: number;
-  number?: number;
+  number?: string;
 }
 
 export interface IFunctionalArea {
@@ -13,6 +14,8 @@ export interface IFunctionalArea {
   description: string;
   userCreate?: string;
   dateCreate?: DateTime;
+
+  projectsVinculation?: IProjectsVinculation[]
 }
 
 export interface IFunctionalAreaCrud {

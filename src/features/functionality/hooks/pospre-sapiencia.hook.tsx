@@ -1,24 +1,38 @@
 import { useForm } from "react-hook-form";
 import { pospreSapienciaValidator } from "../../../common/schemas";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { useNavigate } from "react-router-dom";
+import { IPosPreSapiencia, IPospreSapienciaData } from "../interfaces/PosPreSapiencia";
+import { AppContext } from "../../../common/contexts/app.context";
+import DetailsComponent from "../../../common/components/details.component";
 
 interface IPospreSapienciaFilters {
-    number: string
+    inputPospreSapiencia: string
 }
 
-export function usePospreSapienciaData(pospre: string) {
+export function usePospreSapienciaData({budgetsId, validateAction }: IPospreSapienciaData) {
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
     const resolver = useYupValidationResolver(pospreSapienciaValidator);
+    const { setMessage, validateActionAccess } = useContext(AppContext);
+    const [showTable, setShowTable] = useState(true);
+    const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
+
     const {
         handleSubmit,
         register,
         formState: { errors },
+        control,
         reset,
-    } = useForm<IPospreSapienciaFilters>({ resolver });
+        watch,
+    } = useForm<IPospreSapienciaFilters>({ 
+        resolver,
+    });
+
+    const inputValue =  watch(['inputPospreSapiencia'])
+
     const tableColumns: ITableElement<any>[] = [
         {
             fieldName: "budget.number",
@@ -37,14 +51,76 @@ export function usePospreSapienciaData(pospre: string) {
             header: "Descripción"
         },
     ];
+
     const tableActions: ITableAction<any>[] = [
         {
             icon: "Edit",
+            hide:!validateActionAccess('POSPRE_EDITAR'),
             onClick: (row) => {
                 navigate(`./edit/${row.id}`);
             },
         }
     ];
+
+    const tableColumnsView: ITableElement<IPosPreSapiencia>[] = [
+        {
+            fieldName: "number",
+            header: "Pospre sapiencia"
+        },
+        {
+            fieldName: "description",
+            header: "Descripción pospre sapiencia"
+        },
+        {
+            fieldName: "ejercise",
+            header: "Ejercicio"
+        },
+    ];
+
+    const tableActionsView: ITableAction<IPosPreSapiencia>[] = [
+        {
+            icon: "Detail",
+            hide:!validateActionAccess('POSPRE_VISUALIZAR'),
+            onClick: (row) => {
+                const rows = [
+                    {
+                        title: "Pospre origen",
+                        value: `${row.budget.number}`
+                    },
+                    {
+                        title: "Pospre sapiencia",
+                        value: `${row.number}`
+                    },
+                    {
+                        title: "Ejercicio",
+                        value: `${row.ejercise}`
+                    },
+                    {
+                        title: "Descripción",
+                        value: `${row.description}`
+                    },
+                ]
+
+                setMessage({
+                    title: "Detalle Pospre sapiencia",
+                    show: true,
+                    OkTitle: "Aceptar",
+                    description: <DetailsComponent rows={rows} />,
+                    background: true
+                })
+            },
+        }
+    ];
+
+    const tableActionEdit: ITableAction<any>[] = [
+        {
+            icon: "Edit",
+            hide:!validateActionAccess('POSPRE_EDITAR'),
+            onClick: (row) => {
+                navigate(`./pospre-sapiencia/edit/${row.id}`);
+            },
+        },
+    ]
 
     function loadTableData(searchCriteria?: object): void {
         if (tableComponentRef.current) {
@@ -53,12 +129,30 @@ export function usePospreSapienciaData(pospre: string) {
     }
 
     const onSubmitSearch = handleSubmit(async (data: IPospreSapienciaFilters) => {
-        if(pospre) loadTableData({budgetId: pospre, number: data.number});
+        if(budgetsId){
+            loadTableData({ budgetNumberSapi: data.inputPospreSapiencia});
+        } 
     });
 
+    const clearDat = () => {
+        if(showTable && inputValue[0] != '' )  {
+            reset();
+        }
+    }
+    
     useEffect(() => {
-        if(pospre) loadTableData({budgetId: pospre});
-    }, [pospre]);
+        if(budgetsId && validateAction == 'new') loadTableData({ budgetId: budgetsId});
+    }, []);
 
-    return { register, reset, errors, tableComponentRef, tableColumns, tableActions, onSubmitSearch }
+    useEffect(() => {
+        if (validateAction == 'view') loadTableData({ budgetIdOrig: budgetsId })
+    },[])
+
+    useEffect(() => {
+        setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
+    },[inputValue])
+
+
+    return { register, reset, showTable, control, errors, tableComponentRef, tableColumns, tableActions, isBtnDisable, tableActionEdit,
+        tableColumnsView, tableActionsView, setShowTable, onSubmitSearch, clearDat, validateActionAccess }
 } 

@@ -32,27 +32,32 @@ interface IProps<T> {
   url: string;
   emptyMessage?: string;
   title?: string;
+  secondaryTitle?: string;
   columns: ITableElement<T>[];
   actions?: ITableAction<T>[];
   searchItems?: object;
   isShowModal: boolean;
   titleMessageModalNoResult?: string;
+  classSizeTable?: string;
+  isDisabled?: boolean;
 }
 
 interface IRef {
   loadData: (newSearchCriteria?: object) => void;
-  emptyData:() =>void;
 }
 
 const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
   const {
     title,
+    secondaryTitle,
     columns,
     actions,
     url,
     titleMessageModalNoResult,
     isShowModal,
     emptyMessage = "No hay resultados.",
+    classSizeTable,
+    isDisabled,
   } = props;
 
   // States
@@ -66,27 +71,17 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
   const { width } = useWidth();
   const { setMessage } = useContext(AppContext);
 
-  const token = localStorage.getItem("token");
-
   // Declaraciones
-  const { post } = useCrudService(token, url);
+  const { post } = useCrudService(url);
   useImperativeHandle(ref, () => ({
     loadData: loadData,
-    emptyData: EmptyData
   }));
 
   // Metodo que hace la peticion para realizar la carga de datos
   async function loadData(
     newSearchCriteria?: object,
-    sameData?: object,
-    excludeData?: object,
     currentPage?: number
   ): Promise<void> {
-
-    /*  ----  ALERTA  ----  */
-    /* Evitar usar la propiedad 'sameData' o 'excludeData' para filtrar los datos ya que puede hacer pesada la consulta si existen muchos registros. */
-    /* Solo usar en el caso extremo de no poder filtrar desde el backend ya que el uso de esta traera todos los registros en la peticion. */
-
     setLoading(true);
     if (newSearchCriteria) {
       setSearchCriteria(newSearchCriteria);
@@ -95,120 +90,36 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
     const res = await post<IPagingData<any>>(url, {
       ...body,
       page: currentPage || 1,
-      perPage: sameData || excludeData ? "Infinity" : perPage,
+      perPage: perPage,
     });
+
     if (res.operation.code === EResponseCodes.OK) {
-      if (sameData) {
-        const sameFilters = Reflect.ownKeys(sameData);
-        let filteredData = [];
-        if (sameFilters.length !== 0) {
-          sameFilters.forEach(filter => {
-            if (!Reflect.has(res.data.array[0], filter)) return;
-            if (Array.isArray(sameData[filter])) {
-              sameData[filter].forEach(filt => {
-                filteredData = filteredData.concat(res.data.array.filter(item => item[filter] === filt));
-              });
-            } else {
-              filteredData = filteredData.concat(res.data.array.filter(item => item[filter] === sameData[filter]));
-            }
-          });
-          if (excludeData) {
-            const excludeFilters = Reflect.ownKeys(excludeData);
-            if (excludeFilters.length !== 0) {
-              excludeFilters.forEach(filter => {
-                if (!Reflect.has(res.data.array[0], filter)) return;
-                if (Array.isArray(excludeData[filter])) {
-                  excludeData[filter].forEach(filt => {
-                    filteredData = filteredData.filter(item => item[filter] !== filt);
-                  });
-                } else {
-                  filteredData = filteredData.filter(item => item[filter] !== excludeData[filter]);
-                }
-              });
-            }
-          }
-          const meta = {
-            "total": filteredData.length,
-            "per_page": perPage,
-            "current_page": page,
-            "last_page": Math.trunc(filteredData.length / perPage),
-            "first_page": 1,
-          };
-          setResultData({ array: filteredData.slice(perPage * page, (perPage * page) + perPage), meta: meta });
-        } else {
-          if (excludeData) {
-            let filteredData = res.data.array;
-            const excludeFilters = Reflect.ownKeys(excludeData);
-            if (excludeFilters.length !== 0) {
-              excludeFilters.forEach(filter => {
-                if (!Reflect.has(res.data.array[0], filter)) return;
-                if (Array.isArray(excludeData[filter])) {
-                  excludeData[filter].forEach(filt => {
-                    filteredData = filteredData.filter(item => item[filter] !== filt);
-                  });
-                } else {
-                  filteredData = filteredData.filter(item => item[filter] !== excludeData[filter]);
-                }
-              });
-              const meta = {
-                "total": filteredData.length,
-                "per_page": perPage,
-                "current_page": page,
-                "last_page": Math.trunc(filteredData.length / perPage),
-                "first_page": 1,
-              };
-              setResultData({ array: filteredData.slice(perPage * page, (perPage * page) + perPage), meta: meta });
-            } else {
-              setResultData(res.data);
-            }
-          }
-        }
-      } else if (excludeData) {
-        let filteredData = res.data.array;
-        const excludeFilters = Reflect.ownKeys(excludeData);
-        if (excludeFilters.length !== 0) {
-          excludeFilters.forEach(filter => {
-            if (!Reflect.has(res.data.array[0], filter)) return;
-            if (Array.isArray(excludeData[filter])) {
-              excludeData[filter].forEach(filt => {
-                filteredData = filteredData.filter(item => item[filter] !== filt);
-              });
-            } else {
-              filteredData = filteredData.filter(item => item[filter] !== excludeData[filter]);
-            }
-          });
-          const meta = {
-            "total": filteredData.length,
-            "per_page": perPage,
-            "current_page": page,
-            "last_page": Math.trunc(filteredData.length / perPage),
-            "first_page": 1,
-          };
-          setResultData({ array: filteredData.slice(perPage * page, (perPage * page) + perPage), meta: meta });
-        } else {
-          setResultData(res.data);
-        }
-      } else {
-        setResultData(res.data);
+      setResultData(res.data);
+
+      if (res.data.array.length <= 0 && isShowModal) {
+        EmptyData();
+        setMessage({
+          title: `${titleMessageModalNoResult || ""}`,
+          show: true,
+          description: "No hay resultado para la búsqueda",
+          OkTitle: "Aceptar",
+          background: true,
+        });
       }
     } else {
-      // generar mensaje de error / advetencia
-    }
-    if (res.data.array.length <= 0 && isShowModal) {
+      EmptyData();
       setMessage({
-        title: `${titleMessageModalNoResult || ""}`,
+        title: `Error en la consulta de datos`,
         show: true,
-        description: "No hay resultado para la búsqueda",
+        description: res.operation.message,
         OkTitle: "Aceptar",
         background: true,
+        onOk: () => {
+          setMessage({});
+        },
       });
     }
-    setLoading(false);
-  }
 
-  async function EmptyData(): Promise<void> {
-    setLoading(true);
-    setResultData({ array: [], meta: { total: 0 } });
     setLoading(false);
   }
 
@@ -220,7 +131,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
   }
 
   useEffect(() => {
-    if (charged) loadData(undefined, undefined, undefined, page + 1);
+    if (charged) loadData(undefined, page + 1);
   }, [perPage, first, page]);
 
   useEffect(() => {
@@ -237,30 +148,48 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
         <div className="card-header">
           {columns.map((column) => {
             const properties = column.fieldName.split(".");
-            let field = properties.length === 2 ? item[properties[0]][properties[1]] : item[properties[0]];
+            let field =
+              properties.length === 2
+                ? item[properties[0]][properties[1]]
+                : item[properties[0]];
             return (
               <div key={item} className="item-value-container">
-                <p className="text-black bold">{column.header}</p>
-                <p>
-                  {" "}
-                  {column.renderCell
-                    ? column.renderCell(item)
-                    : field}{" "}
-                </p>
+                <p className="text-black bold text-center">{column.header}</p>
+                <p> {column.renderCell ? column.renderCell(item) : field} </p>
               </div>
             );
           })}
         </div>
         <div className="card-footer">
-          {actions.map((action) => (
-            <div key={action.icon} onClick={() => action.onClick(item)}>
-              {getIconElement(action.icon, "src")}
-            </div>
-          ))}
+          <section className="position-absolute top text-black bold text-center">
+            {" "}
+            Acciones{" "}
+          </section>
+          <section className="section-action">
+            {actions?.map((action) => (
+              <div
+                key={action.icon}
+                onClick={() => !isDisabled && action.onClick(item)}
+              >
+                {getIconElement(action.icon, "src", isDisabled)}
+              </div>
+            ))}
+          </section>
         </div>
       </div>
     );
   };
+
+  useImperativeHandle(ref, () => ({
+    loadData: loadData,
+    emptyData: EmptyData,
+  }));
+
+  async function EmptyData(): Promise<void> {
+    setLoading(true);
+    setResultData({ array: [], meta: { total: 0 } });
+    setLoading(false);
+  }
 
   return (
     <div className="spc-common-table">
@@ -273,12 +202,16 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
         rows={perPage}
         totalRecords={resultData?.meta?.total || 0}
         onPageChange={onPageChange}
-        leftContent={leftContent}
+        leftContent={
+          <p className="header-information text-black bold biggest">
+            {secondaryTitle ?? "Resultados de búsqueda"}
+          </p>
+        }
       />
 
       {width > 830 ? (
         <DataTable
-          className="spc-table full-height"
+          className={`spc-table full-height ${classSizeTable}`}
           value={resultData?.array || []}
           loading={loading}
           scrollable={true}
@@ -290,7 +223,6 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
               field={col.fieldName}
               header={col.header}
               body={col.renderCell}
-              sortable={col.sortable}
             />
           ))}
 
@@ -302,7 +234,13 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
                   <div className="spc-header-title">Acciones</div>
                 </div>
               }
-              body={(row) => <ActionComponent row={row} actions={actions} />}
+              body={(row) => (
+                <ActionComponent
+                  row={row}
+                  actions={actions}
+                  isDisabled={isDisabled}
+                />
+              )}
             />
           )}
         </DataTable>
@@ -311,6 +249,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
           value={resultData?.array || []}
           itemTemplate={mobilTemplate}
           rows={5}
+          emptyMessage={emptyMessage}
         />
       )}
       <Paginator
@@ -326,7 +265,11 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
 });
 
 // Metodo que retorna el icono o nombre de la accion
-function getIconElement(icon: string, element: "name" | "src") {
+function getIconElement(
+  icon: string,
+  element: "name" | "src",
+  isDisabled: boolean
+) {
   switch (icon) {
     case "Detail":
       return element == "name" ? (
@@ -338,7 +281,10 @@ function getIconElement(icon: string, element: "name" | "src") {
       return element == "name" ? (
         "Editar"
       ) : (
-        <Icons.FaPencilAlt className="button grid-button button-edit" />
+        <Icons.FaPencilAlt
+          className={`button grid-button button-edit ${isDisabled && "disable"
+            }`}
+        />
       );
     case "Delete":
       return element == "name" ? (
@@ -352,16 +298,28 @@ function getIconElement(icon: string, element: "name" | "src") {
       ) : (
         <Icons.FaLink className="button grid-button button-link" />
       );
+    case "Add":
+      return element == "name" ? (
+        "Agregar"
+      ) : (
+        <Icons.FaPlus className="button grid-button button-add" />
+      );
+    case "Rp":
+      return element == "name" ? (
+        "Rp"
+      ) : (
+        <Icons.FaRegistered className="button grid-button button-add" />
+      );
+    case "":
+      return element == "name" ? (
+        "LinkMga"
+      ) : (
+        <Icons.FaLink className="button grid-button button-add" />
+      );
     default:
       return "";
   }
 }
-
-const leftContent = (
-  <p className="header-information text-black bold biggest">
-    Resultados de búsqueda
-  </p>
-);
 
 const paginatorHeader: PaginatorTemplateOptions = {
   layout: "CurrentPageReport RowsPerPageDropdown",
@@ -401,7 +359,7 @@ const paginatorHeader: PaginatorTemplateOptions = {
   },
 };
 
-const paginatorFooter: PaginatorTemplateOptions = {
+export const paginatorFooter: PaginatorTemplateOptions = {
   layout: "PrevPageLink PageLinks NextPageLink",
   PrevPageLink: (options: PaginatorPrevPageLinkOptions) => {
     return (
@@ -459,12 +417,17 @@ const paginatorFooter: PaginatorTemplateOptions = {
 const ActionComponent = (props: {
   row: any;
   actions: ITableAction<any>[];
+  isDisabled: boolean;
 }): React.JSX.Element => {
   return (
     <div className="spc-table-action-button">
       {props.actions.map((action) => (
-        <div key={action.icon} onClick={() => action.onClick(props.row)}>
-          {getIconElement(action.icon, "src")}
+        <div
+          key={action.icon}
+          style={{ display: action.hide ? "none" : "block" }}
+          onClick={() => !props?.isDisabled && action.onClick(props.row)}
+        >
+          {getIconElement(action.icon, "src", props.isDisabled)}
         </div>
       ))}
     </div>

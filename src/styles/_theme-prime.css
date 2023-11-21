@@ -64,6 +64,7 @@
 
 .p-disabled, .p-component:disabled {
   opacity: 0.8;
+  background: #f0eeee !important;
 }
 
 .p-error {
@@ -753,7 +754,9 @@
   border: 1px solid #ced4da;
   transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
   border-radius: 3px;
+  
 }
+
 .p-dropdown:not(.p-disabled):hover {
   border-color: #533893;
 }
@@ -780,13 +783,13 @@
 .p-dropdown .p-dropdown-trigger {
   background: transparent;
   color: #495057;
-  width: 2.357rem;
+  width: 1.5rem;
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
 }
 .p-dropdown .p-dropdown-clear-icon {
   color: #495057;
-  right: 2.357rem;
+  right: 1.5rem;
 }
 .p-dropdown.p-invalid.p-component {
   /* border-color: #ced4da #ced4da #ced4da #e4677e; */
@@ -1096,6 +1099,11 @@
   transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
   appearance: none;
   border-radius: 6px;
+  width: 100%;
+
+  @media(max-width: 380px) {
+    font-size: 3.6vw;
+  }
 }
 .p-inputtext:enabled:hover {
   border-color: #533893;
@@ -1526,6 +1534,9 @@
 .p-rating {
   gap: 0.5rem;
 }
+
+
+
 .p-rating .p-rating-item .p-rating-icon {
   color: #495057;
   transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
@@ -6229,3 +6240,26 @@
 /* Customizations to the designer theme should be defined here */
 
 /*# sourceMappingURL=theme.css.map */
+@media (min-width: 400px) and (max-width: 500px) {
+  .p-rating {
+      gap: 5rem;
+  }
+}
+
+@media(max-width: 400) { 
+    
+    .p-rating {
+      gap: 1rem;  /* O cualquier unidad que desees */
+    }    
+  
+}
+@media (min-width:300px) and  (max-width: 399px) {
+  .p-rating {
+      gap: 3rem;  /* Ajusta este valor según lo que necesites */
+  }
+}
+@media (max-width: 299px) {
+  .p-rating {
+      gap: 1rem;  /* Ajusta este valor según lo que necesites */
+  }
+}

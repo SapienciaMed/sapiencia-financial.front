@@ -1,17 +1,25 @@
 import * as yup from "yup";
 
-export const functionalArea = yup.object({});
+export const functionalArea = yup.object({
+    inputCodigoFuncional: yup
+        .string()
+});
 
 export const functionalAreaCrud = yup.object({
     number: yup
         .string()
-        .matches(/^[0-9]+$/, "Solo se permiten numeros")
+        .test('no-all-zeros', 'No se permiten valores completamente en cero', value => {
+            const digitsOnly = value ? value.replace(/\./g, '') : null;
+            return digitsOnly !== null && digitsOnly !== '0'.repeat(digitsOnly.length);
+          })
+        .matches(/^(?:\d{5}\.\d{5}\.\d{4}|\d{8}\.\d{4}\.\d{2})$/, "Validar estructura")
         .required("El campo es obligatorio")
-        .max(15, "Solo se permiten 15 caracteres"),
+        .nullable()
+        .max(16, "Solo se permiten 16 caracteres"),
     denomination: yup
         .string()
         .required("El campo es obligatorio")
-        .max(250, "Solo se permiten 250 caracteres"),
+        .max(100, "Solo se permiten 100 caracteres"),
     description: yup
         .string()
         .required("El campo es obligatorio")

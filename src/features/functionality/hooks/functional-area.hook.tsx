@@ -1,91 +1,117 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { functionalArea } from "../../../common/schemas";
 import { useForm } from "react-hook-form";
-import { IFunctionalAreaFilters, IFunctionalArea } from "../interfaces/Functional-Area";
-import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
+import {
+  IFunctionalAreaFilters,
+  IFunctionalArea,
+} from "../interfaces/Functional-Area";
+import {
+  ITableAction,
+  ITableElement,
+} from "../../../common/interfaces/table.interfaces";
 import { IProjectsVinculation } from "../interfaces/Projects";
-import { EResponseCodes } from "../../../common/constants/api.enum";
-import { useProjectsLinkService } from "./projects-link-service.hook";
+import { AppContext } from "../../../common/contexts/app.context";
 
 export function useFunctionalAreaData() {
-    const tableComponentRef = useRef(null);
-    const navigate = useNavigate();
-    const resolver = useYupValidationResolver(functionalArea);
-    const {
-        handleSubmit,
-        register,
-        formState: { errors },
-        reset,
-    } = useForm<IFunctionalAreaFilters>({ resolver });
-    const { getAllProjectsVinculations } = useProjectsLinkService();
-    const [projects, setProjects] = useState<IProjectsVinculation[]>(null);
-    const tableColumns: ITableElement<IFunctionalArea>[] = [
-        {
-            fieldName: "number",
-            header: "Código",
-        },
-        {
-            fieldName: "projects",
-            header: "Proyectos",
-            renderCell: (row) => {
-                let projectsFunctionalArea:IProjectsVinculation[] = []
-                if(projects) projectsFunctionalArea = projects.filter(project => project.functionalAreaId === row.id);
-                return <>{projectsFunctionalArea.length}</>
-            }
-        },
-        {
-            fieldName: "denomination",
-            header: "Denominación"
-        },
-        {
-            fieldName: "description",
-            header: "Descripción"
-        },
-    ];
-    const tableActions: ITableAction<IFunctionalArea>[] = [
-        {
-            icon: "Detail",
-            onClick: (row) => {
-                navigate(`./view/${row.id}`);
-            },
-        },
-        {
-            icon: "Edit",
-            onClick: (row) => {
-                navigate(`./edit/${row.id}`);
-            },
-        },
-        {
-            icon: "Link",
-            onClick: (row) => {
-                navigate(`./link/${row.id}`);
-            },
-        }
-    ];
+  const tableComponentRef = useRef(null);
+  const navigate = useNavigate();
+  const resolver = useYupValidationResolver(functionalArea);
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+    control,
+    reset,
+    watch,
+  } = useForm<IFunctionalAreaFilters>({ resolver });
 
-    function loadTableData(searchCriteria?: object, filterTable?: object): void {
-        if (tableComponentRef.current) {
-            tableComponentRef.current.loadData(searchCriteria, filterTable);
-        }
+  const [showTable, setShowTable] = useState(false);
+  const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false);
+
+const { validateActionAccess } = useContext(AppContext)  
+
+  const inputValue = watch(["number"]);
+
+  const tableColumns: ITableElement<IFunctionalArea>[] = [
+    {
+      fieldName: "number",
+      header: "Código",
+    },
+    {
+      fieldName: "projects",
+      header: "Proyectos",
+      renderCell: (row) => {
+        return (
+          <>{row.projectsVinculation ? row.projectsVinculation.length : 0}</>
+        );
+      },
+    },
+    {
+      fieldName: "denomination",
+      header: "Denominación",
+    },
+    {
+      fieldName: "description",
+      header: "Descripción",
+    },
+  ];
+  const tableActions: ITableAction<IFunctionalArea>[] = [
+    {
+      icon: "Detail",
+      hide:!validateActionAccess('AREA_FUNCIONAL_CONSULTAR'),
+      onClick: (row) => {
+        navigate(`./view/${row.id}`);
+      },
+    },
+    {
+      icon: "Edit",
+      hide:!validateActionAccess('AREA_FUNCIONAL_EDITAR'),
+      onClick: (row) => {
+        navigate(`./edit/${row.id}`);
+      },
+    },
+    {
+      icon: "Link",
+      hide:!validateActionAccess('AREA_FUNCIONAL_AGREGAR_PROYECTO'),
+      onClick: (row) => {
+        navigate(`./link/${row.id}`);
+      },
+    },
+  ];
+
+  function loadTableData(searchCriteria?: object, filterTable?: object): void {
+    if (tableComponentRef.current) {
+      tableComponentRef.current.loadData(searchCriteria, filterTable);
     }
+  }
 
-    useEffect(() => {
-        getAllProjectsVinculations().then(response => {
-            if (response.operation.code === EResponseCodes.OK) {
-                setProjects(response.data);
-            }
-        });
-    }, []);
+  const onSubmit = handleSubmit(async (data: IFunctionalAreaFilters) => {
+    setShowTable(true);
+    loadTableData(data);
+  });
 
-    useEffect(() => {
-        if(projects) loadTableData();
-    }, [projects]);
+  useEffect(() => {
+    setIsBtnDisable(
+      inputValue.some((value) => value != "" && value != undefined)
+    );
+  }, [inputValue]);
 
-    const onSubmit = handleSubmit(async (data: IFunctionalAreaFilters) => {
-        loadTableData(data);
-    });
-
-    return { tableActions, tableColumns, tableComponentRef, navigate, register, errors, reset, onSubmit }
+  return {
+    tableActions,
+    tableColumns,
+    tableComponentRef,
+    isBtnDisable,
+    showTable,
+    control,
+    setIsBtnDisable,
+    setShowTable,
+    navigate,
+    register,
+    errors,
+    reset,
+    onSubmit,
+    validateActionAccess
+  };
 }

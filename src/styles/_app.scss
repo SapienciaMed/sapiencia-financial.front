@@ -8,6 +8,8 @@
 @import "./spacing.scss";
 @import "./styles.scss";
 @import "./alerts.scss";
+@import './button.scss';
+@import './tables.scss';
 // :root {
 //   --color-black: #0b060e;
 //   --color-gray: #535353;
@@ -67,3 +69,28 @@ hr {
 .pointer {
   cursor: pointer;
 }
+
+.label-max-textarea {
+  text-align: end;
+  margin-top: 0px;
+  font-size: 14px;
+}
+
+
+.routes-denomination-container {
+  display: grid;
+  grid-template-columns: 1.5fr 3fr; 
+  gap: 18px; 
+}
+
+.input-basic {
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .routes-denomination-container {
+    grid-template-columns: 1fr; 
+  }
+}
+
+

@@ -7,19 +7,18 @@ import { IDropdownProps } from "../../../common/interfaces/select.interface";
 import { AppContext } from "../../../common/contexts/app.context";
 import { IBudgetsRoutes, IBudgetsRoutesCrudForm } from "../interfaces/BudgetRoutesInterfaces";
 import { EResponseCodes } from "../../../common/constants/api.enum";
-import { useProjectsLinkService } from "../../functionality/hooks/projects-link-service.hook";
-import { IEntities } from "../../functionality/interfaces/Entities";
-import { IProjectsVinculation } from "../../functionality/interfaces/Projects";
 import { useFunctionalAreaService } from "../../functionality/hooks/functional-area-service.hook";
-import { useBudgetsService } from "../../functionality/hooks/budgets-service.hook";
+import { useBudgetsService } from "../../functionality/budgetPosition/hooks/budgets-service.hook";
 import { usePosPreSapienciaService } from "../../functionality/hooks/pospre-sapiencia-service.hook";
 import { useFundsService } from "../../functionality/hooks/funds-service.hook";
 import { useBudgetRoutesService } from "./budget-routes-service.hook";
+import { useAdditionsTransfersService } from "../../managementCenter/hook/additions-transfers-service.hook";
+import { IBudgetsProjectInfo, IProjectAdditionList } from "../../functionality/interfaces/AdditionsTransfersInterfaces";
 
 export function useBudgetRoutesCrudData(id: string) {
     const resolver = useYupValidationResolver(budgetRoutesCrudValidator);
-    const { getAllProjectsVinculations } = useProjectsLinkService();
-    const { getAllProjects, GetAllFunctionalAreas } = useFunctionalAreaService();
+    const { GetProjectsList } = useAdditionsTransfersService()
+    const { GetAllFunctionalAreas } = useFunctionalAreaService();
     const { getAllBudgets } = useBudgetsService();
     const { GetAllPosPreSapiencia } = usePosPreSapienciaService();
     const { getAllFunds } = useFundsService();
@@ -38,25 +37,34 @@ export function useBudgetRoutesCrudData(id: string) {
     const [projectsData, setProjectsData] = useState<IDropdownProps[]>([]);
     const [budgetData, setBudgetData] = useState<IDropdownProps[]>([]);
     const [pospreSapienciaData, setPospreSapienciaData] = useState<IDropdownProps[]>([]);
+    const [pospreSapienciaDataCdp, setPospreSapienciaDataCdp] = useState<IDropdownProps[]>([]);
     const [fundsData, setFundsData] = useState<IDropdownProps[]>([]);
-    const [projectsVinculateData, setProjectsVinculateData] = useState<IProjectsVinculation[]>(null);
-
+    const [projectsVinculateData, setProjectsVinculateData] = useState<IProjectAdditionList[]>(null);
     const budgetSelected = watch("idBudget");
     const projectVinculationSelected = watch("idProjectVinculation");
 
     async function loadInitList(): Promise<void> {
-        let projectsVinculate: IProjectsVinculation[];
-        const response = await getAllProjectsVinculations();
-        if (response.operation.code === EResponseCodes.OK) {
-            projectsVinculate = response.data;
-        }
-        const response2 = await getAllProjects();
-        if (response2.operation.code === EResponseCodes.OK) {
-            const arrayProjects: IDropdownProps[] = projectsVinculate.map((projectVinculate) => {
-                const project = response2.data.find((data) => data.id === projectVinculate.projectId);
-                return { name: `${project?.id} - ${project?.name}`, value: projectVinculate.id };
+
+        const viculateProjects = await GetProjectsList();
+
+
+        if (viculateProjects.operation.code === EResponseCodes.OK) {
+
+            const arrayProjects: IDropdownProps[] = viculateProjects.data.map((project) => {
+
+                return { name: `${project.projectId}`, value: project.id, areaFuncional: project.functionalAreaId, nameProject: `${project.projectId} - ${project.conceptProject}`  }
             });
+
             setProjectsData(arrayProjects);
+            setProjectsVinculateData(viculateProjects.data)
+            GetAllPosPreSapiencia().then(response => {
+                if (response.operation.code === EResponseCodes.OK) {
+                    const arrayPosPreSapiencia: IDropdownProps[] = response.data.map((posPreSapiencia) => {
+                        return { name: posPreSapiencia.number.toString(), value: posPreSapiencia.id, label: posPreSapiencia.number.toString() };
+                    });
+                    setPospreSapienciaDataCdp(arrayPosPreSapiencia);
+                }
+            })
         }
         const response3 = await getAllBudgets();
         if (response3.operation.code === EResponseCodes.OK) {
@@ -72,7 +80,7 @@ export function useBudgetRoutesCrudData(id: string) {
             });
             setFundsData(arrayFunds);
         }
-        setProjectsVinculateData(projectsVinculate)
+
     }
 
     useEffect(() => {
@@ -109,13 +117,13 @@ export function useBudgetRoutesCrudData(id: string) {
     }, [budgetSelected])
 
     useEffect(() => {
-        if(projectVinculationSelected) {
+        if (projectVinculationSelected) {
             const projectVinculation = projectsVinculateData.find((projectV) => projectV.id === projectVinculationSelected);
-            if(projectVinculation) {
+            if (projectVinculation) {
                 GetAllFunctionalAreas().then(response => {
                     if (response.operation.code === EResponseCodes.OK) {
                         const functionalArea = response.data.find((data) => data.id === projectVinculation.functionalAreaId);
-                        if(functionalArea) {
+                        if (functionalArea) {
                             setValueRegister("functionalArea", functionalArea.number);
                         } else {
                             setValueRegister("functionalArea", "");
@@ -155,7 +163,7 @@ export function useBudgetRoutesCrudData(id: string) {
                 });
             } else {
                 setMessage({
-                    title: "Hubo un problema...",
+                    title: "Validación de datos",
                     description: response.operation.message,
                     show: true,
                     OkTitle: "Aceptar",
@@ -193,7 +201,7 @@ export function useBudgetRoutesCrudData(id: string) {
                 });
             } else {
                 setMessage({
-                    title: "Hubo un problema...",
+                    title: "Validación de datos",
                     description: response.operation.message,
                     show: true,
                     OkTitle: "Aceptar",
@@ -216,11 +224,11 @@ export function useBudgetRoutesCrudData(id: string) {
 
     const confirmClose = (callback) => {
         setMessage({
-            title: "Cancelar fondo",
-            description: "¿Seguro que desea cancelar la operación?",
+            title: "Cancelar",
+            description: "¿Estas segur@ de cancelar la información en el sistema?",
             show: true,
-            OkTitle: "Si, cancelar",
-            cancelTitle: "Continuar",
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
             onOk: () => {
                 callback();
                 setMessage({});
@@ -229,5 +237,5 @@ export function useBudgetRoutesCrudData(id: string) {
         });
     }
 
-    return { register, errors, controlRegister, onSubmitNewBudgetRoute, onSubmitEditBudgetRoute, onCancelNew, onCancelEdit, confirmClose, projectsData, budgetData, pospreSapienciaData, fundsData };
+    return {pospreSapienciaDataCdp, projectsVinculateData, register, errors, controlRegister, onSubmitNewBudgetRoute, onSubmitEditBudgetRoute, onCancelNew, onCancelEdit, confirmClose, projectsData, budgetData, pospreSapienciaData, fundsData, projectVinculationSelected, setValueRegister };
 }

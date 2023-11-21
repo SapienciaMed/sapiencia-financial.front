@@ -7,33 +7,37 @@ import { IBudgetsRoutesFilters, IBudgetsRoutes } from "../interfaces/BudgetRoute
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { AppContext } from "../../../common/contexts/app.context";
 import DetailsComponent from "../../../common/components/details.component";
-import { useFunctionalAreaService } from "../../functionality/hooks/functional-area-service.hook";
-import { IProject, IProjectsVinculation } from "../../functionality/interfaces/Projects";
 import { EResponseCodes } from "../../../common/constants/api.enum";
-import { useProjectsLinkService } from "../../functionality/hooks/projects-link-service.hook";
+import { useAdditionsTransfersService } from "../../managementCenter/hook/additions-transfers-service.hook";
+import { IProjectAdditionList } from "../../functionality/interfaces/AdditionsTransfersInterfaces";
 
 export function useBudgetRoutesData() {
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
-    const { getAllProjects } = useFunctionalAreaService();
-    const { getAllProjectsVinculations } = useProjectsLinkService();
+    const { GetProjectsList } = useAdditionsTransfersService()
     const { setMessage } = useContext(AppContext);
     const resolver = useYupValidationResolver(budgetRoutesValidator);
     const {
         handleSubmit,
         register,
         formState: { errors },
-        reset
+        reset,
+        control,
+        watch
     } = useForm<IBudgetsRoutesFilters>({ resolver });
-    const [projects, setProjects] = useState<IProject[]>(null);
-    const [projectsVinculation, setProjectsVinculation] = useState<IProjectsVinculation[]>(null);
+
+    const [linkedProjects, setLinkedProjects] = useState<IProjectAdditionList[]>(null);
+    const [showTable, setShowTable] = useState(false);
+    const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
+
+    const inputValue =  watch(['idProjectVinculation'])
 
     const tableColumns: ITableElement<IBudgetsRoutes>[] = [
         {
             fieldName: "idProjectVinculation",
             header: "ID Proyecto",
             renderCell: (row) => {
-                const projectVinculate = projectsVinculation.find((item) => item.id === row.idProjectVinculation);
+                const projectVinculate = linkedProjects.find((item) => item.id === row.idProjectVinculation);
                 return <>{projectVinculate.projectId}</>
             }
         },
@@ -41,9 +45,8 @@ export function useBudgetRoutesData() {
             fieldName: "idProjectVinculation",
             header: "Nombre Proyecto",
             renderCell: (row) => {
-                const projectVinculate = projectsVinculation.find((item) => item.id === row.idProjectVinculation);
-                const project = projects.find((item) => item.id === projectVinculate.projectId);
-                return <>{project?.name}</>
+                const projectVinculate = linkedProjects.find((item) => item.id === row.idProjectVinculation);
+                return <>{projectVinculate.conceptProject}</>
             }
         },
         {
@@ -54,21 +57,31 @@ export function useBudgetRoutesData() {
             fieldName: "budget.number",
             header: "Pospre origen"
         },
+        {
+            fieldName: "fuctionalArea",
+            header: "Área funcional",
+            renderCell: (row) => {
+                const projectVinculate = linkedProjects.find((item) => item.id === row.idProjectVinculation);
+                return <>{projectVinculate.areaFuntional.number }</>
+
+            }
+            
+        }
     ];
     const tableActions: ITableAction<IBudgetsRoutes>[] = [
         {
             icon: "Detail",
             onClick: (row) => {
-                const projectVinculate = projectsVinculation.find((item) => item.id === row.idProjectVinculation);
-                const project = projects.find((item) => item.id === projectVinculate.projectId);
+                const projectVinculate = linkedProjects.find((item) => item.id === row.idProjectVinculation);
+             
                 const rows = [
                     {
                         title: "ID proyecto",
-                        value: `${project.id}`
+                        value: `${projectVinculate.projectId}`
                     },
                     {
                         title: "Nombre proyecto",
-                        value: `${project?.name}`
+                        value: `${projectVinculate?.conceptProject}`
                     },
                     {
                         title: "Centro gestor",
@@ -89,10 +102,14 @@ export function useBudgetRoutesData() {
                     {
                         title: "Fondo",
                         value: `${row.fund.number}`
+                    },
+                    {
+                        title: "Área funcional",
+                        value: `${projectVinculate.areaFuntional.number}`
                     }
                 ]
                 setMessage({
-                    title: "Detalle de Fondos",
+                    title: "Detalle Ruta presupuestal",
                     show: true,
                     OkTitle: "Aceptar",
                     description: <DetailsComponent rows={rows} />,
@@ -115,25 +132,27 @@ export function useBudgetRoutesData() {
     }
 
     const onSubmit = handleSubmit(async (data: IBudgetsRoutesFilters) => {
-        if(projects && projectsVinculation) loadTableData(data);
+        if(linkedProjects) {
+            setShowTable(true)
+            loadTableData(data)
+        };
     });
 
     useEffect(() => {
-        getAllProjectsVinculations().then(response => {
-            if(response.operation.code === EResponseCodes.OK) {
-                setProjectsVinculation(response.data);
+        GetProjectsList().then(responseProjectList => {
+            if (responseProjectList.operation.code === EResponseCodes.OK) {
+                setLinkedProjects(responseProjectList.data);
             }
-        });
-        getAllProjects().then(response => {
-            if(response.operation.code === EResponseCodes.OK) {
-                setProjects(response.data);
-            }
-        });
+        })
     }, [])
 
     useEffect(() => {
-        if(projects && projectsVinculation) loadTableData();
-    }, [projects, projectsVinculation])
+        if(linkedProjects) loadTableData();
+    }, [linkedProjects])
 
-    return { navigate, tableComponentRef, register, reset, errors, onSubmit, tableColumns, tableActions }
+    useEffect(() => {
+        setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
+    },[inputValue])
+
+    return { navigate, tableComponentRef, control, register, reset, isBtnDisable, showTable, setShowTable, errors, onSubmit, tableColumns, tableActions }
 }

@@ -1,0 +1,274 @@
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import useYupValidationResolver from "../../../../common/hooks/form-validator.hook";
+import { useContext, useEffect, useState } from "react";
+import { IDropdownProps } from "../../../../common/interfaces/select.interface";
+import { EResponseCodes } from "../../../../common/constants/api.enum";
+import { IEntities } from "../../interfaces/Entities";
+import { useEntitiesService } from "../../hooks/entities-service.hook";
+import { useBudgetsService } from "./budgets-service.hook";
+import { IBudgets } from "../../interfaces/Budgets";
+import { AppContext } from "../../../../common/contexts/app.context";
+import { budgetsCrudValidator } from "../../../../common/schemas/budgets-schemas";
+import { IMessage } from "../../../../common/interfaces/global.interface";
+import insterDataBudgetsUpdate from "../utils/insert-data-budgets-update";
+
+interface IBudgetsCrudForm {
+    number: string;
+    ejercise: string;
+    entity: number;
+    denomination: string;
+    description: string;
+}
+
+export function useBudgetsCrudData(budgetsId: string ) {
+    const [budgetsData, setBudgetsData] = useState<IBudgets>(null);
+    const [entitiesData, setEntitiesData] = useState<IDropdownProps[]>(null);
+    const [isBtnDisable, setIsBtnDisable] = useState(true)
+    const [ isDifferentValues, setIsDifferentValues ] = useState(false)
+    const [ vinculationmgaData, setVinculationmgaData ] = useState([])
+    const [ pospreSapiData, setPospreSapiData ] = useState([])
+
+    const resolver = useYupValidationResolver(budgetsCrudValidator);
+    const { GetEntities } = useEntitiesService();
+    const { CreateBudgets, GetBudgets, UpdateBudgets } = useBudgetsService();
+    const { authorization, setMessage, isValue } = useContext(AppContext);
+
+    const {
+        handleSubmit,
+        register,
+        formState: { errors },
+        setValue: setValueRegister,
+        control: controlRegister,
+        watch
+    } = useForm<IBudgetsCrudForm>({ resolver });
+
+    const navigate = useNavigate();
+    const watchData = watch()
+
+    useEffect(() => {
+        GetEntities().then(response => {
+            if (response.operation.code === EResponseCodes.OK) {
+                const entities: IEntities[] = response.data;
+                const arrayEntities: IDropdownProps[] = entities.map((entity) => {
+                    return { name: entity.name, value: entity.id };
+                });
+                setEntitiesData(arrayEntities);
+            }else {
+                setMessage({
+                    title: "Validacion de datos",
+                    description: response.operation.message,
+                    show: true,
+                    OkTitle: "Aceptar",
+                    onOk: () => {
+                        setMessage({});
+                        navigate("./../../");
+                    },
+                    onClose: () => {
+                        setMessage({});
+                        navigate("./../../");
+                    },
+                    background: true
+                });
+            }
+        }).catch((error) => { 
+            console.log(error)
+        });
+    }, [])
+
+    useEffect(() => {
+        if (budgetsId) {
+            GetBudgets(parseInt(budgetsId)).then(response => {
+                if (response.operation.code === EResponseCodes.OK) {
+                    setBudgetsData(response.data);
+                };
+            });
+        }
+    }, [budgetsId]);
+
+    useEffect(() => { 
+        if (!budgetsData) return;
+        setValueRegister("number", String(budgetsData.number));
+        setValueRegister("entity", budgetsData.entityId);
+        setValueRegister("denomination", budgetsData.denomination);
+        setValueRegister("description", budgetsData.description);
+        setValueRegister("ejercise", String(budgetsData.ejercise));
+    }, [budgetsData])
+
+    
+    useEffect(() => {
+        if(watchData.description != '' && watchData.denomination != '' && ( budgetsData != null || budgetsData != undefined ) ) {
+            if((budgetsData.denomination?.trim() != watchData.denomination?.trim()) || (budgetsData.description?.trim() != watchData.description?.trim())){
+                setIsDifferentValues(true)
+            }else{
+                setIsDifferentValues(false)
+            }
+        }       
+    },[watchData])
+
+    useEffect(() => {
+        setIsBtnDisable(!(isValue || isDifferentValues));
+    }, [isValue, isDifferentValues]);
+
+    const onSubmitNewBudgets = handleSubmit(async (data: IBudgetsCrudForm) => {
+        const insertData: IBudgets = {
+            entityId: data.entity,
+            number: data.number,
+            denomination: data.denomination,
+            description: data.description,
+            userCreate: authorization.user.numberDocument,
+            ejercise: parseInt(data.ejercise),
+        }
+
+        showModal({
+            title: "Crear posición presupuestal",
+            description: "¿Estás segur@ de crear la posición presupuestal?",
+            show: true,
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
+            onOk: () => {
+              setMessage({})
+              messageConfirmSave(insertData)
+            },
+            onCancel: () => {
+              setMessage({})
+              onCancelNew()
+            },
+            onClose: () => {
+              setMessage({})
+              onCancelNew()
+            },
+            background: true
+          })
+
+        
+    });
+ 
+    const showModal = (values: IMessage) => {
+        setMessage({
+          title: values.title,
+          description: values.description,
+          show: true,
+          OkTitle: values.OkTitle,
+          onOk: values.onOk || (() => setMessage({})),
+          cancelTitle: values.cancelTitle
+    
+        });
+    };
+    
+    const messageConfirmSave = async (insertData:any) => {
+        CreateBudgets(insertData).then(response => {
+            if (response.operation.code === EResponseCodes.OK) {
+                setMessage({
+                    title: "Pospre creado",
+                    description: "¡Se creó Posición presupuestal exitosamente!",
+                    show: true,
+                    OkTitle: "Aceptar",
+                    onOk: () => {
+                        onCancelNew();
+                        setMessage({});
+                    },
+                    background: true
+                });
+            } else {
+                setMessage({
+                    title: "Validacion de datos",
+                    description: response.operation.message,
+                    show: true,
+                    OkTitle: "Aceptar",
+                    onOk: () => {
+                        setMessage({});
+                    },
+                    background: true
+                });
+            }
+        })
+    }
+
+    const upDateVinculationData = (vinculationmga: any) => setVinculationmgaData(vinculationmga)
+
+    const upDatePospreData = (pospreSapi: any) => {
+        const newData = [...pospreSapiData, pospreSapi];
+        setPospreSapiData(newData);
+    }
+
+    const onSubmitEditBudgets = handleSubmit(async (data: IBudgetsCrudForm) => {
+        const budgetsData: IBudgets = {
+            entityId: data.entity,
+            number: data.number,
+            denomination: data.denomination,
+            description: data.description,
+            userCreate: authorization.user.numberDocument,
+            ejercise: parseInt(data.ejercise),
+        }
+
+        const insertData = insterDataBudgetsUpdate(budgetsData, vinculationmgaData, authorization, budgetsId, pospreSapiData)
+ 
+        setMessage({
+            title: "Editar Posición presupuestal",
+            description: "¿Estás segur@ de editar la posición presupuestal?",
+            show: true,
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
+            onOk: () => {
+                UpdateBudgets(insertData).then(response => {
+                    if (response.operation.code === EResponseCodes.OK) {
+                        setMessage({
+                            title: "Editar Pospre",
+                            description: "Se ha editado el Pospre exitosamente",
+                            show: true,
+                            OkTitle: "Aceptar",
+                            onOk: () => {
+                                onCancelEdit();
+                                setMessage({});
+                            },
+                            background: true
+                        });
+                    } else {
+                        setMessage({
+                            title: "Validacion de datos",
+                            description: response.operation.message,
+                            show: true,
+                            OkTitle: "Aceptar",
+                            onOk: () => {
+                                setMessage({});
+                            },
+                            background: true
+                        });
+                    }
+                })
+            },
+            onCancel: () => {
+              setMessage({});
+            },
+            background: true,
+          });
+        
+    });
+
+    const onCancelNew = () => {
+        navigate("./../");
+    };
+
+    const onCancelEdit = () => {
+        navigate("./../../");
+    };
+
+    const confirmClose = (callback: () => void,  action: "new" | "edit") =>{
+        setMessage({
+            title: `${action == 'new'? 'Cancelar posición presupuestal' : 'Cancelar Edición' }`,
+            description: ` ${ action == 'new'? '¿Estás segur@ que desea cancelar la posición presupuestal?' : '¿Estas segur@ que deseas cancelar la edición?'} `,
+            show: true,
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
+            onOk: () => {
+                callback();
+                setMessage({});
+            },
+            background: true
+        });
+    }
+
+    return { register, errors, entitiesData, budgetsData, controlRegister, isBtnDisable, onSubmitNewBudgets, onSubmitEditBudgets, onCancelNew, 
+        onCancelEdit, confirmClose, upDateVinculationData, upDatePospreData };
+}

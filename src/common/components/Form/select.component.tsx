@@ -21,6 +21,10 @@ interface ISelectProps<T> {
   fieldArray?: boolean;
   filter?: boolean;
   emptyMessage?: string;
+  optionSelected?:Function;
+  isSearchByName?:boolean;
+  isValidateName?: boolean;
+  onChange?: (selectedOption: T) => void;
 }
 
 function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
@@ -49,6 +53,8 @@ export function SelectComponent({
   fieldArray,
   filter,
   emptyMessage = "Sin resultados.",
+  optionSelected,
+  isValidateName = true
 }: ISelectProps<any>): React.JSX.Element {
   if (data) {
     const seleccione: IDropdownProps = { name: "Seleccione", value: null };
@@ -62,7 +68,7 @@ export function SelectComponent({
     const keysError = idInput.split(".");
     let errs = errors;
     if (fieldArray) {
-      const errorKey = `${keysError[0]}[${keysError[1]}].${keysError[2]}`;
+      const errorKey = `${keysError[0]}.${keysError[1]}`;
       return errors[errorKey]?.message;
     } else {
       for (let key of keysError) {
@@ -90,21 +96,23 @@ export function SelectComponent({
         <Controller
           name={idInput}
           control={control}
-          render={({ field }) => (
-            <Dropdown
-              id={field.name}
-              value={data ? data.find((row) => row.value === field.value)?.value : null}
-              onChange={(e) => field.onChange(e.value)}
-              options={data}
-              optionLabel="name"
-              placeholder={placeholder}
-              className={`${className} ${messageError() ? "p-invalid" : ""}`}
-              disabled={disabled}
-              filter={filter}
-              emptyMessage={emptyMessage}
-              emptyFilterMessage={emptyMessage}
-            />
-          )}
+          render={({ field }) => {
+            return <Dropdown
+              	id={field.name}
+              	value={data?.find((row) => row.value === field.value)?.value || fieldArray && data.filter((row) => row.name != 'Seleccione' || row.value != undefined).find(value => value?.projectId == field?.value)?.value}
+              	onChange={(e) => {field.onChange(e.value); optionSelected && optionSelected(e.value)}}
+              	options={data}
+              	optionLabel="name"
+              	placeholder={placeholder}
+              	className={`${className} ${messageError() ? "p-invalid" : ""}`}
+              	disabled={disabled}
+              	filter={filter}
+              	emptyMessage={emptyMessage}
+              	emptyFilterMessage={emptyMessage}
+              	virtualScrollerOptions={{ itemSize: 38}}
+            	/>
+          	
+          }}
         />
         {messageError() && <span className="icon-error"></span>}
       </div>

@@ -23,7 +23,7 @@ interface IInputProps<T> {
   fieldArray?: boolean;
   rows?: number;
   cols?: number;
-  optionsRegister?: {};
+  optionsRegister?: {}; 
 }
 
 function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
@@ -49,7 +49,7 @@ function TextAreaElement({
   id,
   rows,
   cols,
-  optionsRegister = {},
+  optionsRegister = {},  
 }): React.JSX.Element {
   return (
     <textarea
@@ -64,6 +64,7 @@ function TextAreaElement({
       value={value}
       rows={rows}
       cols={cols}
+      
     />
   );
 }
@@ -130,6 +131,7 @@ export function TextAreaComponent({
           rows={rows}
           cols={cols}
           optionsRegister={optionsRegister}
+          
         />
         {messageError() && (
           <MdOutlineError

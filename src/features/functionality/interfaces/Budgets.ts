@@ -5,21 +5,22 @@ export interface IBudgets {
   id?: number;
   entityId: number;
   ejercise: number;
-  number:number;
+  number: string;
   denomination:string;
   description:string;
   userModify?: DateTime;
   dateModify?: Date;
   userCreate: string;
   dateCreate?: DateTime;
-  entity?: IEntities
+  entity?: IEntities,
+  pospresap?: any[]
+  vinculationmga?: any[]
 }
 
-export interface IFilterBudgets {
-  page: number;
-  perPage: number;
-  entity?: number;
-  ejercise?: number;
-  number:number;
-  denomination:string;
+export interface IBudgetViewPage {
+  actions: "vinculation" | "edit" | "view",
+  unlinkMGA?: (value: boolean) => void,
+  upDatePospreData?: (pospreSapi: any) => void,
+  upDateVinculationData?: (vinculationmga: any[]) => void
 }
+

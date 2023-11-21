@@ -1,0 +1,127 @@
+.button-delete {
+  @include generate-button(0, #CC0100, transparent, transparent solid 1px);
+  margin: 0.2em;
+
+  
+
+  &.tiny {
+    font-size: 0.6em;
+  }
+
+  &.small {
+    font-size: 0.7em;
+  }
+
+  &.medium {
+    font-size: 0.8em;
+  }
+
+  &.big {
+    font-size: 1em;
+  }
+
+  &.biggest {
+    font-size: 1.25em;
+  }
+
+  &.large {
+    font-size: 1.5em;
+  }
+
+  &.extra-large {
+    font-size: 1.8em;
+  }
+
+  &.huge {
+    font-size: 2em;
+  }
+
+}
+
+@media(max-width: 500px) {
+  .button-delete{
+    align-self: flex-end;
+  }
+}
+
+.button-clean{
+  @include generate-button(0, $color-black, transparent, transparent solid 1px);
+  font-size: 1em;
+  margin: 0.2em;
+
+  &.hover-main:hover {
+    -webkit-box-shadow: 0px 0px 15px 0px rgba(167, 25, 137, 0.6);
+    -moz-box-shadow: 0px 0px 15px 0px rgba(167, 25, 137, 0.6);
+    box-shadow: 0px 0px 15px 0px rgba(167, 25, 137, 0.6);
+  }
+
+  &.hover-three:hover {
+    color: $three-color;
+    border: $three-color solid 1px;
+    -webkit-box-shadow: 0px 0px 15px 0px $three-color;
+    -moz-box-shadow: 0px 0px 15px 0px $three-color;
+    box-shadow: 0px 0px 15px 0px $three-color;
+  }
+
+  &.disabled-black:disabled {
+    background-color: #fff;
+    color: $color-black;
+    opacity: 1;
+    border: $input-color-border solid 1px;
+  }
+}
+
+.button-tab_save {
+  @include generate-button(30px, #fff, $fourth-color, none);
+
+  &.tiny {
+    width: 2em;
+    height: 2.5em;
+    font-size: 0.7rem;
+  }
+
+  &.small {
+    width: 3em;
+    height: 2.5em;
+    font-size: 1rem;
+  }
+
+  &.medium {
+    width: 4em;
+    height: 2.5em;
+    font-size: 1rem;
+  }
+
+  &.big {
+    width: 6em;
+    height: 2.5em;
+    font-size: 1rem;
+  }
+
+  &.large {
+    width: 9em;
+    height: 2.5em;
+    font-size: 1rem;
+  }
+
+  &.disabled{
+    display: none;
+  }
+
+  &.hover-three:hover {
+    color: #fff;
+    border: $fourth-color solid 1px;
+    -webkit-box-shadow: 0px 0px 15px 0px $fourth-color;
+    -moz-box-shadow: 0px 0px 15px 0px $fourth-color;
+    box-shadow: 0px 0px 15px 0px $fourth-color;
+  }
+
+  &.invalid {
+    @include generate-button(30px, #fff, $input-color-border, none);
+    cursor: not-allowed;
+  }
+}
+
+.button-add{
+  color: #533893
+}

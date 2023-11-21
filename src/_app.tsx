@@ -7,19 +7,21 @@ import "primereact/resources/primereact.min.css";
 import ModalMessageComponent from "./common/components/modal-message.component";
 import ApplicationProvider from "./application-provider";
 import useAppCominicator from "./common/hooks/app-communicator.hook";
+import { ManagementCenterRoutes } from "./features/managementCenter/management-center-routes";
+import { FunctionalityRoutes } from "./features/functionality/functionality-routes";
+import { PacRoutes } from "./features/pac/pac-routes";
+import { EditCdp, HomeCdp,RpCdp } from "./features/budget-availability/pages";
+import Reports from "./features/reports/pages";
+import { BudgetRecordRoutes } from "./features/budget-record/budget-record-routes";
+import CreditorViewPage from "./features/creditors/pages/creditor-view.page";
+import { CreditorRoutes } from "./features/creditors/creditor-routes";
 
 const Home = lazy(() => import("./features/home/pages/home.page"));
-const Functionality = lazy(() => import("./features/functionality/pages/functionality.page"));
-const FunctionalityCenterManagerPage = lazy(() => import("./features/functionality/pages/funcionality-center-manager.page"));
-const FundsCrud = lazy(() => import("./features/functionality/pages/funds-crud.page"));
-const BudgetsCrud = lazy(()  => import("./features/functionality/pages/budgets-crud.page"));
-const Link = lazy(()  => import("./features/functionality/pages/link.page"));
-const ProjectsLinkPage = lazy(()  => import("./features/functionality/pages/projects-link.page"));
-const FunctionalAreaCrudPage = lazy(()  => import("./features/functionality/pages/functional-area-crud.page"));
-const PosPreSapienciaForm = lazy(()  => import("./features/functionality/pages/pospre-sapiencia-crud.page"));
-const BudgetsView = lazy(()  => import("./features/functionality/pages/budgets-view.page"));
 const BudgetRoutes = lazy(()  => import("./features/budget-routes/pages/budget-routes.page"));
 const BudgetRoutesCrudPage = lazy(()  => import("./features/budget-routes/pages/budget-routes-crud.page"));
+const BudgetAvailabilityRoutes = lazy(()  => import("./features/budget-availability/budget-availability-routes"));
+const PaysRoutes = lazy(() => import("./features/pays/pays-routes"));
+//const CreditorRoutes = lazy(()  => import("./features/creditors/creditor-routes"));
 
 function App() {
   const { publish } = useAppCominicator();
@@ -41,34 +43,23 @@ function App() {
           <Suspense fallback={<p>Loading...</p>}>
             <Routes>
               <Route path={"/*"} element={<Home/>} />
-              <Route path={"/gestion-financiera/funcionalidad"} element={<Functionality/>} />
-              <Route path={"/gestion-financiera/funcionalidad/:option"} element={<Functionality/>} />
 
-              <Route path={"/gestion-financiera/funcionalidad/fondos/create"} element={<FundsCrud action="new"/>} />
-              <Route path={"/gestion-financiera/funcionalidad/fondos/edit/:id"} element={<FundsCrud action="edit"/>} />
-            
-              <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/create"} element={<BudgetsCrud action="new"/>} />
-              <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/edit/:id"} element={<BudgetsCrud action="edit"/>} />
-
-              <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/vinculacion/:pospre"} element={<Link />} />
-              <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/vinculacion/:pospre/:option"} element={<Link />} />
-
-              <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/vinculacion/:pospre/pospre-sapiencia/create"} element={<PosPreSapienciaForm action="new"/>} />
-              <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/vinculacion/:pospre/pospre-sapiencia/edit/:id"} element={<PosPreSapienciaForm action="edit" />} />
-              <Route path={"/gestion-financiera/funcionalidad/posicion-presupuestal/view/:id"} element={<BudgetsView/>} />
-
-              <Route path={"/gestion-financiera/funcionalidad/area-funcional/create"} element={<FunctionalAreaCrudPage action="new"/>} />
-              <Route path={"/gestion-financiera/funcionalidad/area-funcional/edit/:id"} element={<FunctionalAreaCrudPage action="edit"/>} />
-              <Route path={"/gestion-financiera/funcionalidad/area-funcional/view/:id"} element={<FunctionalAreaCrudPage action="view"/>} />
-              <Route path={"/gestion-financiera/funcionalidad/area-funcional/link/:id"} element={<ProjectsLinkPage action="new"/>} />
-              <Route path={"/gestion-financiera/funcionalidad/area-funcional/edit/:id/link/"} element={<ProjectsLinkPage action="edit"/>} />
-              
-              <Route path={"/gestion-financiera/centro-gestor/"} element={<FunctionalityCenterManagerPage/>} />
-              <Route path={"/gestion-financiera/centro-gestor/:option"} element={<FunctionalityCenterManagerPage/>} />
+              <Route path={"/gestion-financiera/presupuesto/*"} element={<FunctionalityRoutes/>} />
+              <Route path={'/gestion-financiera/pac/*'} element={<PacRoutes/>} />
+              <Route path={"/gestion-financiera/centro-gestor/*"} element={<ManagementCenterRoutes/>} />
+              <Route path={"/gestion-financiera/cdp/*"} element={<BudgetAvailabilityRoutes/>} />
+              <Route path={"/gestion-financiera/ejecucion-financiera/consultar-pagos/*"} element={<PaysRoutes/>} />
+              <Route path={"/gestion-financiera/rp/*"} element={<BudgetRecordRoutes/>} />
 
               <Route path={"/gestion-financiera/ruta-presupuestal"} element={<BudgetRoutes/>} />
               <Route path={"/gestion-financiera/ruta-presupuestal/create"} element={<BudgetRoutesCrudPage action="new"/>} />
               <Route path={"/gestion-financiera/ruta-presupuestal/edit/:id"} element={<BudgetRoutesCrudPage action="edit"/>} />
+              <Route path={"/gestion-financiera/cdp"} element={HomeCdp} />
+              <Route path={"/gestion-financiera/cdp/edit/:id"} element={EditCdp} />
+              <Route path={"/gestion-financiera/reportes"} element={<Reports/>}/>
+              <Route path={"/gestion-financiera/cdp/rp/:id"} element={RpCdp} />
+              
+              <Route path={"/gestion-financiera/acreedor/*"} element={<CreditorRoutes/>} />
             </Routes>
           </Suspense>
         </Router>

@@ -13,7 +13,6 @@
   &column {
     @include generate-flex-container(column, null, null, null, null, 8px);
   }
-
   .error-message {
     font-size: 0.7rem;
     color: $alert-failed-color;
@@ -77,12 +76,18 @@
   }
 
   &.big {
-    height: 2.5em;
+    height: 2.667em;
   }
 
   &.large {
     height: 3em;
   }
+
+  &:disabled{
+    background: #f0eeee;
+    opacity: 0.8
+  }
+  
 }
 
 .input-group-basic {
@@ -197,11 +202,12 @@
     15px
   );
   place-items: center;
+  
 
   &:focus {
     outline: none;
   }
-
+  
   &.error {
     border: 1px solid $alert-failed-color;
   }
@@ -224,6 +230,7 @@
   &.large {
     height: 3em;
   }
+
 }
 
 .select-basic-black {

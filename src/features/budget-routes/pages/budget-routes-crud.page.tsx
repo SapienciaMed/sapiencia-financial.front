@@ -24,31 +24,24 @@ function BudgetRoutesCrudPage({ action }: IAppProps) {
                             <div className="fund-data-container">
                                 <SelectComponent
                                     idInput="idProjectVinculation"
-                                    className="select-basic"
+                                    className="select-basic span-width"
                                     control={controlRegister}
                                     errors={errors}
-                                    label={
-                                        <>
-                                            ID Proyecto <span>*</span>
-                                        </>
-                                    }
-                                    classNameLabel="text-black biggest bold"
-                                    direction={EDirection.row}
+                                    label='ID Proyecto' 
+                                    classNameLabel="text-black biggest bold text-required"
+                                    direction={EDirection.column}
                                     data={projectsData}
                                     filter={true}
+                                    disabled={action == 'edit'}
                                 />
                                 <SelectComponent
                                     idInput="managementCenter"
                                     className="select-basic"
                                     control={controlRegister}
                                     errors={errors}
-                                    label={
-                                        <>
-                                            Centro gestor <span>*</span>
-                                        </>
-                                    }
-                                    classNameLabel="text-black biggest bold"
-                                    direction={EDirection.row}
+                                    label='Centro gestor'
+                                    classNameLabel="text-black biggest bold text-required"
+                                    direction={EDirection.column}
                                     data={[{name: "91500000",value: "91500000"}]}
                                     filter={true}
                                 />
@@ -57,13 +50,9 @@ function BudgetRoutesCrudPage({ action }: IAppProps) {
                                     className="select-basic"
                                     control={controlRegister}
                                     errors={errors}
-                                    label={
-                                        <>
-                                            Div <span>*</span>
-                                        </>
-                                    }
-                                    classNameLabel="text-black biggest bold"
-                                    direction={EDirection.row}
+                                    label='Div'
+                                    classNameLabel="text-black biggest bold text-required"
+                                    direction={EDirection.column}
                                     data={[{name: "SAPI",value: "SAPI"}]}
                                     filter={true}
                                 />
@@ -72,13 +61,9 @@ function BudgetRoutesCrudPage({ action }: IAppProps) {
                                     className="input-basic"
                                     typeInput="text"
                                     register={register}
-                                    label={
-                                        <>
-                                            Area funcional <span>*</span>
-                                        </>
-                                    }
-                                    classNameLabel="text-black biggest bold"
-                                    direction={EDirection.row}
+                                    label='Area funcional'
+                                    classNameLabel="text-black biggest bold text-required"
+                                    direction={EDirection.column}
                                     errors={errors}
                                     disabled={true}
                                 />
@@ -87,13 +72,9 @@ function BudgetRoutesCrudPage({ action }: IAppProps) {
                                     className="select-basic"
                                     control={controlRegister}
                                     errors={errors}
-                                    label={
-                                        <>
-                                            Pospre origen <span>*</span>
-                                        </>
-                                    }
-                                    classNameLabel="text-black biggest bold"
-                                    direction={EDirection.row}
+                                    label='Pospre origen'
+                                    classNameLabel="text-black biggest bold text-required"
+                                    direction={EDirection.column}
                                     data={budgetData}
                                     filter={true}
                                 />
@@ -102,13 +83,9 @@ function BudgetRoutesCrudPage({ action }: IAppProps) {
                                     className="select-basic"
                                     control={controlRegister}
                                     errors={errors}
-                                    label={
-                                        <>
-                                            Pospre sapiencia <span>*</span>
-                                        </>
-                                    }
-                                    classNameLabel="text-black biggest bold"
-                                    direction={EDirection.row}
+                                    label='Pospre sapiencia'
+                                    classNameLabel="text-black biggest bold text-required"
+                                    direction={EDirection.column}
                                     data={pospreSapienciaData}
                                     filter={true}
                                 />
@@ -117,13 +94,9 @@ function BudgetRoutesCrudPage({ action }: IAppProps) {
                                     className="select-basic"
                                     control={controlRegister}
                                     errors={errors}
-                                    label={
-                                        <>
-                                            Fondo <span>*</span>
-                                        </>
-                                    }
-                                    classNameLabel="text-black biggest bold"
-                                    direction={EDirection.row}
+                                    label='Fondo'
+                                    classNameLabel="text-black biggest bold text-required"
+                                    direction={EDirection.column}
                                     data={fundsData}
                                     filter={true}
                                 />

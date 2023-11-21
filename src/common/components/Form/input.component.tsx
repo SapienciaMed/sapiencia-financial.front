@@ -1,7 +1,7 @@
 import React from "react";
 import { EDirection } from "../../constants/input.enum";
 import { LabelComponent } from "./label.component";
-import { FieldErrors, UseFormRegister } from "react-hook-form";
+import { UseFormRegister } from "react-hook-form";
 
 import { MdOutlineError } from "react-icons/md";
 
@@ -20,9 +20,14 @@ interface IInputProps<T> {
   errors?: any;
   disabled?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (event: React.FocusEventHandler<HTMLInputElement>) => void;
+  onKeyPress?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   id?: string;
+  style?: React.CSSProperties;
   fieldArray?: boolean;
   optionsRegister?: {};
+  max?: number | string;
+  min?:number | string;
 }
 
 function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
@@ -44,19 +49,31 @@ function InputElement({
   register,
   value,
   disabled,
-  onChange,
+  onChange: onChangeProp,
+  onBlur: onBlurProp,
   defaultValue,
   id,
   optionsRegister,
+  max,
+  min
 }): React.JSX.Element {
+  
+  
   return (
     <input
-      {...register(idInput)}
+      {...(register ? register(idInput, optionsRegister) : {})}
+      id={id}
       name={idInput}
       type={typeInput}
       className={className}
       placeholder={placeholder}
-      defaultValue={value}
+      defaultValue={defaultValue}
+      disabled={disabled}
+      onChange={onChangeProp}
+      onBlur={onBlurProp}
+      value={value}
+      max={max}
+      min={min}
     />
   );
 }
@@ -75,38 +92,62 @@ export function InputComponent({
   errors,
   disabled,
   onChange,
+  onBlur,
+  onKeyPress,
   defaultValue,
   id,
   fieldArray,
   optionsRegister = {},
+  max,
+  min
 }: IInputProps<any>): React.JSX.Element {
+  const messageError = () => {
+    const keysError = idInput.split(".");
+    let errs = errors;
+    if (fieldArray) {
+      const errorKey = `${keysError[0]}.${keysError[1]}`;
+      return errors[errorKey]?.message;
+    } else {
+      for (let key of keysError) {
+        errs = errs?.[key];
+        if (!errs) {
+          break;
+        }
+      }
+      return errs?.message ?? null;
+    }
+  };
 
+  
   return (
     <div
       className={
-        errors[idInput]?.message  ? `${direction} container-icon_error` : direction
+        messageError() ? `${direction} container-icon_error` : direction
       }
     >
       <LabelElement
         label={label}
-        idInput={idInput}
+        idInput={id}
         classNameLabel={classNameLabel}
       />
       <div className="flex-container-input">
         <InputElement
           typeInput={typeInput}
           idInput={idInput}
-          className={errors[idInput]?.message  ? `${className} error` : className}
+          className={messageError() ? `${className} error` : className}
           placeholder={placeholder}
           register={register}
           value={value}
           disabled={disabled}
           onChange={onChange}
+          onBlur={onBlur}
           defaultValue={defaultValue}
           id={id}
           optionsRegister={optionsRegister}
+          max={max}
+          min={min}
         />
-        {errors[idInput]?.message && (
+        {messageError() && (
           <MdOutlineError
             className="icon-error"
             fontSize={"22px"}
@@ -114,9 +155,9 @@ export function InputComponent({
           />
         )}
       </div>
-      {errors[idInput]?.message  && (
+      {messageError() && (
         <p className="error-message bold not-margin-padding">
-          {errors[idInput]?.message }
+          {messageError()}
         </p>
       )}
       {children}
