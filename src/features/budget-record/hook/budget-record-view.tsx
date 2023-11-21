@@ -21,7 +21,7 @@ export function useBudgeRecordView() {
     const { GetContractorsByDocuments, GetAllDependencies } = usePayrollExternalServices()
     const { GetCreditorsByFilters } = useCreditorsServices()
 
-    const { setMessage } = useContext(AppContext);
+    const { setMessage, validateActionAccess } = useContext(AppContext);
     const tableComponentRef = useRef(null);
 
     const [dataFindRpSt, setDataFindRpSt] = useState({})
@@ -100,23 +100,23 @@ export function useBudgeRecordView() {
 
 
     useEffect(() => {
-        if(contractorDocumentSt.length==0){
+        if (contractorDocumentSt.length == 0) {
             setContractorDocumentSt('')
         }
     }, [contractorDocumentSt])
-    
+
 
 
     useEffect(() => {
-        if((Number(consecutivoRpSap) > 0 || Number(consecutiveRpAurora) > 0) && supplierName!=""){
+        if ((Number(consecutivoRpSap) > 0 || Number(consecutiveRpAurora) > 0) && supplierName != "") {
             setIsAllowSearchCdp(true)
-        }else{
+        } else {
             setIsAllowSearchCdp(false)
         }
-            
+
         supplierType?.length > 0 && contractorDocumentSt?.length > 2
             ? setIsAllowSearchCdp(true)
-            : (Number(consecutivoRpSap) > 0 || Number(consecutiveRpAurora) > 0) && supplierName!=""
+            : (Number(consecutivoRpSap) > 0 || Number(consecutiveRpAurora) > 0) && supplierName != ""
                 ? setIsAllowSearchCdp(true)
                 : setIsAllowSearchCdp(false)
     }, [consecutivoRpSap, consecutiveRpAurora, supplierType, contractorDocumentSt, supplierName])
@@ -233,7 +233,11 @@ export function useBudgeRecordView() {
             renderCell: (row) => {
                 return (
                     <div className="flex align-items-center">
-                        <Checkbox onChange={() => showModalCancelAmount(row)} checked={false} disabled={row.rpSap > 0 || row.payments?.length > 0 ? true : false} />
+                        {
+                            validateActionAccess('RP_ANULAR_MONTO') && (
+                                <Checkbox onChange={() => showModalCancelAmount(row)} checked={false} disabled={row.rpSap > 0 || row.payments?.length > 0 ? true : false} />
+                            )
+                        }
                     </div>)
             }
         },
@@ -243,6 +247,7 @@ export function useBudgeRecordView() {
     const tableActions: ITableAction<any>[] = [
         {
             icon: "Edit",
+            hide: !validateActionAccess('RP_RUTAS_EDITAR'),
             onClick: (row) => {
                 { row.rpId }
                 navigate(`./edit/${row.rpId}`);
@@ -386,12 +391,13 @@ export function useBudgeRecordView() {
 
     const actionTemplate = (rowData) => {
         return (
-            <Icons.FaPencilAlt
-                className="button grid-button button-edit"
-                style={{ color: '#4caf50', fontSize: '1.5em' }}
-                onClick={() => navigate(`editar-rp/${JSON.stringify(rowData.consecutiveRpAurora)}`)}
-            />
-
+            validateActionAccess('RP_DATOS_BASICOS_EDITAR') && (
+                <Icons.FaPencilAlt
+                    className="button grid-button button-edit"
+                    style={{ color: '#4caf50', fontSize: '1.5em' }}
+                    onClick={() => navigate(`editar-rp/${JSON.stringify(rowData.consecutiveRpAurora)}`)}
+                />
+            )
         );
     };
 
@@ -418,7 +424,8 @@ export function useBudgeRecordView() {
         setContractorDocumentSt,
         setAuroraRPConsecutiveSt,
         setSapRPConsecutiveSt,
-        nameSupplierSt
+        nameSupplierSt,
+        validateActionAccess
     };
 
 

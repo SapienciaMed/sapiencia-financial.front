@@ -16,7 +16,7 @@ export function usePospreSapienciaData({budgetsId, validateAction }: IPospreSapi
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
     const resolver = useYupValidationResolver(pospreSapienciaValidator);
-    const { setMessage } = useContext(AppContext);
+    const { setMessage, validateActionAccess } = useContext(AppContext);
     const [showTable, setShowTable] = useState(true);
     const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false)
 
@@ -55,6 +55,7 @@ export function usePospreSapienciaData({budgetsId, validateAction }: IPospreSapi
     const tableActions: ITableAction<any>[] = [
         {
             icon: "Edit",
+            hide:!validateActionAccess('POSPRE_EDITAR'),
             onClick: (row) => {
                 navigate(`./edit/${row.id}`);
             },
@@ -79,6 +80,7 @@ export function usePospreSapienciaData({budgetsId, validateAction }: IPospreSapi
     const tableActionsView: ITableAction<IPosPreSapiencia>[] = [
         {
             icon: "Detail",
+            hide:!validateActionAccess('POSPRE_VISUALIZAR'),
             onClick: (row) => {
                 const rows = [
                     {
@@ -113,6 +115,7 @@ export function usePospreSapienciaData({budgetsId, validateAction }: IPospreSapi
     const tableActionEdit: ITableAction<any>[] = [
         {
             icon: "Edit",
+            hide:!validateActionAccess('POSPRE_EDITAR'),
             onClick: (row) => {
                 navigate(`./pospre-sapiencia/edit/${row.id}`);
             },
@@ -151,5 +154,5 @@ export function usePospreSapienciaData({budgetsId, validateAction }: IPospreSapi
 
 
     return { register, reset, showTable, control, errors, tableComponentRef, tableColumns, tableActions, isBtnDisable, tableActionEdit,
-        tableColumnsView, tableActionsView, setShowTable, onSubmitSearch, clearDat }
+        tableColumnsView, tableActionsView, setShowTable, onSubmitSearch, clearDat, validateActionAccess }
 } 

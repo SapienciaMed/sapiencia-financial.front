@@ -10,13 +10,13 @@ interface IAppProps { }
 
 function FunctionalAreaPage(props: IAppProps): React.JSX.Element {
     const { tableActions, tableColumns, tableComponentRef, showTable, isBtnDisable, control, setShowTable, setIsBtnDisable,
-        navigate, register, errors, reset, onSubmit } = useFunctionalAreaData();
+        navigate, register, errors, reset, onSubmit, validateActionAccess } = useFunctionalAreaData();
     return (
         <div className='main-page'>
             <div className='card-table'>
-            <div className="title-area">
-                <div className="text-black extra-large bold">Área funcional</div>
-            </div>
+                <div className="title-area">
+                    <div className="text-black extra-large bold">Área funcional</div>
+                </div>
                 <FormComponent action={onSubmit}>
                     <div className="card-form">
                         <div className="title-area">
@@ -24,9 +24,15 @@ function FunctionalAreaPage(props: IAppProps): React.JSX.Element {
                                 Consultar Área funcional
                             </label>
 
-                            <div className="title-button text-main biggest" onClick={() => { navigate('./create') }}>
-                                Crear área funcional <AiOutlinePlusCircle />
-                            </div>
+
+                            {
+                                validateActionAccess('AREA_FUNCIONAL_CREAR') && (
+                                    <div className="title-button text-main biggest" onClick={() => { navigate('./create') }}>
+                                        Crear área funcional <AiOutlinePlusCircle />
+                                    </div>
+                                )
+                            }
+
                         </div>
                         <div className="one-filter-container">
                             <Controller
@@ -47,7 +53,7 @@ function FunctionalAreaPage(props: IAppProps): React.JSX.Element {
                                             direction={EDirection.column}
                                             errors={errors}
                                             onChange={field.onChange}
-                                        /> 
+                                        />
                                     )
                                 }}
                             />
@@ -56,7 +62,7 @@ function FunctionalAreaPage(props: IAppProps): React.JSX.Element {
                     <div className="funcionality-buttons-container">
                         <span className="bold text-center button" onClick={() => {
                             reset();
-                            if(showTable)  {
+                            if (showTable) {
                                 tableComponentRef.current.emptyData();
                                 setShowTable(false)
                             }
@@ -72,17 +78,17 @@ function FunctionalAreaPage(props: IAppProps): React.JSX.Element {
                     </div>
                 </FormComponent>
                 {
-                    showTable && 
-                        <div className="card-form">
-                            <TableComponent
-                                ref={tableComponentRef}
-                                url={`${process.env.urlApiFinancial}/api/v1/functional-area/get-paginated`}
-                                columns={tableColumns}
-                                actions={tableActions}
-                                isShowModal={true}
-                                titleMessageModalNoResult='Área funcional'
-                            />
-                        </div>
+                    showTable &&
+                    <div className="card-form">
+                        <TableComponent
+                            ref={tableComponentRef}
+                            url={`${process.env.urlApiFinancial}/api/v1/functional-area/get-paginated`}
+                            columns={tableColumns}
+                            actions={tableActions}
+                            isShowModal={true}
+                            titleMessageModalNoResult='Área funcional'
+                        />
+                    </div>
                 }
             </div>
         </div>

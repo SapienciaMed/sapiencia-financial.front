@@ -24,7 +24,7 @@ export function useBudgeRecordCrudv2() {
     const { GetRoutesByValidity } = useCdpServices()
     const { GetCreditorsByFilters } = useCreditorsServices()
     const { GetAllDependencies, GetContractorsByDocuments } = usePayrollExternalServices()
-    const { setMessage, authorization } = useContext(AppContext);
+    const { setMessage, authorization, validateActionAccess } = useContext(AppContext);
 
     const [componentsData, setComponentsData] = useState<IDropdownProps[]>([]);
     const [dependeciesData, setDependeciesData] = useState<IDropdownProps[]>([]);
@@ -263,7 +263,11 @@ export function useBudgeRecordCrudv2() {
             renderCell: (row) => {
                 return (
                     <div className="flex align-items-center">
-                        <Checkbox inputId={row.id} name="row" value={row} onChange={onAmountChange} checked={selectedAmounts?.some((item) => item.id == row.id)} />
+                        {
+                           validateActionAccess('RP_ASOCIAR_RUTAS') && (
+                               <Checkbox inputId={row.id} name="row" value={row} onChange={onAmountChange} checked={selectedAmounts?.some((item) => item.id == row.id)} />
+                           ) 
+                        }
                     </div>)
             }
         },

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { budgetAvailabilityValidator } from "../../../common/schemas/budget-availability-schemas";
@@ -6,11 +6,13 @@ import { IBudgetsAvailabilityFilters } from "../interfaces/budgetAvailabilityInt
 import { useCdpServices } from "./useCdpServices";
 import { clearRequestFilters, filterDataSelect } from "../utils/filtersSearch";
 import { useNavigate } from "react-router-dom";
+import { AppContext } from "../../../common/contexts/app.context";
 
 export const useSearchCdp = () => {
   const { GetRoutesByValidity } = useCdpServices();
   const resolver = useYupValidationResolver(budgetAvailabilityValidator);
   const tableComponentRef = useRef(null);
+  const { validateActionAccess } = useContext(AppContext)
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -75,12 +77,14 @@ export const useSearchCdp = () => {
   const tableActionsCdp: any[] = [
     {
       icon: "Detail",
+      hide:!validateActionAccess('CDP_VISUALIZAR'),
       onClick: (row) => {
         navigate(`./view/${row.id}`);
       },
     },
     {
       icon: "Edit",
+      hide:!validateActionAccess('CDP_RUTAS_EDITAR'),
       onClick: (row) => {
         const id = row.id;
         navigate(`/gestion-financiera/cdp/edit/${id}`);
@@ -88,12 +92,14 @@ export const useSearchCdp = () => {
     },
     {
       icon: "Add",
+      hide:!validateActionAccess('CDP_RUTAS_VINCULAR'),
       onClick: (row) => {
         navigate(`./assoc-amounts/${row.id}`);
       },
     },
     {
       icon: "Rp",
+      hide:!validateActionAccess('CDP_VISUALIZAR_RP'),
       onClick: (row) => {
         navigate(`/gestion-financiera/cdp/rp/${row.id}`);
       },
@@ -170,5 +176,6 @@ export const useSearchCdp = () => {
     arraySelect,
     initialDate,
     endDate,
+    validateActionAccess
   };
 };
