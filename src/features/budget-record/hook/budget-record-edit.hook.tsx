@@ -189,7 +189,7 @@ export function useBudgeRecordEdit() {
 
             // Si todos los inputs están vacíos o son 0, usa el valor de finalAmount
             if (inputCreditAmount <= 0 && inputAgaintsAmount <= 0 && inputFixedCompleted <= 0) {
-                setValue("idcFinalValue", dataRp.linksRp[0].finalAmount);
+                setValue("idcFinalValue", dataRp.linksRp[0].finalAmount === 0 ||  dataRp.linksRp[0].finalAmount === null ? dataRp?.linksRp?.[0]?.initialAmount : dataRp.linksRp[0].finalAmount);
 
             } else {
                 // Realiza el cálculo con los valores actuales, independientemente de si están completos o no
@@ -250,7 +250,9 @@ export function useBudgeRecordEdit() {
         setValue("creditAmount", dataRp?.linksRp?.[0]?.creditAmount || "");
         setValue("fixedCompleted", dataRp?.linksRp?.[0]?.fixedCompleted || "");
     
-        setValue("finalAmount", dataRp?.linksRp?.[0]?.finalAmount || "");
+        //setValue("finalAmount", dataRp?.linksRp?.[0]?.finalAmount || "");
+        //setValue("idcFinalValue", dataRp.linksRp[0].finalAmount === 0 ||  dataRp.linksRp[0].finalAmount === null ? dataRp?.linksRp?.[0]?.initialAmount : dataRp.linksRp[0].finalAmount);
+
     }, [dataRp, areaNumber, projectNumber]);
 
     const onSubmiteditRp = handleSubmit(async (data: IUpdateRP) => {
@@ -272,10 +274,10 @@ export function useBudgeRecordEdit() {
     const confirmEdit = async (data: IUpdateRP) => {
 
         const datos = {
-            againtsAmount: data.againtsAmount,
-            creditAmount: data.creditAmount,
+            againtsAmount: data.againtsAmount === 0 || !data.againtsAmount ? null : data.againtsAmount,
+            creditAmount: data.creditAmount === 0 || !data.creditAmount ? null : data.creditAmount,
             finalAmount: calculatedValue,
-            fixedCompleted: data.fixedCompleted,
+            fixedCompleted: data.fixedCompleted === 0 || !data.fixedCompleted ? null : data.fixedCompleted,
             observation: data.observation
         }
 
