@@ -23,7 +23,7 @@ export function useBudgeRecordEdit() {
     const { GetRpByFilters, GetAllComponents, GetCausation, editRp } = useBudgetRecordServices();
     const { GetProjectsList } = useAdditionsTransfersService();
     const { GetAllFunctionalAreas } = useFunctionalAreaService();
-    const { GetAllDependencies } = usePayrollExternalServices();
+    const { GetAllDependencies,GetContractorsByDocuments } = usePayrollExternalServices();
     const { getRouteCDPId, getOneRpp, updateRouteCdp, getTotalValuesImport } = useCdpService()
 
     const [dataRp, setDataRp] = useState<any>()
@@ -206,10 +206,31 @@ export function useBudgeRecordEdit() {
     useEffect(() => {
         if (!dataRp ) return;
 
+        if (dataRp.supplierType === "Acreedor") {
+            setValue("document", dataRp?.creditor?.document || "");
+            setValue("name", dataRp?.creditor?.name || "");
+            setValue("taxIdentification", dataRp?.creditor?.taxIdentification || "");            
+        }else{
+            GetContractorsByDocuments({
+                documentList: [dataRp.contractorDocument]
+            }).then(res => {
+              console.log(res)
+
+              const contractorName = Object(res).data?.data[0]?.firstName + " " +
+              Object(res).data.data[0]?.secondName + " " +
+              Object(res).data.data[0]?.surname + " " +
+              Object(res).data.data[0]?.secondSurname;
+
+              //numberDocument             
+              setValue("document", dataRp?.contractorDocument || "");
+             setValue("name",contractorName || "");
+              setValue("taxIdentification", Object(res).data?.data[0]?.fiscalIdentification || "");            
+
+               
+            })
+        }
+
         // Asignar los campos que siempre vienen
-        setValue("document", dataRp?.creditor?.document || "");
-        setValue("name", dataRp?.creditor?.name || "");
-        setValue("taxIdentification", dataRp?.creditor?.taxIdentification || "");
         setValue("dependencyId", dataRp?.dependencyId || "");
         setValue("fund", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.budgetRoute?.fund?.number || "");
         setValue("pospreSapiencia", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.budgetRoute?.pospreSapiencia?.number || "");
