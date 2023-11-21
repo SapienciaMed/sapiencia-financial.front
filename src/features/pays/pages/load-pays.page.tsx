@@ -12,13 +12,13 @@ import {
 import { EDirection } from "../../../common/constants/input.enum";
 import TableDataPropComponent from "../../../common/components/tableDataProp.component";
 import { usePacCrud } from "../../pac/createPac/hook/pac-crud.hook";
-import {usePaysCrud } from "../hooks/pays.crud.hook"
+import { usePaysCrud } from "../hooks/pays.crud.hook"
 import UploadComponent from "../../pac/createPac/components/UploadComponent";
 function LoadPays() {
   const {
     errors,
     onSubmitPagPays,
-   // showModal,
+    // showModal,
     setMessage,
     register,
     isAllowSave,
@@ -54,6 +54,36 @@ function LoadPays() {
     }
   };
 
+  const mesesDelAnio = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ];
+
+  const [tipoArchivo, setTipoArchivo] = useState('');
+
+  const handleTipoArchivoChange = (event) => {
+    console.log(event);
+
+    //setTipoArchivo(selectedTipoArchivo);
+  };
+
+
+  const mesesOptions = mesesDelAnio.map((mes, index) => ({
+    id: index + 1,
+    name: mes,
+    value: mes,
+  }));
+
   const [dataTableSt, setDataTableSt] = useState<any>();
 
   useEffect(() => {
@@ -66,6 +96,11 @@ function LoadPays() {
     setErrorsSt([]);
     setIsVisibleErrors(false);
   }, [file]);
+
+  useEffect(() => {
+    console.log('TipoArchivo state:', tipoArchivo);
+  }, [tipoArchivo]);
+
 
   return (
     <div className="crud-page">
@@ -82,7 +117,7 @@ function LoadPays() {
                 idInput="exercise"
                 className="input-basic medium"
                 typeInput="number"
-                register={register}
+                value={actualFullYear.toString()}
                 label="Vigencia"
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
@@ -102,32 +137,28 @@ function LoadPays() {
                     name: "Pagos",
                     value: "Pagos",
                   },
-                /*   {
-                    id: 2,
-                    name: "Area Funcional",
-                    value: "2",
-                  },
-                  {
-                    id: 3,
-                    name: "Pospre Origen y MGA",
-                    value: "3",
-                  },
-                  {
-                    id: 4,
-                    name: "Ruta",
-                    value: "4",
-                  },
-                  {
-                    id: 5,
-                    name: "Ppto Inicial",
-                    value: "5",
-                  }, */
-
                 ]}
                 filter={true}
                 errors={errors}
                 direction={EDirection.column}
+                onChange={handleTipoArchivoChange}
+
               />
+
+              <SelectComponent
+                idInput="mesDelAnio"
+                control={control}
+                label="Mes del año"
+                className="select-basic medium"
+                classNameLabel="text-black big bold text-required"
+                placeholder="Seleccionar"
+                data={mesesOptions}
+                filter={true}
+                errors={errors}
+                direction={EDirection.column}
+              />
+
+       
 
               <div className="div-upload">
                 <br />
@@ -267,39 +298,33 @@ function LoadPays() {
           </div>
         )}
       </div>
-      <ButtonLoadingComponent
-            className="button-main huge hover-three"
-            value="Guardar"
-            form="form-load-pays"
-            type="button"
-            action={() => {
-              btnUploadFileRef.current.click();
-              /* setIsUploadFileSt(false) */
-            }}
-            disabled={!isUploadFileSt}
-            isLoading={isLoading}
-          />
-      <div className="container-button-bot">
-        <div className="buttons-bot">
-          {/* <span
-            className="bold text-center button"
-          onClick={() => {
-            confirmClose(action === "new" ? onCancelNew : onCancelEdit, action);
-          }}
-          >
-            Cancelar
-          </span> */}
-          {/* <ButtonComponent
-              className="button-main huge hover-three"
-              value="Guardar"
-              type="submit"
-              form="funds-form"
-              disabled={true}
-            /> */}
 
-         
-        </div>
+      <div className="buttons-bot" style={{ position: 'fixed', bottom: 0, right: 0, display: 'flex', justifyContent: 'flex-end', width: '25%', marginBottom: '15px', marginRight: '15px' }}>
+        <span
+          className="bold text-center button"
+          onClick={() => { console.log("gola") }}
+          style={{
+            marginTop: '10px',
+            marginRight: '10px',
+          }}
+        >
+          Cancelar
+        </span>
+        <ButtonLoadingComponent
+          className="button-main huge hover-three"
+          value="Guardar"
+          form="form-load-pays"
+          type="button"
+          action={() => {
+            btnUploadFileRef.current.click();
+            /* setIsUploadFileSt(false) */
+          }}
+          disabled={!isUploadFileSt}
+          isLoading={isLoading}
+        />
       </div>
+
+
     </div>
   );
 }

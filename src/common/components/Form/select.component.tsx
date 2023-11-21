@@ -23,7 +23,8 @@ interface ISelectProps<T> {
   emptyMessage?: string;
   optionSelected?:Function;
   isSearchByName?:boolean;
-  isValidateName?: boolean
+  isValidateName?: boolean;
+  onChange?: (selectedOption: T) => void;
 }
 
 function LabelElement({ label, idInput, classNameLabel }): React.JSX.Element {
