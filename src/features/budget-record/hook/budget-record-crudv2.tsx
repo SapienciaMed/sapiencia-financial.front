@@ -369,7 +369,8 @@ export function useBudgeRecordCrudv2() {
                 isActive: e.isActive,
                 reasonCancellation: "",
                 rpId: null,
-                position: index + 1
+                position: index + 1,
+                finalAmount:confirmChangeAmountSt?.amount && confirmChangeAmountSt.id == e.id ? confirmChangeAmountSt.amount : e.amount,
             })
         })
         let amountRouteToSave = [];
@@ -398,7 +399,7 @@ export function useBudgeRecordCrudv2() {
     const onSubmitRP = handleSubmit(async (data: IBudgetRecord) => {
         data.documentDate = formatDate(new Date(data.documentDate))
         data.dateValidity = formatDate(new Date(data.dateValidity))
-
+        
         showModal({
             title: "Guardar",
             description: "¿Está segur@ de guardar la información?",
@@ -454,7 +455,7 @@ export function useBudgeRecordCrudv2() {
                 setMessage({})
                 navigate('../')
             }),
-            OkTitle: "Aceptar",
+            OkTitle: "Cerrar",
         })
     }
 

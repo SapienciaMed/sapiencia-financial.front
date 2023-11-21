@@ -35,11 +35,11 @@ function BudgetRecordViewPage() {
         setDataFindRpSt,
         setDataRouteBudgetsSt,
         isAllowSearchCdp,
-        isConfirmCancel,
         actionTemplate,
         setContractorDocumentSt,
         setAuroraRPConsecutiveSt,
-        setSapRPConsecutiveSt
+        setSapRPConsecutiveSt,
+        nameSupplierSt
     } = useBudgeRecordView();
 
     return (
@@ -137,17 +137,18 @@ function BudgetRecordViewPage() {
                                         classNameLabel="text-black big bold"
                                         direction={EDirection.column}
                                         errors={errors}
-                                        //onChange={(value) => field.onChange(value)}
+                                        onChange={(value) => field.onChange(value)}
                                         onBlur={(e) => setContractorDocumentSt(Object(e).target.value)}
                                     />
                                 )} />
-                            <Controller
+                            {/* <Controller
                                 control={control}
                                 name={"supplierName"}
-                                render={({ field }) => (
+                                render={({ field }) => ( */}
                                     <InputComponent
-                                        id={field.name}
-                                        idInput={field.name}
+                                        id={'name'}
+                                        idInput={'name'}
+                                        value={nameSupplierSt}
                                         className="input-basic medium"
                                         typeInput="text"
                                         register={register}
@@ -157,7 +158,7 @@ function BudgetRecordViewPage() {
                                         disabled={true}
                                         errors={errors}
                                     />
-                                )} />
+                                {/* )} /> */}
                         </section>
                         <div className="funcionality-buttons-container">
                             <span className="bold text-center button" onClick={() => {
