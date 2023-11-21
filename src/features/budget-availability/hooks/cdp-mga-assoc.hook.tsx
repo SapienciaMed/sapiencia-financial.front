@@ -8,6 +8,7 @@ import { EResponseCodes } from '../../../common/constants/api.enum';
 import { AppContext } from '../../../common/contexts/app.context';
 import { useNavigate } from 'react-router-dom';
 import { IDropdownProps } from '../../../common/interfaces/select.interface';
+import { useBudgetsService } from '../../functionality/budgetPosition/hooks/budgets-service.hook';
 
 interface IArrayMgaAssoc {
     id: number,
@@ -28,6 +29,7 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
     const resolver = useYupValidationResolver(cdpMgaAssoc);
     const { setMessage } = useContext(AppContext);
     const { getCdpById, getActivitiesDetail, validate, createVinculationMGA,validateCDP } = useCdpService()
+    const { getAllCpc } = useBudgetsService()
     const [arrayDataSelect, setArrayDataSelect] = useState({
         listDetailedActivityMGA: []
     })
@@ -35,6 +37,7 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
     const [nextId, setNextId] = useState(1);
     const [disableAddButton, setDisableAddButton] = useState(false)
     const [activities, setActivities] = useState<IDropdownProps[]>([]);
+    const [cpc, setCpc] = useState<any[]>([]);
     const [valorFinal, setValorFinal] = useState<any>();
     const navigate = useNavigate();
 
@@ -44,7 +47,8 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
         control,
         handleSubmit,
         setValue,
-        reset
+        reset,
+        watch
     } = useForm<ICdpMgaAssoc>({
         resolver,
         mode: 'all',
@@ -65,12 +69,36 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
         }).catch((error) => console.log(error))
 
         getActivitiesDetail().then(res => {
-            const activities = Object(res).data?.map(d => ({ id: d.activity.id, name: d.activity.activityDescriptionMGA, value: d.activity.id, activityId: d.activityId, activity: d.detailActivity, cost: d.unitCost, activitieMga: d.id }))
+            const activities = Object(res).data?.map(d => ({ id: d.activity.id, name: d.activity.activityDescriptionMGA, value: d.activity.id, activityId: d.activityId, activity: d.detailActivity, cost: d.unitCost, activitieMga: d.id, pospre: d.pospre }))
             setActivities(activities)
+        })
+
+        getAllCpc().then(res => {
+            const cpc = Object(res).data?.map(c => ({ id: id, name: c.ejercise, value: c.id}))
+            setCpc(cpc)           
         })
 
     }, [])
 
+ 
+    const selecte = watch('DetailedActivityMGA')
+    
+    const [filteredCpc, setFilteredCpc] = useState<IDropdownProps[]>([]);
+    
+    /* useEffect(() => {
+        if (selecte) {
+            const selectActivitie = activities.find(activity => activity.id == selecte);
+
+            console.log(selectActivitie.pospre)
+
+            const filtered = cpc.filter(item => item.entityId === selectActivitie.pospre);
+
+            filtered.map(c => ({id: Number(c.id), name: String(c.ejercise)}))
+            setFilteredCpc(filtered); 
+        }
+    }, [selecte, cpc]);
+    
+    console.log(filteredCpc) */
 
     useEffect(() => {
         const dataMockServiceDetail = {
@@ -302,7 +330,9 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
         deleteElement,
         handleSaveSubmit,
         onCancel,
-        activities
+        activities,
+        filteredCpc,
+        cpc
     }
 
 }
