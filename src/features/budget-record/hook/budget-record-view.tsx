@@ -157,11 +157,12 @@ export function useBudgeRecordView() {
 
                     const routeBudgets = Object(res).data?.map(e => {
                         return e.linksRp?.map(link => {
+                           console.log({link})
                             return ({
                                 id: link.id,
                                 rpId: link.rpId, // rp Aurora
                                 rpSap: e.consecutiveSap,//link.amountBudgetAvailability.cdpCode,
-                                cdpPosition: link.amountBudgetAvailability.cdpPosition,
+                                cdpPosition: link.position,
                                 budgetRouteCode: link.amountBudgetAvailability.budgetRoute.budget.number,
                                 initialAmount: link.initialAmount,
                                 finalAmount: link.finalAmount,

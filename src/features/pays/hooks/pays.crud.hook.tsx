@@ -39,6 +39,7 @@ export function usePaysCrud(){
       } = useForm<IPagoDataSave>({
         defaultValues: {
         tipoDocumento: actualFullYear.toString(),
+        register: actualFullYear.toString(),
         },
         mode: 'onSubmit'
       });

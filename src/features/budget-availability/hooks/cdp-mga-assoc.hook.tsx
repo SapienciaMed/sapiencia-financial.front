@@ -60,9 +60,6 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
                     setValue('pospreSapiencia', Object(val).pospreSapienciaCode)
                     setValue('finalValue', Object(val).idcFinalValue)
                     setValorFinal(Object(val).idcFinalValue)
-
-                    console.log('CDP', Object(val).cdpCode);
-
                 })
             }
         }).catch((error) => console.log(error))
@@ -70,13 +67,9 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
         getActivitiesDetail().then(res => {
             const activities = Object(res).data?.map(d => ({ id: d.activity.id, name: d.activity.activityDescriptionMGA, value: d.activity.id, activityId: d.activityId, activity: d.detailActivity, cost: d.unitCost, activitieMga: d.id }))
             setActivities(activities)
-            console.log(activities)
         })
 
     }, [])
-
-
-
 
 
     useEffect(() => {
@@ -98,9 +91,7 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
         setDisableAddButton(sumaPercentage > 100)
     }, [arrayMgaAssoc])
 
-    const onSubmit = handleSubmit(async (data: any) => {
-
-        console.log('datos i',data)
+    const onSubmit = handleSubmit(async (data: any) => {       
      
         const sumaPercentage = arrayMgaAssoc.reduce((acumulador, elemento) => {
             return acumulador + elemento.percentage;
@@ -112,9 +103,6 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
         //setear valores
         const selectActivitie = activities.find(activity => activity.id == data.DetailedActivityMGA);
 
-        console.log('select',selectActivitie)
-
-
         const datos = {
             cdpId: id,
             costMGA: selectActivitie.cost
@@ -122,7 +110,7 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
 
         const validateCDPData = {
             activitieId: selectActivitie.id,
-            valueFinal: valorFinal,
+            valueFinal: valorFinal ?? 0,
             activitieCost: selectActivitie.cost
         };
 
@@ -169,11 +157,9 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
                 tabActivity: selectActivitie.activity,
                 tabDetailedMgaActivity: selectActivitie.name,
             }
-            console.log('Array',mgaAssoc)
             setArrayMgaAssoc([...arrayMgaAssoc, mgaAssoc])
             setNextId(nextId + 1);
-        }
-       
+        }      
 
     })
 
