@@ -11,12 +11,12 @@ import { ProgressSpinner } from "primereact/progressspinner";
 
 
 function PacPages() {
-    const {width} = useWidth()
+    const { width } = useWidth()
 
-    const {control, errors, isBtnDisable, showTable, tableComponentRef, tableActions, showSpinner, arrayDataSelect, disableEdit,
+    const { control, errors, isBtnDisable, showTable, tableComponentRef, tableActions, showSpinner, arrayDataSelect, disableEdit,
         tableColumns, navigate, setShowTable, register, onSubmit, reset, handleChangeExercise,
-        handleChangeVersion} = usePacData()
-    
+        handleChangeVersion, validateActionAccess } = usePacData()
+
     return (
         <div className='main-page'>
             <div className='card-table gap-0'>
@@ -24,38 +24,51 @@ function PacPages() {
                     <div className="text-black weight-500 extra-large">Consultar  PAC</div>
 
                     <div className={`${width < 800 ? 'display-justify-space-between-pac' : 'display-align-flex-end'} gap-0 gap-05`}>
-                        <div
-                            className="title-button font-big"
-                            onClick={() => { navigate('./asociar') }}
-                        >
-                            Asociar al PAC <AiOutlinePlusCircle />
-                        </div>
-                        <div
-                            className="title-button font-big"
-                            onClick={() => {navigate('./traslado')}}
-                        >
-                            Traslado <IoWalletOutline />
-                        </div>
-                        <div
-                            className="title-button font-big"
-                            onClick={() => { navigate('./cargar') }}
-                        >
-                            Cargar archivo <AiOutlinePlusCircle />  
-                        </div>
+
+                        {
+                            validateActionAccess('PAC_ASOCIAR_RUTAS') && (
+                                <div
+                                    className="title-button font-big"
+                                    onClick={() => { navigate('./asociar') }}
+                                >
+                                    Asociar al PAC <AiOutlinePlusCircle />
+                                </div>
+                            )
+                        }
+                        {
+                            validateActionAccess('PAC_TRASLADO') && (
+                                <div
+                                    className="title-button font-big"
+                                    onClick={() => { navigate('./traslado') }}
+                                >
+                                    Traslado <IoWalletOutline />
+                                </div>
+                            )
+                        }
+                        {
+                            validateActionAccess('PAC_CARGAR') && (
+                                <div
+                                    className="title-button font-big"
+                                    onClick={() => { navigate('./cargar') }}
+                                >
+                                    Cargar archivo <AiOutlinePlusCircle />
+                                </div>
+                            )
+                        }
 
                     </div>
 
                 </section>
-                
+
                 <section className="card-user">
                     <FormComponent action={onSubmit}>
                         <div className="funcionality-filters-container">
                             <Controller
                                 control={control}
                                 name={"exercise"}
-                                defaultValue='' 
+                                defaultValue=''
                                 render={({ field }) => {
-                                    return(
+                                    return (
                                         <InputComponent
                                             id={field.name}
                                             idInput={field.name}
@@ -71,7 +84,7 @@ function PacPages() {
                                             }}
                                             errors={errors}
 
-                                    />
+                                        />
                                     )
                                 }}
                             />
@@ -83,7 +96,7 @@ function PacPages() {
                                 classNameLabel="text-black weight-500 biggest text-required"
                                 direction={EDirection.column}
                                 data={[
-                                    { id: '1', name: 'Seleccione', value: null},
+                                    { id: '1', name: 'Seleccione', value: null },
                                     { id: "2", name: "Transferencias distritales", value: "Transferencias distritales" },
                                     { id: "3", name: "Recursos propios", value: "Recursos propios" },
                                     { id: "4", name: "Todas", value: "Todos" },
@@ -91,12 +104,12 @@ function PacPages() {
                                 control={control}
                                 isValidateName={false}
                             />
-                             <Controller
+                            <Controller
                                 control={control}
                                 name={"version"}
                                 defaultValue=''
                                 render={({ field }) => {
-                                    return(
+                                    return (
                                         <InputComponent
                                             id={field.name}
                                             idInput={field.name}
@@ -118,9 +131,9 @@ function PacPages() {
                         </div>
                         {
                             showSpinner && (
-                                <ProgressSpinner style={{width: '20px', height: '20px'}}  animationDuration=".5s" />
+                                <ProgressSpinner style={{ width: '20px', height: '20px' }} animationDuration=".5s" />
 
-                            )              
+                            )
                         }
                         <div className="funcionality-filters-container">
                             <SelectComponent
@@ -129,11 +142,11 @@ function PacPages() {
                                 className="select-basic"
                                 label='Proyecto'
                                 classNameLabel="text-black weight-500 biggest"
-                                placeholder={'Seleccionar'}   
+                                placeholder={'Seleccionar'}
                                 data={arrayDataSelect?.listProjects}
                                 filter={true}
                                 isValidateName={false}
-                                errors={errors} 
+                                errors={errors}
                             />
                             <SelectComponent
                                 idInput='idFund'
@@ -160,16 +173,16 @@ function PacPages() {
                                 errors={errors}
                             />
                         </div>
-                           
+
                         <div className="funcionality-buttons-container">
                             <ButtonComponent
                                 form='useQueryForm'
                                 value="Limpiar campos"
                                 type="button"
                                 className="button-clean-fields bold"
-                                action={() => { 
-                                    reset() 
-                                    if(showTable)  {
+                                action={() => {
+                                    reset()
+                                    if (showTable) {
                                         tableComponentRef.current.emptyData();
                                         setShowTable(false)
                                     }

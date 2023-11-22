@@ -22,28 +22,34 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
     entitiesData,
     isVisibleTable,
     setIsVisibleTable,
-    isBtnDisable
+    isBtnDisable,
+    validateActionAccess
   } = useFundsData();
 
   return (
     <div className='main-page'>
       <div className='card-table'>
         <div className="title-area">
-            <div className="text-black extra-large bold">Fondos</div>
+          <div className="text-black extra-large bold">Fondos</div>
         </div>
         <FormComponent action={onSubmit}>
           <div className="card-form">
             <div className="title-area">
               <label className="text-black biggest bold">Consultar Fondo</label>
 
-              <div
-                className="title-button text-main biggest"
-                onClick={() => {
-                  navigate("./create");
-                }}
-              >
-                Crear Fondo <AiOutlinePlusCircle />
-              </div>
+              {
+                validateActionAccess('FONDOS_CREAR') && (
+                  <div
+                    className="title-button text-main biggest"
+                    onClick={() => {
+                      navigate("./create");
+                    }}
+                  >
+                    Crear Fondo <AiOutlinePlusCircle />
+                  </div>
+                )
+              }
+
             </div>
             <div className="funcionality-filters-container">
               <SelectComponent
@@ -75,7 +81,7 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
                       errors={errors}
                       onChange={field.onChange}
                       min={0}
-                    /> 
+                    />
                   )
                 }}
               />
@@ -125,16 +131,16 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
             isVisibleTable ? "card-form isVisible" : "card-form isNotVisible"
           }
         >
-        <TableComponent
-          ref={tableComponentRef}
-          url={`${process.env.urlApiFinancial}/api/v1/funds/get-paginated`}
-          columns={tableColumns}
-          actions={tableActions}
-          isShowModal={true}
-          titleMessageModalNoResult={"Fondos"}
-        />
+          <TableComponent
+            ref={tableComponentRef}
+            url={`${process.env.urlApiFinancial}/api/v1/funds/get-paginated`}
+            columns={tableColumns}
+            actions={tableActions}
+            isShowModal={true}
+            titleMessageModalNoResult={"Fondos"}
+          />
         </div>
-      </div>          
+      </div>
     </div>
   );
 }

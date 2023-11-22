@@ -12,7 +12,7 @@ import DisplayPacPages from '../pages/display-pac.pages';
 import { ITableAction, ITableElement } from '../../../common/interfaces/table.interfaces';
 export function usePacData() {
 
-    const { setCondensedQueryData, setMessage } = useContext(AppContext);
+    const { setCondensedQueryData, setMessage, validateActionAccess } = useContext(AppContext);
     const navigate = useNavigate();
     const tableComponentRef = useRef(null);
     const { GetRoutesByValidity, GetUltimateVersion } = usePacServices()
@@ -196,6 +196,7 @@ export function usePacData() {
     const tableActions: ITableAction<any>[] = [
         {
             icon: "Detail",
+            hide:!validateActionAccess('PAC_VISUALIZAR'),
             onClick: (row) => {
                 setCondensedQueryData({
                     pacId: row.id,
@@ -215,6 +216,7 @@ export function usePacData() {
         },
         {
             icon: "Edit",
+            hide:!validateActionAccess('PAC_EDITAR'),
             onClick: (row) => {
                 const pacId = row?.id
                 const budgetRouteId = row?.dataCondensed.routeId
@@ -308,7 +310,8 @@ export function usePacData() {
         onSubmit,
         reset,
         handleChangeExercise,
-        handleChangeVersion
+        handleChangeVersion,
+        validateActionAccess
     }
     
 }
