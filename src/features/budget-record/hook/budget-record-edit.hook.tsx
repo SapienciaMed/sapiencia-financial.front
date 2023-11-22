@@ -19,8 +19,8 @@ import { editRpValidator } from '../../../common/schemas/editRP-validator';
 export function useBudgeRecordEdit() {
     
     const navigate = useNavigate();
-    const { id } = useParams();
-    const { setMessage } = useContext(AppContext);
+    const { id, idRp } = useParams();
+    const { setMessage } = useContext(AppContext);   
 
     const resolver = useYupValidationResolver(editRpValidator);
 
@@ -31,6 +31,7 @@ export function useBudgeRecordEdit() {
     const { getRouteCDPId, getOneRpp, updateRouteCdp, getTotalValuesImport } = useCdpService()
 
     const [dataRp, setDataRp] = useState<any>()
+    const [dataRpInitial, setDataRpInitial] = useState<any>()
     const [projectsData, setProjectsData] = useState<IProjectAdditionList[]>([]);
     const [areaData, setAreaData] = useState<IFunctionalArea[]>([]);
     const [areaNumber, setAreaNumber] = useState("");
@@ -47,6 +48,7 @@ export function useBudgeRecordEdit() {
     //Form
     const { control, handleSubmit, register, watch, setValue, reset, formState: { errors }, } = useForm({resolver});
 
+    
 
    
     useEffect(() => {
@@ -58,7 +60,7 @@ export function useBudgeRecordEdit() {
                 contractorDocument: ""
             }).then(res => {
                 if (res.data && res.data.length > 0) {
-                    setDataRp(res.data[0]);
+                    setDataRpInitial(res.data[0]);
 
                 }
             }).catch(err => {
@@ -66,9 +68,22 @@ export function useBudgeRecordEdit() {
 
             });
         }
-        console.log(dataRp)
+
+        
     }, [id]);
 
+    //filtrar informacion por id de rp
+    useEffect(() => {
+        if (dataRpInitial && dataRpInitial.linksRp) {
+            const filteredData = {
+                ...dataRpInitial,
+                linksRp: dataRpInitial.linksRp.filter(link => link.id == idRp)
+            };            
+            setDataRp(filteredData);
+        }
+    }, [dataRpInitial, idRp]);
+    
+   
 
     useEffect(() => {
         GetProjectsList().then((response) => {
@@ -161,45 +176,32 @@ export function useBudgeRecordEdit() {
     //calculos
     const inputAgaintsAmount = watch('againtsAmount')
     const inputCreditAmount = watch('creditAmount')
-    const inputFixedCompleted = watch('fixedCompleted')
-
-    /* useEffect(() => {
-        // Cuando el componente se monta, el botón está deshabilitado
-        setDisabledButton(true);
-    }, []); */
-
-   /*  useEffect(() => {
-        console.log(inputCreditAmount)
-        // Aquí, verifica si inputAgaintsAmount ha cambiado
-        if (inputCreditAmount && inputCreditAmount !== 0) {
-            setDisabledButton(true); // Habilita el botón si hay un cambio            
-        } else {
-            setDisabledButton(false); // O mantiene deshabilitado si no hay cambio
-            console.log('false')
-        }
-    }, [inputCreditAmount]); */
+    const inputFixedCompleted = watch('fixedCompleted')  
     
-    useEffect(() => {        
+    useEffect(() => {
         // Inicialmente asumimos que el botón debe estar deshabilitado
         let shouldDisableButton = true;
-    
-      
-            // Si inputCreditAmount no ha cambiado, entonces evalúa las otras condiciones
-            if (totalCautation !== undefined) {
-                shouldDisableButton = inputAgaintsAmount > Number(totalCautation);
-            }
-    
-            if (!shouldDisableButton && RP !== undefined) {
-                shouldDisableButton = inputCreditAmount > RP;
-            }
-    
-            if (!shouldDisableButton && totalCautation !== undefined && RP !== undefined) {
-                shouldDisableButton = totalCautation > RP;
-            }
-        
-    
+
+        // Si inputCreditAmount no ha cambiado, entonces evalúa las otras condiciones
+        if (totalCautation !== undefined) {
+            shouldDisableButton = inputAgaintsAmount > Number(totalCautation);
+        }
+
+        if (!shouldDisableButton && RP !== undefined) {
+            shouldDisableButton = inputCreditAmount > RP;
+        }
+
+        if (!shouldDisableButton && totalCautation !== undefined && RP !== undefined) {
+            shouldDisableButton = totalCautation > RP;
+        }
+
+        if (inputFixedCompleted > 0) {
+            shouldDisableButton = false
+        }
+
         setDisabledButton(shouldDisableButton);
     }, [totalCautation, RP, inputAgaintsAmount, inputCreditAmount, inputFixedCompleted]);
+   
     
 
     //total
@@ -234,8 +236,6 @@ export function useBudgeRecordEdit() {
             GetContractorsByDocuments({
                 documentList: [dataRp.contractorDocument]
             }).then(res => {
-              console.log(res)
-
               const contractorName = Object(res).data?.data[0]?.firstName + " " +
               Object(res).data.data[0]?.secondName + " " +
               Object(res).data.data[0]?.surname + " " +
@@ -260,7 +260,7 @@ export function useBudgeRecordEdit() {
         setValue("areaNumber", areaNumber || "");
         setValue("managementCenter", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.budgetRoute?.managementCenter || "");
         setValue("div", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.budgetRoute?.div || "");
-        setValue("cdpPosition", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.cdpPosition || "");
+        setValue("cdpPosition", dataRp?.linksRp?.[0]?.position || "");
         setValue("numberProject", projectNumber || "");
         setValue("dependencyId", dataRp?.dependencyId || "");
         setValue("contractualObject", dataRp?.contractualObject || "");
