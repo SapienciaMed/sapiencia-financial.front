@@ -34,7 +34,6 @@ const SelectSearch = ({ options, setter, style, defaultValue }) => {
     setSearchTerm(option.name);
     setShowOptions(false);
     setter(option.value);
-    console.log(option);
   };
 
   const handleClick = (e) => {

@@ -165,29 +165,6 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({datasFounds, for
   }, [proyecto, nombreProyecto, fondo, pospreNewV, posicion, valorInicial, idRpp]);
 
 
-  /*   useEffect(() => {
-      if (formDataCdpRoute.length > 0) {
-        const currentFormData = formDataCdpRoute.find((item) => item.id === formNumber);
-    
-        if (currentFormData) {
-          setProyecto(currentFormData.proyecto);
-          setNombreProyecto(currentFormData.nombreProyecto);
-          setFondo(currentFormData.fondo);
-          setPospreNewV(currentFormData.pospreNewV);
-          setAreaFuncional(currentFormData.areaFuncional);
-          setCentroGestor(currentFormData.centroGestor);
-          setDiv(currentFormData.div);
-          setPosicion(currentFormData.posicion);
-          setValorInicial(currentFormData.valorInicial);
-          setBalance(currentFormData.balance);
-          setIdRpp(currentFormData.idRppCode);
-        }
-      }
-    
-      console.log(formDataCdpRoute);
-    }, [formDataCdpRoute, formNumber]); */
-
-
   const formatToColombianPesos = (value) => {
     const formatter = new Intl.NumberFormat('es-CO', {
       style: 'currency',
