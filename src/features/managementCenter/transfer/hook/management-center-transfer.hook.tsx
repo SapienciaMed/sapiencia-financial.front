@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ITableAction, ITableElement } from "../../../../common/interfaces/table.interfaces";
 import { useForm } from "react-hook-form";
@@ -9,9 +9,11 @@ import { useTypesTranfersService } from "./types-transfers-service.hook";
 import { transferValidator } from "../../../../common/schemas/transfer-schema";
 import { ITransfers } from "../interfaces/TranfersInterfaces";
 import { IFilterTransferInterface } from "../interfaces/FilterTransferInterface";
+import { AppContext } from "../../../../common/contexts/app.context";
 
 export function useManagementCenterTransfer() {
     const tableComponentRef = useRef(null);
+    const { validateActionAccess } = useContext(AppContext)
     const navigate = useNavigate();
     const { GetTypesTransfers, GetTransfers } = useTypesTranfersService();
     const resolver = useYupValidationResolver(transferValidator);
@@ -47,12 +49,14 @@ export function useManagementCenterTransfer() {
     const tableActions: ITableAction<IBudgets>[] = [
         {
             icon: "Detail",
+            hide:!validateActionAccess('TRASLADO_VISUALIZAR'),
             onClick: (row) => {
                 navigate(`./view/${row.id}`);
             },
         },
         {
             icon: "Edit",
+            hide:!validateActionAccess('TRASLADO_EDITAR'),
             onClick: (row) => {
                 navigate(`./edit/${row.id}`);
             },
@@ -97,6 +101,7 @@ export function useManagementCenterTransfer() {
         typesTransfersData,
         controlRegister,
         showTable,
-        setShowTable
+        setShowTable,
+        validateActionAccess
     }
 } 

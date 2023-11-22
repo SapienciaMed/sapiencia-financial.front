@@ -54,12 +54,14 @@ export function useManagementCenterAdditional(typeMovement: string) {
     const tableActions: ITableAction<IAdditionsWithMovements>[] = [
         {
             icon: "Detail",
+            hide:!validateActionAccess('ADICION_CONSULTAR'),
             onClick: (row) => {
                 navigate(`./detail/${row.id}`);
             },
         },
         {
             icon: "Edit",
+            hide:!validateActionAccess('ADICION_EDITAR'),
             onClick: (row) => {
                 navigate(`./edit/${row.id}`);
             },
