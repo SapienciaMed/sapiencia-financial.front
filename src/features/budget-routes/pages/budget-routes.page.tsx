@@ -10,7 +10,7 @@ interface IAppProps { }
 
 function BudgetRoutesPage(props: IAppProps): React.JSX.Element {
     const { navigate, tableComponentRef, control, isBtnDisable, showTable, setShowTable,
-        register, reset, onSubmit, tableColumns, tableActions  } = useBudgetRoutesData();
+        register, reset, onSubmit, tableColumns, tableActions, validateActionAccess } = useBudgetRoutesData();
     return (
         <div className='main-page'>
             <div className='card-table'>
@@ -23,10 +23,14 @@ function BudgetRoutesPage(props: IAppProps): React.JSX.Element {
                             <label className="text-black biggest bold">
                                 Consultar Proyecto
                             </label>
-                            <div className="title-button text-three biggest">
-                                <span style={{ marginRight: '0.5em' }} onClick={() => { navigate('./create') }}> Crear ruta presupuestal</span>
-                                {<AiOutlinePlusCircle size={20} color="533893" />}
-                            </div>
+                            {
+                                validateActionAccess('RUTA_PRESUPUESTAL_CREAR') && (
+                                    <div className="title-button text-three biggest">
+                                        <span style={{ marginRight: '0.5em' }} onClick={() => { navigate('./create') }}> Crear ruta presupuestal</span>
+                                        {<AiOutlinePlusCircle size={20} color="533893" />}
+                                    </div>
+                                )
+                            }
                         </div>
 
                         <div className="one-filter-container">
@@ -36,18 +40,18 @@ function BudgetRoutesPage(props: IAppProps): React.JSX.Element {
                                 defaultValue=""
                                 render={({ field }) => {
                                     return (
-                                    <InputComponent
-                                        id={field.name}
-                                        idInput={field.name}
-                                        value={`${field.value}`}
-                                        className="input-basic"
-                                        typeInput="text"
-                                        register={register}
-                                        label="ID Proyecto"
-                                        classNameLabel="text-black biggest bold text-required"
-                                        direction={EDirection.column}
-                                        onChange={field.onChange}
-                                    /> 
+                                        <InputComponent
+                                            id={field.name}
+                                            idInput={field.name}
+                                            value={`${field.value}`}
+                                            className="input-basic"
+                                            typeInput="text"
+                                            register={register}
+                                            label="ID Proyecto"
+                                            classNameLabel="text-black biggest bold text-required"
+                                            direction={EDirection.column}
+                                            onChange={field.onChange}
+                                        />
                                     )
                                 }}
                             />
@@ -56,7 +60,7 @@ function BudgetRoutesPage(props: IAppProps): React.JSX.Element {
                     <div className="funcionality-buttons-container">
                         <span className="bold text-center button" onClick={() => {
                             reset();
-                            if(showTable)  {
+                            if (showTable) {
                                 tableComponentRef.current.emptyData();
                                 setShowTable(false)
                             }
@@ -73,17 +77,17 @@ function BudgetRoutesPage(props: IAppProps): React.JSX.Element {
                 </FormComponent>
 
                 {
-                    showTable && 
-                        <div className="card-form">
-                            <TableComponent
-                                ref={tableComponentRef}
-                                url={`${process.env.urlApiFinancial}/api/v1/budget-routes/get-paginated`}
-                                columns={tableColumns}
-                                actions={tableActions}
-                                isShowModal={true}
-                                titleMessageModalNoResult='Ruta presupuestal'
-                            />
-                        </div>
+                    showTable &&
+                    <div className="card-form">
+                        <TableComponent
+                            ref={tableComponentRef}
+                            url={`${process.env.urlApiFinancial}/api/v1/budget-routes/get-paginated`}
+                            columns={tableColumns}
+                            actions={tableActions}
+                            isShowModal={true}
+                            titleMessageModalNoResult='Ruta presupuestal'
+                        />
+                    </div>
                 }
             </div>
         </div>
