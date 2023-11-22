@@ -10,6 +10,9 @@ import CdpheadCreate from '../components/cdp-head-create.component';
 import PaginatorComponent from '../components/paginator-cdp.component';
 import CdpPaginator from '../components/cdp-paginator.component';
 import { log } from 'console';
+import useStore from '../../../store/store';
+import useStoreTwo from '../../../store/storeTwo';
+
 interface FormInfoType {
   id: number;
   idRppCode: string;
@@ -26,6 +29,8 @@ interface FormularioProps {
 }
 
 const CdpCrudPage = () => {
+  const { formDataCdpRoute, setFormDataCdpRoute } = useStore();
+  const { totalDataRuta, setTotalDataRuta } = useStoreTwo();
   const { setMessage } = useContext(AppContext);
   const { formInfo } = useContext(AppContext);
   const [formCount, setFormCount] = useState(2);
@@ -37,6 +42,7 @@ const CdpCrudPage = () => {
   const [proyectoError, setProyectoError] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [deleteRouteTwo, setDeleteRouteTwo] = useState(false);
+  const [formStates, setFormStates] = useState({});
   const [amountInfo, setAmountInfo] = useState<FormInfoType>({
     idRppCode: "",
     posicion: "",
@@ -44,6 +50,8 @@ const CdpCrudPage = () => {
     balance: "",
     id: 0,
   });
+
+
   const handleProyectoError = (selectedProyecto) => {
     if (!selectedProyecto) {
       setProyectoError(true);
@@ -56,12 +64,26 @@ const CdpCrudPage = () => {
     const newFormulario = { id: formCount };
     setFormularios([...formularios, newFormulario]);
     setFormCount(formCount + 1);
-    if(!deleteRouteTwo){
+  /*   if(!deleteRouteTwo){
       setTimeout(() => {
         handleEliminar(1)
         setDeleteRouteTwo(true);
       }, 500);
-    }
+    } */
+  };
+
+  const updateFormInGlobalState = (formNumber, updatedInfo) => {
+    const updatedFormData = formDataCdpRoute.map((form) =>
+      form.id === formNumber ? { ...form, ...updatedInfo } : form
+    );
+    setFormDataCdpRoute(updatedFormData);
+  };
+
+  const updateFormState = (formNumber, updatedState) => {
+    setFormStates((prevFormStates) => ({
+      ...prevFormStates,
+      [formNumber]: { ...prevFormStates[formNumber], ...updatedState },
+    }));
   };
 
   const handleEliminar = (formNumber) => {
@@ -74,17 +96,16 @@ const CdpCrudPage = () => {
       setCurrentPage((prevPage) => prevPage - 1);
     }
   };
-  function setInfoData() {
-    console.log("amountInfo", amountInfo);
-
+  const setInfoData = () => {
+  
     if (Object.keys(amountInfo).length > 0) {
-
       if ('id' in amountInfo) {
         const id = typeof amountInfo.id === 'number' ? amountInfo.id : 0;
         const isExisting = formularios.some((item) => item.id === id);
         if (isExisting) {
           const updatedFormularios = formularios.map((item) => {
             if (item.id === id) {
+              updateFormInGlobalState(item.formNumber, amountInfo);
               return amountInfo;
             }
             return item;
@@ -93,18 +114,20 @@ const CdpCrudPage = () => {
         } else {
           const updatedFormularios = [...formularios, { ...amountInfo, id: id }];
           setFormularios(updatedFormularios);
+          updateFormInGlobalState(id, amountInfo);
         }
       }
     }
-
+  
     let finalObj = {
       date: formHeadInfo['date'],
       contractObject: formHeadInfo['contractObject'],
       exercise: formHeadInfo['exercise'],
       icdArr: formularios
-    }
-    setObjectSendData(finalObj)
-  }
+    };
+    setObjectSendData(finalObj);
+  };
+  
 
   useEffect(() => {
     setInfoData()
@@ -197,7 +220,7 @@ const CdpCrudPage = () => {
           onOk: async () => {
             try {
               const response = await cdpService.createCdp_(nuevoObjeto);
-              console.log(response['operation']['code']);
+            
 
               setTimeout(() => {
                 if (response['operation']['code'] == "OK") {
@@ -274,6 +297,7 @@ const CdpCrudPage = () => {
   
   const formsPerPage = 2;
   const [currentPage, setCurrentPage] = useState(1);
+  const [dataComplete, setDataComplete] = useState([]);
   const indexOfLastForm = currentPage * formsPerPage;
   const indexOfFirstForm = indexOfLastForm - formsPerPage;
   const currentForms = formularios.slice(indexOfFirstForm, indexOfLastForm);
@@ -283,23 +307,75 @@ const CdpCrudPage = () => {
   const renderFormsForCurrentPage = () => {
     const indexOfLastForm = currentPage * formsPerPage;
     const indexOfFirstForm = indexOfLastForm - formsPerPage;
-    return formularios.slice(indexOfFirstForm, indexOfLastForm).map((_, index) => (
-      <FormCreateRutaCDPComponent
-        key={indexOfFirstForm + index}
-        isRequired={indexOfFirstForm + index === 0}
-        formNumber={indexOfFirstForm + index}
-        handleEliminar={handleEliminar}
-        formSubmitted={formSubmitted}
-        amountInfo={amountInfo}
-        setAmountInfo={setAmountInfo}
-      />
-    ));
+  
+    return formularios
+      .slice(indexOfFirstForm, indexOfLastForm)
+      .map((_, index) => {
+        const currentFormIndex = indexOfFirstForm + index;
+       // const currentFormData = formDataCdpRoute?.find((form) => form.id === currentFormIndex);
+       const foundObject = totalDataRuta.find(obj => obj.id === currentFormIndex);
+
+        return (
+          <FormCreateRutaCDPComponent
+          key={currentFormIndex}
+          isRequired={currentFormIndex === 0}
+          formNumber={currentFormIndex}
+          handleEliminar={handleEliminar}
+          formSubmitted={formSubmitted}
+          amountInfo={formStates[currentFormIndex] || {}}
+          setAmountInfo={(updatedState) => updateFormState(currentFormIndex, updatedState)}
+          datasFounds={foundObject}
+        />
+        );
+      });
   };
 
+  useEffect(() => {
+    // Check if formDataCdpRoute is not empty
+    if (formDataCdpRoute.length > 0) {
+      // Update dataComplete based on formDataCdpRoute
+      const newDataComplete = dataComplete.map((existingObj) => {
+        const matchingIndex = formDataCdpRoute.findIndex(
+          (newObj) => newObj.id === existingObj.id
+        );
+
+        if (matchingIndex !== -1) {
+          // If the object exists in formDataCdpRoute, update it
+          return formDataCdpRoute[matchingIndex];
+        }
+
+        return existingObj;
+      });
+
+      // Add new objects from formDataCdpRoute that don't exist in dataComplete
+      formDataCdpRoute.forEach((newObj) => {
+        const isNewObject = newDataComplete.every(
+          (existingObj) => existingObj.id !== newObj.id
+        );
+
+        if (isNewObject) {
+          newDataComplete.push(newObj);
+        }
+      });
+
+      setDataComplete(newDataComplete);
+    }
+    
+    setTotalDataRuta(dataComplete)
+  
+    
+  }, [formDataCdpRoute]);
 
   const handlePageChange = (page) => {
-    setCurrentPage(page);
+    if (page !== currentPage) {
+      setCurrentPage(page);
+      const indexOfLastForm = page * formsPerPage;
+      const indexOfFirstForm = indexOfLastForm - formsPerPage;
+      const updatedFormData = formDataCdpRoute.slice(indexOfFirstForm, indexOfLastForm);
+    }
   };
+  
+
   return (
     <div className='container-principal'>
       <div className="agregar-ruta-container">
