@@ -10,5 +10,5 @@ export interface IDropdownProps {
     activitDetailyId?: number,
     activitieMga?: number,
     activityId?: number,
-
+    pospre?:number
 }

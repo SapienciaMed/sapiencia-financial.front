@@ -226,6 +226,12 @@ export function useBudgeRecordView() {
         {
             fieldName: "finalAmount",
             header: "Valor final",
+            renderCell: (row) => {
+                // Si finalAmount es null o 0, muestra initialAmount. De lo contrario, muestra finalAmount.
+                return row.finalAmount === null || row.finalAmount === 0 
+                    ? row.initialAmount 
+                    : row.finalAmount;
+            }
         },
         {
             fieldName: "rpId",
