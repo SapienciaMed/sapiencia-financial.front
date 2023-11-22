@@ -15,7 +15,7 @@ export function useBudgetRoutesData() {
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
     const { GetProjectsList } = useAdditionsTransfersService()
-    const { setMessage } = useContext(AppContext);
+    const { setMessage, validateActionAccess } = useContext(AppContext);
     const resolver = useYupValidationResolver(budgetRoutesValidator);
     const {
         handleSubmit,
@@ -71,6 +71,7 @@ export function useBudgetRoutesData() {
     const tableActions: ITableAction<IBudgetsRoutes>[] = [
         {
             icon: "Detail",
+            hide:!validateActionAccess('RUTA_PRESUPUESTAL_VISUALIZAR'),
             onClick: (row) => {
                 const projectVinculate = linkedProjects.find((item) => item.id === row.idProjectVinculation);
              
@@ -119,6 +120,7 @@ export function useBudgetRoutesData() {
         },
         {
             icon: "Edit",
+            hide:!validateActionAccess('RUTA_PRESUPUESTAL_EDITAR'),
             onClick: (row) => {
                 navigate(`./edit/${row.id}`);
             },
@@ -154,5 +156,5 @@ export function useBudgetRoutesData() {
         setIsBtnDisable(inputValue.some(value => value != '' && value != undefined))
     },[inputValue])
 
-    return { navigate, tableComponentRef, control, register, reset, isBtnDisable, showTable, setShowTable, errors, onSubmit, tableColumns, tableActions }
+    return { navigate, tableComponentRef, control, register, reset, isBtnDisable, showTable, setShowTable, errors, onSubmit, tableColumns, tableActions, validateActionAccess }
 }
