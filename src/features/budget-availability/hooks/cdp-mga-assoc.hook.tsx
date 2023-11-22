@@ -81,7 +81,7 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
         }) */
 
         getAllCpc().then(res => {
-            const cpc = Object(res).data?.map(c => ({ id: c.id, name: c.ejercise, value: c.id, entityId: c.entityId}))
+            const cpc = Object(res).data?.map(c => ({ id: c.id, name: c.description, value: c.id, budgetId: c.budgetId}))
             setFilteredCpc(cpc)           
         })
 
@@ -91,17 +91,18 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
     const selecte = watch('DetailedActivityMGA')
     
     const [filteredCpc, setFilteredCpc] = useState<any[]>([]);
-   
+
+    
     
     useEffect(() => {
         if (selecte) {
             const selectActivitie = activities.find(activity => activity.id == selecte);           
 
-            const filtered = filteredCpc.filter(item => item.entityId === selectActivitie.pospre);            
+            const filtered = filteredCpc.filter(item => item.budgetId == selectActivitie.pospre);            
 
-            filtered.map(c => ({id: c.id, name: c.ejercise, value: c.id}))
+            filtered.map(c => ({id: c.id, name: c.description, value: c.id}))
             setCpc(filtered);             
-        }
+        }        
     }, [selecte, filteredCpc]);
     
 
