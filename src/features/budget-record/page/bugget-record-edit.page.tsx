@@ -10,7 +10,7 @@ function BudgetRecordEditPage() {
 
   
 
-    const { control, register, dependeciesData, componentsData, disabledButton, onSubmiteditRp, CancelFunction, totalCautation, RP } = useBudgeRecordEdit();
+    const { control, register, dependeciesData, componentsData, disabledButton, onSubmiteditRp, CancelFunction, totalCautation, RP,errors } = useBudgeRecordEdit();
 
     return (
         <div className="crud-page">
@@ -191,7 +191,7 @@ function BudgetRecordEditPage() {
                                             idInput={field.name}
                                             label="Valor inicial"
                                             className="inputNumber-basic"
-                                            classNameLabel="text-black biggest text-required"
+                                            classNameLabel="text-black biggest "
                                             mode="currency"
                                             currency="COP"
                                             locale="es-CO"
@@ -216,13 +216,13 @@ function BudgetRecordEditPage() {
                                         idInput={field.name}
                                         label="Modificado contracrédito"
                                         className="inputNumber-basic"
-                                        classNameLabel="text-black biggest text-required"
+                                        classNameLabel="text-black biggest"
                                         mode="currency"
                                         currency="COP"
                                         locale="es-CO"
                                         minFractionDigits={0}
                                         maxFractionDigits={0}
-                                    //errors={errors}
+                                        errors={errors}
                                     />
                                     )
                                 }}
@@ -241,13 +241,13 @@ function BudgetRecordEditPage() {
                                             idInput={field.name}
                                             label="Modificado crédito"
                                             className="inputNumber-basic"
-                                            classNameLabel="text-black biggest text-required"
+                                            classNameLabel="text-black biggest"
                                             mode="currency"
                                             currency="COP"
                                             locale="es-CO"
                                             minFractionDigits={0}
                                             maxFractionDigits={0}
-                                        //errors={errors}
+                                            errors={errors}
                                         />
                                     )
                                 }}
@@ -266,13 +266,13 @@ function BudgetRecordEditPage() {
                                             idInput={field.name}
                                             label="Fijado concluído"
                                             className="inputNumber-basic"
-                                            classNameLabel="text-black biggest text-required"
+                                            classNameLabel="text-black biggest"
                                             mode="currency"
                                             currency="COP"
                                             locale="es-CO"
                                             minFractionDigits={0}
                                             maxFractionDigits={0}
-                                        //errors={errors}
+                                            errors={errors}
                                         />
                                     )
                                 }}
@@ -291,14 +291,14 @@ function BudgetRecordEditPage() {
                                             idInput={field.name}
                                             label="Valor final"
                                             className="inputNumber-basic"
-                                            classNameLabel="text-black biggest text-required"
+                                            classNameLabel="text-black biggest"
                                             mode="currency"
                                             currency="COP"
                                             locale="es-CO"
                                             minFractionDigits={0}
                                             maxFractionDigits={0}
-                                        //errors={errors}
-                                        disabled
+                                            errors={errors}
+                                            disabled
                                         />
                                     )
                                 }}
@@ -324,7 +324,7 @@ function BudgetRecordEditPage() {
                                             register={register}
                                             onChange={field.onChange}
                                             characters={500}
-
+                                            errors={errors}
                                         ></TextAreaCountComponent>
                                     );
                                 }}

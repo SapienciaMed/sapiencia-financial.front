@@ -12,13 +12,17 @@ import { usePayrollExternalServices } from "./payroll-external-services.hook";
 import { IDropdownProps } from "../../../common/interfaces/select.interface";
 import { useCdpService } from "../../budget-availability/hooks/cdp-service";
 import { IUpdateRP } from "../interface/updateRp";
+import useYupValidationResolver from '../../../common/hooks/form-validator.hook';
+import { editRpValidator } from '../../../common/schemas/editRP-validator';
 
 
 export function useBudgeRecordEdit() {
     
     const navigate = useNavigate();
-    const { id } = useParams();
-    const { setMessage } = useContext(AppContext);
+    const { id, idRp } = useParams();
+    const { setMessage } = useContext(AppContext);   
+
+    const resolver = useYupValidationResolver(editRpValidator);
 
     const { GetRpByFilters, GetAllComponents, GetCausation, editRp } = useBudgetRecordServices();
     const { GetProjectsList } = useAdditionsTransfersService();
@@ -27,6 +31,7 @@ export function useBudgeRecordEdit() {
     const { getRouteCDPId, getOneRpp, updateRouteCdp, getTotalValuesImport } = useCdpService()
 
     const [dataRp, setDataRp] = useState<any>()
+    const [dataRpInitial, setDataRpInitial] = useState<any>()
     const [projectsData, setProjectsData] = useState<IProjectAdditionList[]>([]);
     const [areaData, setAreaData] = useState<IFunctionalArea[]>([]);
     const [areaNumber, setAreaNumber] = useState("");
@@ -35,14 +40,15 @@ export function useBudgeRecordEdit() {
     const [componentsData, setComponentssData] = useState<IDropdownProps[]>([]);
     const [totalCautation, setTotalCautation] = useState(0);
     const [RP, setRP] = useState(0);
-    const [disabledButton, setDisabledButton] = useState(false);
+    const [disabledButton, setDisabledButton] = useState(true);
 
     const [calculatedValue, setCalculatedValue] = useState(0);
 
 
     //Form
-    const { control, handleSubmit, register, watch, setValue, reset, formState: { errors }, } = useForm({});
+    const { control, handleSubmit, register, watch, setValue, reset, formState: { errors }, } = useForm({resolver});
 
+    
 
    
     useEffect(() => {
@@ -54,7 +60,7 @@ export function useBudgeRecordEdit() {
                 contractorDocument: ""
             }).then(res => {
                 if (res.data && res.data.length > 0) {
-                    setDataRp(res.data[0]);
+                    setDataRpInitial(res.data[0]);
 
                 }
             }).catch(err => {
@@ -62,8 +68,22 @@ export function useBudgeRecordEdit() {
 
             });
         }
+
+        
     }, [id]);
 
+    //filtrar informacion por id de rp
+    useEffect(() => {
+        if (dataRpInitial && dataRpInitial.linksRp) {
+            const filteredData = {
+                ...dataRpInitial,
+                linksRp: dataRpInitial.linksRp.filter(link => link.id == idRp)
+            };            
+            setDataRp(filteredData);
+        }
+    }, [dataRpInitial, idRp]);
+    
+   
 
     useEffect(() => {
         GetProjectsList().then((response) => {
@@ -156,12 +176,13 @@ export function useBudgeRecordEdit() {
     //calculos
     const inputAgaintsAmount = watch('againtsAmount')
     const inputCreditAmount = watch('creditAmount')
-    const inputFixedCompleted = watch('fixedCompleted')
+    const inputFixedCompleted = watch('fixedCompleted')  
     
-    useEffect(() => {        
-        
-        let shouldDisableButton = false;
+    useEffect(() => {
+        // Inicialmente asumimos que el botón debe estar deshabilitado
+        let shouldDisableButton = true;
 
+        // Si inputCreditAmount no ha cambiado, entonces evalúa las otras condiciones
         if (totalCautation !== undefined) {
             shouldDisableButton = inputAgaintsAmount > Number(totalCautation);
         }
@@ -174,13 +195,14 @@ export function useBudgeRecordEdit() {
             shouldDisableButton = totalCautation > RP;
         }
 
-        /*  if (totalCautation !== undefined && inputFixedCompleted) {
-             shouldDisableButton = inputFixedCompleted > totalCautation;
-         }    */
+        if (inputFixedCompleted > 0) {
+            shouldDisableButton = false
+        }
 
         setDisabledButton(shouldDisableButton);
-
     }, [totalCautation, RP, inputAgaintsAmount, inputCreditAmount, inputFixedCompleted]);
+   
+    
 
     //total
     useEffect(() => {
@@ -214,8 +236,6 @@ export function useBudgeRecordEdit() {
             GetContractorsByDocuments({
                 documentList: [dataRp.contractorDocument]
             }).then(res => {
-              console.log(res)
-
               const contractorName = Object(res).data?.data[0]?.firstName + " " +
               Object(res).data.data[0]?.secondName + " " +
               Object(res).data.data[0]?.surname + " " +
@@ -230,6 +250,8 @@ export function useBudgeRecordEdit() {
             })
         }
 
+       
+
         // Asignar los campos que siempre vienen
         setValue("dependencyId", dataRp?.dependencyId || "");
         setValue("fund", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.budgetRoute?.fund?.number || "");
@@ -238,7 +260,7 @@ export function useBudgeRecordEdit() {
         setValue("areaNumber", areaNumber || "");
         setValue("managementCenter", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.budgetRoute?.managementCenter || "");
         setValue("div", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.budgetRoute?.div || "");
-        setValue("cdpPosition", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.cdpPosition || "");
+        setValue("cdpPosition", dataRp?.linksRp?.[0]?.position || "");
         setValue("numberProject", projectNumber || "");
         setValue("dependencyId", dataRp?.dependencyId || "");
         setValue("contractualObject", dataRp?.contractualObject || "");
@@ -253,7 +275,11 @@ export function useBudgeRecordEdit() {
         //setValue("finalAmount", dataRp?.linksRp?.[0]?.finalAmount || "");
         //setValue("idcFinalValue", dataRp.linksRp[0].finalAmount === 0 ||  dataRp.linksRp[0].finalAmount === null ? dataRp?.linksRp?.[0]?.initialAmount : dataRp.linksRp[0].finalAmount);
 
+        
+
     }, [dataRp, areaNumber, projectNumber]);
+
+    
 
     const onSubmiteditRp = handleSubmit(async (data: IUpdateRP) => {
       
@@ -342,7 +368,8 @@ export function useBudgeRecordEdit() {
         onSubmiteditRp,
         CancelFunction,
         totalCautation,
-        RP
+        RP,
+        errors
 
     };
 }
