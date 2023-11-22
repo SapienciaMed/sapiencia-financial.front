@@ -153,8 +153,8 @@ export function useCreditorCrud(id) {
 
                 Object(res).operation.code == 'OK'
                     ? showModal({
-                        title: "Guardado",
-                        description: "¡Guardado exitosamente!",
+                        title: "Guardar",
+                        description: "¡Se guardó exitosamente!",
                         onOk: (() => {
                             setMessage({})
                             navigate('../')
@@ -191,8 +191,8 @@ export function useCreditorCrud(id) {
 
                 Object(res).operation.code == 'OK'
                     ? showModal({
-                        title: "Guardado",
-                        description: "¡Guardado exitosamente!",
+                        title: "Guardar",
+                        description: "¡Se guardó exitosamente!",
                         onOk: (() => {
                             setMessage({})
                             navigate('../')
