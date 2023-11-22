@@ -47,7 +47,7 @@ const CdpMgaAssocPage = () => {
                     value="Guardar"
                     type="submit"
                     action={() => handleSaveSubmit() }
-                    disabled={disableAddButton}
+                    disabled={!disableAddButton}
                 />
             </div>
             </section>

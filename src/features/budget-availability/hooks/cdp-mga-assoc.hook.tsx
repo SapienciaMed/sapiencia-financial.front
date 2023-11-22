@@ -105,23 +105,12 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
     }, [selecte, filteredCpc]);
     
 
-    useEffect(() => {
-        const dataMockServiceDetail = {
-            listDetailedActivityMGA: [
-                { id: '1', name: 'Seleccione', value: null },
-                { id: "2", name: "Actividad 1", value: "Actividad 1", costActivity: '700000.0' },
-                { id: "3", name: "Actividad 2", value: "Actividad 2", costActivity: '500000.0' },
-                { id: "4", name: "Actividad 3", value: "Actividad 3", costActivity: '500000.0' },
-            ]
-        }
-        setArrayDataSelect(dataMockServiceDetail)
-    }, [])
-
+    
     useEffect(() => {
         const sumaPercentage = arrayMgaAssoc.reduce((acumulador, elemento) => {
             return acumulador + elemento.percentage;
         }, 0);
-        setDisableAddButton(sumaPercentage > 100)
+        setDisableAddButton(sumaPercentage >= 100)
     }, [arrayMgaAssoc])
 
     const onSubmit = handleSubmit(async (data: any) => {   
