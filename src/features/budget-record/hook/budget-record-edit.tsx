@@ -10,7 +10,7 @@ import { IMessage } from "../../../common/interfaces/global.interface";
 import { useNavigate } from "react-router-dom";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { budgetRecordEditCrudValidator } from "../../../common/schemas/budget-record-edit-validator";
-
+import moment from 'moment';
 
 export function useBudgeRecordEdit(id) {
 
@@ -18,12 +18,12 @@ export function useBudgeRecordEdit(id) {
     const navigate = useNavigate();
     const { GetRpByFilters, GetAllComponents, UpdateDataBasicRp, GetAllActivityObjectContract } = useBudgetRecordServices();
     const { GetAllDependencies, GetContractorsByDocuments } = usePayrollExternalServices()
-    const { setMessage, authorization } = useContext(AppContext);
+    const { setMessage} = useContext(AppContext);
 
     const [componentsData, setComponentsData] = useState<IDropdownProps[]>([]);
     const [dependeciesData, setDependeciesData] = useState<IDropdownProps[]>([]);
 
-    const [isAllowSave, setIsAllowSave] = useState(false)
+    /* const [isAllowSave, setIsAllowSave] = useState(false) */
     const [isUploadData, setIsUploadData] = useState(false)
     const [activityObjectContractData, setActivityObjectContractData] = useState<IDropdownProps[]>([]);
 
@@ -90,10 +90,10 @@ export function useBudgeRecordEdit(id) {
 
     const formData = watch()
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (!isUploadData) return;
         setIsAllowSave(true)
-    }, [formData])
+    }, [formData]) */
 
 
     function pad(num) {
@@ -101,13 +101,11 @@ export function useBudgeRecordEdit(id) {
     }
 
 
-    const formatDate = (dateUTC: Date) => {
-        let year = new Date(dateUTC).getUTCFullYear();
-        let month = new Date(dateUTC).getUTCMonth() + 1; // Los meses en JavaScript van de 0 a 11
-        let day = new Date(dateUTC).getUTCDate() + 1;
-        let fechaFormateada = year + '-' + pad(month) + '-' + pad(day)
-        return fechaFormateada
+    function formatDate(fecha:Date) {
+        return moment(new Date(fecha).toISOString()).format('YYYY-MM-DD');
     }
+    
+
 
     useEffect(() => {
         if (id != "") {
@@ -116,10 +114,10 @@ export function useBudgeRecordEdit(id) {
             }).then(res => {
                 if (res.operation.code == 'OK') {
                     setValueRegister('id', res.data[0].id)
-                    setValueRegister('supplierName', res.data[0].supplierType == 'Acreedor' ? Object(res).data[0].creditor.name : (contractorListSt.find(e=>e.value==res.data[0].contractorDocument)).name)
+                    setValueRegister('supplierName', res.data[0].supplierType == 'Acreedor' ? Object(res).data[0].creditor.name : (contractorListSt.find(e => e.value == res.data[0].contractorDocument))?.name)
                     setValueRegister('contractorDocument', res.data[0].contractorDocument)
-                    setValueRegister('documentDate', formatDate(res.data[0].documentDate))
-                    setValueRegister('dateValidity', formatDate(res.data[0].dateValidity))
+                    setValueRegister('documentDate', JSON.stringify(res.data[0].documentDate.split('T')[0]))
+                    setValueRegister('dateValidity', JSON.stringify(res.data[0].dateValidity.split('T')[0]))
                     setValueRegister('dependencyId', res.data[0].dependencyId)
                     setValueRegister('contractualObject', res.data[0].contractualObject)
                     setValueRegister('componentId', res.data[0].componentId)
@@ -136,8 +134,9 @@ export function useBudgeRecordEdit(id) {
     }, [id, contractorListSt])
 
     const onSubmitEditRp = handleSubmit(async (data: IBudgetRecord) => {
-        data.documentDate = formatDate(new Date(data.documentDate))
-        data.dateValidity = formatDate(new Date(data.dateValidity))
+
+        data.documentDate = formatDate(data.documentDate);
+        data.dateValidity = formatDate(data.dateValidity);
 
         showModal({
             title: "Guardar",
@@ -205,7 +204,6 @@ export function useBudgeRecordEdit(id) {
         onSubmitEditRp,
         componentsData,
         dependeciesData,
-        isAllowSave,
         contractorListSt,
         activityObjectContractData
     };

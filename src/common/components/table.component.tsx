@@ -282,9 +282,8 @@ function getIconElement(
         "Editar"
       ) : (
         <Icons.FaPencilAlt
-          className={`button grid-button button-edit ${
-            isDisabled && "disable"
-          }`}
+          className={`button grid-button button-edit ${isDisabled && "disable"
+            }`}
         />
       );
     case "Delete":
@@ -425,6 +424,7 @@ const ActionComponent = (props: {
       {props.actions.map((action) => (
         <div
           key={action.icon}
+          style={{ display: action.hide ? "none" : "block" }}
           onClick={() => !props?.isDisabled && action.onClick(props.row)}
         >
           {getIconElement(action.icon, "src", props.isDisabled)}

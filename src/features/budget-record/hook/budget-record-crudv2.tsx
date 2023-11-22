@@ -24,7 +24,7 @@ export function useBudgeRecordCrudv2() {
     const { GetRoutesByValidity } = useCdpServices()
     const { GetCreditorsByFilters } = useCreditorsServices()
     const { GetAllDependencies, GetContractorsByDocuments } = usePayrollExternalServices()
-    const { setMessage, authorization } = useContext(AppContext);
+    const { setMessage, authorization, validateActionAccess } = useContext(AppContext);
 
     const [componentsData, setComponentsData] = useState<IDropdownProps[]>([]);
     const [dependeciesData, setDependeciesData] = useState<IDropdownProps[]>([]);
@@ -147,7 +147,7 @@ export function useBudgeRecordCrudv2() {
     
 
     const messageValidateSupplier = (type: string) => {
-        /* setMessage({
+        setMessage({
             title: `${type} no existe`,
             show: true,
             OkTitle: "Aceptar",
@@ -158,7 +158,7 @@ export function useBudgeRecordCrudv2() {
                 setMessage({})
             }
         }
-        ) */
+        )
     }
 
 
@@ -263,7 +263,11 @@ export function useBudgeRecordCrudv2() {
             renderCell: (row) => {
                 return (
                     <div className="flex align-items-center">
-                        <Checkbox inputId={row.id} name="row" value={row} onChange={onAmountChange} checked={selectedAmounts?.some((item) => item.id == row.id)} />
+                        {
+                           validateActionAccess('RP_ASOCIAR_RUTAS') && (
+                               <Checkbox inputId={row.id} name="row" value={row} onChange={onAmountChange} checked={selectedAmounts?.some((item) => item.id == row.id)} />
+                           ) 
+                        }
                     </div>)
             }
         },
@@ -287,7 +291,19 @@ export function useBudgeRecordCrudv2() {
                 consecutiveSap: consecutiveCdpSap,
                 consecutiveAurora: consecutiveCdpAurora,
             }).then(res => {
-                console.log({ res: res.data.array })
+               
+                if(res.data.array.length==0){
+                    setMessage({
+                        title: `Datos no encontrados`,
+                        description: 'No existe CDP asociado a los valores de búsqueda',
+                        show: true,
+                        OkTitle: "Aceptar",
+                        onOk: () => {
+                            setMessage({})
+                            setValueRegister('newAmount', null)
+                        }
+                    })
+                }
 
                 const dataCdp = res.data.array.map(e => {
                     return e.amounts.map(el => {
@@ -298,7 +314,7 @@ export function useBudgeRecordCrudv2() {
                             projectName: el.projectName,
                             fundCode: el.budgetRoute.fund.number,
                             pospreCode: el.budgetRoute.fund.number,
-                            amount: el.amount,
+                            amount: parseFloat(el.amount).toFixed(2),
                             amountCdpId: el.id
                         })
                     })
@@ -321,7 +337,7 @@ export function useBudgeRecordCrudv2() {
                 projectName: el.projectName,
                 fundCode: el.fundCode,
                 pospreCode: el.pospreCode,
-                amount: confirmChangeAmountSt?.amount && confirmChangeAmountSt.id == el.id ? confirmChangeAmountSt.amount : el.amount,
+                amount: confirmChangeAmountSt?.amount && confirmChangeAmountSt.id == el.id ? parseFloat(confirmChangeAmountSt.amount).toFixed(2) : parseFloat(el.amount).toFixed(2),
                 amountCdpId: el.amountCdpId
             })
         })
@@ -369,7 +385,8 @@ export function useBudgeRecordCrudv2() {
                 isActive: e.isActive,
                 reasonCancellation: "",
                 rpId: null,
-                position: index + 1
+                position: index + 1,
+                finalAmount:confirmChangeAmountSt?.amount && confirmChangeAmountSt.id == e.id ? confirmChangeAmountSt.amount : e.amount,
             })
         })
         let amountRouteToSave = [];
@@ -398,7 +415,7 @@ export function useBudgeRecordCrudv2() {
     const onSubmitRP = handleSubmit(async (data: IBudgetRecord) => {
         data.documentDate = formatDate(new Date(data.documentDate))
         data.dateValidity = formatDate(new Date(data.dateValidity))
-
+        
         showModal({
             title: "Guardar",
             description: "¿Está segur@ de guardar la información?",
@@ -454,7 +471,7 @@ export function useBudgeRecordCrudv2() {
                 setMessage({})
                 navigate('../')
             }),
-            OkTitle: "Aceptar",
+            OkTitle: "Cerrar",
         })
     }
 

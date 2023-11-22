@@ -8,7 +8,7 @@ import { Controller } from "react-hook-form";
 interface IAppProps { }
 
 function ManagementCenterTransferPage(props: IAppProps): React.JSX.Element {
-    const { tableActions, tableColumns, tableComponentRef, navigate, onSubmit, showTable, register, errors, reset, typesTransfersData, controlRegister, isBtnDisable,setShowTable } = useManagementCenterTransfer();
+    const { tableActions, tableColumns, tableComponentRef, navigate, onSubmit, showTable, register, errors, reset, typesTransfersData, controlRegister, isBtnDisable, setShowTable, validateActionAccess } = useManagementCenterTransfer();
     return (
         <div className='main-page'>
             <div className='card-table'>
@@ -21,7 +21,11 @@ function ManagementCenterTransferPage(props: IAppProps): React.JSX.Element {
                             <label className="text-black biggest bold">
                                 Consultar Traslado
                             </label>
-                            <div style={{ marginTop: '0px' }} className="title-button text-three large" onClick={() => navigate('./create')}> Crear traslado <BiPlusCircle /> </div>
+                            {
+                                validateActionAccess('TRASLADO_CREAR') && (
+                                    <div style={{ marginTop: '0px' }} className="title-button text-three large" onClick={() => navigate('./create')}> Crear traslado <BiPlusCircle /> </div>
+                                )
+                            }
                         </div>
 
                         <div className="funcionality-filters-container">
@@ -81,7 +85,7 @@ function ManagementCenterTransferPage(props: IAppProps): React.JSX.Element {
                                 className="button-clean-fields bold"
                                 action={() => {
                                     reset()
-                                    if(showTable)  {
+                                    if (showTable) {
                                         tableComponentRef.current.emptyData();
                                         setShowTable(false)
                                     }

@@ -9,7 +9,7 @@ import { Controller } from 'react-hook-form';
 function ManagementCenterAdditionalPage({typeMovement}): React.JSX.Element{   
 
     const { errors, controlRegister, isBtnDisable, tableComponentRef, showTable, tableActions, tableColumns, 
-        reset, onSubmit, navigate, setShowTable, register } = useManagementCenterAdditional(typeMovement)        
+        reset, onSubmit, navigate, setShowTable, register, validateActionAccess } = useManagementCenterAdditional(typeMovement)        
 
     return (
         <div className='main-page'>
@@ -21,9 +21,15 @@ function ManagementCenterAdditionalPage({typeMovement}): React.JSX.Element{
                     <div className="card-form">
                         <div className="title-area"> 
                             <label className="text-black biggest bold"> {typeMovement === "Adicion" ? "Consultar adición" : "Consultar disminución"}  </label>
-                            <div className="title-button text-three large" onClick={() => { navigate('./create') }}>  
+                            {
+                                validateActionAccess(typeMovement === "Adicion" ? 'ADICION_CREAR':'DISMINUCION_CREAR') && (
+                                    <div className="title-button text-three large" onClick={() => { navigate('./create') }}>  
                                 Crear {typeMovement === "Adicion" ? "Adición" : "Disminución"} <BiPlusCircle/> 
                             </div>
+                                ) 
+                            }
+                            
+                        
                         </div>
                         
                         <div className="funcionality-filters-container">

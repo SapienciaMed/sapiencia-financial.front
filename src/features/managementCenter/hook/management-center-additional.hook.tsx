@@ -1,13 +1,14 @@
 import { useForm } from "react-hook-form";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { consultFundsAdditional } from "../../../common/schemas";
 import { useNavigate } from "react-router-dom";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { IAdditionsFilters, IAdditionsWithMovements } from "../interfaces/Additions";
+import { AppContext } from "../../../common/contexts/app.context";
 
 export function useManagementCenterAdditional(typeMovement: string) {
-
+    const { validateActionAccess } = useContext(AppContext)
     const tableComponentRef = useRef(null);
     const navigate = useNavigate();
     const resolver = useYupValidationResolver(consultFundsAdditional);
@@ -53,12 +54,14 @@ export function useManagementCenterAdditional(typeMovement: string) {
     const tableActions: ITableAction<IAdditionsWithMovements>[] = [
         {
             icon: "Detail",
+            hide:!validateActionAccess('ADICION_CONSULTAR'),
             onClick: (row) => {
                 navigate(`./detail/${row.id}`);
             },
         },
         {
             icon: "Edit",
+            hide:!validateActionAccess('ADICION_EDITAR'),
             onClick: (row) => {
                 navigate(`./edit/${row.id}`);
             },
@@ -111,6 +114,7 @@ export function useManagementCenterAdditional(typeMovement: string) {
         navigate,
         register,
         reset,
-        setShowTable
+        setShowTable,
+        validateActionAccess
     }
 }

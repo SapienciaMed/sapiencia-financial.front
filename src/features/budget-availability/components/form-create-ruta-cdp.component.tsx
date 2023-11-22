@@ -5,6 +5,8 @@ import SelectSearch from './select-create-cdp.component';
 import { AppContext } from '../../../common/contexts/app.context';
 import { useBudgetRoutesCrudData } from '../../budget-routes/hooks/budget-routes-crud.hook';
 import { Grid } from '@mui/material';
+import useStore from '../../../store/store';
+import useStoreTwo from '../../../store/storeTwo';
 
 export interface FormInfoType {
   idRppCode: string;
@@ -12,6 +14,16 @@ export interface FormInfoType {
   valorInicial: string;
   balance: string;
   id: number;
+}
+
+export interface FormInfoData {
+  proyecto: string;
+  nombreProyecto: string;
+  fondo: string;
+  pospre: string;
+  posicion: string;
+  valorInicial: string;
+  idRpp: string;
 }
 
 interface FormularioProps {
@@ -22,9 +34,12 @@ interface FormularioProps {
   setAmountInfo: React.Dispatch<React.SetStateAction<FormInfoType>>;
   amountInfo: FormInfoType;
   posicionCdp?: number;
+  datasFounds: any; 
 }
 
-const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, isRequired = false, formNumber, handleEliminar, setAmountInfo, amountInfo, posicionCdp }) => {
+
+
+const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({datasFounds, formSubmitted, isRequired = false, formNumber, handleEliminar, setAmountInfo, amountInfo, posicionCdp }) => {
   const { setFormInfo, formInfo } = useContext(AppContext);
   const cdpService = useCdpService();
   const [proyecto, setProyecto] = useState('');
@@ -32,6 +47,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
   const [fondo, setFondo] = useState('');
   const [pospre, setPospre] = useState('0');
   const [pospreNewV, setPospreNewV] = useState('');
+  const [posPre1, setPosPre1] = useState();
   const [areaFuncional, setAreaFuncional] = useState('');
   const [centroGestor, setCentroGestor] = useState('91500000');
   const [div, setDiv] = useState('SAPI');
@@ -40,6 +56,20 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
   const [balance, setBalance] = useState('0');
   const [idRpp, setIdRpp] = useState('0');
   const { setMessage } = useContext(AppContext);
+  const { formDataCdpRoute, setFormDataCdpRoute } = useStore();
+  const { totalDataRuta } = useStoreTwo();
+  const [arrAmounts, setArrAmounts] = useState([])
+
+
+  const [formInfoComponent, setFormInfoComponent] = useState<FormInfoData>({
+    proyecto: "",
+    nombreProyecto: "",
+    fondo: "",
+    pospre: "",
+    posicion: "",
+    valorInicial: "",
+    idRpp: "",
+  });
 
   const onDeleteClick = () => {
     handleEliminar(formNumber);
@@ -60,6 +90,10 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
     name: item.name,
   }));
 
+  const renderedFormNumber = (posicionCdp && posicionCdp !== 0) ?
+    (formNumber > posicionCdp ? formNumber : posicionCdp) :
+    formNumber;
+
   const validateField = (field) => {
     if (formSubmitted && !field) {
 
@@ -69,6 +103,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
   };
 
   const loadInfo = () => {
+    let arrInfo = [];
     setAmountInfo((prevAmountInfo) => ({
       ...prevAmountInfo,
       idRppCode: idRpp,
@@ -77,11 +112,58 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
       id: Number(formNumber),
       balance: balance,
     }));
+
+    setFormInfoComponent((dataInfo) => ({
+      ...dataInfo,
+      proyecto, nombreProyecto, fondo, pospre, posicion, valorInicial, idRpp, id: formNumber
+    }));
+
+
+    if (arrInfo && arrInfo.length > 0) {
+      const exists = arrInfo.some(obj => obj.id === formNumber);
+      if (!exists) {
+        const newObj = {
+          proyecto,
+          nombreProyecto,
+          fondo,
+          "pospre": pospreNewV,
+          posicion,
+          valorInicial,
+          idRpp,
+          areaFuncional,
+          id: renderedFormNumber
+        };
+       
+        
+        arrInfo.push(newObj);
+        setFormDataCdpRoute([...arrInfo]); // Create a new array with the updated object
+        localStorage.setItem('infoImporter', JSON.stringify(formInfoComponent));
+      } else {
+        console.log(`Ya existe un objeto con id ${formNumber} en arrInfo.`);
+      }
+    } else {
+      const newObj = {
+        proyecto,
+        nombreProyecto,
+        fondo,
+        "pospre": pospreNewV,
+        posicion,
+        valorInicial,
+        idRpp,
+        areaFuncional,
+        id: formNumber
+      };
+      arrInfo.push(newObj);
+      setFormDataCdpRoute([...arrInfo]); // Create a new array with the updated object
+      localStorage.setItem('infoImporter', JSON.stringify(formInfoComponent));
+    }
+
   };
 
   useEffect(() => {
     loadInfo();
-  }, [proyecto, nombreProyecto, fondo, pospre, posicion, valorInicial, idRpp]);
+  }, [proyecto, nombreProyecto, fondo, pospreNewV, posicion, valorInicial, idRpp]);
+
 
   const formatToColombianPesos = (value) => {
     const formatter = new Intl.NumberFormat('es-CO', {
@@ -140,17 +222,19 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
   };
 
   useEffect(() => {
-    const selectedProject = projectsData.find((project) => {
+    projectsData.find((project) => {
       if (project.value === parseInt(proyecto)) {
         let arrName = project['nameProject'].split('-');
-        setNombreProyecto(arrName[2]);
+        setNombreProyecto(arrName[1]);
         projectsVinculateData.find((area) => {
           if (project['areaFuncional'] === area.functionalAreaId) {
             setAreaFuncional(area.areaFuntional.number);
           }
         });
+  
       }
     });
+    
   }, [proyecto]);
 
   const fetchData = async () => {
@@ -207,9 +291,20 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
     fetchData();
   }, [pospreNewV, fondo, proyecto]);
 
-  const renderedFormNumber = (posicionCdp && posicionCdp !== 0) ?
-    (formNumber > posicionCdp ? formNumber : posicionCdp) :
-    formNumber;
+
+  useEffect(() => {
+    if (datasFounds && datasFounds !== undefined) {
+      setProyecto(datasFounds.proyecto);
+      setNombreProyecto(datasFounds.nombreProyecto);
+      setFondo(datasFounds.fondo);
+      setPospreNewV(datasFounds.pospre);
+      setPosicion(datasFounds.posicion);
+      setValorInicial(datasFounds.valorInicial);
+      setIdRpp(datasFounds.idRpp);
+      setAreaFuncional(datasFounds.areaFuncional);
+    }
+
+  }, [])
 
   return (
     <div className='containerOne'>
@@ -242,7 +337,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
             <Grid item xs={12} sm={12} md={4}>
               <div className={`col-4`}>
                 <label>Proyecto <span>*</span></label>
-                <SelectSearch style={{ border: formSubmitted && !proyecto ? '1px solid red' : '1px solid #ccc' }} options={projectsData} setter={setProyecto} />
+                <SelectSearch defaultValue={parseInt(proyecto)} style={{ border: formSubmitted && !proyecto ? '1px solid red' : '1px solid #ccc' }} options={projectsData} setter={setProyecto} />
                 {formSubmitted && !proyecto && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
               </div>
             </Grid>
@@ -263,14 +358,14 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
             <Grid item xs={12} sm={12} md={4}>
               <div className={`col-4`}>
                 <label>Fondo <span>*</span></label>
-                <SelectSearch style={{ border: formSubmitted && !fondo ? '1px solid red' : '1px solid #ccc' }} options={fundsData} setter={setFondo} />
+                <SelectSearch defaultValue={fondo} style={{ border: formSubmitted && !fondo ? '1px solid red' : '1px solid #ccc' }} options={fundsData} setter={setFondo} />
                 {formSubmitted && !fondo && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
               </div>
             </Grid>
             <Grid item xs={12} sm={12} md={4}>
               <div className={`col-4`}>
                 <label>Pospre <span>*</span></label>
-                <SelectSearch style={{ border: formSubmitted && !pospreNewV ? '1px solid red' : '1px solid #ccc' }} options={convertedOptionsPosPre} setter={setPospreNewV} />
+                <SelectSearch defaultValue={pospreNewV} style={{ border: formSubmitted && !pospreNewV ? '1px solid red' : '1px solid #ccc' }} options={convertedOptionsPosPre} setter={setPospreNewV} />
                 {formSubmitted && !pospreNewV && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
               </div>
             </Grid>

@@ -72,7 +72,7 @@ function BudgetRecordCrudPagev2() {
                     classNameLabel="text-black big bold text-required"
                     direction={EDirection.column}
                     errors={errors}
-                    onChange={(value) => field.onChange(value)}
+                    onBlur={(value) => field.onChange(value)}
                   />
                 )} />
               <Controller

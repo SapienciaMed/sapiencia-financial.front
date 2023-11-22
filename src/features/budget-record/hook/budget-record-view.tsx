@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useBudgetRecordServices } from "./budget-record-services.hook";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
-import { IBudgetRecord, IBudgetRecordFilter } from "../interface/budget-record";
+import { IBudgetRecordFilter } from "../interface/budget-record";
 import { Controller, useForm } from "react-hook-form";
 import { AppContext } from "../../../common/contexts/app.context";
 import { Checkbox } from "primereact/checkbox";
@@ -10,7 +10,6 @@ import { EDirection } from "../../../common/constants/input.enum";
 import { usePayrollExternalServices } from "./payroll-external-services.hook";
 import { useCreditorsServices } from "../../creditors/hook/creditors-service.hook";
 import { IDropdownProps } from "../../../common/interfaces/select.interface";
-import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import * as Icons from "react-icons/fa";
 
@@ -18,11 +17,11 @@ import * as Icons from "react-icons/fa";
 export function useBudgeRecordView() {
 
     const navigate = useNavigate()
-    const { GetRpByFilters, CancelLinkCdp, GetAllComponents } = useBudgetRecordServices();
+    const { GetRpByFilters, CancelLinkCdp } = useBudgetRecordServices();
     const { GetContractorsByDocuments, GetAllDependencies } = usePayrollExternalServices()
     const { GetCreditorsByFilters } = useCreditorsServices()
 
-    const { setMessage, authorization } = useContext(AppContext);
+    const { setMessage, validateActionAccess } = useContext(AppContext);
     const tableComponentRef = useRef(null);
 
     const [dataFindRpSt, setDataFindRpSt] = useState({})
@@ -36,6 +35,7 @@ export function useBudgeRecordView() {
 
     const [auroraRPConsecutiveSt, setAuroraRPConsecutiveSt] = useState('')
     const [sapRPConsecutiveSt, setSapRPConsecutiveSt] = useState('')
+    const [nameSupplierSt, setNameSupplierSt] = useState('')
 
 
     const {
@@ -63,17 +63,23 @@ export function useBudgeRecordView() {
         /* resolver, */
     });
 
-    const { consecutivoRpSap, consecutiveRpAurora, supplierType, reasonCancellation, supplierName, taxIdentificationId } = watch()
+    const { consecutivoRpSap, consecutiveRpAurora, supplierType, supplierName, contractorDocument, taxIdentificationId } = watch()
+
+    useEffect(() => {
+        if (supplierType != '' || contractorDocument != '') {
+            setNameSupplierSt(supplierName)
+        } else {
+            setNameSupplierSt('')
+        }
+    }, [supplierName])
 
 
     useEffect(() => {
-        console.log({consecutivoRpSap, consecutiveRpAurora})
-        if (consecutivoRpSap!='' || consecutiveRpAurora!='') {
+        if (consecutivoRpSap != '' || consecutiveRpAurora != '') {
             GetRpByFilters({
                 consecutiveRpSap: consecutivoRpSap,
                 consecutiveRpAurora: consecutiveRpAurora,
             }).then(res => {
-                console.log({res})
                 if (Object(res).data?.length > 0) {
                     setSupplierTypeSt(Object(res)?.data[0]?.supplierType)
                     setContractorDocumentSt(Object(res)?.data[0]?.contractorDocument)
@@ -84,27 +90,36 @@ export function useBudgeRecordView() {
                     setDataRouteBudgetsSt([])
                 }
             })
-        }else{
-            setValueRegister('supplierName','')
-            setValueRegister('supplierType','')
+        } else {
+            setValueRegister('supplierName', '')
+            setValueRegister('supplierType', '')
             setSupplierTypeSt('')
             setContractorDocumentSt('')
         }
-    },[consecutivoRpSap, consecutiveRpAurora])
+    }, [consecutivoRpSap, consecutiveRpAurora])
+
+
+    useEffect(() => {
+        if (contractorDocumentSt.length == 0) {
+            setContractorDocumentSt('')
+        }
+    }, [contractorDocumentSt])
 
 
 
     useEffect(() => {
-        Number(consecutivoRpSap) > 0 || Number(consecutiveRpAurora) > 0
-            ? setIsAllowSearchCdp(true)
-            : setIsAllowSearchCdp(false)
+        if ((Number(consecutivoRpSap) > 0 || Number(consecutiveRpAurora) > 0) && supplierName != "") {
+            setIsAllowSearchCdp(true)
+        } else {
+            setIsAllowSearchCdp(false)
+        }
 
         supplierType?.length > 0 && contractorDocumentSt?.length > 2
             ? setIsAllowSearchCdp(true)
-            : Number(consecutivoRpSap) > 0 || Number(consecutiveRpAurora) > 0
+            : (Number(consecutivoRpSap) > 0 || Number(consecutiveRpAurora) > 0) && supplierName != ""
                 ? setIsAllowSearchCdp(true)
                 : setIsAllowSearchCdp(false)
-    }, [consecutivoRpSap, consecutiveRpAurora, supplierType, contractorDocumentSt])
+    }, [consecutivoRpSap, consecutiveRpAurora, supplierType, contractorDocumentSt, supplierName])
 
 
     useEffect(() => {
@@ -112,7 +127,6 @@ export function useBudgeRecordView() {
             const componentes = Object(res).data.data?.map(e => ({ id: e.id, name: e.name, value: e.id }))
             setDependenciesData(componentes)
         })
-
     }, [])
 
 
@@ -143,14 +157,16 @@ export function useBudgeRecordView() {
 
                     const routeBudgets = Object(res).data?.map(e => {
                         return e.linksRp?.map(link => {
+                           console.log({link})
                             return ({
                                 id: link.id,
                                 rpId: link.rpId, // rp Aurora
                                 rpSap: e.consecutiveSap,//link.amountBudgetAvailability.cdpCode,
-                                cdpPosition: link.amountBudgetAvailability.cdpPosition,
+                                cdpPosition: link.position,
                                 budgetRouteCode: link.amountBudgetAvailability.budgetRoute.budget.number,
                                 initialAmount: link.initialAmount,
                                 finalAmount: link.finalAmount,
+                                Payments: link.pagos,
                                 actions: () => {
 
                                 }
@@ -221,10 +237,13 @@ export function useBudgeRecordView() {
             fieldName: "rpId",
             header: "Anular posición",
             renderCell: (row) => {
-                console.log("=>>>>> ", row.rpSap)
                 return (
                     <div className="flex align-items-center">
-                        <Checkbox onChange={() => showModalCancelAmount(row)}  /* onChange={onAmountChange} */ checked={false} disabled={row.rpSap>0 ? true : false}/>
+                        {
+                            validateActionAccess('RP_ANULAR_MONTO') && (
+                                <Checkbox onChange={() => showModalCancelAmount(row)} checked={false} disabled={row.rpSap > 0 || row.payments?.length > 0 ? true : false} />
+                            )
+                        }
                     </div>)
             }
         },
@@ -234,9 +253,10 @@ export function useBudgeRecordView() {
     const tableActions: ITableAction<any>[] = [
         {
             icon: "Edit",
+            hide: !validateActionAccess('RP_RUTAS_EDITAR'),
             onClick: (row) => {
                 { row.rpId }
-                navigate(`./edit/${row.rpId}`);
+                navigate(`./edit/${row.rpId}/idRp/${row.id}`);
             },
         }
     ];
@@ -350,7 +370,6 @@ export function useBudgeRecordView() {
                         setValueRegister('taxIdentificationId', Object(res).data?.data[0]?.fiscalIdentification)
                         setValueRegister('supplierId', null)
                     })
-
                 )
                 :
                 (
@@ -360,7 +379,7 @@ export function useBudgeRecordView() {
                         page: 1,
                         perPage: 1000
                     }).then(res => {
-                        if (Object(res).data.array.length == 0) {
+                        if (Object(res).data.array.length == 0 && contractorDocumentSt.length > 0) {
                             messageValidateSupplier('Acreedor')
                             setValueRegister('supplierName', '')
                             setValueRegister('supplierId', null)
@@ -369,9 +388,7 @@ export function useBudgeRecordView() {
                         if (contractorDocumentSt.length > 0) {
                             setValueRegister('supplierName', Object(res).data.array[0]?.name)
                             setValueRegister('supplierId', Object(res).data.array[0]?.id)
-
                         }
-
                     })
                 )
         }
@@ -380,12 +397,13 @@ export function useBudgeRecordView() {
 
     const actionTemplate = (rowData) => {
         return (
-            <Icons.FaPencilAlt
-                className="button grid-button button-edit"
-                style={{ color: '#4caf50', fontSize: '1.5em' }}
-                onClick={() => navigate(`editar-rp/${JSON.stringify(rowData.consecutiveRpAurora)}`)}
-            />
-
+            validateActionAccess('RP_DATOS_BASICOS_EDITAR') && (
+                <Icons.FaPencilAlt
+                    className="button grid-button button-edit"
+                    style={{ color: '#4caf50', fontSize: '1.5em' }}
+                    onClick={() => navigate(`editar-rp/${JSON.stringify(rowData.consecutiveRpAurora)}`)}
+                />
+            )
         );
     };
 
@@ -411,7 +429,9 @@ export function useBudgeRecordView() {
         actionTemplate,
         setContractorDocumentSt,
         setAuroraRPConsecutiveSt,
-        setSapRPConsecutiveSt
+        setSapRPConsecutiveSt,
+        nameSupplierSt,
+        validateActionAccess
     };
 
 

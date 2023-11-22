@@ -32,6 +32,7 @@ const CdpPage = () => {
     arraySelect,
     initialDate,
     endDate,
+    validateActionAccess
   } = useSearchCdp();
 
   return (
@@ -40,19 +41,24 @@ const CdpPage = () => {
         <section className="title-area">
           <div className="text-black weight-500 extra-large">Consultar CDP</div>
           <div
-            className={`${
-              width < 800
+            className={`${width < 800
                 ? "display-justify-space-between-pac"
                 : "display-align-flex-end"
-            } gap-0 gap-05`}
+              } gap-0 gap-05`}
           >
-            <div
-              className="title-button font-big"
-              onClick={() => navigate("./create")}
-            >
-              Crear CDP
-              <AiOutlinePlusCircle />
-            </div>
+
+            {
+              validateActionAccess('CDP_CREAR') && (
+                <div
+                  className="title-button font-big"
+                  onClick={() => navigate("./create")}
+                >
+                  Crear CDP
+                  <AiOutlinePlusCircle />
+                </div>
+              )
+            }
+
           </div>
         </section>
         <section className="card-user">
