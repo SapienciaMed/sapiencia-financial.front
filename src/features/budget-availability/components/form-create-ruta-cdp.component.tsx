@@ -117,7 +117,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({datasFounds, for
       ...dataInfo,
       proyecto, nombreProyecto, fondo, pospre, posicion, valorInicial, idRpp, id: formNumber
     }));
-    console.log(pospreNewV);
+
 
     if (arrInfo && arrInfo.length > 0) {
       const exists = arrInfo.some(obj => obj.id === formNumber);
@@ -245,17 +245,19 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({datasFounds, for
   };
 
   useEffect(() => {
-    const selectedProject = projectsData.find((project) => {
+    projectsData.find((project) => {
       if (project.value === parseInt(proyecto)) {
         let arrName = project['nameProject'].split('-');
-        setNombreProyecto(arrName[2]);
+        setNombreProyecto(arrName[1]);
         projectsVinculateData.find((area) => {
           if (project['areaFuncional'] === area.functionalAreaId) {
             setAreaFuncional(area.areaFuntional.number);
           }
         });
+  
       }
     });
+    
   }, [proyecto]);
 
   const fetchData = async () => {
