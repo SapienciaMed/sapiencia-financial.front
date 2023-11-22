@@ -250,7 +250,7 @@ export function useBudgeRecordView() {
             hide: !validateActionAccess('RP_RUTAS_EDITAR'),
             onClick: (row) => {
                 { row.rpId }
-                navigate(`./edit/${row.rpId}`);
+                navigate(`./edit/${row.rpId}/idRp/${row.id}`);
             },
         }
     ];
