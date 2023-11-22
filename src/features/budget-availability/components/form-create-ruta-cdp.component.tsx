@@ -117,7 +117,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({datasFounds, for
       ...dataInfo,
       proyecto, nombreProyecto, fondo, pospre, posicion, valorInicial, idRpp, id: formNumber
     }));
-    console.log(pospreNewV);
+
 
     if (arrInfo && arrInfo.length > 0) {
       const exists = arrInfo.some(obj => obj.id === formNumber);
@@ -163,29 +163,6 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({datasFounds, for
   useEffect(() => {
     loadInfo();
   }, [proyecto, nombreProyecto, fondo, pospreNewV, posicion, valorInicial, idRpp]);
-
-
-  /*   useEffect(() => {
-      if (formDataCdpRoute.length > 0) {
-        const currentFormData = formDataCdpRoute.find((item) => item.id === formNumber);
-    
-        if (currentFormData) {
-          setProyecto(currentFormData.proyecto);
-          setNombreProyecto(currentFormData.nombreProyecto);
-          setFondo(currentFormData.fondo);
-          setPospreNewV(currentFormData.pospreNewV);
-          setAreaFuncional(currentFormData.areaFuncional);
-          setCentroGestor(currentFormData.centroGestor);
-          setDiv(currentFormData.div);
-          setPosicion(currentFormData.posicion);
-          setValorInicial(currentFormData.valorInicial);
-          setBalance(currentFormData.balance);
-          setIdRpp(currentFormData.idRppCode);
-        }
-      }
-    
-      console.log(formDataCdpRoute);
-    }, [formDataCdpRoute, formNumber]); */
 
 
   const formatToColombianPesos = (value) => {
@@ -245,17 +222,19 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({datasFounds, for
   };
 
   useEffect(() => {
-    const selectedProject = projectsData.find((project) => {
+    projectsData.find((project) => {
       if (project.value === parseInt(proyecto)) {
         let arrName = project['nameProject'].split('-');
-        setNombreProyecto(arrName[2]);
+        setNombreProyecto(arrName[1]);
         projectsVinculateData.find((area) => {
           if (project['areaFuncional'] === area.functionalAreaId) {
             setAreaFuncional(area.areaFuntional.number);
           }
         });
+  
       }
     });
+    
   }, [proyecto]);
 
   const fetchData = async () => {
