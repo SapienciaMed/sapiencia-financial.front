@@ -18,12 +18,12 @@ export function useBudgeRecordEdit(id) {
     const navigate = useNavigate();
     const { GetRpByFilters, GetAllComponents, UpdateDataBasicRp, GetAllActivityObjectContract } = useBudgetRecordServices();
     const { GetAllDependencies, GetContractorsByDocuments } = usePayrollExternalServices()
-    const { setMessage, authorization } = useContext(AppContext);
+    const { setMessage} = useContext(AppContext);
 
     const [componentsData, setComponentsData] = useState<IDropdownProps[]>([]);
     const [dependeciesData, setDependeciesData] = useState<IDropdownProps[]>([]);
 
-    const [isAllowSave, setIsAllowSave] = useState(false)
+    /* const [isAllowSave, setIsAllowSave] = useState(false) */
     const [isUploadData, setIsUploadData] = useState(false)
     const [activityObjectContractData, setActivityObjectContractData] = useState<IDropdownProps[]>([]);
 
@@ -90,10 +90,10 @@ export function useBudgeRecordEdit(id) {
 
     const formData = watch()
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (!isUploadData) return;
         setIsAllowSave(true)
-    }, [formData])
+    }, [formData]) */
 
 
     function pad(num) {
@@ -204,7 +204,6 @@ export function useBudgeRecordEdit(id) {
         onSubmitEditRp,
         componentsData,
         dependeciesData,
-        isAllowSave,
         contractorListSt,
         activityObjectContractData
     };
