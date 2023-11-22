@@ -80,7 +80,8 @@
     "update": "^0.7.4",
     "url-loader": "^4.1.1",
     "uuid": "^9.0.1",
-    "yup": "^1.2.0"
+    "yup": "^1.2.0",
+    "zustand": "^4.4.6"
   },
   "types": "dist/sapiencia-financial.d.ts"
 }
