@@ -10,7 +10,9 @@ function BudgetRecordEditPage() {
 
   
 
-    const { control, register, dependeciesData, componentsData, disabledButton, onSubmiteditRp, CancelFunction, totalCautation, RP } = useBudgeRecordEdit();
+    const { control, register, dependeciesData, componentsData, disabledButton, onSubmiteditRp, CancelFunction, totalCautation, RP,errors } = useBudgeRecordEdit();
+
+    console.log('boton',disabledButton)
 
     return (
         <div className="crud-page">
@@ -222,7 +224,7 @@ function BudgetRecordEditPage() {
                                         locale="es-CO"
                                         minFractionDigits={0}
                                         maxFractionDigits={0}
-                                    //errors={errors}
+                                        errors={errors}
                                     />
                                     )
                                 }}
@@ -247,7 +249,7 @@ function BudgetRecordEditPage() {
                                             locale="es-CO"
                                             minFractionDigits={0}
                                             maxFractionDigits={0}
-                                        //errors={errors}
+                                            errors={errors}
                                         />
                                     )
                                 }}
@@ -272,7 +274,7 @@ function BudgetRecordEditPage() {
                                             locale="es-CO"
                                             minFractionDigits={0}
                                             maxFractionDigits={0}
-                                        //errors={errors}
+                                            errors={errors}
                                         />
                                     )
                                 }}
@@ -297,8 +299,8 @@ function BudgetRecordEditPage() {
                                             locale="es-CO"
                                             minFractionDigits={0}
                                             maxFractionDigits={0}
-                                        //errors={errors}
-                                        disabled
+                                            errors={errors}
+                                            disabled
                                         />
                                     )
                                 }}
@@ -324,7 +326,7 @@ function BudgetRecordEditPage() {
                                             register={register}
                                             onChange={field.onChange}
                                             characters={500}
-
+                                            errors={errors}
                                         ></TextAreaCountComponent>
                                     );
                                 }}

@@ -12,6 +12,8 @@ import { usePayrollExternalServices } from "./payroll-external-services.hook";
 import { IDropdownProps } from "../../../common/interfaces/select.interface";
 import { useCdpService } from "../../budget-availability/hooks/cdp-service";
 import { IUpdateRP } from "../interface/updateRp";
+import useYupValidationResolver from '../../../common/hooks/form-validator.hook';
+import { editRpValidator } from '../../../common/schemas/editRP-validator';
 
 
 export function useBudgeRecordEdit() {
@@ -19,6 +21,8 @@ export function useBudgeRecordEdit() {
     const navigate = useNavigate();
     const { id } = useParams();
     const { setMessage } = useContext(AppContext);
+
+    const resolver = useYupValidationResolver(editRpValidator);
 
     const { GetRpByFilters, GetAllComponents, GetCausation, editRp } = useBudgetRecordServices();
     const { GetProjectsList } = useAdditionsTransfersService();
@@ -35,13 +39,13 @@ export function useBudgeRecordEdit() {
     const [componentsData, setComponentssData] = useState<IDropdownProps[]>([]);
     const [totalCautation, setTotalCautation] = useState(0);
     const [RP, setRP] = useState(0);
-    const [disabledButton, setDisabledButton] = useState(false);
+    const [disabledButton, setDisabledButton] = useState(true);
 
     const [calculatedValue, setCalculatedValue] = useState(0);
 
 
     //Form
-    const { control, handleSubmit, register, watch, setValue, reset, formState: { errors }, } = useForm({});
+    const { control, handleSubmit, register, watch, setValue, reset, formState: { errors }, } = useForm({resolver});
 
 
    
@@ -62,6 +66,7 @@ export function useBudgeRecordEdit() {
 
             });
         }
+        console.log(dataRp)
     }, [id]);
 
 
@@ -157,30 +162,45 @@ export function useBudgeRecordEdit() {
     const inputAgaintsAmount = watch('againtsAmount')
     const inputCreditAmount = watch('creditAmount')
     const inputFixedCompleted = watch('fixedCompleted')
+
+    /* useEffect(() => {
+        // Cuando el componente se monta, el botón está deshabilitado
+        setDisabledButton(true);
+    }, []); */
+
+   /*  useEffect(() => {
+        console.log(inputCreditAmount)
+        // Aquí, verifica si inputAgaintsAmount ha cambiado
+        if (inputCreditAmount && inputCreditAmount !== 0) {
+            setDisabledButton(true); // Habilita el botón si hay un cambio            
+        } else {
+            setDisabledButton(false); // O mantiene deshabilitado si no hay cambio
+            console.log('false')
+        }
+    }, [inputCreditAmount]); */
     
     useEffect(() => {        
+        // Inicialmente asumimos que el botón debe estar deshabilitado
+        let shouldDisableButton = true;
+    
+      
+            // Si inputCreditAmount no ha cambiado, entonces evalúa las otras condiciones
+            if (totalCautation !== undefined) {
+                shouldDisableButton = inputAgaintsAmount > Number(totalCautation);
+            }
+    
+            if (!shouldDisableButton && RP !== undefined) {
+                shouldDisableButton = inputCreditAmount > RP;
+            }
+    
+            if (!shouldDisableButton && totalCautation !== undefined && RP !== undefined) {
+                shouldDisableButton = totalCautation > RP;
+            }
         
-        let shouldDisableButton = false;
-
-        if (totalCautation !== undefined) {
-            shouldDisableButton = inputAgaintsAmount > Number(totalCautation);
-        }
-
-        if (!shouldDisableButton && RP !== undefined) {
-            shouldDisableButton = inputCreditAmount > RP;
-        }
-
-        if (!shouldDisableButton && totalCautation !== undefined && RP !== undefined) {
-            shouldDisableButton = totalCautation > RP;
-        }
-
-        /*  if (totalCautation !== undefined && inputFixedCompleted) {
-             shouldDisableButton = inputFixedCompleted > totalCautation;
-         }    */
-
+    
         setDisabledButton(shouldDisableButton);
-
     }, [totalCautation, RP, inputAgaintsAmount, inputCreditAmount, inputFixedCompleted]);
+    
 
     //total
     useEffect(() => {
@@ -230,6 +250,8 @@ export function useBudgeRecordEdit() {
             })
         }
 
+       
+
         // Asignar los campos que siempre vienen
         setValue("dependencyId", dataRp?.dependencyId || "");
         setValue("fund", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.budgetRoute?.fund?.number || "");
@@ -253,7 +275,11 @@ export function useBudgeRecordEdit() {
         //setValue("finalAmount", dataRp?.linksRp?.[0]?.finalAmount || "");
         //setValue("idcFinalValue", dataRp.linksRp[0].finalAmount === 0 ||  dataRp.linksRp[0].finalAmount === null ? dataRp?.linksRp?.[0]?.initialAmount : dataRp.linksRp[0].finalAmount);
 
+        
+
     }, [dataRp, areaNumber, projectNumber]);
+
+    
 
     const onSubmiteditRp = handleSubmit(async (data: IUpdateRP) => {
       
@@ -342,7 +368,8 @@ export function useBudgeRecordEdit() {
         onSubmiteditRp,
         CancelFunction,
         totalCautation,
-        RP
+        RP,
+        errors
 
     };
 }
