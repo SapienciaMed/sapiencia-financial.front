@@ -29,5 +29,11 @@ export function useBudgetsService() {
         return get(`${roleUrl}${endpoint}`);
     }
 
-    return { GetBudgets, CreateBudgets, UpdateBudgets, getAllBudgets }
+    async function getAllCpc(): Promise<ApiResponse<IBudgets[]>> {
+        const endpoint: string = `/get-all-cpc`;
+        return get(`${roleUrl}${endpoint}`);
+    }
+
+
+    return { GetBudgets, CreateBudgets, UpdateBudgets, getAllBudgets,getAllCpc }
 }

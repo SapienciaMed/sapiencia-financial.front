@@ -8,6 +8,7 @@ import { EResponseCodes } from '../../../common/constants/api.enum';
 import { AppContext } from '../../../common/contexts/app.context';
 import { useNavigate } from 'react-router-dom';
 import { IDropdownProps } from '../../../common/interfaces/select.interface';
+import { useBudgetsService } from '../../functionality/budgetPosition/hooks/budgets-service.hook';
 
 interface IArrayMgaAssoc {
     id: number,
@@ -16,18 +17,21 @@ interface IArrayMgaAssoc {
     cpc: string,
     percentage: number,
     cdpCode: number,
+    
     /* mgaActivity: number,
     detailedMgaActivity:number, */
 
     tabActivity: string,
-    tabDetailedMgaActivity: string
+    tabDetailedMgaActivity: string,
+    tabSelectCpc: string
 }
 
 export function useCdpMgaAssoc(id?: string, idRoute?: string) {
    
     const resolver = useYupValidationResolver(cdpMgaAssoc);
-    const { setMessage } = useContext(AppContext);
+    const { setMessage,authorization } = useContext(AppContext);
     const { getCdpById, getActivitiesDetail, validate, createVinculationMGA,validateCDP } = useCdpService()
+    const { getAllCpc } = useBudgetsService()
     const [arrayDataSelect, setArrayDataSelect] = useState({
         listDetailedActivityMGA: []
     })
@@ -35,6 +39,7 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
     const [nextId, setNextId] = useState(1);
     const [disableAddButton, setDisableAddButton] = useState(false)
     const [activities, setActivities] = useState<IDropdownProps[]>([]);
+    const [cpc, setCpc] = useState<any[]>([]);
     const [valorFinal, setValorFinal] = useState<any>();
     const navigate = useNavigate();
 
@@ -44,7 +49,8 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
         control,
         handleSubmit,
         setValue,
-        reset
+        reset,
+        watch
     } = useForm<ICdpMgaAssoc>({
         resolver,
         mode: 'all',
@@ -65,33 +71,50 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
         }).catch((error) => console.log(error))
 
         getActivitiesDetail().then(res => {
-            const activities = Object(res).data?.map(d => ({ id: d.activity.id, name: d.activity.activityDescriptionMGA, value: d.activity.id, activityId: d.activityId, activity: d.detailActivity, cost: d.unitCost, activitieMga: d.id }))
+            const activities = Object(res).data?.map(d => ({ id: d.activity.id, name: d.activity.activityDescriptionMGA, value: d.activity.id, activityId: d.activityId, activity: d.detailActivity, cost: d.unitCost, activitieMga: d.id, pospre: d.pospre }))
             setActivities(activities)
+        })
+
+       /*  getAllCpc().then(res => {
+            const cpc = Object(res).data?.map(c => ({ id: id, name: c.ejercise, value: c.id}))
+            setCpc(cpc)           
+        }) */
+
+        getAllCpc().then(res => {
+            const cpc = Object(res).data?.map(c => ({ id: c.id, name: c.description, value: c.id, budgetId: c.budgetId}))
+            setFilteredCpc(cpc)           
         })
 
     }, [])
 
+ 
+    const selecte = watch('DetailedActivityMGA')
+    
+    const [filteredCpc, setFilteredCpc] = useState<any[]>([]);
 
+    
+    
     useEffect(() => {
-        const dataMockServiceDetail = {
-            listDetailedActivityMGA: [
-                { id: '1', name: 'Seleccione', value: null },
-                { id: "2", name: "Actividad 1", value: "Actividad 1", costActivity: '700000.0' },
-                { id: "3", name: "Actividad 2", value: "Actividad 2", costActivity: '500000.0' },
-                { id: "4", name: "Actividad 3", value: "Actividad 3", costActivity: '500000.0' },
-            ]
-        }
-        setArrayDataSelect(dataMockServiceDetail)
-    }, [])
+        if (selecte) {
+            const selectActivitie = activities.find(activity => activity.id == selecte);           
 
+            const filtered = filteredCpc.filter(item => item.budgetId == selectActivitie.pospre);            
+
+            filtered.map(c => ({id: c.id, name: c.description, value: c.id}))
+            setCpc(filtered);             
+        }        
+    }, [selecte, filteredCpc]);
+    
+
+    
     useEffect(() => {
         const sumaPercentage = arrayMgaAssoc.reduce((acumulador, elemento) => {
             return acumulador + elemento.percentage;
         }, 0);
-        setDisableAddButton(sumaPercentage > 100)
+        setDisableAddButton(sumaPercentage >= 100)
     }, [arrayMgaAssoc])
 
-    const onSubmit = handleSubmit(async (data: any) => {       
+    const onSubmit = handleSubmit(async (data: any) => {   
      
         const sumaPercentage = arrayMgaAssoc.reduce((acumulador, elemento) => {
             return acumulador + elemento.percentage;
@@ -102,6 +125,9 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
 
         //setear valores
         const selectActivitie = activities.find(activity => activity.id == data.DetailedActivityMGA);
+
+        const selectCpc = cpc.find(cpc => cpc.id == data.cpc);
+       
 
         const datos = {
             cdpId: id,
@@ -156,6 +182,7 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
                 
                 tabActivity: selectActivitie.activity,
                 tabDetailedMgaActivity: selectActivitie.name,
+                tabSelectCpc: selectCpc.name
             }
             setArrayMgaAssoc([...arrayMgaAssoc, mgaAssoc])
             setNextId(nextId + 1);
@@ -239,7 +266,9 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
             activitieMga: Number(item.mgaActivity),
             activitieDetailMga: Number(item.detailedMgaActivity),
             percentageAfected: Number(item.percentage),
-            cdpCode: Number(item.cdpCode)
+            cdpCode: Number(item.cdpCode),
+            cpcCode: Number(item.cpc),
+            userCreate: authorization?.user?.numberDocument!,
         }));
 
         const finalObject = { datos };
@@ -302,7 +331,9 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
         deleteElement,
         handleSaveSubmit,
         onCancel,
-        activities
+        activities,
+        filteredCpc,
+        cpc
     }
 
 }

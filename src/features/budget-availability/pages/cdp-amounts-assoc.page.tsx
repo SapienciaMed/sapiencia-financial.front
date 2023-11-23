@@ -87,6 +87,8 @@ const CdpAmountAssoc = () => {
     const handleAgregarFormulario = () => {
         const newFormulario = { id: formularios.length };
         setFormularios([...formularios, newFormulario]);
+  
+        
       
     /*     if (!deleteRouteTwo) {
           setTimeout(() => {
@@ -285,9 +287,8 @@ const CdpAmountAssoc = () => {
     const renderFormsForCurrentPage = () => {
         const indexOfLastForm = currentPage * formsPerPage;
         const indexOfFirstForm = indexOfLastForm - formsPerPage;
-        console.log(cdpPosition);
-        console.log(indexOfLastForm);
         const foundObject = totalDataRuta.find(obj => obj.id === indexOfFirstForm);
+
 
         return formularios.slice(indexOfFirstForm, indexOfLastForm).map((_, index) => (
           
@@ -337,6 +338,8 @@ const CdpAmountAssoc = () => {
             }
             
             setTotalDataRuta(dataComplete)
+            console.log(dataComplete);
+            
             
           }, [formDataCdpRoute]);
         
