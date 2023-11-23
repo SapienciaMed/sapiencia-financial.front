@@ -5,13 +5,26 @@ import SelectSearch from './select-create-cdp.component';
 import { AppContext } from '../../../common/contexts/app.context';
 import { useBudgetRoutesCrudData } from '../../budget-routes/hooks/budget-routes-crud.hook';
 import { Grid } from '@mui/material';
-
+import useStore from '../../../store/store';
+import useStoreTwo from '../../../store/storeTwo';
+import useStoreIcd from '../../../store/store-icd';
 export interface FormInfoType {
   idRppCode: string;
   posicion: string;
   valorInicial: string;
   balance: string;
   id: number;
+}
+
+export interface FormInfoData {
+  proyecto: string;
+  nombreProyecto: string;
+  fondo: string;
+  pospre: string;
+  posicion: string;
+  valorInicial: string;
+  idRpp: string;
+  balance: string;
 }
 
 interface FormularioProps {
@@ -22,16 +35,21 @@ interface FormularioProps {
   setAmountInfo: React.Dispatch<React.SetStateAction<FormInfoType>>;
   amountInfo: FormInfoType;
   posicionCdp?: number;
+  datasFounds: any; 
 }
 
-const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, isRequired = false, formNumber, handleEliminar, setAmountInfo, amountInfo, posicionCdp }) => {
+
+
+const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({datasFounds, formSubmitted, isRequired = false, formNumber, handleEliminar, setAmountInfo, amountInfo, posicionCdp }) => {
   const { setFormInfo, formInfo } = useContext(AppContext);
   const cdpService = useCdpService();
   const [proyecto, setProyecto] = useState('');
+  const { icdImportsData, setIcdImportsData } = useStoreIcd();
   const [nombreProyecto, setNombreProyecto] = useState('');
   const [fondo, setFondo] = useState('');
   const [pospre, setPospre] = useState('0');
   const [pospreNewV, setPospreNewV] = useState('');
+  const [posPre1, setPosPre1] = useState();
   const [areaFuncional, setAreaFuncional] = useState('');
   const [centroGestor, setCentroGestor] = useState('91500000');
   const [div, setDiv] = useState('SAPI');
@@ -40,6 +58,11 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
   const [balance, setBalance] = useState('0');
   const [idRpp, setIdRpp] = useState('0');
   const { setMessage } = useContext(AppContext);
+  const { formDataCdpRoute, setFormDataCdpRoute } = useStore();
+  const { totalDataRuta } = useStoreTwo();
+  const [arrAmounts, setArrAmounts] = useState([])
+  const [saldo, setSaldo] = useState(0)
+
 
   const onDeleteClick = () => {
     handleEliminar(formNumber);
@@ -60,6 +83,10 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
     name: item.name,
   }));
 
+  const renderedFormNumber = (posicionCdp && posicionCdp !== 0) ?
+    (Number(formNumber) > posicionCdp ? Number(formNumber) : posicionCdp) :
+    Number(formNumber);
+
   const validateField = (field) => {
     if (formSubmitted && !field) {
 
@@ -68,7 +95,89 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
     return '';
   };
 
+
+  useEffect(() => {
+    
+    console.log("vamos a ver",datasFounds);
+    if(datasFounds !== undefined) {
+      setBalance(datasFounds.balance);
+    }
+   /*  setSaldo(parseInt(datasFounds.balance))
+    setBalance(datasFounds.balance);  */
+  }, []);
+
+
+
+  const fetchData = async () => {
+    if (pospreNewV && fondo && proyecto) {
+      try {
+        const objectSendData = {
+          posPreId: parseInt(pospreNewV),
+          foundId: parseInt(fondo),
+          projectId: parseInt(proyecto),
+        };
+        const response = await cdpService.getOneRpp(objectSendData);
+        if (typeof (response) === "object") {
+          let totalAmountsAssoc = parseFloat(response['totalIdc']);
+          let balanceFloat = parseFloat(response['balance']).toString().split('.');
+          let parteEntera = parseInt(balanceFloat[0]);
+          let totalAmountAvalible = parteEntera - totalAmountsAssoc;
+          console.log(totalAmountAvalible);
+          if(datasFounds.valorInicial != "0" && idRpp != datasFounds.idRppCode){
+            setSaldo(datasFounds.balance)
+            setBalance(datasFounds.balance);
+            setValorInicial(datasFounds.valorInicial);
+          } else {
+            setSaldo(totalAmountAvalible)
+            setBalance(totalAmountAvalible.toString());
+            setValorInicial(totalAmountAvalible.toString());
+          }  
+          let tryJsonInfo = JSON.stringify(response);
+          tryJsonInfo = JSON.parse(tryJsonInfo)['id'].toString();
+          setIdRpp(tryJsonInfo);
+        } else {
+          setMessage({
+            title: "!No hay datos relacionados!",
+            description: "No encontramos una ruta presupuestal con los datos que proporcionaste, intentalo de otra vez con nuevos datos",
+            show: true,
+            OkTitle: "cerrar",
+            onOk: () => {
+              setMessage({});
+            },
+            background: true,
+          });
+          setValorInicial('0');
+          return;
+        }
+      } catch (error) {
+        console.error('Error al obtener los datos:', error);
+      }
+    }
+  };
+  
+
+  useEffect(() => {
+    fetchData();
+  }, [pospreNewV, fondo, proyecto]);
+
+
+  useEffect(() => {
+    if (datasFounds && datasFounds !== undefined) {
+      setProyecto(datasFounds.proyecto);
+      setNombreProyecto(datasFounds.nombreProyecto);
+      setFondo(datasFounds.fondo);
+      setPospreNewV(datasFounds.pospre);
+      setPosicion(datasFounds.posicion);
+      setValorInicial(datasFounds.valorInicial);
+      setIdRpp(datasFounds.idRpp);
+      setAreaFuncional(datasFounds.areaFuncional);
+    }
+
+  }, [])
+
+
   const loadInfo = () => {
+    let arrInfo = [];
     setAmountInfo((prevAmountInfo) => ({
       ...prevAmountInfo,
       idRppCode: idRpp,
@@ -77,11 +186,63 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
       id: Number(formNumber),
       balance: balance,
     }));
+
+    setIcdImportsData((prevAmountInfo) => ({
+      ...prevAmountInfo,
+      idRppCode: idRpp,
+      posicion: renderedFormNumber,
+      valorInicial: valorInicial,
+      id: Number(renderedFormNumber),
+      balance: balance,
+    }))
+
+
+
+    if (arrInfo && arrInfo.length > 0) {
+      const exists = arrInfo.some(obj => obj.id === renderedFormNumber);
+      if (!exists) {
+        const newObj = {
+          proyecto,
+          nombreProyecto,
+          fondo,
+          "pospre": pospreNewV,
+          posicion,
+          valorInicial,
+          idRpp,
+          areaFuncional,
+          id: renderedFormNumber,
+          balance,
+        };
+       
+        
+        arrInfo.push(newObj);
+        setFormDataCdpRoute([...arrInfo]);
+      } else {
+        console.log(`Ya existe un objeto con id ${formNumber} en arrInfo.`);
+      }
+    } else {
+      const newObj = {
+        proyecto,
+        nombreProyecto,
+        fondo,
+        "pospre": pospreNewV,
+        posicion,
+        valorInicial,
+        idRpp,
+        areaFuncional,
+        id: renderedFormNumber,
+        balance,
+      };
+      arrInfo.push(newObj);
+      setFormDataCdpRoute([...arrInfo]); 
+    }
+
   };
 
   useEffect(() => {
     loadInfo();
-  }, [proyecto, nombreProyecto, fondo, pospre, posicion, valorInicial, idRpp]);
+  }, [proyecto, nombreProyecto, fondo, pospreNewV, posicion, valorInicial, idRpp]);
+
 
   const formatToColombianPesos = (value) => {
     const formatter = new Intl.NumberFormat('es-CO', {
@@ -140,76 +301,22 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
   };
 
   useEffect(() => {
-    const selectedProject = projectsData.find((project) => {
+    projectsData.find((project) => {
       if (project.value === parseInt(proyecto)) {
         let arrName = project['nameProject'].split('-');
-        setNombreProyecto(arrName[2]);
+        setNombreProyecto(arrName[1]);
         projectsVinculateData.find((area) => {
           if (project['areaFuncional'] === area.functionalAreaId) {
             setAreaFuncional(area.areaFuntional.number);
           }
         });
+  
       }
     });
+    
   }, [proyecto]);
 
-  const fetchData = async () => {
-    if (pospreNewV && fondo && proyecto) {
-      try {
-        const objectSendData = {
-          posPreId: parseInt(pospreNewV),
-          foundId: parseInt(fondo),
-          projectId: parseInt(proyecto),
-        };
-        const response = await cdpService.getOneRpp(objectSendData);
-        if (typeof (response) === "object") {
-          let totalAmountsAssoc = parseFloat(response['totalIdc']);
-          let balanceFloat = parseFloat(response['balance']).toString().split('.');
-          let parteEntera = parseInt(balanceFloat[0]);
-          let totalAmountAvalible = parteEntera - totalAmountsAssoc;
-          setValorInicial(totalAmountAvalible.toString());
-          setBalance(totalAmountAvalible.toString());
-          let tryJsonInfo = JSON.stringify(response);
-          tryJsonInfo = JSON.parse(tryJsonInfo)['id'].toString();
-          setIdRpp(tryJsonInfo);
-          const updatedFormInfo = {
-            idRppCode: tryJsonInfo,
-            posicion: posicion,
-            valorInicial: totalAmountAvalible.toFixed(2),
-            id: Number(formNumber),
-            balance: totalAmountAvalible.toFixed(2),
-          };
 
-          setAmountInfo(updatedFormInfo);
-        } else {
-          setMessage({
-            title: "!No hay datos relacionados!",
-            description: "No encontramos una ruta presupuestal con los datos que proporcionaste, intentalo de otra vez con nuevos datos",
-            show: true,
-            OkTitle: "cerrar",
-            onOk: () => {
-              setMessage({});
-            },
-            background: true,
-          });
-
-          setValorInicial('0')
-          return;
-        }
-
-      } catch (error) {
-        console.error('Error al obtener los datos:', error);
-      }
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [pospreNewV, fondo, proyecto]);
-
-  const renderedFormNumber = (posicionCdp && posicionCdp !== 0) ?
-    (formNumber > posicionCdp ? formNumber : posicionCdp) :
-    formNumber;
 
   return (
     <div className='containerOne'>
@@ -242,7 +349,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
             <Grid item xs={12} sm={12} md={4}>
               <div className={`col-4`}>
                 <label>Proyecto <span>*</span></label>
-                <SelectSearch style={{ border: formSubmitted && !proyecto ? '1px solid red' : '1px solid #ccc' }} options={projectsData} setter={setProyecto} />
+                <SelectSearch defaultValue={parseInt(proyecto)} style={{ border: formSubmitted && !proyecto ? '1px solid red' : '1px solid #ccc' }} options={projectsData} setter={setProyecto} />
                 {formSubmitted && !proyecto && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
               </div>
             </Grid>
@@ -263,14 +370,14 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ formSubmitted, 
             <Grid item xs={12} sm={12} md={4}>
               <div className={`col-4`}>
                 <label>Fondo <span>*</span></label>
-                <SelectSearch style={{ border: formSubmitted && !fondo ? '1px solid red' : '1px solid #ccc' }} options={fundsData} setter={setFondo} />
+                <SelectSearch defaultValue={fondo} style={{ border: formSubmitted && !fondo ? '1px solid red' : '1px solid #ccc' }} options={fundsData} setter={setFondo} />
                 {formSubmitted && !fondo && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
               </div>
             </Grid>
             <Grid item xs={12} sm={12} md={4}>
               <div className={`col-4`}>
                 <label>Pospre <span>*</span></label>
-                <SelectSearch style={{ border: formSubmitted && !pospreNewV ? '1px solid red' : '1px solid #ccc' }} options={convertedOptionsPosPre} setter={setPospreNewV} />
+                <SelectSearch defaultValue={pospreNewV} style={{ border: formSubmitted && !pospreNewV ? '1px solid red' : '1px solid #ccc' }} options={convertedOptionsPosPre} setter={setPospreNewV} />
                 {formSubmitted && !pospreNewV && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
               </div>
             </Grid>

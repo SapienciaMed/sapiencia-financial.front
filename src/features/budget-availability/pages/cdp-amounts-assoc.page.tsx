@@ -8,6 +8,9 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from '../../../common/contexts/app.context';
 import Icons from '../components/Icons';
 import { v4 as uuidv4 } from 'uuid';
+import useStore from '../../../store/store';
+import useStoreTwo from '../../../store/storeTwo';
+
 
 interface FormInfoType {
     id: number;
@@ -25,6 +28,9 @@ interface FormHeadInfo {
 }
 
 const CdpAmountAssoc = () => {
+    const { formDataCdpRoute, setFormDataCdpRoute } = useStore();
+    const { totalDataRuta, setTotalDataRuta } = useStoreTwo();
+    const [formStates, setFormStates] = useState({});
     const { setMessage } = useContext(AppContext);
     const { formInfo } = useContext(AppContext);
     const [formCount, setFormCount] = useState(2);
@@ -63,8 +69,8 @@ const CdpAmountAssoc = () => {
     const [objectFinal, setObjectFinal] = useState([])
     const [idCdp, setIdCdp] = useState(0);
     const [formId, setFormId] = useState(0);
-
-
+    const [dataComplete, setDataComplete] = useState([]);
+/* 
     const handleAgregarFormulario = () => {
         const newFormulario = { id: formCount };
         setFormularios([...formularios, newFormulario]);
@@ -76,7 +82,23 @@ const CdpAmountAssoc = () => {
               setDeleteRouteTwo(true);
             }, 500);
           }
-    };
+    }; */
+
+    const handleAgregarFormulario = () => {
+        const newFormulario = { id: formularios.length };
+        setFormularios([...formularios, newFormulario]);
+  
+        
+      
+    /*     if (!deleteRouteTwo) {
+          setTimeout(() => {
+            handleEliminar(formularios.length - 1);
+            setDeleteRouteTwo(true);
+          }, 500);
+        } */
+
+      };
+      
 
     const [cdpPosition, setCdpPosition] = useState(0);
 
@@ -223,6 +245,7 @@ const CdpAmountAssoc = () => {
                                         onOk: () => {
                                             //onCancelNew();
                                             navigate("../");
+                                            setMessage({});
                                         },
                                         background: true,
                                     });
@@ -264,7 +287,11 @@ const CdpAmountAssoc = () => {
     const renderFormsForCurrentPage = () => {
         const indexOfLastForm = currentPage * formsPerPage;
         const indexOfFirstForm = indexOfLastForm - formsPerPage;
+        const foundObject = totalDataRuta.find(obj => obj.id === indexOfFirstForm);
+
+
         return formularios.slice(indexOfFirstForm, indexOfLastForm).map((_, index) => (
+          
           <FormCreateRutaCDPComponent
             key={indexOfFirstForm + index}
             isRequired={indexOfFirstForm + index === 0}
@@ -273,11 +300,51 @@ const CdpAmountAssoc = () => {
             formSubmitted={formSubmitted}
             amountInfo={amountInfo}
             setAmountInfo={setAmountInfo}
-            posicionCdp={indexOfLastForm > cdpPosition ? indexOfLastForm+index : cdpPosition + index}
+            posicionCdp = {(cdpPosition >= 0 && cdpPosition <= 2) ? cdpPosition + index : (indexOfLastForm > cdpPosition ? indexOfLastForm + index : cdpPosition + index)}
+            datasFounds={foundObject}
           />
-        ));
-      };
+          ));
+        };
 
+        useEffect(() => {
+            // Check if formDataCdpRoute is not empty
+            if (formDataCdpRoute.length > 0) {
+              // Update dataComplete based on formDataCdpRoute
+              const newDataComplete = dataComplete.map((existingObj) => {
+                const matchingIndex = formDataCdpRoute.findIndex(
+                  (newObj) => newObj.id === existingObj.id
+                );
+        
+                if (matchingIndex !== -1) {
+                  // If the object exists in formDataCdpRoute, update it
+                  return formDataCdpRoute[matchingIndex];
+                }
+        
+                return existingObj;
+              });
+        
+              // Add new objects from formDataCdpRoute that don't exist in dataComplete
+              formDataCdpRoute.forEach((newObj) => {
+                const isNewObject = newDataComplete.every(
+                  (existingObj) => existingObj.id !== newObj.id
+                );
+        
+                if (isNewObject) {
+                  newDataComplete.push(newObj);
+                }
+              });
+        
+              setDataComplete(newDataComplete);
+            }
+            
+            setTotalDataRuta(dataComplete)
+            console.log(dataComplete);
+            
+            
+          }, [formDataCdpRoute]);
+        
+
+      
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
@@ -293,9 +360,13 @@ const CdpAmountAssoc = () => {
             });
 
             const amounts = res.data[0].amounts;
+            const lastAmount = amounts.length;
+            setCdpPosition(lastAmount);
             if (amounts && amounts.length > 0) {
                 const lastAmount = amounts.length;
                 setCdpPosition(lastAmount);
+            }else if(amounts.length === 0){
+                setCdpPosition(0);
             }
         });
     }, []);

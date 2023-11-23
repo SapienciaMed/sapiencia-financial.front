@@ -8,11 +8,14 @@ import { useCreditorsServices } from "./creditors-service.hook";
 import { ICreditor } from "../interface/creditor";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
 import { useGenericListService } from "../../../common/hooks/generic-list-service.hook";
+import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
+import { creditorCrudValidator } from "../../../common/schemas/creditor-crud-validator";
 
 
 export function useCreditorCrud(id) {
 
     const navigate = useNavigate();
+    const resolver = useYupValidationResolver(creditorCrudValidator);
     const { getListByGrouper } = useGenericListService()
     const { GetCreditorsByFilters, CreateCreditor, UpdateCreditor } = useCreditorsServices();
     const { setMessage, authorization } = useContext(AppContext);
@@ -26,31 +29,31 @@ export function useCreditorCrud(id) {
 
     const [documentTypeList, setDocumentTypeList] = useState([])
     useEffect(() => {
-        getListByGrouper('TIPOS_DOCUMENTOS').then(res=>{
-            const docuTypeList = Object(res).data.map(e=>({ id: e.id, name: e.itemCode, value: e.itemCode}))
+        getListByGrouper('TIPOS_DOCUMENTOS').then(res => {
+            const docuTypeList = Object(res).data.map(e => ({ id: e.id, name: e.itemCode, value: e.itemCode }))
             setDocumentTypeList(docuTypeList)
         })
     }, [])
-    
+
 
 
     useEffect(() => {
-        if(!id) return;
+        if (!id) return;
         setValueRegister('id', Number(id))
-        
+
         GetCreditorsByFilters({
             id,
-            page:1,
-            perPage:1
-        }).then(res=>{
-            setValueRegister('typeDocument',Object(res).data?.array[0].typeDocument);
-            setValueRegister('document',Object(res).data?.array[0].document);
-            setValueRegister('taxIdentification',Object(res).data?.array[0].taxIdentification);
-            setValueRegister('name',Object(res).data?.array[0].name);
-            setValueRegister('city',Object(res).data?.array[0].city);
-            setValueRegister('address',Object(res).data?.array[0].address);
-            setValueRegister('phone',Object(res).data?.array[0].phone);
-            setValueRegister('email',Object(res).data?.array[0].email);   
+            page: 1,
+            perPage: 1
+        }).then(res => {
+            setValueRegister('typeDocument', Object(res).data?.array[0].typeDocument);
+            setValueRegister('document', Object(res).data?.array[0].document);
+            setValueRegister('taxIdentification', Object(res).data?.array[0].taxIdentification);
+            setValueRegister('name', Object(res).data?.array[0].name);
+            setValueRegister('city', Object(res).data?.array[0].city);
+            setValueRegister('address', Object(res).data?.array[0].address);
+            setValueRegister('phone', Object(res).data?.array[0].phone);
+            setValueRegister('email', Object(res).data?.array[0].email);
         })
 
     }, [id])
@@ -83,7 +86,7 @@ export function useCreditorCrud(id) {
             'dateModify': '',
         },
         mode: 'onChange',
-        /* resolver, */
+        resolver,
     });
 
     const formData = watch()
@@ -147,10 +150,11 @@ export function useCreditorCrud(id) {
     const messageConfirmSave = (data: any) => {
         if (data.id) {
             UpdateCreditor(data).then(res => {
+
                 Object(res).operation.code == 'OK'
                     ? showModal({
-                        title: "Guardado",
-                        description: "¡Guardado exitosamente!",
+                        title: "Guardar",
+                        description: "¡Se guardó exitosamente!",
                         onOk: (() => {
                             setMessage({})
                             navigate('../')
@@ -166,22 +170,36 @@ export function useCreditorCrud(id) {
             })
         } else {
             CreateCreditor(data).then(res => {
+                console.log({ res })
+                if (Object(res).operation.code == 'FAIL' &&
+                    Object(res).operation.message.toString().includes('Duplicate entry')) {
+                    showModal({
+                        title: "Validación",
+                        description: "¡El dato ya existe!",
+                        onOk: (() => setMessage({})),
+                        OkTitle: "Aceptar",
+                    })
+                } else if (Object(res).operation.code == 'FAIL' &&
+                    !Object(res).operation.message.toString().includes('Duplicate entry')) {
+                    showModal({
+                        title: "Falla en almacenamiento",
+                        description: "Falla en creación",
+                        onOk: (() => setMessage({})),
+                        OkTitle: "Aceptar",
+                    })
+                }
+
                 Object(res).operation.code == 'OK'
                     ? showModal({
-                        title: "Guardado",
-                        description: "¡Guardado exitosamente!",
+                        title: "Guardar",
+                        description: "¡Se guardó exitosamente!",
                         onOk: (() => {
                             setMessage({})
                             navigate('../')
                         }),
                         OkTitle: "Aceptar",
                     })
-                    : showModal({
-                        title: "Falla en almacenamiento",
-                        description: "Falla en creación",
-                        onOk: (() => setMessage({})),
-                        OkTitle: "Aceptar",
-                    })
+                    : ''
             })
 
         }

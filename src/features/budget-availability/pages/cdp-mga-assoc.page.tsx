@@ -8,7 +8,7 @@ const CdpMgaAssocPage = () => {
     const { id, idRoute } = useParams();
    
     const { control, errors, arrayDataSelect, disableAddButton, arrayMgaAssoc, 
-        register, onSubmit, deleteElement, onCancel, handleSaveSubmit,activities } = useCdpMgaAssoc(id,idRoute)
+        register, onSubmit, deleteElement, onCancel, handleSaveSubmit,activities,cpc } = useCdpMgaAssoc(id,idRoute)
 
     return (
         <div className="crud-page full-height ">
@@ -24,6 +24,7 @@ const CdpMgaAssocPage = () => {
                     disableAddButton={disableAddButton}
                     arrayMgaAssoc={arrayMgaAssoc}
                     activities={activities}
+                    cpc={cpc}
                     register={register}
                     onSubmit={onSubmit}
                     deleteElement={deleteElement}
@@ -46,7 +47,7 @@ const CdpMgaAssocPage = () => {
                     value="Guardar"
                     type="submit"
                     action={() => handleSaveSubmit() }
-                    disabled={disableAddButton}
+                    disabled={!disableAddButton}
                 />
             </div>
             </section>
