@@ -12,6 +12,7 @@ import CdpPaginator from '../components/cdp-paginator.component';
 import { log } from 'console';
 import useStore from '../../../store/store';
 import useStoreTwo from '../../../store/storeTwo';
+import useStoreIcd from '../../../store/store-icd';
 
 interface FormInfoType {
   id: number;
@@ -31,6 +32,7 @@ interface FormularioProps {
 const CdpCrudPage = () => {
   const { formDataCdpRoute, setFormDataCdpRoute } = useStore();
   const { totalDataRuta, setTotalDataRuta } = useStoreTwo();
+  const { icdImportsData } = useStoreIcd();
   const { setMessage } = useContext(AppContext);
   const { formInfo } = useContext(AppContext);
   const [formCount, setFormCount] = useState(2);
@@ -50,7 +52,7 @@ const CdpCrudPage = () => {
     balance: "",
     id: 0,
   });
-
+  const [dataFinalSend, setDataFinalSend] = useState([]);
 
   const handleProyectoError = (selectedProyecto) => {
     if (!selectedProyecto) {
@@ -87,7 +89,7 @@ const CdpCrudPage = () => {
   };
 
   const handleEliminar = (formNumber) => {
-    setFormularios((prevFormularios) =>
+    setDataFinalSend((prevFormularios) =>
       prevFormularios.filter((_, index) => indexOfFirstForm + index !== formNumber)
     );
     setFormCount((prevCount) => prevCount - 1);
@@ -98,23 +100,23 @@ const CdpCrudPage = () => {
   };
   const setInfoData = () => {
   
-    if (Object.keys(amountInfo).length > 0) {
-      if ('id' in amountInfo) {
-        const id = typeof amountInfo.id === 'number' ? amountInfo.id : 0;
+    if (Object.keys(icdImportsData).length > 0) {
+      if ('id' in icdImportsData) {
+        const id = typeof icdImportsData.id === 'number' ? icdImportsData.id : 0;
         const isExisting = formularios.some((item) => item.id === id);
         if (isExisting) {
           const updatedFormularios = formularios.map((item) => {
             if (item.id === id) {
-              updateFormInGlobalState(item.formNumber, amountInfo);
-              return amountInfo;
+              updateFormInGlobalState(item.formNumber, icdImportsData);
+              return icdImportsData;
             }
             return item;
           });
           setFormularios(updatedFormularios);
         } else {
-          const updatedFormularios = [...formularios, { ...amountInfo, id: id }];
+          const updatedFormularios = [...formularios, { ...icdImportsData, id: id }];
           setFormularios(updatedFormularios);
-          updateFormInGlobalState(id, amountInfo);
+          updateFormInGlobalState(id, icdImportsData);
         }
       }
     }
@@ -128,10 +130,40 @@ const CdpCrudPage = () => {
     setObjectSendData(finalObj);
   };
   
+useEffect(() => {
+  handleAgregarFormulario()
+}, [])
 
   useEffect(() => {
-    setInfoData()
-  }, [amountInfo,formHeadInfo]);
+    // Verificar si el idRppCode ya existe en dataFinalSend
+    const index = dataFinalSend.findIndex(item => item.id === icdImportsData['id']);
+  
+    // Si el idRppCode ya existe, actualizar el objeto correspondiente
+    if (index !== -1) {
+      setDataFinalSend(prevData => {
+        const newData = [...prevData];
+        newData[index] = icdImportsData;
+        return newData;
+      });
+    } else {
+      // Si el idRppCode no existe, agregar un nuevo objeto al array
+      setDataFinalSend(prevData => [...prevData, icdImportsData]);
+    }
+
+    let finalObj = {
+      date: formHeadInfo['date'],
+      contractObject: formHeadInfo['contractObject'],
+      exercise: formHeadInfo['exercise'],
+      icdArr: dataFinalSend
+    };
+    setObjectSendData(finalObj);
+    
+    setTimeout(() => {
+      console.log(objectSendData);
+      
+    }, 2000);
+    
+  }, [icdImportsData,formHeadInfo]);
 
   const handleCancel = () => {
     setMessage({
@@ -169,7 +201,7 @@ const CdpCrudPage = () => {
     return;
   }
     try {
-      const icdArrWithBalanceCheck = objectSendData["icdArr"];
+      const icdArrWithBalanceCheck = objectSendData["icdArr"].slice(1);
 
       const invalidBalances = icdArrWithBalanceCheck.filter(
         (item) => parseInt(item.valorInicial) >= parseInt(item.balance)
@@ -366,6 +398,11 @@ const CdpCrudPage = () => {
     
   }, [formDataCdpRoute]);
 
+
+  useEffect(() => {
+    console.log("verificacion por efecto icd",icdImportsData);
+    
+  }, [icdImportsData]);
   const handlePageChange = (page) => {
     if (page !== currentPage) {
       setCurrentPage(page);
