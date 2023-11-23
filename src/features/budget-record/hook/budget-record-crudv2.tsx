@@ -307,6 +307,11 @@ export function useBudgeRecordCrudv2() {
 
                 const dataCdp = res.data.array.map(e => {
                     return e.amounts.map(el => {
+
+                        let rpAmountsAssoc = el.linkRpcdps.reduce((acumulator, obj) => {
+                            return acumulator + obj.finalAmount;
+                          }, 0);
+
                         return ({
                             id: el.id,
                             sapConsecutive: e.sapConsecutive,
@@ -314,7 +319,7 @@ export function useBudgeRecordCrudv2() {
                             projectName: el.projectName,
                             fundCode: el.budgetRoute.fund.number,
                             pospreCode: el.budgetRoute.fund.number,
-                            amount: parseFloat(el.amount).toFixed(2),
+                            amount: (parseFloat(el.amount) - parseFloat(rpAmountsAssoc)).toFixed(2),
                             amountCdpId: el.id
                         })
                     })
