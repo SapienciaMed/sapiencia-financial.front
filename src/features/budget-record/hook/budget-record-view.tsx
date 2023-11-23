@@ -226,6 +226,12 @@ export function useBudgeRecordView() {
         {
             fieldName: "finalAmount",
             header: "Valor final",
+            renderCell: (row) => {
+                // Si finalAmount es null o 0, muestra initialAmount. De lo contrario, muestra finalAmount.
+                return row.finalAmount === null || row.finalAmount === 0 
+                    ? row.initialAmount 
+                    : row.finalAmount;
+            }
         },
         {
             fieldName: "rpId",
@@ -250,7 +256,7 @@ export function useBudgeRecordView() {
             hide: !validateActionAccess('RP_RUTAS_EDITAR'),
             onClick: (row) => {
                 { row.rpId }
-                navigate(`./edit/${row.rpId}`);
+                navigate(`./edit/${row.rpId}/idRp/${row.id}`);
             },
         }
     ];
