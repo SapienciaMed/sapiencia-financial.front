@@ -35,7 +35,7 @@ const CdpCrudPage = () => {
   const { icdImportsData } = useStoreIcd();
   const { setMessage } = useContext(AppContext);
   const { formInfo } = useContext(AppContext);
-  const [formCount, setFormCount] = useState(2);
+  const [formCount, setFormCount] = useState(1);
   const [formularios, setFormularios] = useState([]);
   const [formHeadInfo, setFormHeadInfo] = useState({})
   const [objectSendData, setObjectSendData] = useState({})
@@ -65,15 +65,9 @@ const CdpCrudPage = () => {
   const handleAgregarFormulario = () => {
     const newFormulario = { id: formCount };
     setFormularios([...formularios, newFormulario]);
+    setDataFinalSend([...dataFinalSend, []]); // Agregar un elemento vacío junto con el nuevo formulario
     setFormCount(formCount + 1);
-  /*   if(!deleteRouteTwo){
-      setTimeout(() => {
-        handleEliminar(1)
-        setDeleteRouteTwo(true);
-      }, 500);
-    } */
   };
-
   const updateFormInGlobalState = (formNumber, updatedInfo) => {
     const updatedFormData = formDataCdpRoute.map((form) =>
       form.id === formNumber ? { ...form, ...updatedInfo } : form
@@ -89,8 +83,6 @@ const CdpCrudPage = () => {
   };
 
   const handleEliminar = (formNumber) => {
-
-    console.log(formNumber);
     
     setDataFinalSend((prevFormularios) =>
       prevFormularios.filter((form) => form.id !== (formNumber+1))
@@ -105,10 +97,15 @@ const CdpCrudPage = () => {
     if (currentForms.length === 1 && currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
     }
-   const updatedIcdArr = objectSendData['icdArr'].filter((item) => item.id !== formNumber);
+  
+    const updatedIcdArr = objectSendData['icdArr']
+    .filter((_, index) => index !== formNumber * 2)
+    .filter((item) => Array.isArray(item) ? item.length > 0 : item !== undefined && item !== null);
   const updatedObjectSendData = { ...objectSendData, icdArr: updatedIcdArr };
-  setObjectSendData(updatedObjectSendData); 
+  setObjectSendData(updatedObjectSendData);
   };
+  
+  
   
   
 useEffect(() => {
@@ -166,8 +163,9 @@ useEffect(() => {
       navigate("./");
     };
 
-    const icdArrWithBalanceCheck = objectSendData["icdArr"].slice(1);
-    
+    //const icdArrWithBalanceCheck = objectSendData["icdArr"].slice(1);
+    const icdArrWithBalanceCheck = objectSendData["icdArr"].filter(item => Array.isArray(item) ? item.length > 0 : item !== undefined && item !== null);
+
     const hasEmptyFieldsOrZeros = icdArrWithBalanceCheck.some((item) => {
       for (const key in item) {
         if (key === 'posicion' || key === 'id') {
@@ -201,7 +199,8 @@ useEffect(() => {
     
 
     try {
-      const icdArrWithBalanceCheck = objectSendData["icdArr"].slice(1);
+      //const icdArrWithBalanceCheck = objectSendData["icdArr"].slice(1);
+      const icdArrWithBalanceCheck = objectSendData["icdArr"].filter(item => Array.isArray(item) ? item.length > 0 : item !== undefined && item !== null);
 
       const invalidBalances = icdArrWithBalanceCheck.filter(
         (item) => parseInt(item.valorInicial) >= parseInt(item.balance)
@@ -233,7 +232,7 @@ useEffect(() => {
           consecutive: 10,
           icdArr: updatedIcdArr.map(({ proyecto, posicion, valorInicial, id, ...rest }) => ({
             idRppCode: parseInt(proyecto),
-            cdpPosition: parseInt(posicion),
+            cdpPosition: parseInt(posicion) +1,
             amount: parseFloat(valorInicial),
             ...rest,
           })),
