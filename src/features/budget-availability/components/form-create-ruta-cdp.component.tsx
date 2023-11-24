@@ -169,6 +169,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ datasFounds, fo
         setBalance(datasFounds.balance);
         setValorInicial(datasFounds.valorInicial);
 
+        
         let totalAmountsAssoc = parseFloat(response['totalIdc']);
         let balanceFloat = parseFloat(response['balance']).toString().split('.');
         let parteEntera = parseInt(balanceFloat[0]);
