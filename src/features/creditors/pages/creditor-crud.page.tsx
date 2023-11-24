@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ButtonComponent, ButtonLoadingComponent, DatePickerComponent, FormComponent, InputComponent, SelectComponent } from "../../../common/components/Form";
 import { useNavigate } from "react-router";
 import { useWidth } from "../../../common/hooks/use-width";
@@ -12,7 +12,7 @@ function CreditorCrudPage() {
     const { id } = useParams();
     const navigate = useNavigate()
     const { width } = useWidth()
-
+    const [isAllowUpdateBtn, setIsAllowUpdateBtn] = useState(false)
 
     const {
         errors,
@@ -25,6 +25,8 @@ function CreditorCrudPage() {
         isAllowSave,
         documentTypeList
     } = useCreditorCrud(id);
+
+
 
     return (
         <div className='main-page'>
@@ -93,7 +95,7 @@ function CreditorCrudPage() {
                                         classNameLabel="text-black big bold text-required"
                                         direction={EDirection.column}
                                         errors={errors}
-                                        onChange={(value) => field.onChange(value)}
+                                        onChange={(value) => {field.onChange(value);setIsAllowUpdateBtn(true)}}
                                     />
                                 )} />
 
@@ -113,7 +115,7 @@ function CreditorCrudPage() {
                                         classNameLabel="text-black big bold text-required"
                                         direction={EDirection.column}
                                         errors={errors}
-                                        onChange={(value) => field.onChange(value)}
+                                        onChange={(value) => {field.onChange(value);;setIsAllowUpdateBtn(true)}}
                                     />
                                 )} />
                         </section>
@@ -132,7 +134,7 @@ function CreditorCrudPage() {
                                         classNameLabel={!id ? 'text-black big bold text-required': 'text-black big bold'}
                                         direction={EDirection.column}
                                         errors={errors}
-                                        onChange={(value) => field.onChange(value)}
+                                        onChange={(value) => {field.onChange(value);setIsAllowUpdateBtn(true)}}
                                     />
                                 )} />
                             <Controller
@@ -149,7 +151,7 @@ function CreditorCrudPage() {
                                         classNameLabel={!id ? 'text-black big bold text-required': 'text-black big bold'}
                                         direction={EDirection.column}
                                         errors={errors}
-                                        onChange={(value) => field.onChange(value)}
+                                        onChange={(value) => {field.onChange(value);setIsAllowUpdateBtn(true)}}
                                     />
                                 )} />
                             <Controller
@@ -166,7 +168,7 @@ function CreditorCrudPage() {
                                         classNameLabel={!id ? 'text-black big bold text-required': 'text-black big bold'}
                                         direction={EDirection.column}
                                         errors={errors}
-                                        onChange={(value) => field.onChange(value)}
+                                        onChange={(value) => {field.onChange(value);setIsAllowUpdateBtn(true)}}
                                     />
                                 )} />
                             <Controller
@@ -183,7 +185,7 @@ function CreditorCrudPage() {
                                         classNameLabel={!id ? 'text-black big bold text-required': 'text-black big bold'}
                                         direction={EDirection.column}
                                         errors={errors}
-                                        onChange={(value) => field.onChange(value)}
+                                        onChange={(value) => {field.onChange(value);setIsAllowUpdateBtn(true)}}
                                     />
                                 )} />
 
@@ -226,7 +228,7 @@ function CreditorCrudPage() {
                                 value="Guardar"
                                 form="form-pac"
                                 type="submit"
-                            //disabled={!isAllowSave}
+                                disabled={ id ? !isAllowUpdateBtn : false}
                             />
                         </div>
                     </div>

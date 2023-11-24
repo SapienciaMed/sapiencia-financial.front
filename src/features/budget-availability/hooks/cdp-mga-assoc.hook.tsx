@@ -29,7 +29,7 @@ interface IArrayMgaAssoc {
 export function useCdpMgaAssoc(id?: string, idRoute?: string) {
    
     const resolver = useYupValidationResolver(cdpMgaAssoc);
-    const { setMessage } = useContext(AppContext);
+    const { setMessage,authorization } = useContext(AppContext);
     const { getCdpById, getActivitiesDetail, validate, createVinculationMGA,validateCDP } = useCdpService()
     const { getAllCpc } = useBudgetsService()
     const [arrayDataSelect, setArrayDataSelect] = useState({
@@ -267,7 +267,8 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
             activitieDetailMga: Number(item.detailedMgaActivity),
             percentageAfected: Number(item.percentage),
             cdpCode: Number(item.cdpCode),
-            cpcCode: Number(item.cpc)
+            cpcCode: Number(item.cpc),
+            userCreate: authorization?.user?.numberDocument!,
         }));
 
         const finalObject = { datos };
