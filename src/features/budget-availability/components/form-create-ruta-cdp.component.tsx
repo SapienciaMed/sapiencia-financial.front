@@ -127,49 +127,48 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ datasFounds, fo
             setValorInicial(totalAmountAvalible.toString());
           } else {
             setMessage({
-            title: "!No hay datos relacionados!",
-            description: "No encontramos una ruta presupuestal con los datos que proporcionaste, intentalo de otra vez con nuevos datos",
-            show: true,
-            OkTitle: "cerrar",
-            onOk: () => {
-              setMessage({});
-            },
-            background: true,
-          });
-          setValorInicial('0');
-          return;
-        
+              title: "!No hay datos relacionados!",
+              description: "No encontramos una ruta presupuestal con los datos que proporcionaste, intentalo de otra vez con nuevos datos",
+              show: true,
+              OkTitle: "cerrar",
+              onOk: () => {
+                setMessage({});
+              },
+              background: true,
+            });
+            setValorInicial('0');
+            return;
+
           }
-        
+
         } catch (error) {
           console.error('Error al obtener los datos:', error);
         }
-      }     // Caso 1: datasFounds no tiene información
- 
+      }
+
     } else {
       let response;
+      let tryJsonInfo
       if (pospreNewV && fondo && proyecto) {
-          const objectSendData = {
-            posPreId: parseInt(pospreNewV),
-            foundId: parseInt(fondo),
-            projectId: parseInt(proyecto),
-          };
-           response = await cdpService.getOneRpp(objectSendData);
+        const objectSendData = {
+          posPreId: parseInt(pospreNewV),
+          foundId: parseInt(fondo),
+          projectId: parseInt(proyecto),
+        };
+        response = await cdpService.getOneRpp(objectSendData);
+        tryJsonInfo = JSON.stringify(response);
+        tryJsonInfo = JSON.parse(tryJsonInfo)['id'].toString();
+        setIdRpp(tryJsonInfo);
       }
-      let tryJsonInfo = JSON.stringify(response);
-      tryJsonInfo = JSON.parse(tryJsonInfo)['id'].toString();
-      setIdRpp(tryJsonInfo);
       // Caso 2: datasFounds tiene datos
       if (datasFounds.valorInicial !== "0" && tryJsonInfo === datasFounds.idRpp) {
         setSaldo(datasFounds.balance)
         setBalance(datasFounds.balance);
         setValorInicial(datasFounds.valorInicial);
-      } else if(datasFounds.valorInicial !== "0" && tryJsonInfo != datasFounds.idRpp){
+      } else if (datasFounds.valorInicial !== "0" && tryJsonInfo != datasFounds.idRpp) {
         setSaldo(datasFounds.balance)
         setBalance(datasFounds.balance);
         setValorInicial(datasFounds.valorInicial);
-
-        
         let totalAmountsAssoc = parseFloat(response['totalIdc']);
         let balanceFloat = parseFloat(response['balance']).toString().split('.');
         let parteEntera = parseInt(balanceFloat[0]);
@@ -178,7 +177,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ datasFounds, fo
         setSaldo(totalAmountAvalible)
         setBalance(totalAmountAvalible.toString());
         setValorInicial(totalAmountAvalible.toString());
-      }else {
+      } else {
         if (pospreNewV && fondo && proyecto) {
           try {
             const objectSendData = {
@@ -192,13 +191,13 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ datasFounds, fo
               let balanceFloat = parseFloat(response['balance']).toString().split('.');
               let parteEntera = parseInt(balanceFloat[0]);
               let totalAmountAvalible = parteEntera - totalAmountsAssoc;
-    
+
               setSaldo(totalAmountAvalible)
               setBalance(totalAmountAvalible.toString());
               setValorInicial(totalAmountAvalible.toString());
-             
+
             } else {
-              
+
               setMessage({
                 title: "!No hay datos relacionados!",
                 description: "No encontramos una ruta presupuestal con los datos que proporcionaste, intentalo de otra vez con nuevos datos",
@@ -218,7 +217,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ datasFounds, fo
         }
       }
     }
-  
+
   };
 
 
