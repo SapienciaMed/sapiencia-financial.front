@@ -241,13 +241,10 @@ function BudgetRecordCrudPagev2() {
       </div>
       {
         isAllowSave && (
-          <div className="container-button-bot">
-            <ButtonComponent
-              form="useQueryForm"
-              value="Cancelar"
-              type="button"
-              className="button-clean-fields bold"
-              action={() => {
+          <div className="funcionality-buttons-container">
+            <span
+              className="bold text-center button"
+              onClick={() => {
                 setMessage({
                   title: "Cancelar",
                   show: true,
@@ -267,8 +264,14 @@ function BudgetRecordCrudPagev2() {
                     setMessage({});
                   },
                 });
+              }
+              }
+              style={{
+                marginRight: '10px',
               }}
-            />
+            >
+              Cancelar
+            </span>
 
             <div className="buttons-bot">
               <ButtonLoadingComponent
