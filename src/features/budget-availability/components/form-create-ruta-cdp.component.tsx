@@ -64,9 +64,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({datasFounds, for
   const [saldo, setSaldo] = useState(0)
 
 
-  const onDeleteClick = () => {
-    handleEliminar(formNumber);
-  };
+
 
   const formValues = {
     idRppCode: idRpp,
@@ -86,6 +84,10 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({datasFounds, for
   const renderedFormNumber = (posicionCdp && posicionCdp !== 0) ?
     (Number(formNumber) > posicionCdp ? Number(formNumber) : posicionCdp) :
     Number(formNumber);
+
+    const onDeleteClick = () => {
+      handleEliminar(renderedFormNumber);
+    };
 
   const validateField = (field) => {
     if (formSubmitted && !field) {
@@ -122,8 +124,8 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({datasFounds, for
           let balanceFloat = parseFloat(response['balance']).toString().split('.');
           let parteEntera = parseInt(balanceFloat[0]);
           let totalAmountAvalible = parteEntera - totalAmountsAssoc;
-          console.log(totalAmountAvalible);
-          if(datasFounds.valorInicial != "0" && idRpp != datasFounds.idRppCode){
+
+          if(datasFounds.valorInicial != "0" && idRpp == datasFounds.idRpp){
             setSaldo(datasFounds.balance)
             setBalance(datasFounds.balance);
             setValorInicial(datasFounds.valorInicial);
