@@ -84,7 +84,7 @@ const CdpCrudPage = () => {
 
   const handleEliminar = (formNumber) => {
     setDataFinalSend((prevFormularios) =>
-      prevFormularios.filter((form) => form.id !== (formNumber+1))
+      prevFormularios.filter((form,index) => index !== (formNumber))
     );
     
     setFormularios((prevFormularios) =>
@@ -164,8 +164,15 @@ useEffect(() => {
     };
 
     //const icdArrWithBalanceCheck = objectSendData["icdArr"].slice(1);
-    const icdArrWithBalanceCheck = objectSendData["icdArr"].filter(item => Array.isArray(item) ? item.length > 0 : item !== undefined && item !== null);
-
+    const icdArrWithBalanceCheck = objectSendData["icdArr"].filter(item => {
+      if (Array.isArray(item)) {
+          return item.length > 0;
+      } else if (item !== undefined && item !== null) {
+          return item.idRppCode !== "0";
+      }
+      return false;
+  });
+  
     const hasEmptyFieldsOrZeros = icdArrWithBalanceCheck.some((item) => {
       for (const key in item) {
         if (key === 'posicion' || key === 'id') {
@@ -200,8 +207,14 @@ useEffect(() => {
 
     try {
       //const icdArrWithBalanceCheck = objectSendData["icdArr"].slice(1);
-      const icdArrWithBalanceCheck = objectSendData["icdArr"].filter(item => Array.isArray(item) ? item.length > 0 : item !== undefined && item !== null);
-
+      const icdArrWithBalanceCheck = objectSendData["icdArr"].filter(item => {
+        if (Array.isArray(item)) {
+            return item.length > 0;
+        } else if (item !== undefined && item !== null) {
+            return item.idRppCode !== "0";
+        }
+        return false;
+    });
       const invalidBalances = icdArrWithBalanceCheck.filter(
         (item) => parseInt(item.valorInicial) >= parseInt(item.balance)
       );
@@ -251,8 +264,6 @@ useEffect(() => {
           onOk: async () => {
             try {
               const response = await cdpService.createCdp_(nuevoObjeto);
-            
-
               setTimeout(() => {
                 if (response['operation']['code'] == "OK") {
                   setMessage({
@@ -345,7 +356,6 @@ useEffect(() => {
         const currentFormIndex = indexOfFirstForm + index;
        // const currentFormData = formDataCdpRoute?.find((form) => form.id === currentFormIndex);
        const foundObject = totalDataRuta.find(obj => obj.id === currentFormIndex);
-
         return (
           <FormCreateRutaCDPComponent
           key={currentFormIndex}
