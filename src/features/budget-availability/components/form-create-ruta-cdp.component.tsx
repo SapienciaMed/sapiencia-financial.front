@@ -156,9 +156,12 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ datasFounds, fo
           projectId: parseInt(proyecto),
         };
         response = await cdpService.getOneRpp(objectSendData);
-        tryJsonInfo = JSON.stringify(response);
-        tryJsonInfo = JSON.parse(tryJsonInfo)['id'].toString();
-        setIdRpp(tryJsonInfo);
+        if(response instanceof Object) {
+        
+          tryJsonInfo = JSON.stringify(response);
+          tryJsonInfo = JSON.parse(tryJsonInfo)['id'].toString();
+          setIdRpp(tryJsonInfo);
+        }
       }
       // Caso 2: datasFounds tiene datos
       if (datasFounds.valorInicial !== "0" && tryJsonInfo === datasFounds.idRpp) {
