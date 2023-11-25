@@ -83,13 +83,12 @@ const CdpCrudPage = () => {
   };
 
   const handleEliminar = (formNumber) => {
-    
     setDataFinalSend((prevFormularios) =>
       prevFormularios.filter((form) => form.id !== (formNumber+1))
     );
     
     setFormularios((prevFormularios) =>
-      prevFormularios.filter((form) => form.id !== (formNumber+1))
+      prevFormularios.filter((form,index) => index !== (formNumber))
     );
   
     setFormCount((prevCount) => prevCount - 1);
@@ -103,6 +102,7 @@ const CdpCrudPage = () => {
     .filter((item) => Array.isArray(item) ? item.length > 0 : item !== undefined && item !== null);
   const updatedObjectSendData = { ...objectSendData, icdArr: updatedIcdArr };
   setObjectSendData(updatedObjectSendData);
+
   };
   
   
