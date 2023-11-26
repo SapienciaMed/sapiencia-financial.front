@@ -145,7 +145,7 @@ export function useCdpCrud(cdpId?: string) {
 
     ];
 
-    const tableActions: ITableAction<any>[] = [
+   /*  const tableActions: ITableAction<any>[] = [
         {
             icon: "Edit",
             onClick: (row) => {
@@ -159,7 +159,33 @@ export function useCdpCrud(cdpId?: string) {
                 navigate(`./mga-assoc/${row.id}`);
             },
         },
-    ];
+    ]; */
+
+    function getTableActions(): ITableAction<any>[] {
+        const actions: ITableAction<any>[] = [
+            {
+                icon: "Edit",
+                onClick: (row) => {
+                    navigate(`./edit/${row.id}`);
+                },
+            }
+        ];
+    
+        if (validateActionAccess('CDP_MGA_VINCULAR') || amountWatch.sapConsecutive !== null) {
+            actions.push({
+                icon: "LinkMga",
+                onClick: (row) => {
+                    navigate(`./mga-assoc/${row.id}`);
+                },
+            });
+        }
+    
+        return actions;
+    }
+    
+    const tableActions = getTableActions();
+
+  
 
 
 
