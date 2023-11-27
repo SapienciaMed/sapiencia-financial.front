@@ -72,7 +72,7 @@ function BudgetRecordCrudPagev2() {
                     classNameLabel="text-black big bold text-required"
                     direction={EDirection.column}
                     errors={errors}
-                    onChange={(value) => field.onChange(value)}
+                    onBlur={(value) => field.onChange(value)}
                   />
                 )} />
               <Controller
@@ -239,49 +239,56 @@ function BudgetRecordCrudPagev2() {
           />
         </FormComponent>
       </div>
+      {
+        isAllowSave && (
+          <div className="funcionality-buttons-container">
+            <span
+              className="bold text-center button"
+              onClick={() => {
+                setMessage({
+                  title: "Cancelar",
+                  show: true,
+                  cancelTitle: "Cancelar",
+                  OkTitle: "Aceptar",
+                  description: (
+                    <div style={{ width: "100%" }}>
+                      <label>¿Estas segur@ de cancelar?</label>
+                    </div>
+                  ),
+                  background: true,
+                  onOk: () => {
+                    navigate("/gestion-financiera/rp");
+                    setMessage({});
+                  },
+                  onCancel: () => {
+                    setMessage({});
+                  },
+                });
+              }
+              }
+              style={{
+                marginRight: '10px',
+              }}
+            >
+              Cancelar
+            </span>
 
-      <div className="container-button-bot">
-        <ButtonComponent
-          form="useQueryForm"
-          value="Cancelar"
-          type="button"
-          className="button-clean-fields bold"
-          action={() => {
-            setMessage({
-              title: "Cancelar",
-              show: true,
-              cancelTitle: "Cancelar",
-              OkTitle: "Aceptar",
-              description: (
-                <div style={{ width: "100%" }}>
-                  <label>¿Estas segur@ de cancelar?</label>
-                </div>
-              ),
-              background: true,
-              onOk: () => {
-                navigate("/gestion-financiera/rp");
-                setMessage({});
-              },
-              onCancel: () => {
-                setMessage({});
-              },
-            });
-          }}
-        />
+            <div className="buttons-bot">
+              <ButtonLoadingComponent
+                className="button-main huge hover-three"
+                value="Guardar"
+                form="form-pac"
+                type="button"
+                action={() => {
+                  btnUploadFileRef.current.click();
+                }}
+                disabled={!isAllowSave}
+              />
+            </div>
+          </div>
+        )
+      }
 
-        <div className="buttons-bot">
-          <ButtonLoadingComponent
-            className="button-main huge hover-three"
-            value="Guardar"
-            form="form-pac"
-            type="button"
-            action={() => {
-              btnUploadFileRef.current.click();
-            }}
-            disabled={!isAllowSave}
-          />
-        </div>
-      </div>
     </div>
   );
 }

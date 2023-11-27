@@ -92,4 +92,6 @@ export interface ICdpMgaAssocFromProps {
   register: UseFormRegister<ICdpMgaAssoc>,
   onSubmit: (e?: React.BaseSyntheticEvent<object, any, any>) => Promise<void>,
   deleteElement: (idToDelete: any) => void
+  activities: any,
+  cpc: any
 }

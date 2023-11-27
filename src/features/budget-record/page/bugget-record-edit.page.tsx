@@ -1,17 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import { ButtonComponent, FormComponent, InputComponent, SelectComponent } from "../../../common/components/Form";
 import { TextAreaCountComponent } from "../../../common/components/Form/input-text-area-count.component";
 import { Controller } from 'react-hook-form';
 import { useBudgeRecordEdit } from "../hook/budget-record-edit.hook";
+import { InputNumberComponent } from "../../../common/components/Form/input-number.component";
 
 
 function BudgetRecordEditPage() {
 
-    const [modifiedIdcCountercredit, setModifiedIdcCountercredit] = useState(0)
-    const [idcModifiedCredit, setIdcModifiedCredit] = useState(0)
-    const [idcFixedCompleted, setIdcFixedCompleted] = useState(0)
+  
 
-    const { control, register, dependeciesData,componentsData,disabledButton,onSubmiteditRp,CancelFunction, totalCautation, RP } = useBudgeRecordEdit(modifiedIdcCountercredit,idcModifiedCredit,idcFixedCompleted);
+    const { control, register, dependeciesData, componentsData, disabledButton, onSubmiteditRp, CancelFunction, totalCautation, RP,errors } = useBudgeRecordEdit();
 
     return (
         <div className="crud-page">
@@ -56,7 +55,7 @@ function BudgetRecordEditPage() {
                         </section>
 
                         <section className="grid-form-3-container-area mt-5px"><h3>Dependencia</h3></section>
-                        <section className="grid-form-3-container-area mt-5px">                           
+                        <section className="grid-form-3-container-area mt-5px">
                             <SelectComponent
                                 idInput="dependencyId"
                                 control={control}
@@ -66,7 +65,7 @@ function BudgetRecordEditPage() {
                                 placeholder={"Seleccionar"}
                                 data={dependeciesData}
                                 filter={true}
-                                disabled                               
+                                disabled
                             />
                             <InputComponent
                                 idInput="contractualObject"
@@ -86,8 +85,8 @@ function BudgetRecordEditPage() {
                                 placeholder={"Seleccionar"}
                                 data={componentsData}
                                 filter={true}
-                                disabled                             
-                                
+                                disabled
+
                             />
                         </section>
                     </div>
@@ -180,61 +179,133 @@ function BudgetRecordEditPage() {
 
                         <label className="text-black biggest mt-24px">Importe</label>
                         <section className='funcionality-filters-container mt-24px'>
-                            <InputComponent
-                                idInput="amount"
-                                className="input-basic"
-                                typeInput="text"
-                                register={register}
-                                label="Valor inicial"
-                                classNameLabel="text-black biggest "
-                                disabled
+                         
+                          <Controller
+                                control={control}
+                                name={"amount"}
+                                defaultValue='0'
+                                render={({ field }) => {
+                                    return (
+                                        <InputNumberComponent
+                                            control={control}
+                                            idInput={field.name}
+                                            label="Valor inicial"
+                                            className="inputNumber-basic"
+                                            classNameLabel="text-black biggest "
+                                            mode="currency"
+                                            currency="COP"
+                                            locale="es-CO"
+                                            minFractionDigits={0}
+                                            maxFractionDigits={0}
+                                        //errors={errors}
+                                        disabled
+                                        />
+                                    )
+                                }}
                             />
-                            <InputComponent
-                                idInput="againtsAmount"
-                                className="input-basic"
-                                typeInput="number"
-                                register={register}
-                                label="Modificado contracrédito"
-                                classNameLabel="text-black biggest"
-                                onChange={(e) => setModifiedIdcCountercredit(Number(e.target.value))}
-                                
-                                />
 
-                            <InputComponent
-                                idInput="creditAmount"
-                                className="input-basic"
-                                typeInput="number"
-                                register={register}
-                                label="Modificado crédito"
-                                classNameLabel="text-black biggest"                             
-                                onChange={(e) => setIdcModifiedCredit(Number(e.target.value))}
-                                
-                                />
-                            <InputComponent
-                                idInput="fixedCompleted"
-                                className="input-basic"
-                                typeInput="number"
-                                register={register}
-                                label="Fijado concluído"
-                                classNameLabel="text-black biggest"
-                                onChange={(e) => setIdcFixedCompleted(Number(e.target.value))}
 
+                            <Controller
+                                control={control}
+                                name={"againtsAmount"}
+                                defaultValue=""
+                                render={({ field }) => {
+                                    return (
+                                        <InputNumberComponent
+                                        control={control}
+                                        idInput={field.name}
+                                        label="Modificado contracrédito"
+                                        className="inputNumber-basic"
+                                        classNameLabel="text-black biggest"
+                                        mode="currency"
+                                        currency="COP"
+                                        locale="es-CO"
+                                        minFractionDigits={0}
+                                        maxFractionDigits={0}
+                                        errors={errors}
+                                    />
+                                    )
+                                }}
                             />
+
+                         
+
+                            <Controller
+                                control={control}
+                                name={"creditAmount"}
+                                defaultValue=""
+                                render={({ field }) => {
+                                    return (
+                                        <InputNumberComponent
+                                            control={control}
+                                            idInput={field.name}
+                                            label="Modificado crédito"
+                                            className="inputNumber-basic"
+                                            classNameLabel="text-black biggest"
+                                            mode="currency"
+                                            currency="COP"
+                                            locale="es-CO"
+                                            minFractionDigits={0}
+                                            maxFractionDigits={0}
+                                            errors={errors}
+                                        />
+                                    )
+                                }}
+                            />
+
+                        
+
+                            <Controller
+                                control={control}
+                                name={"fixedCompleted"}
+                                defaultValue=""
+                                render={({ field }) => {
+                                    return (
+                                        <InputNumberComponent
+                                            control={control}
+                                            idInput={field.name}
+                                            label="Fijado concluído"
+                                            className="inputNumber-basic"
+                                            classNameLabel="text-black biggest"
+                                            mode="currency"
+                                            currency="COP"
+                                            locale="es-CO"
+                                            minFractionDigits={0}
+                                            maxFractionDigits={0}
+                                            errors={errors}
+                                        />
+                                    )
+                                }}
+                            />
+
                         </section>
                         <section className='one-filter-container'>
-                            <InputComponent
-                                idInput="idcFinalValue"
-                                className="input-basic"
-                                typeInput="text"
-                                register={register}
-                                label="Valor final"
-                                classNameLabel="text-black biggest "
-                                disabled
-                                //value={String(idcFinalValue)}
+                            <Controller
+                                control={control}
+                                name={"idcFinalValue"}
+                                defaultValue='0'
+                                render={({ field }) => {
+                                    return (
+                                        <InputNumberComponent
+                                            control={control}
+                                            idInput={field.name}
+                                            label="Valor final"
+                                            className="inputNumber-basic"
+                                            classNameLabel="text-black biggest"
+                                            mode="currency"
+                                            currency="COP"
+                                            locale="es-CO"
+                                            minFractionDigits={0}
+                                            maxFractionDigits={0}
+                                            errors={errors}
+                                            disabled
+                                        />
+                                    )
+                                }}
                             />
                         </section>
 
-                       <div className='mt-24px'>
+                        <div className='mt-24px'>
                             <Controller
                                 control={control}
                                 name={"observation"}
@@ -253,21 +324,21 @@ function BudgetRecordEditPage() {
                                             register={register}
                                             onChange={field.onChange}
                                             characters={500}
-                                            
+                                            errors={errors}
                                         ></TextAreaCountComponent>
                                     );
                                 }}
                             />
-                                <label>RP: {RP}</label>
-                                <br />
-                                <label>Causación: {totalCautation}</label>
-                                <br />
-                                <br />
+                            <label>CDP: {RP}</label>
+                            <br />
+                            <label>Causación: {totalCautation}</label>
+                            <br />
+                            <br />
 
-                                <label>Modificado contracrédito no puede ser mayor a la Causación</label><br />
-                                <label>Modificado crédito no puede ser mayor al RP</label><br />
-                                <label>El total causacion debe ser menor al RP</label><br />
-                        </div> 
+                            <label>Modificado contracrédito no puede ser mayor a la Causación</label><br />
+                            <label>Modificado crédito no puede ser mayor al RP</label><br />
+                            <label>El total causacion debe ser menor al RP</label><br />
+                        </div>
                     </section>
 
                     <hr />

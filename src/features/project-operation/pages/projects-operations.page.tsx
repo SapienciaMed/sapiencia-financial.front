@@ -12,6 +12,7 @@ function ProjectsOperationsPage(props: IAppProps): React.JSX.Element {
     tableComponentRef,
     navigate,
     isVisibleTable,
+    validateActionAccess
   } = useDataProjectOperation();
 
   return (
@@ -19,7 +20,11 @@ function ProjectsOperationsPage(props: IAppProps): React.JSX.Element {
       <div className='card-table'>
         <div className="title-area">
           <div className="text-black extra-large bold">Consultar proyecto</div>
-          <div style={{ marginTop: '30px' }} className="title-button text-three large" onClick={() => navigate('./create')}> Crear proyecto <BiPlusCircle /> </div>
+          {
+            validateActionAccess('PROYECTO_FUNCIONAMIENTO_CREAR') && (
+              <div style={{ marginTop: '30px' }} className="title-button text-three large" onClick={() => navigate('./create')}> Crear proyecto <BiPlusCircle /> </div>
+            )
+          }
         </div>
 
         <div

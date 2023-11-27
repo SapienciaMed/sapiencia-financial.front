@@ -8,9 +8,12 @@ import { Controller } from "react-hook-form";
 import { EDirection } from "../../../../common/constants/input.enum";
 import { typesReports } from "../../constants";
 import { useWidth } from "../../../../common/hooks/use-width";
+import { useContext } from "react";
+import { AppContext } from "../../../../common/contexts/app.context";
 
 const HomeReports = () => {
   const { width } = useWidth();
+  const { validateActionAccess } = useContext(AppContext)
   const {
     onSubmit,
     control,
@@ -55,7 +58,9 @@ const HomeReports = () => {
               : "funcionality-filters-container"
           }
         >
+          
           {typesReports?.map((report, index) => (
+            validateActionAccess(report.indicatorSecurity) && (
             <div key={report.name}>
               <Controller
                 control={control}
@@ -96,6 +101,7 @@ const HomeReports = () => {
                 }}
               />
             </div>
+            )
           ))}
         </div>
         <div className="funcionality-buttons-container">

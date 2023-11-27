@@ -16,8 +16,8 @@ export function useCreditorView() {
     const { getListByGrouper } = useGenericListService()
     const tableComponentRef = useRef(null);
     const { GetCreditorsByFilters } = useCreditorsServices();
-    const { setMessage, authorization } = useContext(AppContext);
-
+    const { setMessage, validateActionAccess } = useContext(AppContext);
+    
     const [componentsData, setComponentsData] = useState<IDropdownProps[]>([]);
     const [dependeciesData, setDependeciesData] = useState<IDropdownProps[]>([]);
 
@@ -53,6 +53,17 @@ export function useCreditorView() {
     });
 
     const formData = watch()
+
+    useEffect(() => {
+        if (formData.typeDocument != null && formData.typeDocument != "") {
+            setIsAllowSave(true)
+        } else if (formData.name != "" || formData.taxIdentification != "" || formData.document != "") {
+            setIsAllowSave(true)
+        } else {
+            setIsAllowSave(false)
+        }
+    }, [formData])
+
 
 
     const [creditorsSt, setCreditorsSt] = useState([])
@@ -128,6 +139,7 @@ export function useCreditorView() {
     const tableActions: ITableAction<any>[] = [
         {
             customName: 'Acciones',
+            hide:!validateActionAccess('ACREEDOR_EDITAR'),
             icon: "Edit",
             onClick: (row) => {
                 navigate(`/gestion-financiera/acreedor/editar/${row.id}`)
@@ -152,8 +164,10 @@ export function useCreditorView() {
         tableComponentRef,
         tableColumns,
         tableActions,
+        setCreditorsSt,
         creditorsSt,
-        documentTypeList
+        documentTypeList,
+        validateActionAccess
     };
 
 }

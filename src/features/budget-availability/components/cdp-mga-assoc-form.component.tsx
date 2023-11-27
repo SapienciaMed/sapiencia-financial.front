@@ -10,14 +10,11 @@ import { DataView } from "primereact/dataview";
 import { ICdpMgaAssocFromProps } from "../interfaces/budgetAvailabilityInterfaces";
 
 function CdpMgaAssocFormComponent(props: ICdpMgaAssocFromProps) {
-    const { control, errors, arrayDataSelect, disableAddButton, arrayMgaAssoc, register, onSubmit, deleteElement } = props;
+    const { control, errors, arrayDataSelect, disableAddButton, arrayMgaAssoc, register, onSubmit, deleteElement,activities,cpc } = props;
     const { width } = useWidth();
 
     const headerMobil = [
-        {
-            field:"mgaProduct",
-            header:"Producto MGA",
-        },
+     
         {
             field: "mgaActivity",
             header: "Actividad MGA",
@@ -134,6 +131,7 @@ function CdpMgaAssocFormComponent(props: ICdpMgaAssocFromProps) {
             <section  className='card-table gap-0 mt-16px'>
                 <FormComponent action={onSubmit}  id="form-cdp-assoc-mga">
                     <div className="funcionality-filters-container">
+                        
 
                         <SelectComponent
                             idInput='DetailedActivityMGA'
@@ -142,8 +140,9 @@ function CdpMgaAssocFormComponent(props: ICdpMgaAssocFromProps) {
                             className="select-basic big"
                             classNameLabel="text-black weight-500 biggest text-required"
                             placeholder={'Seleccionar'}
-                            data={arrayDataSelect.listDetailedActivityMGA}
+                            data={activities}
                             errors={errors}
+                            filter={true}
                         /> 
 
                         <SelectComponent
@@ -153,35 +152,34 @@ function CdpMgaAssocFormComponent(props: ICdpMgaAssocFromProps) {
                             className="select-basic big"
                             classNameLabel="text-black weight-500 biggest text-required"
                             placeholder={'Seleccionar'}
-                            data={[
-                                { id: '1', name: 'Seleccione', value: null},
-                                { id: "2", name: "CPC 1", value: "CPC 1" },
-                                { id: "3", name: "CPC 2", value: "CPC 2" },
-                                { id: "4", name: "CPC 3", value: "CPC 3" },
-                            ]}
+                            data={cpc}
                             errors={errors}
+                            filter={true}
                         />
 
                         <Controller
                             control={control}
                             name={"percentageAffected"} 
+                            defaultValue=""
                             render={({ field }) => {
                                 return (
                                     <InputComponent
                                         id={field.name}
                                         idInput={field.name}
+                                        //value={`${field.value}`}
                                         className="input-basic big"  
                                         typeInput="number"
                                         register={register}
                                         label="Porcentaje de afectación"
                                         classNameLabel="text-black weight-500 biggest text-required"
                                         direction={EDirection.column}
+                                        onChange={field.onChange}
                                         errors={errors}
                                     />
                                 );
                             }}
                         /> 
-
+    
 
                     </div>
                     <section className="container-button-bot-2" style={{border:'none'}}>
@@ -198,7 +196,7 @@ function CdpMgaAssocFormComponent(props: ICdpMgaAssocFromProps) {
                         </div>
                     </section>
                 </FormComponent>
-            </section>
+            </section>            
 
             {
                 arrayMgaAssoc.length > 0 && (
@@ -214,11 +212,11 @@ function CdpMgaAssocFormComponent(props: ICdpMgaAssocFromProps) {
                                     className={`spc-table full-height`}
                                     value={arrayMgaAssoc}
                                     scrollable={true}
-                                >            
-                                    <Column field="mgaProduct" header="Producto MGA"></Column>
-                                    <Column field="mgaActivity" header="Actividad MGA"></Column>
-                                    <Column field="detailedMgaActivity" header="Actividad detallada MGA"></Column>
-                                    <Column field="cpc" header="CPC"></Column>
+                                >           
+                                    
+                                    <Column field="tabActivity" header="Actividad MGA"></Column>
+                                    <Column field="tabDetailedMgaActivity" header="Actividad detallada MGA"></Column>
+                                    <Column field="tabSelectCpc" header="CPC"></Column>
                                     <Column field="percentage" header="Porcentaje"></Column>
                                     <Column 
                                         className="spc-table-actions" 

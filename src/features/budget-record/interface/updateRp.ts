@@ -4,5 +4,7 @@ export interface IUpdateRP{
     againtsAmount?: number;
     fixedCompleted?: number,
     finalAmount?: number
+
+   
    
 }

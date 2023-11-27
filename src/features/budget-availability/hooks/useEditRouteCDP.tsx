@@ -6,15 +6,13 @@ import { IRoutesCDP, IUpdateRoutesCDP } from "../interfaces/RouteCDPInterface";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import { useForm } from "react-hook-form";
 import { useAdditionsTransfersService } from "../../managementCenter/hook/additions-transfers-service.hook";
-import { IDropdownProps } from "../../../common/interfaces/select.interface";
 import { IProjectAdditionList } from "../../functionality/interfaces/AdditionsTransfersInterfaces";
-import { projects } from '../../../common/schemas/projects-schemas';
 import { useFunctionalAreaService } from "../../functionality/hooks/functional-area-service.hook";
 import { IFunctionalArea } from "../../functionality/interfaces/Functional-Area";
 import { AppContext } from "../../../common/contexts/app.context";
 
 
-export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCredit: any, idcFixedCompleted: number) {
+export function useEditrouteCDP() {
 
     //params url
     const navigate = useNavigate();
@@ -111,27 +109,21 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
         }
     }, [dataRoutesCDP, projectsData]);
 
+    const inputModifiedIdcCountercredit = watch('modifiedIdcCountercredit')
+    const inputIdcModifiedCredit= watch('idcModifiedCredit')
+    const inputIdcFixedCompleted = watch('idcFixedCompleted')
 
     useEffect(() => {
-        const amount = dataRoutesCDP?.amount ?? 0;
-        const idcModifiedCreditNumber = idcModifiedCredit ;
-        const modifiedIdcCountercreditNumber = modifiedIdcCountercredit ;
-        const idcFixedCompletedNumber = idcFixedCompleted ;
+        const amount = dataRoutesCDP?.amount ?? 0;       
 
-        const resultFinal = Math.max(0, (Number(amount) + idcModifiedCreditNumber) - modifiedIdcCountercreditNumber - idcFixedCompletedNumber);
+        const resultFinal = Math.max(0, (Number(amount) + inputIdcModifiedCredit) - inputModifiedIdcCountercredit - inputIdcFixedCompleted);
         setIdcFinalValue(resultFinal);
-
 
         setValue("idcFinalValue", Number(resultFinal));
 
+    }, [dataRoutesCDP, inputModifiedIdcCountercredit, inputIdcModifiedCredit, inputIdcFixedCompleted]);
 
-    }, [dataRoutesCDP, idcModifiedCredit, modifiedIdcCountercredit, idcFixedCompleted]);
-
-    //validar por valores
-
-
-
-    
+    //validar por valores    
     const fetchBalance = async () => {
 
         if (dataRoutesCDP) {
@@ -145,6 +137,8 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
                 const res = await getOneRpp(objectSendData);
                 const resRP = await getTotalValuesImport(dataRoutesCDP.id);
 
+               
+
                 setBalance(Number(res['balance']));
                 setTotalICD(Number(res['totalIdc']));
 
@@ -156,42 +150,24 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
                 console.error('Error al obtener los datos:', error);
             }
         }
-    };
-
-   /*  console.log('balance',totalRp)
-    console.log('totales',totalFinalICD) */
+    };  
    
-    const [debouncedIdcModifiedCredit, setDebouncedIdcModifiedCredit] = useState(idcModifiedCredit);
-    const [debouncedIdcModifiedCounterCredit, setDebouncedIdcModifiedCounterCredit] = useState(modifiedIdcCountercredit);
-    const [debouncedIdcFixedCompleted, setDebouncedIdcFixedCompleted] = useState(idcFixedCompleted);
 
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebouncedIdcModifiedCredit(idcModifiedCredit);
-            setDebouncedIdcModifiedCounterCredit(modifiedIdcCountercredit);
-            setDebouncedIdcFixedCompleted(idcFixedCompleted);
-        }, 300);  // Retraso de 300ms
 
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [idcModifiedCredit, modifiedIdcCountercredit, idcFixedCompleted]);
 
     useEffect(() => {
         fetchBalance();
-        const isCondition1 = Number(debouncedIdcModifiedCredit) > Number(totalFinalICD);
-        const isCondition2 = Number(debouncedIdcModifiedCounterCredit) > Number(totalRp);
-        const isCondition3 = Number(debouncedIdcFixedCompleted) > Number(totalRp);
+        const isCondition1 = inputIdcModifiedCredit > Number(totalFinalICD);
+        const isCondition2 = inputModifiedIdcCountercredit > Number(totalRp);
+        const isCondition3 = inputIdcFixedCompleted > Number(totalRp);
 
-        if (isCondition1  || isCondition2  || isCondition3 ) {
-           // console.log('es menor')
+        if (isCondition1  || isCondition2  || isCondition3 ) {          
             setDisable(true);
         } else {
-            setDisable(false);
-            //console.log('es mayor')
+            setDisable(false);            
         }
 
-    }, [totalRp, totalFinalICD, debouncedIdcModifiedCredit, debouncedIdcModifiedCounterCredit, debouncedIdcFixedCompleted]);
+    }, [totalRp, totalFinalICD, inputIdcModifiedCredit, inputModifiedIdcCountercredit, inputIdcFixedCompleted]);
 
 
 
@@ -240,7 +216,8 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
 
     }, [dataRoutesCDP, projectNumber, projectName, areaNumber, centroGestor]);
 
-    const onSubmiteditRouteCDP = handleSubmit(async (data: IUpdateRoutesCDP) => {        
+    const onSubmiteditRouteCDP = handleSubmit(async (data: IUpdateRoutesCDP) => {  
+        console.log(data)      
         setMessage({
             show: true,
             title: "Guardar",
@@ -260,11 +237,13 @@ export function useEditrouteCDP(modifiedIdcCountercredit: number, idcModifiedCre
             idRppCode: dataRoutesCDP.idRppCode,
             cdpPosition: data.cdpPosition,
             amount: Number(data.amount),
-            modifiedIdcCountercredit: modifiedIdcCountercredit,
-            idcModifiedCredit: idcModifiedCredit,
-            idcFixedCompleted: idcFixedCompleted,
+            modifiedIdcCountercredit: data.modifiedIdcCountercredit,
+            idcModifiedCredit: data.idcModifiedCredit,
+            idcFixedCompleted: data.idcFixedCompleted,
             idcFinalValue: idcFinalValue
         }      
+
+       
 
         const res = await updateRouteCdp(parseInt(idRoute), datos);
 

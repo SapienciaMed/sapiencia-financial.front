@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useBudgetRecordServices } from "./budget-record-services.hook";
 import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
-import { IBudgetRecord, IBudgetRecordFilter } from "../interface/budget-record";
+import { IBudgetRecordFilter } from "../interface/budget-record";
 import { Controller, useForm } from "react-hook-form";
 import { AppContext } from "../../../common/contexts/app.context";
 import { Checkbox } from "primereact/checkbox";
@@ -10,7 +10,6 @@ import { EDirection } from "../../../common/constants/input.enum";
 import { usePayrollExternalServices } from "./payroll-external-services.hook";
 import { useCreditorsServices } from "../../creditors/hook/creditors-service.hook";
 import { IDropdownProps } from "../../../common/interfaces/select.interface";
-import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import * as Icons from "react-icons/fa";
 
@@ -18,11 +17,11 @@ import * as Icons from "react-icons/fa";
 export function useBudgeRecordView() {
 
     const navigate = useNavigate()
-    const { GetRpByFilters, CancelLinkCdp, GetAllComponents } = useBudgetRecordServices();
+    const { GetRpByFilters, CancelLinkCdp } = useBudgetRecordServices();
     const { GetContractorsByDocuments, GetAllDependencies } = usePayrollExternalServices()
     const { GetCreditorsByFilters } = useCreditorsServices()
 
-    const { setMessage, authorization } = useContext(AppContext);
+    const { setMessage, validateActionAccess } = useContext(AppContext);
     const tableComponentRef = useRef(null);
 
     const [dataFindRpSt, setDataFindRpSt] = useState({})
@@ -32,8 +31,12 @@ export function useBudgeRecordView() {
 
     const [dependenciesData, setDependenciesData] = useState<IDropdownProps[]>([]);
     const [contractorDocumentSt, setContractorDocumentSt] = useState('')
+    const [supplierTypeSt, setSupplierTypeSt] = useState('')
 
-  
+    const [auroraRPConsecutiveSt, setAuroraRPConsecutiveSt] = useState('')
+    const [sapRPConsecutiveSt, setSapRPConsecutiveSt] = useState('')
+    const [nameSupplierSt, setNameSupplierSt] = useState('')
+
 
     const {
         handleSubmit,
@@ -46,41 +49,84 @@ export function useBudgeRecordView() {
         reset
     } = useForm<IBudgetRecordFilter>({
         defaultValues: {
-            consecutivoRpSap: null,
-            consecutiveRpAurora: null,
+            consecutivoRpSap: '',
+            consecutiveRpAurora: '',
             contractorDocument: '',
             supplierType: '',
             supplierName: '',
             supplierId: null,
             rpId: null,
-            reasonCancellation: ''
+            reasonCancellation: '',
+            taxIdentificationId: ''
         },
         mode: 'onChange',
         /* resolver, */
     });
 
-    const { consecutivoRpSap, consecutiveRpAurora, supplierType, reasonCancellation } = watch()
-    
+    const { consecutivoRpSap, consecutiveRpAurora, supplierType, supplierName, contractorDocument, taxIdentificationId } = watch()
+
     useEffect(() => {
-        Number(consecutivoRpSap) > 0 || Number(consecutiveRpAurora) > 0
-            ? setIsAllowSearchCdp(true)
-            : setIsAllowSearchCdp(false)
+        if (supplierType != '' || contractorDocument != '') {
+            setNameSupplierSt(supplierName)
+        } else {
+            setNameSupplierSt('')
+        }
+    }, [supplierName])
+
+
+    useEffect(() => {
+        if (consecutivoRpSap != '' || consecutiveRpAurora != '') {
+            GetRpByFilters({
+                consecutiveRpSap: consecutivoRpSap,
+                consecutiveRpAurora: consecutiveRpAurora,
+            }).then(res => {
+                if (Object(res).data?.length > 0) {
+                    setSupplierTypeSt(Object(res)?.data[0]?.supplierType)
+                    setContractorDocumentSt(Object(res)?.data[0]?.contractorDocument)
+                } else {
+                    setSupplierTypeSt('')
+                    setContractorDocumentSt('')
+                    setDataFindRpSt([])
+                    setDataRouteBudgetsSt([])
+                }
+            })
+        } else {
+            setValueRegister('supplierName', '')
+            setValueRegister('supplierType', '')
+            setSupplierTypeSt('')
+            setContractorDocumentSt('')
+        }
+    }, [consecutivoRpSap, consecutiveRpAurora])
+
+
+    useEffect(() => {
+        if (contractorDocumentSt.length == 0) {
+            setContractorDocumentSt('')
+        }
+    }, [contractorDocumentSt])
+
+
+
+    useEffect(() => {
+        if ((Number(consecutivoRpSap) > 0 || Number(consecutiveRpAurora) > 0) && supplierName != "") {
+            setIsAllowSearchCdp(true)
+        } else {
+            setIsAllowSearchCdp(false)
+        }
 
         supplierType?.length > 0 && contractorDocumentSt?.length > 2
             ? setIsAllowSearchCdp(true)
-            : Number(consecutivoRpSap) > 0 || Number(consecutiveRpAurora) > 0
+            : (Number(consecutivoRpSap) > 0 || Number(consecutiveRpAurora) > 0) && supplierName != ""
                 ? setIsAllowSearchCdp(true)
                 : setIsAllowSearchCdp(false)
-    }, [consecutivoRpSap, consecutiveRpAurora, supplierType, contractorDocumentSt])
+    }, [consecutivoRpSap, consecutiveRpAurora, supplierType, contractorDocumentSt, supplierName])
 
-    
+
     useEffect(() => {
         GetAllDependencies().then(res => {
-            console.log({res})
             const componentes = Object(res).data.data?.map(e => ({ id: e.id, name: e.name, value: e.id }))
             setDependenciesData(componentes)
         })
-
     }, [])
 
 
@@ -101,24 +147,26 @@ export function useBudgeRecordView() {
                     {
                         consecutiveRpSap: Object(res)?.data[0]?.consecutiveSap,
                         consecutiveRpAurora: Object(res)?.data[0]?.id,
-                        taxIdentificationId: Object(res)?.data[0]?.creditor.taxIdentification,
+                        taxIdentificationId: Object(res)?.data[0]?.creditor?.taxIdentification ?? taxIdentificationId,
                         identification: Object(res)?.data[0]?.contractorDocument,
-                        contractName: Object(res)?.data[0]?.creditor.name,
-                        dependencieName: dependenciesData.find(e=>e.id==Object(res)?.data[0]?.dependencyId).name
+                        contractName: Object(res)?.data[0]?.creditor?.name ?? supplierName,
+                        dependencieName: dependenciesData.find(e => e.id == Object(res)?.data[0]?.dependencyId).name
                     }
-
+                    setSupplierTypeSt(Object(res)?.data[0]?.supplierType)
+                    setContractorDocumentSt(Object(res)?.data[0]?.contractorDocument)
 
                     const routeBudgets = Object(res).data?.map(e => {
-                        console.log({e})
                         return e.linksRp?.map(link => {
+                           console.log({link})
                             return ({
                                 id: link.id,
                                 rpId: link.rpId, // rp Aurora
                                 rpSap: e.consecutiveSap,//link.amountBudgetAvailability.cdpCode,
-                                cdpPosition: link.amountBudgetAvailability.cdpPosition,
+                                cdpPosition: link.position,
                                 budgetRouteCode: link.amountBudgetAvailability.budgetRoute.budget.number,
                                 initialAmount: link.initialAmount,
                                 finalAmount: link.finalAmount,
+                                Payments: link.pagos,
                                 actions: () => {
 
                                 }
@@ -136,7 +184,7 @@ export function useBudgeRecordView() {
             } catch (error) {
                 setMessage({
                     title: `Sin coincidencia`,
-                    description:'No existen resultados de búsqueda',
+                    description: 'No existen resultados de búsqueda',
                     show: true,
                     OkTitle: "Aceptar",
                     onOk: () => {
@@ -178,6 +226,12 @@ export function useBudgeRecordView() {
         {
             fieldName: "finalAmount",
             header: "Valor final",
+            renderCell: (row) => {
+                // Si finalAmount es null o 0, muestra initialAmount. De lo contrario, muestra finalAmount.
+                return row.finalAmount === null || row.finalAmount === 0 
+                    ? row.initialAmount 
+                    : row.finalAmount;
+            }
         },
         {
             fieldName: "rpId",
@@ -185,7 +239,11 @@ export function useBudgeRecordView() {
             renderCell: (row) => {
                 return (
                     <div className="flex align-items-center">
-                        <Checkbox onChange={() => showModalCancelAmount(row)}  /* onChange={onAmountChange} */ checked={false} />
+                        {
+                            validateActionAccess('RP_ANULAR_MONTO') && (
+                                <Checkbox onChange={() => showModalCancelAmount(row)} checked={false} disabled={row.rpSap > 0 || row.payments?.length > 0 ? true : false} />
+                            )
+                        }
                     </div>)
             }
         },
@@ -195,23 +253,34 @@ export function useBudgeRecordView() {
     const tableActions: ITableAction<any>[] = [
         {
             icon: "Edit",
+            hide: !validateActionAccess('RP_RUTAS_EDITAR'),
             onClick: (row) => {
                 { row.rpId }
-                /* showModalChangeAmount(row.id) */
-                navigate(`./edit/${row.rpId}`); 
+                navigate(`./edit/${row.rpId}/idRp/${row.id}`);
             },
         }
     ];
 
 
     const showModalCancelAmount = (row: object) => {
-        console.log(row)
         setMessage({
             title: "Observación anulado",
             show: true,
             OkTitle: "Guardar",
             onOk: () => {
                 const { reasonCancellation } = watch()
+                if (reasonCancellation.length == 0) {
+                    setMessage({
+                        title: 'Anulación no permitida',
+                        description: 'Debe registrar un motivo de anulación',
+                        show: true,
+                        OkTitle: "Aceptar",
+                        onOk: () => {
+                            setMessage({})
+                        }
+                    })
+                    return;
+                };
                 setMessage({})
                 setValueRegister('reasonCancellation', '')
                 CancelLinkCdp(`${Object(row).id}`, {
@@ -221,7 +290,7 @@ export function useBudgeRecordView() {
                     res.operation.code == 'OK' && setIsConfirmCancel(!isConfirmCancel)
                 })
 
-                setDataRouteBudgetsSt(dataRouteBudgetsSt.filter(el=>el.id!=Object(row).id))
+                setDataRouteBudgetsSt(dataRouteBudgetsSt.filter(el => el.id != Object(row).id))
             },
             onClose() {
                 setMessage({})
@@ -279,9 +348,9 @@ export function useBudgeRecordView() {
     }
 
     useEffect(() => {
-        if (!supplierType) return;
+        if (!supplierType && supplierTypeSt.length == 0) return;
         if (contractorDocumentSt.length > 0) {
-            supplierType == 'Contratista'
+            supplierType == 'Contratista' || supplierTypeSt == 'Contratista'
                 ? (
                     GetContractorsByDocuments({
                         documentList: [contractorDocumentSt]
@@ -292,16 +361,15 @@ export function useBudgeRecordView() {
                             setValueRegister('supplierId', null)
                             return;
                         }
-                        console.log({res})
                         const contractorName = Object(res).data?.data[0]?.firstName + " " +
                             Object(res).data.data[0]?.secondName + " " +
                             Object(res).data.data[0]?.surname + " " +
                             Object(res).data.data[0]?.secondSurname;
 
                         setValueRegister('supplierName', contractorName)
+                        setValueRegister('taxIdentificationId', Object(res).data?.data[0]?.fiscalIdentification)
                         setValueRegister('supplierId', null)
                     })
-
                 )
                 :
                 (
@@ -311,29 +379,31 @@ export function useBudgeRecordView() {
                         page: 1,
                         perPage: 1000
                     }).then(res => {
-                        if (Object(res).data.array.length == 0) {
+                        if (Object(res).data.array.length == 0 && contractorDocumentSt.length > 0) {
                             messageValidateSupplier('Acreedor')
                             setValueRegister('supplierName', '')
                             setValueRegister('supplierId', null)
                             return;
                         }
-                        setValueRegister('supplierName', Object(res).data.array[0]?.name)
-                        setValueRegister('supplierId', Object(res).data.array[0]?.id)
-
+                        if (contractorDocumentSt.length > 0) {
+                            setValueRegister('supplierName', Object(res).data.array[0]?.name)
+                            setValueRegister('supplierId', Object(res).data.array[0]?.id)
+                        }
                     })
                 )
         }
     }, [supplierType, contractorDocumentSt])
 
-    
+
     const actionTemplate = (rowData) => {
         return (
-            <Icons.FaPencilAlt 
-            className="button grid-button button-edit"
-            style={{color:'#4caf50', fontSize:'1.5em'}} 
-            onClick={() => navigate(`editar-rp/${JSON.stringify(rowData.consecutiveRpAurora)}`)}
-            />
-            
+            validateActionAccess('RP_DATOS_BASICOS_EDITAR') && (
+                <Icons.FaPencilAlt
+                    className="button grid-button button-edit"
+                    style={{ color: '#4caf50', fontSize: '1.5em' }}
+                    onClick={() => navigate(`editar-rp/${JSON.stringify(rowData.consecutiveRpAurora)}`)}
+                />
+            )
         );
     };
 
@@ -357,7 +427,11 @@ export function useBudgeRecordView() {
         isAllowSearchCdp,
         isConfirmCancel,
         actionTemplate,
-        setContractorDocumentSt
+        setContractorDocumentSt,
+        setAuroraRPConsecutiveSt,
+        setSapRPConsecutiveSt,
+        nameSupplierSt,
+        validateActionAccess
     };
 
 

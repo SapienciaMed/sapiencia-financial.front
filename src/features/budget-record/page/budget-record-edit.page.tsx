@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ButtonComponent, ButtonLoadingComponent, DatePickerComponent, FormComponent, InputComponent, SelectComponent } from "../../../common/components/Form";
 import { useBudgeRecordView } from "../hook/budget-record-view";
 import { useNavigate } from "react-router";
@@ -23,10 +23,11 @@ function BudgetRecordEditRpPage() {
         onSubmitEditRp,
         componentsData,
         dependeciesData,
-        isAllowSave,
         contractorListSt,
         activityObjectContractData
     } = useBudgeRecordEdit(id);
+
+    const [isAllowUpdateBtn, setIsAllowUpdateBtn] = useState(false)
 
     return (
         <div className='main-page'>
@@ -114,6 +115,7 @@ function BudgetRecordEditRpPage() {
                                 filter={true}
                                 errors={errors}
                                 direction={EDirection.column}
+                                optionSelected={()=>setIsAllowUpdateBtn(true)}
                             />
                             <SelectComponent
                                 idInput="contractualObject"
@@ -126,6 +128,7 @@ function BudgetRecordEditRpPage() {
                                 filter={true}
                                 errors={errors}
                                 direction={EDirection.column}
+                                optionSelected={()=>setIsAllowUpdateBtn(true)}
                             />
                             
                             <SelectComponent
@@ -139,6 +142,7 @@ function BudgetRecordEditRpPage() {
                                 filter={true}
                                 errors={errors}
                                 direction={EDirection.column}
+                                optionSelected={()=>setIsAllowUpdateBtn(true)}
                             />
 
                         </section>
@@ -158,7 +162,7 @@ function BudgetRecordEditRpPage() {
                                         classNameLabel="text-black big bold"
                                         direction={EDirection.column}
                                         errors={errors}
-                                        onChange={(value) => field.onChange(value)}
+                                        onChange={(value) => {field.onChange(value);setIsAllowUpdateBtn(true)}}
                                     />
                                 )} />
 
@@ -173,6 +177,7 @@ function BudgetRecordEditRpPage() {
                                 filter={true}
                                 errors={errors}
                                 direction={EDirection.column}
+                                optionSelected={()=>setIsAllowUpdateBtn(true)}
                             />
 
                             <Controller
@@ -189,7 +194,7 @@ function BudgetRecordEditRpPage() {
                                         classNameLabel="text-black big bold"
                                         direction={EDirection.column}
                                         errors={errors}
-                                        onChange={(value) => field.onChange(value)}
+                                        onChange={(value) => {field.onChange(value);setIsAllowUpdateBtn(true)}}
                                     />
                                 )} />
                         </section>
@@ -205,6 +210,7 @@ function BudgetRecordEditRpPage() {
                                 filter={true}
                                 errors={errors}
                                 direction={EDirection.column}
+                                optionSelected={()=>setIsAllowUpdateBtn(true)}
                             />
 
                             <DatePickerComponent
@@ -267,7 +273,7 @@ function BudgetRecordEditRpPage() {
                                 value="Guardar"
                                 form="form-pac"
                                 type="submit"
-                                disabled={!isAllowSave}
+                                disabled={!isAllowUpdateBtn}
                             />
                         </div>
                     </div>

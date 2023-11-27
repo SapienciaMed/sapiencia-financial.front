@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AppContext } from "../../../common/contexts/app.context";
 import { useBudgetRecordServices } from "./budget-record-services.hook";
-import { IRP, Creditor, LinkRp } from '../interface/budgetRecordsEdit';
 import { useForm } from 'react-hook-form';
 import { useAdditionsTransfersService } from "../../managementCenter/hook/additions-transfers-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
@@ -13,23 +12,26 @@ import { usePayrollExternalServices } from "./payroll-external-services.hook";
 import { IDropdownProps } from "../../../common/interfaces/select.interface";
 import { useCdpService } from "../../budget-availability/hooks/cdp-service";
 import { IUpdateRP } from "../interface/updateRp";
+import useYupValidationResolver from '../../../common/hooks/form-validator.hook';
+import { editRpValidator } from '../../../common/schemas/editRP-validator';
 
 
-export function useBudgeRecordEdit(modifiedIdcCountercredit: number, idcModifiedCredit: number, idcFixedCompleted: number) {
-    /*  console.log('Modificado contracrédito', modifiedIdcCountercredit)
-     console.log('Modificado crédito', idcModifiedCredit)
-     console.log('Fijado concluído', idcFixedCompleted) */
+export function useBudgeRecordEdit() {
+    
     const navigate = useNavigate();
-    const { id } = useParams();
-    const { setMessage } = useContext(AppContext);
+    const { id, idRp } = useParams();
+    const { setMessage } = useContext(AppContext);   
+
+    const resolver = useYupValidationResolver(editRpValidator);
 
     const { GetRpByFilters, GetAllComponents, GetCausation, editRp } = useBudgetRecordServices();
     const { GetProjectsList } = useAdditionsTransfersService();
     const { GetAllFunctionalAreas } = useFunctionalAreaService();
-    const { GetAllDependencies } = usePayrollExternalServices();
+    const { GetAllDependencies,GetContractorsByDocuments } = usePayrollExternalServices();
     const { getRouteCDPId, getOneRpp, updateRouteCdp, getTotalValuesImport } = useCdpService()
 
     const [dataRp, setDataRp] = useState<any>()
+    const [dataRpInitial, setDataRpInitial] = useState<any>()
     const [projectsData, setProjectsData] = useState<IProjectAdditionList[]>([]);
     const [areaData, setAreaData] = useState<IFunctionalArea[]>([]);
     const [areaNumber, setAreaNumber] = useState("");
@@ -38,14 +40,17 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit: number, idcModified
     const [componentsData, setComponentssData] = useState<IDropdownProps[]>([]);
     const [totalCautation, setTotalCautation] = useState(0);
     const [RP, setRP] = useState(0);
-    const [disabledButton, setDisabledButton] = useState(false);
+    const [disabledButton, setDisabledButton] = useState(true);
 
     const [calculatedValue, setCalculatedValue] = useState(0);
 
 
     //Form
-    const { control, handleSubmit, register, watch, setValue, reset, formState: { errors }, } = useForm({});
+    const { control, handleSubmit, register, watch, setValue, reset, formState: { errors }, } = useForm({resolver});
 
+    
+
+   
     useEffect(() => {
         if (id) {
             GetRpByFilters({
@@ -55,7 +60,7 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit: number, idcModified
                 contractorDocument: ""
             }).then(res => {
                 if (res.data && res.data.length > 0) {
-                    setDataRp(res.data[0]);
+                    setDataRpInitial(res.data[0]);
 
                 }
             }).catch(err => {
@@ -63,8 +68,22 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit: number, idcModified
 
             });
         }
+
+        
     }, [id]);
 
+    //filtrar informacion por id de rp
+    useEffect(() => {
+        if (dataRpInitial && dataRpInitial.linksRp) {
+            const filteredData = {
+                ...dataRpInitial,
+                linksRp: dataRpInitial.linksRp.filter(link => link.id == idRp)
+            };            
+            setDataRp(filteredData);
+        }
+    }, [dataRpInitial, idRp]);
+    
+   
 
     useEffect(() => {
         GetProjectsList().then((response) => {
@@ -132,10 +151,6 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit: number, idcModified
     }, [id, dataRp]);
 
 
-
-
-
-
     useEffect(() => {
         if (dataRp && Array.isArray(dataRp.linksRp) && dataRp.linksRp.length > 0) {
             const linksRpFirstElement = dataRp.linksRp[0];
@@ -159,91 +174,115 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit: number, idcModified
     }, [dataRp, projectsData, areaData]);
 
     //calculos
+    const inputAgaintsAmount = watch('againtsAmount')
+    const inputCreditAmount = watch('creditAmount')
+    const inputFixedCompleted = watch('fixedCompleted')  
+    
     useEffect(() => {
+        // Inicialmente asumimos que el botón debe estar deshabilitado
+        let shouldDisableButton = true;
 
-        let shouldDisableButton = false;
-
-        if (totalCautation !== undefined && modifiedIdcCountercredit !== undefined) {
-            shouldDisableButton = modifiedIdcCountercredit > Number(totalCautation);
+        // Si inputCreditAmount no ha cambiado, entonces evalúa las otras condiciones
+        if (totalCautation !== undefined) {
+            shouldDisableButton = inputAgaintsAmount > Number(totalCautation);
         }
 
-        if (!shouldDisableButton && RP !== undefined && idcModifiedCredit !== undefined) {
-            shouldDisableButton = idcModifiedCredit > RP;
+        if (!shouldDisableButton && RP !== undefined) {
+            shouldDisableButton = inputCreditAmount > RP;
         }
 
         if (!shouldDisableButton && totalCautation !== undefined && RP !== undefined) {
             shouldDisableButton = totalCautation > RP;
         }
 
-        /*  if (totalCautation !== undefined && idcFixedCompleted !== undefined) {
-             shouldDisableButton = idcFixedCompleted > totalCautation;
-         }    */
+        if (inputFixedCompleted > 0) {
+            shouldDisableButton = false
+        }
 
         setDisabledButton(shouldDisableButton);
-
-    }, [totalCautation, RP, modifiedIdcCountercredit, idcModifiedCredit, idcFixedCompleted]);
+    }, [totalCautation, RP, inputAgaintsAmount, inputCreditAmount, inputFixedCompleted]);
+   
+    
 
     //total
     useEffect(() => {
         if (dataRp && Array.isArray(dataRp.linksRp) && dataRp.linksRp.length > 0) {
-            const inputIdcModifiedCredit = idcModifiedCredit ?? 0;
-            const inputModifiedIdcCountercredit = modifiedIdcCountercredit ?? 0;
-            const inputIdcFixedCompleted = idcFixedCompleted ?? 0;
+            
 
             // Si todos los inputs están vacíos o son 0, usa el valor de finalAmount
-            if (inputIdcModifiedCredit <= 0 && inputModifiedIdcCountercredit <= 0 && inputIdcFixedCompleted <= 0) {
-                setValue("idcFinalValue", dataRp.linksRp[0].finalAmount);
+            if (inputCreditAmount <= 0 && inputAgaintsAmount <= 0 && inputFixedCompleted <= 0) {
+                setValue("idcFinalValue", dataRp.linksRp[0].finalAmount === 0 ||  dataRp.linksRp[0].finalAmount === null ? dataRp?.linksRp?.[0]?.initialAmount : dataRp.linksRp[0].finalAmount);
 
             } else {
                 // Realiza el cálculo con los valores actuales, independientemente de si están completos o no
                 const initialAmount = dataRp.linksRp[0].initialAmount || 0;
-                const calculatedResult = initialAmount + inputIdcModifiedCredit - inputModifiedIdcCountercredit - inputIdcFixedCompleted;
-
+                const calculatedResult = Math.max(0, initialAmount + inputCreditAmount - inputAgaintsAmount - inputFixedCompleted);
+                
                 setCalculatedValue(calculatedResult);
-                setValue("idcFinalValue", calculatedResult);
+                setValue("idcFinalValue", Number(calculatedResult));
             }
         }
-    }, [dataRp, idcModifiedCredit, modifiedIdcCountercredit, idcFixedCompleted]);
-
-
-
-
-
-
-
+    }, [dataRp, inputAgaintsAmount, inputCreditAmount, inputFixedCompleted]);
 
 
     useEffect(() => {
-        if (!dataRp) return;
+        if (!dataRp ) return;
+
+        if (dataRp.supplierType === "Acreedor") {
+            setValue("document", dataRp?.creditor?.document || "");
+            setValue("name", dataRp?.creditor?.name || "");
+            setValue("taxIdentification", dataRp?.creditor?.taxIdentification || "");            
+        }else{
+            GetContractorsByDocuments({
+                documentList: [dataRp.contractorDocument]
+            }).then(res => {
+              const contractorName = Object(res).data?.data[0]?.firstName + " " +
+              Object(res).data.data[0]?.secondName + " " +
+              Object(res).data.data[0]?.surname + " " +
+              Object(res).data.data[0]?.secondSurname;
+
+              //numberDocument             
+              setValue("document", dataRp?.contractorDocument || "");
+             setValue("name",contractorName || "");
+              setValue("taxIdentification", Object(res).data?.data[0]?.fiscalIdentification || "");            
+
+               
+            })
+        }
+
+       
 
         // Asignar los campos que siempre vienen
-        setValue("document", dataRp.creditor.document);
-        setValue("name", dataRp.creditor.name);
-        setValue("taxIdentification", dataRp.creditor.taxIdentification);
-        setValue("dependencyId", dataRp.dependencyId);
-        setValue("fund", dataRp.linksRp[0].amountBudgetAvailability.budgetRoute.fund.number);
-        setValue("pospreSapiencia", dataRp.linksRp[0].amountBudgetAvailability.budgetRoute.pospreSapiencia.number);
-        setValue("projectName", dataRp.linksRp[0].projectName);
-        setValue("areaNumber", areaNumber);
-        setValue("managementCenter", dataRp.linksRp[0].amountBudgetAvailability.budgetRoute.managementCenter);
-        setValue("div", dataRp.linksRp[0].amountBudgetAvailability.budgetRoute.div);
-        setValue("cdpPosition", dataRp.linksRp[0].amountBudgetAvailability.cdpPosition);
-        setValue("numberProject", projectNumber);
-        setValue("dependencyId", dataRp.dependencyId);
-        setValue("contractualObject", dataRp.contractualObject);
-        setValue("componentId", dataRp.componentId);
-        setValue("amount", dataRp.linksRp[0].initialAmount);
+        setValue("dependencyId", dataRp?.dependencyId || "");
+        setValue("fund", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.budgetRoute?.fund?.number || "");
+        setValue("pospreSapiencia", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.budgetRoute?.pospreSapiencia?.number || "");
+        setValue("projectName", dataRp?.linksRp?.[0]?.projectName || "");
+        setValue("areaNumber", areaNumber || "");
+        setValue("managementCenter", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.budgetRoute?.managementCenter || "");
+        setValue("div", dataRp?.linksRp?.[0]?.amountBudgetAvailability?.budgetRoute?.div || "");
+        setValue("cdpPosition", dataRp?.linksRp?.[0]?.position || "");
+        setValue("numberProject", projectNumber || "");
+        setValue("dependencyId", dataRp?.dependencyId || "");
+        setValue("contractualObject", dataRp?.contractualObject || "");
+        setValue("componentId", dataRp?.componentId || "");
+        setValue("amount", dataRp?.linksRp?.[0]?.initialAmount || "");
+    
+        setValue("observation", dataRp?.linksRp?.[0]?.observation || "");
+        setValue("againtsAmount", dataRp?.linksRp?.[0]?.againtsAmount || "");
+        setValue("creditAmount", dataRp?.linksRp?.[0]?.creditAmount || "");
+        setValue("fixedCompleted", dataRp?.linksRp?.[0]?.fixedCompleted || "");
+    
+        //setValue("finalAmount", dataRp?.linksRp?.[0]?.finalAmount || "");
+        //setValue("idcFinalValue", dataRp.linksRp[0].finalAmount === 0 ||  dataRp.linksRp[0].finalAmount === null ? dataRp?.linksRp?.[0]?.initialAmount : dataRp.linksRp[0].finalAmount);
 
-        setValue("observation", dataRp.linksRp[0].observation);
-        setValue("againtsAmount", dataRp.linksRp[0].againtsAmount);
-        setValue("creditAmount", dataRp.linksRp[0].creditAmount);
-        setValue("fixedCompleted", dataRp.linksRp[0].fixedCompleted);
+        
 
-        setValue("finalAmount", dataRp.linksRp[0].finalAmount);
     }, [dataRp, areaNumber, projectNumber]);
 
+    
+
     const onSubmiteditRp = handleSubmit(async (data: IUpdateRP) => {
-        //console.log('llego',data)
+      
         setMessage({
             show: true,
             title: "Guardar",
@@ -261,14 +300,14 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit: number, idcModified
     const confirmEdit = async (data: IUpdateRP) => {
 
         const datos = {
-            againtsAmount: modifiedIdcCountercredit,
-            creditAmount: idcModifiedCredit,
-            finalAmount: data.finalAmount,
-            fixedCompleted: idcFixedCompleted,
+            againtsAmount: data.againtsAmount === 0 || !data.againtsAmount ? 0 : data.againtsAmount,
+            creditAmount: data.creditAmount === 0 || !data.creditAmount ? 0 : data.creditAmount,
+            finalAmount: calculatedValue,
+            fixedCompleted: data.fixedCompleted === 0 || !data.fixedCompleted ? 0 : data.fixedCompleted,
             observation: data.observation
         }
 
-        //console.log(datos)
+        
 
         const res = await editRp(dataRp.linksRp[0].id, datos);
 
@@ -318,8 +357,7 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit: number, idcModified
         });
     };
 
-    console.log(totalCautation,
-        RP)
+    
 
     return {
         control,
@@ -330,7 +368,8 @@ export function useBudgeRecordEdit(modifiedIdcCountercredit: number, idcModified
         onSubmiteditRp,
         CancelFunction,
         totalCautation,
-        RP
+        RP,
+        errors
 
     };
 }

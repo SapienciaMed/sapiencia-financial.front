@@ -13,7 +13,7 @@ import { EDirection } from "../../../common/constants/input.enum";
 
 export function useCdpCrud(cdpId?: string) {
     const resolver = useYupValidationResolver(cdpCrudValidator);
-    const { setMessage } = useContext(AppContext);
+    const { setMessage, validateActionAccess } = useContext(AppContext);
     const navigate = useNavigate();
     const { getCdpById, cancelAmount } = useCdpService()
 
@@ -31,12 +31,13 @@ export function useCdpCrud(cdpId?: string) {
         defaultValues: {
             exercise: Object(cdpFoundSt).exercise,
             consecutive: Object(cdpFoundSt).consecutive,
-            rpAssoc:'No',
+            rpAssoc: '',
+            //rpAssoc:(Object(cdpFoundSt).amounts?.map(e=>e.linkRpcdps))?.length>0 ? 'Si' : 'No',
             amounts: [{
                 id: null,
                 reasonCancellation: ''
             }],
-            contractObject:''
+            contractObject: ''
         },
         mode: 'onChange',
         resolver,
@@ -60,7 +61,7 @@ export function useCdpCrud(cdpId?: string) {
                             setCdpFoundSt(res.data[0])
                         })
                         setMessage({})
-                        setValueRegister('amounts.0.reasonCancellation','')
+                        setValueRegister('amounts.0.reasonCancellation', '')
                     }))
                     : ''
 
@@ -132,14 +133,19 @@ export function useCdpCrud(cdpId?: string) {
             renderCell: (row) => {
                 return (
                     <div className="flex align-items-center">
-                        <Checkbox checked={false} onChange={() => showModalCancelAmount(row.id)} disabled={amountWatch.sapConsecutive>0 ? true : false}/>
+                        {
+                            validateActionAccess('CDP_ANULAR_MONTO') && (
+                                <Checkbox checked={false} onChange={() => showModalCancelAmount(row.id)} disabled={amountWatch.sapConsecutive > 0 ? true : false} />
+                            )
+                        }
+
                     </div>)
             }
         },
 
     ];
 
-    const tableActions: ITableAction<any>[] = [
+   /*  const tableActions: ITableAction<any>[] = [
         {
             icon: "Edit",
             onClick: (row) => {
@@ -148,11 +154,39 @@ export function useCdpCrud(cdpId?: string) {
         },
         {
             icon: "LinkMga",
+            hide: !validateActionAccess('CDP_MGA_VINCULAR'),
             onClick: (row) => {
                 navigate(`./mga-assoc/${row.id}`);
             },
         },
-    ];
+    ]; */
+
+    function getTableActions(): ITableAction<any>[] {
+        const actions: ITableAction<any>[] = [
+            {
+                icon: "Edit",
+                onClick: (row) => {
+                    navigate(`./edit/${row.id}`);
+                },
+            }
+        ];
+    
+        if (amountWatch.sapConsecutive !== null) {
+            actions.push({
+                icon: "LinkMga",
+                hide: !validateActionAccess('CDP_MGA_VINCULAR'),
+                onClick: (row) => {
+                    navigate(`./mga-assoc/${row.id}`);
+                },
+            });
+        }
+    
+        return actions;
+    }
+    
+    const tableActions = getTableActions();
+
+  
 
 
 
@@ -169,6 +203,7 @@ export function useCdpCrud(cdpId?: string) {
         setValueRegister('sapConsecutive', Object(cdpFoundSt).sapConsecutive)
         setValueRegister('date', Object(cdpFoundSt).date)
         setValueRegister('contractObject', Object(cdpFoundSt).contractObject)
+        setValueRegister('rpAssoc', (Object(cdpFoundSt).amounts.map(e => e.linkRpcdps)).length > 0 ? 'Si' : 'No')
     }, [cdpFoundSt])
 
     return {
