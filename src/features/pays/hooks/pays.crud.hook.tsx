@@ -82,6 +82,7 @@ export function usePaysCrud() {
   };
 
   async function processExcelFile(base64Data, tipoDocumento) {
+    setSelection(tipoDocumento)
     return new Promise((resolve, reject) => {
       let infoErrors = []
       const base64Content = base64Data.split(',')[1];
@@ -161,7 +162,7 @@ export function usePaysCrud() {
                 const cell_address = { c: C, r: R };
                 const cell_ref = XLSX.utils.encode_cell(cell_address);
                 const value = sheet[cell_ref]?.v;
-                setSelection(tipoDocumento)
+             
                 if (tipoDocumento == "Pagos") {
                   switch (titleDB[C]) {
                     case "POSICION":
