@@ -78,7 +78,7 @@ const TableDataPropComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
   useEffect(() => {
     loadData()
   }, [dataTable])
-  
+
 
 
   // Metodo que hace la peticion para realizar la carga de datos
@@ -101,9 +101,9 @@ const TableDataPropComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
 
     const startIndex = (page ?? 1 * perPage - perPage);
     const lastPage = Math.ceil(dataTable?.length / perPage);
-    console.log({page, lastPage})
+    console.log({ page, lastPage })
     //const endIndex =5;
-    const endIndex = page !=lastPage 
+    const endIndex = page != lastPage
       ? startIndex + perPage
       : dataTable.length ?? 0// Índice de final
     const filteredData = dataTable?.slice(startIndex, endIndex);
@@ -344,7 +344,7 @@ function getIconElement(icon: string, element: "name" | "src") {
       return element == "name" ? (
         "Mga"
       ) : (
-        <BiSolidFileExport  className="button grid-button button-link button-edit"/>
+        <BiSolidFileExport className="button grid-button button-link button-edit" />
       );
     default:
       return "";
@@ -451,7 +451,11 @@ const ActionComponent = (props: {
   return (
     <div className="spc-table-action-button">
       {props.actions.map((action) => (
-        <div key={action.icon} onClick={() => action.onClick(props.row)}>
+        <div 
+          key={action.icon}
+          onClick={() => action.onClick(props.row)}
+          style={{ display: action.hide ? "none" : "block" }}
+        >
           {getIconElement(action.icon, "src")}
         </div>
       ))}
