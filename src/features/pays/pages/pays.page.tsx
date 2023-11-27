@@ -26,7 +26,6 @@ const PaysPage = () => {
         showTable,
         setShowTable,
         tableComponentRef,
-        tableActionsCdp,
         tableColumnsCdp,
         navigate,
         arraySelect,
@@ -147,9 +146,8 @@ const PaysPage = () => {
                     <div className="card-user mt-2rem">
                         <TableComponent
                             ref={tableComponentRef}
-                            url={`${process.env.urlApiFinancial}/api/v1/cdp/search-cdps`}
+                            url={`${process.env.urlApiFinancial}/api/v1/pag-pagos/get-paginated`}
                             columns={tableColumnsCdp}
-                            actions={tableActionsCdp}
                             isShowModal={true}
                             titleMessageModalNoResult="No hay resultados"
                             secondaryTitle="Pagos"

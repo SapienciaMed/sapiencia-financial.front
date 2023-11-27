@@ -8,12 +8,15 @@ import { clearRequestFilters, filterDataSelect } from "../../budget-availability
 import { useNavigate } from "react-router-dom";
 import { IPagoFilters } from "../interfaces/paysInterfaces";
 import { paysLoad } from "../../../common/schemas/pays-schemas";
+import { usePaysServices } from "./pays-service";
+import useStorePays from "../../../store/store-pays";
 
 export const useSearchPays = () => {
   const { GetRoutesByValidity } = useCdpServices();
   const resolver = useYupValidationResolver(paysLoad);
   const tableComponentRef = useRef(null);
   const navigate = useNavigate();
+  const { infoErrors, setInfoErrors } = useStorePays()
   const {
     handleSubmit,
     register,
@@ -32,37 +35,35 @@ export const useSearchPays = () => {
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(true);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [arraySelect, setArraySelect] = useState<any>([]);
+  const { getPays } = usePaysServices()
 
   const tableColumnsCdp: any[] = [
     {
-      fieldName: "mes",
+      fieldName: "PAG_MES",
       header: "Mes",
     },
     {
-      fieldName: "vinculacionRpCode",
+      fieldName: "CONSECUTIVO_SAP",
       header: "Consecutivo SAP RP",
     },
     {
-      fieldName: "posicionRp",
+      fieldName: "VRP_POSICION",
       header: "Posicion RP",
     },
     {
-      fieldName: "valorFinal",
+      fieldName: "VRP_VALOR_FINAL",
       header: "Valor final",
     },
     {
-      fieldName: "causado",
+      fieldName: "PAG_VALOR_CAUSADO",
       header: "Causado",
     },
     {
-      fieldName: "pagado",
+      fieldName: "PAG_VALOR_PAGADO",
       header: "Pagado",
     },
   ];
 
-  const tableActionsCdp: any[] = [
-
-  ];
 
   useEffect(() => {
     setIsBtnDisable(
@@ -71,20 +72,25 @@ export const useSearchPays = () => {
   }, [inputValue]);
 
   function loadTableData(searchCriteria?: object): void {
-
-      
-      console.log("hola mundo");
-      console.log(tableComponentRef.current);
-      if (tableComponentRef.current) {
+    if (tableComponentRef.current) {
       tableComponentRef.current.loadData(searchCriteria);
     }
   }
-
-  const onSubmit = handleSubmit(async (data: any ) => {
-    console.log(data);
-    loadTableData(data)
-    setShowTable(true)
+ /*  const onSubmit = handleSubmit(async (data: any ) => {
+   let response = await getPays(data);
+   let informationReal = response['data']['array'];
+   console.log(informationReal);
+   loadTableData(informationReal);
+   setShowTable(true);
     
+  }); */
+
+  const onSubmit = handleSubmit(async (data: any) => {
+    clearRequestFilters(data);
+    if (data) {
+      setShowTable(true);
+      loadTableData(data);
+    }
   });
 
 
@@ -120,7 +126,6 @@ export const useSearchPays = () => {
     setShowTable,
     tableComponentRef,
     tableColumnsCdp,
-    tableActionsCdp,
     navigate,
     arraySelect
   };
