@@ -23,7 +23,7 @@ export function usePaysCrud() {
   const [isLoading, setIsLoading] = useState(false)
   const [errorsLoad, setErrorsLoad] = useState([])
   const { infoErrors, setInfoErrors } = useStorePays()
-
+  const [selection, setSelection] = useState('')
 
   const api = usePaysServices();
 
@@ -161,7 +161,7 @@ export function usePaysCrud() {
                 const cell_address = { c: C, r: R };
                 const cell_ref = XLSX.utils.encode_cell(cell_address);
                 const value = sheet[cell_ref]?.v;
-
+                setSelection(tipoDocumento)
                 if (tipoDocumento == "Pagos") {
                   switch (titleDB[C]) {
                     case "POSICION":
@@ -342,6 +342,10 @@ export function usePaysCrud() {
 
     const verification = await processExcelFile(base64Data, tipoDocumento);
     if (verification) {
+      if(selection !== "Pagos"){
+        console.log("No esta disponible el guardado");
+        return;
+      }
       let obInfo = {
         fileContent: base64Data,
         documentType: tipoDocumento,
