@@ -52,7 +52,7 @@ function CreditorCrudPage() {
                                 control={control}
                                 label="Tipo de identificación"
                                 className="select-basic medium"
-                                classNameLabel={!id ? 'text-black big bold text-required' : 'text-black big bold'}
+                                classNameLabel={'text-black big bold text-required'}
                                 placeholder={"Seleccionar"}
                                 data={documentTypeList}
                                 filter={true}
@@ -73,7 +73,7 @@ function CreditorCrudPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Identificación"
-                                        classNameLabel={!id ? 'text-black big bold text-required' : 'text-black big bold'}
+                                        classNameLabel={'text-black big bold text-required'}
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
@@ -131,7 +131,7 @@ function CreditorCrudPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Ciudad"
-                                        classNameLabel={!id ? 'text-black big bold text-required' : 'text-black big bold'}
+                                        classNameLabel={'text-black big bold text-required'}
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => { field.onChange(value); setIsAllowUpdateBtn(true) }}
@@ -148,7 +148,7 @@ function CreditorCrudPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Dirección"
-                                        classNameLabel={!id ? 'text-black big bold text-required' : 'text-black big bold'}
+                                        classNameLabel={'text-black big bold text-required'}
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => { field.onChange(value); setIsAllowUpdateBtn(true) }}
@@ -165,7 +165,7 @@ function CreditorCrudPage() {
                                         typeInput="number"
                                         register={register}
                                         label="Teléfono"
-                                        classNameLabel={!id ? 'text-black big bold text-required' : 'text-black big bold'}
+                                        classNameLabel={'text-black big bold text-required'}
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => { field.onChange(value); setIsAllowUpdateBtn(true) }}
@@ -182,7 +182,7 @@ function CreditorCrudPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Correo electrónico"
-                                        classNameLabel={!id ? 'text-black big bold text-required' : 'text-black big bold'}
+                                        classNameLabel={'text-black big bold text-required'}
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => { field.onChange(value); setIsAllowUpdateBtn(true) }}
