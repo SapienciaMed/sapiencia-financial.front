@@ -277,7 +277,7 @@ export function useAdditionAreaCrud(
 
     showModal({
       //type?: EResponseCodes;
-      title: res.operation.code === "OK" ? "Guardado" : "Error",
+      title: res.operation.code === "OK" ? "Guardado" : "Validación de datos",
       description: res.operation.message,
       show: true,
       OkTitle: "Aceptar",
