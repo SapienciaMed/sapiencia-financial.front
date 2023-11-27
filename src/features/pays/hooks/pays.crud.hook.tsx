@@ -23,7 +23,7 @@ export function usePaysCrud() {
   const [isLoading, setIsLoading] = useState(false)
   const [errorsLoad, setErrorsLoad] = useState([])
   const { infoErrors, setInfoErrors } = useStorePays()
-
+  const [selection, setSelection] = useState('')
 
   const api = usePaysServices();
 
@@ -82,6 +82,7 @@ export function usePaysCrud() {
   };
 
   async function processExcelFile(base64Data, tipoDocumento) {
+    setSelection(tipoDocumento)
     return new Promise((resolve, reject) => {
       let infoErrors = []
       const base64Content = base64Data.split(',')[1];
@@ -117,6 +118,11 @@ export function usePaysCrud() {
             case "Pagos":
               titleDB = ["POSICION", "PAG_VALOR_CAUSADO", "PAG_VALOR_PAGADO", "PAG_CODVRP_VINCULACION_RP"];
               titleExcel = ['Posicion', 'Causado', 'Pagado', 'Consecutivo RP SAP'];
+              break;
+            case "Funds":
+              titleDB = ["FND_DENOMINACION", "FND_DESCRIPCION", "FND_VIGENTE_DESDE", "FND_VIGENTE_HASTA"];
+              titleExcel = ['DENOMINACION', 'DESCRIPCION', 'VALIDEZ DE', 'VALIDEZ A'];
+
               break;
             // Agrega otros casos según sea necesario
 
@@ -156,36 +162,86 @@ export function usePaysCrud() {
                 const cell_address = { c: C, r: R };
                 const cell_ref = XLSX.utils.encode_cell(cell_address);
                 const value = sheet[cell_ref]?.v;
+             
+                if (tipoDocumento == "Pagos") {
+                  switch (titleDB[C]) {
+                    case "POSICION":
+                      if (typeof value !== 'number' || !Number.isInteger(value)) {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
+                        let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                        infoErrors.push(objErrors);
+                      }
+                      break;
+                    case "PAG_VALOR_CAUSADO":
+                      if (typeof value !== 'number') {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número.`);
+                        let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                        infoErrors.push(objErrors);
+                      }
+                      break;
+                    case "PAG_VALOR_PAGADO":
+                      if (typeof value !== 'number') {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número.`);
+                        let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                        infoErrors.push(objErrors);
+                      }
+                      break;
+                    case "PAG_CODVRP_VINCULACION_RP":
+                      if (typeof value !== 'number') {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número.`);
+                        let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                        infoErrors.push(objErrors);
+                      }
+                      break;
 
-                switch (titleDB[C]) {
-                  case "POSICION":
-                    if (typeof value !== 'number' || !Number.isInteger(value)) {
-                      console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
-                      let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                      infoErrors.push(objErrors);
-                    }
-                    break;
-                  case "PAG_VALOR_CAUSADO":
-                    if (typeof value !== 'number') {
-                      console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número.`);
-                      let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                      infoErrors.push(objErrors);
-                    }
-                    break;
-                  case "PAG_VALOR_PAGADO":
-                    if (typeof value !== 'number') {
-                      console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número.`);
-                      let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                      infoErrors.push(objErrors);
-                    }
-                    break;
-                  case "PAG_CODVRP_VINCULACION_RP":
-                    if (typeof value !== 'number') {
-                      console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número.`);
-                      let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                      infoErrors.push(objErrors);
-                    }
-                    break;
+                  }
+
+                } else if (tipoDocumento == "Funds") {
+                  switch (titleDB[C]) {
+                    case "FND_CODECP_ENTIDAD":
+                      if (typeof value !== 'string') {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                        let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                        infoErrors.push(objErrors);
+                      }
+                      break;
+                    case "FND_CODIGO":
+                      if (typeof value !== 'number' || !Number.isInteger(value)) {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
+                        let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                        infoErrors.push(objErrors);
+                      }
+                      break;
+                    case "DENOMINACION":
+                      if (typeof value !== 'string') {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                        let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                        infoErrors.push(objErrors);
+                      }
+                      break;
+                    case "DESCRIPCION":
+                      if (typeof value !== 'string') {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                        let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                        infoErrors.push(objErrors);
+                      }
+                      break;
+                    case "VALIDEZ DE":
+                      if (typeof value !== 'string') {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                        let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                        infoErrors.push(objErrors);
+                      }
+                      break;
+                    case "VALIDEZ A":
+                      if (typeof value !== 'string') {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                        let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                        infoErrors.push(objErrors);
+                      }
+                      break;
+
+                  }
 
                 }
 
@@ -199,30 +255,62 @@ export function usePaysCrud() {
                 rowData[titleDB[C]] = value;
               }
 
-              const rpSapValue = rowData['PAG_CODVRP_VINCULACION_RP'];
-              const posicionValue = rowData['POSICION'];
+              let rpSapValue, posicionValue
+              if (tipoDocumento == "Pagos") {
+                rpSapValue = rowData['PAG_CODVRP_VINCULACION_RP'];
+                posicionValue = rowData['POSICION'];
+              } else if (tipoDocumento == "Funds") {
+                rpSapValue = rowData['FND_CODIGO'];
 
-              if (rpSapValue !== undefined && posicionValue !== undefined) {
-                const key = `${rpSapValue}-${posicionValue}`;
+              }
 
-                if (uniqueRows.has(key)) {
-                  console.log(`Error en la fila ${R}: Duplicado encontrado para RP SAP '${rpSapValue}' y Posición '${posicionValue}'.`);
-                  let objErrors = { "rowError": R, "message": `Error en la fila ${R}: Duplicado encontrado para RP SAP '${rpSapValue}' y Posición '${posicionValue}'.` };
-                  infoErrors.push(objErrors);
-                  hasDuplicate = true;
-                } else {
-                  uniqueRows.add(key);
+
+              if (rpSapValue !== undefined) {
+                if (tipoDocumento === "Pagos" && posicionValue !== undefined) {
+                  const key = `${rpSapValue}-${posicionValue}`;
+
+                  if (uniqueRows.has(key)) {
+                    console.log(`Error en la fila ${R}: Duplicado encontrado para RP SAP '${rpSapValue}' y Posición '${posicionValue}'.`);
+                    let objErrors = { "rowError": R, "message": `Error en la fila ${R}: Duplicado encontrado para RP SAP '${rpSapValue}' y Posición '${posicionValue}'.` };
+                    infoErrors.push(objErrors);
+                    hasDuplicate = true;
+                  } else {
+                    uniqueRows.add(key);
+                  }
+                } else if (tipoDocumento === "Funds") {
+                  if (uniqueRows.has(rpSapValue)) {
+                    console.log(`Error en la fila ${R}: Duplicado encontrado para el codigo${rpSapValue}'.`);
+                    let objErrors = { "rowError": R, "message": `Error en la fila ${R}: Duplicado encontrado para el CODIGO'${rpSapValue}'.` };
+                    infoErrors.push(objErrors);
+                    hasDuplicate = true;
+                  } else {
+                    uniqueRows.add(rpSapValue);
+                  }
                 }
-
+              }
+              /* 
+                            if (rpSapValue !== undefined && posicionValue !== undefined) {
+                              const key = `${rpSapValue}-${posicionValue}`;
+              
+                              if (uniqueRows.has(key)) {
+                                console.log(`Error en la fila ${R}: Duplicado encontrado para RP SAP '${rpSapValue}' y Posición '${posicionValue}'.`);
+                                let objErrors = { "rowError": R, "message": `Error en la fila ${R}: Duplicado encontrado para RP SAP '${rpSapValue}' y Posición '${posicionValue}'.` };
+                                infoErrors.push(objErrors);
+                                hasDuplicate = true;
+                              } else {
+                                uniqueRows.add(key);
+                              }
+              
+                            } */
+              if (tipoDocumento == "Pagos") {
+                if (rowData['PAG_VALOR_CAUSADO'] === 0 && rowData['PAG_VALOR_PAGADO'] === 0) {
+                  console.log(`Error en la fila ${R}: Ambos 'PAG_VALOR_CAUSADO' y 'PAG_VALOR_PAGADO' no pueden ser 0.`);
+                  let objErrors = { "rowError": R, "message": `Error en la fila ${R}: Ambos valor causado y valor pagado no pueden ser 0.` };
+                  infoErrors.push(objErrors);
+                }
               }
 
-              if (rowData['PAG_VALOR_CAUSADO'] === 0 && rowData['PAG_VALOR_PAGADO'] === 0) {
-                console.log(`Error en la fila ${R}: Ambos 'PAG_VALOR_CAUSADO' y 'PAG_VALOR_PAGADO' no pueden ser 0.`);
-                let objErrors = { "rowError": R, "message": `Error en la fila ${R}: Ambos valor causado y valor pagado no pueden ser 0.` };
-                infoErrors.push(objErrors);
-              }
 
-              // Aquí tienes toda la información de la fila actual en el objeto rowData
               console.log('Datos de la fila:', rowData);
             }
             console.log('Datos fila de errores:', infoErrors);
@@ -254,66 +342,71 @@ export function usePaysCrud() {
     const mes = data.mesDelAnio;
 
     const verification = await processExcelFile(base64Data, tipoDocumento);
-  if(verification){
-    let obInfo = {
-      fileContent: base64Data,
-      documentType: tipoDocumento,
-      usuarioCreo: authorization.user.numberDocument,
-      mes:mes
+    if (verification) {
+      if(selection !== "Pagos"){
+        console.log("No esta disponible el guardado");
+        return;
+      }
+      let obInfo = {
+        fileContent: base64Data,
+        documentType: tipoDocumento,
+        usuarioCreo: authorization.user.numberDocument,
+        mes: mes
+      }
+      setMessage({
+        title: "Guardar Información",
+        description: `¿Estás segur@ de guardar la informacion ?`,
+        show: true,
+        OkTitle: "Aceptar",
+        cancelTitle: "Cancelar",
+        onOk: async () => {
+          try {
+            const response = await api.loadPays(obInfo)
+            setTimeout(() => {
+              if (response['operation']['code'] == "OK") {
+                setMessage({
+                  title: "Confirmación",
+                  description: "Guardado Exitosamente!",
+                  show: true,
+                  OkTitle: "Cerrar",
+                  onOk: () => {
+                    //onCancelNew();
+                    navigate("./../");
+                    setMessage({})
+                  },
+                  background: true,
+                });
+              }
+
+
+              if (response['operation']['code'] === "FAIL") {
+                setMessage({
+                  title: "Error al crear CDP",
+                  description: response['operation']['message'],
+                  show: true,
+                  OkTitle: "Aceptar",
+                  onOk: () => {
+                    onCancelNew();
+                    setMessage({});
+                  },
+                  background: true,
+                });
+                return
+              }
+            }, 1500);
+
+          } catch (error) {
+            console.error("Error al enviar los datos:", error);
+          }
+          setMessage({});
+        }, onCancel() {
+          onCancelNew();
+          setMessage({})
+        },
+        background: true,
+      });
     }
-    setMessage({
-      title: "Guardar Información",
-      description: `¿Estás segur@ de guardar la informacion ?`,
-      show: true,
-      OkTitle: "Aceptar",
-      cancelTitle: "Cancelar",
-      onOk: async () => {
-        try {
-          const response = await api.loadPays(obInfo)
-          setTimeout(() => {
-            if (response['operation']['code'] == "OK") {
-              setMessage({
-                title: "Confirmación",
-                description: "Guardado Exitosamente!",
-                show: true,
-                OkTitle: "Cerrar",
-                onOk: () => {
-                  //onCancelNew();
-                  navigate("./../");
-                },
-                background: true,
-              });
-            }
 
-
-            if (response['operation']['code'] === "FAIL") {
-              setMessage({
-                title: "Error al crear CDP",
-                description: response['operation']['message'],
-                show: true,
-                OkTitle: "Aceptar",
-                onOk: () => {
-                  onCancelNew();
-                  setMessage({});
-                },
-                background: true,
-              });
-              return
-            }
-          }, 1500);
-
-        } catch (error) {
-          console.error("Error al enviar los datos:", error);
-        }
-        setMessage({});
-      }, onCancel() {
-        onCancelNew();
-        setMessage({})
-      },
-      background: true,
-    });
-  }
-  
   });
 
   function loadTableData(searchCriteria?: object): void {
