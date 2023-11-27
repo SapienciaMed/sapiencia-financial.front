@@ -159,6 +159,11 @@
                       name: "Pagos",
                       value: "Pagos",
                     },
+                    {
+                      id: 1,
+                      name: "Fondos",
+                      value: "Funds",
+                    },
                   ]}
                   filter={true}
                   errors={errors}
