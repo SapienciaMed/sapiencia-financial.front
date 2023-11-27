@@ -14,6 +14,8 @@
   import { usePacCrud } from "../../pac/createPac/hook/pac-crud.hook";
   import { usePaysCrud } from "../hooks/pays.crud.hook"
   import UploadComponent from "../../pac/createPac/components/UploadComponent";
+  import useStorePays from "../../../store/store-pays";
+
   function LoadPays() {
     const {
       errors,
@@ -40,6 +42,7 @@
     const [isVisibleErrors, setIsVisibleErrors] = useState(false);
     const [isUploadFileSt, setIsUploadFileSt] = useState(false);
     const [errorsSt, setErrorsSt] = useState([]);
+    const { infoErrors, setInfoErrors } = useStorePays()
 
     const getFile = (newFile: File) => {
       setFile(newFile);
@@ -97,7 +100,7 @@
     const mesesOptions = mesesDelAnio.map((mes, index) => ({
       id: index + 1,
       name: mes,
-      value: mes,
+      value: index+1,
     }));
 
     const [dataTableSt, setDataTableSt] = useState<any>();
@@ -176,8 +179,6 @@
                   errors={errors}
                   direction={EDirection.column}
                 />
-
-        
 
                 <div className="div-upload">
                   <br />
@@ -300,15 +301,15 @@
             </FormComponent>
           </div>
           <br />
-          {isVisibleErrors && dataTableSt.length > 0 && errorsSt.length > 0 && (
+          {infoErrors.length > 0 && (
             <div
               className={
-                !isVisibleTable ? "card-user isVisible" : "card-user isNotVisible"
+                infoErrors.length > 0 ? "card-user isVisible" : "card-user isNotVisible"
               }
             >
               <TableDataPropComponent
                 ref={tableComponentRef}
-                dataTable={dataTableSt}
+                dataTable={infoErrors}
                 columns={tableColumns}
                 isShowModal={false}
                 titleMessageModalNoResult={"No se encontraron registros"}
