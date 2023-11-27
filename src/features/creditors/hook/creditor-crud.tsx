@@ -46,14 +46,14 @@ export function useCreditorCrud(id) {
             page: 1,
             perPage: 1
         }).then(res => {
-            setValueRegister('typeDocument', Object(res).data?.array[0].typeDocument);
-            setValueRegister('document', Object(res).data?.array[0].document);
-            setValueRegister('taxIdentification', Object(res).data?.array[0].taxIdentification);
-            setValueRegister('name', Object(res).data?.array[0].name);
-            setValueRegister('city', Object(res).data?.array[0].city);
-            setValueRegister('address', Object(res).data?.array[0].address);
-            setValueRegister('phone', Object(res).data?.array[0].phone);
-            setValueRegister('email', Object(res).data?.array[0].email);
+            setValueRegister('typeDocument', Object(res).data?.array[0]?.typeDocument);
+            setValueRegister('document', Object(res).data?.array[0]?.document);
+            setValueRegister('taxIdentification', Object(res).data?.array[0]?.taxIdentification);
+            setValueRegister('name', Object(res).data?.array[0]?.name);
+            setValueRegister('city', Object(res).data?.array[0]?.city);
+            setValueRegister('address', Object(res).data?.array[0]?.address);
+            setValueRegister('phone', Object(res).data?.array[0]?.phone);
+            setValueRegister('email', Object(res).data?.array[0]?.email);
         })
 
     }, [id])

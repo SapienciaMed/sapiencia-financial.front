@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ButtonComponent, ButtonLoadingComponent, DatePickerComponent, FormComponent, InputComponent, SelectComponent } from "../../../common/components/Form";
 import { useNavigate } from "react-router";
 import { useWidth } from "../../../common/hooks/use-width";
@@ -12,7 +12,7 @@ function CreditorCrudPage() {
     const { id } = useParams();
     const navigate = useNavigate()
     const { width } = useWidth()
-
+    const [isAllowUpdateBtn, setIsAllowUpdateBtn] = useState(false)
 
     const {
         errors,
@@ -25,6 +25,8 @@ function CreditorCrudPage() {
         isAllowSave,
         documentTypeList
     } = useCreditorCrud(id);
+
+
 
     return (
         <div className='main-page'>
@@ -50,7 +52,7 @@ function CreditorCrudPage() {
                                 control={control}
                                 label="Tipo de identificación"
                                 className="select-basic medium"
-                                classNameLabel={!id ? 'text-black big bold text-required': 'text-black big bold'}
+                                classNameLabel={!id ? 'text-black big bold text-required' : 'text-black big bold'}
                                 placeholder={"Seleccionar"}
                                 data={documentTypeList}
                                 filter={true}
@@ -71,7 +73,7 @@ function CreditorCrudPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Identificación"
-                                        classNameLabel={!id ? 'text-black big bold text-required': 'text-black big bold'}
+                                        classNameLabel={!id ? 'text-black big bold text-required' : 'text-black big bold'}
                                         direction={EDirection.column}
                                         errors={errors}
                                         onChange={(value) => field.onChange(value)}
@@ -93,7 +95,7 @@ function CreditorCrudPage() {
                                         classNameLabel="text-black big bold text-required"
                                         direction={EDirection.column}
                                         errors={errors}
-                                        onChange={(value) => field.onChange(value)}
+                                        onChange={(value) => { field.onChange(value); setIsAllowUpdateBtn(true) }}
                                     />
                                 )} />
 
@@ -113,7 +115,7 @@ function CreditorCrudPage() {
                                         classNameLabel="text-black big bold text-required"
                                         direction={EDirection.column}
                                         errors={errors}
-                                        onChange={(value) => field.onChange(value)}
+                                        onChange={(value) => { field.onChange(value);; setIsAllowUpdateBtn(true) }}
                                     />
                                 )} />
                         </section>
@@ -129,10 +131,10 @@ function CreditorCrudPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Ciudad"
-                                        classNameLabel={!id ? 'text-black big bold text-required': 'text-black big bold'}
+                                        classNameLabel={!id ? 'text-black big bold text-required' : 'text-black big bold'}
                                         direction={EDirection.column}
                                         errors={errors}
-                                        onChange={(value) => field.onChange(value)}
+                                        onChange={(value) => { field.onChange(value); setIsAllowUpdateBtn(true) }}
                                     />
                                 )} />
                             <Controller
@@ -146,10 +148,10 @@ function CreditorCrudPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Dirección"
-                                        classNameLabel={!id ? 'text-black big bold text-required': 'text-black big bold'}
+                                        classNameLabel={!id ? 'text-black big bold text-required' : 'text-black big bold'}
                                         direction={EDirection.column}
                                         errors={errors}
-                                        onChange={(value) => field.onChange(value)}
+                                        onChange={(value) => { field.onChange(value); setIsAllowUpdateBtn(true) }}
                                     />
                                 )} />
                             <Controller
@@ -163,10 +165,10 @@ function CreditorCrudPage() {
                                         typeInput="number"
                                         register={register}
                                         label="Teléfono"
-                                        classNameLabel={!id ? 'text-black big bold text-required': 'text-black big bold'}
+                                        classNameLabel={!id ? 'text-black big bold text-required' : 'text-black big bold'}
                                         direction={EDirection.column}
                                         errors={errors}
-                                        onChange={(value) => field.onChange(value)}
+                                        onChange={(value) => { field.onChange(value); setIsAllowUpdateBtn(true) }}
                                     />
                                 )} />
                             <Controller
@@ -180,10 +182,10 @@ function CreditorCrudPage() {
                                         typeInput="text"
                                         register={register}
                                         label="Correo electrónico"
-                                        classNameLabel={!id ? 'text-black big bold text-required': 'text-black big bold'}
+                                        classNameLabel={!id ? 'text-black big bold text-required' : 'text-black big bold'}
                                         direction={EDirection.column}
                                         errors={errors}
-                                        onChange={(value) => field.onChange(value)}
+                                        onChange={(value) => { field.onChange(value); setIsAllowUpdateBtn(true) }}
                                     />
                                 )} />
 
@@ -191,13 +193,10 @@ function CreditorCrudPage() {
                     </div>
 
 
-                    <div className="container-button-bot">
-                        <ButtonComponent
-                            form="useQueryForm"
-                            value="Cancelar"
-                            type="button"
-                            className="button-clean-fields bold"
-                            action={() => {
+                    <div className="funcionality-buttons-container">
+                        <span
+                            className="bold text-center button"
+                            onClick={() => {
                                 setMessage({
                                     title: "Cancelar",
                                     show: true,
@@ -216,19 +215,23 @@ function CreditorCrudPage() {
                                     onCancel: () => {
                                         setMessage({});
                                     },
-                                });
+                                });}
+                            }
+                            style={{
+                                marginRight: '10px',
                             }}
-                        />
+                        >
+                            Cancelar
+                        </span>
 
-                        <div className="buttons-bot">
-                            <ButtonLoadingComponent
-                                className="button-main huge hover-three"
-                                value="Guardar"
-                                form="form-pac"
-                                type="submit"
-                            //disabled={!isAllowSave}
-                            />
-                        </div>
+                        
+                        <ButtonLoadingComponent
+                            className="button-main huge hover-three"
+                            value="Guardar"
+                            form="form-pac"
+                            type="submit"
+                            disabled={id ? !isAllowUpdateBtn : false}
+                        />
                     </div>
                 </FormComponent>
             </div>

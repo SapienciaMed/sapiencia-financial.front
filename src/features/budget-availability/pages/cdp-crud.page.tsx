@@ -35,7 +35,7 @@ const CdpCrudPage = () => {
   const { icdImportsData } = useStoreIcd();
   const { setMessage } = useContext(AppContext);
   const { formInfo } = useContext(AppContext);
-  const [formCount, setFormCount] = useState(2);
+  const [formCount, setFormCount] = useState(1);
   const [formularios, setFormularios] = useState([]);
   const [formHeadInfo, setFormHeadInfo] = useState({})
   const [objectSendData, setObjectSendData] = useState({})
@@ -65,15 +65,9 @@ const CdpCrudPage = () => {
   const handleAgregarFormulario = () => {
     const newFormulario = { id: formCount };
     setFormularios([...formularios, newFormulario]);
+    setDataFinalSend([...dataFinalSend, []]); // Agregar un elemento vacío junto con el nuevo formulario
     setFormCount(formCount + 1);
-  /*   if(!deleteRouteTwo){
-      setTimeout(() => {
-        handleEliminar(1)
-        setDeleteRouteTwo(true);
-      }, 500);
-    } */
   };
-
   const updateFormInGlobalState = (formNumber, updatedInfo) => {
     const updatedFormData = formDataCdpRoute.map((form) =>
       form.id === formNumber ? { ...form, ...updatedInfo } : form
@@ -90,55 +84,38 @@ const CdpCrudPage = () => {
 
   const handleEliminar = (formNumber) => {
     setDataFinalSend((prevFormularios) =>
-      prevFormularios.filter((_, index) => indexOfFirstForm + index !== formNumber)
+      prevFormularios.filter((form,index) => index !== (formNumber))
     );
+    
+    setFormularios((prevFormularios) =>
+      prevFormularios.filter((form,index) => index !== (formNumber))
+    );
+  
     setFormCount((prevCount) => prevCount - 1);
-
+  
     if (currentForms.length === 1 && currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
     }
-  };
-  const setInfoData = () => {
   
-    if (Object.keys(icdImportsData).length > 0) {
-      if ('id' in icdImportsData) {
-        const id = typeof icdImportsData.id === 'number' ? icdImportsData.id : 0;
-        const isExisting = formularios.some((item) => item.id === id);
-        if (isExisting) {
-          const updatedFormularios = formularios.map((item) => {
-            if (item.id === id) {
-              updateFormInGlobalState(item.formNumber, icdImportsData);
-              return icdImportsData;
-            }
-            return item;
-          });
-          setFormularios(updatedFormularios);
-        } else {
-          const updatedFormularios = [...formularios, { ...icdImportsData, id: id }];
-          setFormularios(updatedFormularios);
-          updateFormInGlobalState(id, icdImportsData);
-        }
-      }
-    }
-  
-    let finalObj = {
-      date: formHeadInfo['date'],
-      contractObject: formHeadInfo['contractObject'],
-      exercise: formHeadInfo['exercise'],
-      icdArr: formularios
-    };
-    setObjectSendData(finalObj);
+    const updatedIcdArr = objectSendData['icdArr']
+    .filter((_, index) => index !== formNumber * 2)
+    .filter((item) => Array.isArray(item) ? item.length > 0 : item !== undefined && item !== null);
+  const updatedObjectSendData = { ...objectSendData, icdArr: updatedIcdArr };
+  setObjectSendData(updatedObjectSendData);
+
   };
+  
+  
+  
   
 useEffect(() => {
   handleAgregarFormulario()
 }, [])
 
   useEffect(() => {
-    // Verificar si el idRppCode ya existe en dataFinalSend
+
     const index = dataFinalSend.findIndex(item => item.id === icdImportsData['id']);
-  
-    // Si el idRppCode ya existe, actualizar el objeto correspondiente
+
     if (index !== -1) {
       setDataFinalSend(prevData => {
         const newData = [...prevData];
@@ -146,7 +123,6 @@ useEffect(() => {
         return newData;
       });
     } else {
-      // Si el idRppCode no existe, agregar un nuevo objeto al array
       setDataFinalSend(prevData => [...prevData, icdImportsData]);
     }
 
@@ -157,11 +133,6 @@ useEffect(() => {
       icdArr: dataFinalSend
     };
     setObjectSendData(finalObj);
-    
-    setTimeout(() => {
-      console.log(objectSendData);
-      
-    }, 2000);
     
   }, [icdImportsData,formHeadInfo]);
 
@@ -192,17 +163,58 @@ useEffect(() => {
       navigate("./");
     };
 
-  const hasEmptyFields = Object.values(objectSendData).some((value) => {
-    return typeof value === "string" && value.trim() === "";
+    //const icdArrWithBalanceCheck = objectSendData["icdArr"].slice(1);
+    const icdArrWithBalanceCheck = objectSendData["icdArr"].filter(item => {
+      if (Array.isArray(item)) {
+          return item.length > 0;
+      } else if (item !== undefined && item !== null) {
+          return item.idRppCode !== "0";
+      }
+      return false;
   });
+  
+    const hasEmptyFieldsOrZeros = icdArrWithBalanceCheck.some((item) => {
+      for (const key in item) {
+        if (key === 'posicion' || key === 'id') {
+          continue; // Saltar 'posicion' e 'id'
+        }
+    
+        if (typeof item[key] === 'string' && (item[key].trim() === '' || item[key] === '0')) {
+          console.log("Campo vacío o con valor en 0 encontrado:", key, item[key]);
+          return true;
+        } else if (typeof item[key] === 'number' && item[key] === 0) {
+          console.log("Campo con valor en 0 encontrado:", key, item[key]);
+          return true;
+        }
+      }
+      return false;
+    });
 
-  if (hasEmptyFields) {
-    console.log("Hay campos vacíos. No se puede continuar.");
-    return;
-  }
+    const emptyHeadInfo = Array.isArray(formHeadInfo) && formHeadInfo.some((item) => {
+      if (item == null || item === "") {
+        console.log("Campo necesario");
+        return true;
+      }
+      return false;
+    });
+    
+    if (hasEmptyFieldsOrZeros || emptyHeadInfo) {
+      console.log("Hay campos vacíos o con valores en 0. No se puede continuar.");
+      
+      return;
+    }
+    
+
     try {
-      const icdArrWithBalanceCheck = objectSendData["icdArr"].slice(1);
-
+      //const icdArrWithBalanceCheck = objectSendData["icdArr"].slice(1);
+      const icdArrWithBalanceCheck = objectSendData["icdArr"].filter(item => {
+        if (Array.isArray(item)) {
+            return item.length > 0;
+        } else if (item !== undefined && item !== null) {
+            return item.idRppCode !== "0";
+        }
+        return false;
+    });
       const invalidBalances = icdArrWithBalanceCheck.filter(
         (item) => parseInt(item.valorInicial) >= parseInt(item.balance)
       );
@@ -233,7 +245,7 @@ useEffect(() => {
           consecutive: 10,
           icdArr: updatedIcdArr.map(({ proyecto, posicion, valorInicial, id, ...rest }) => ({
             idRppCode: parseInt(proyecto),
-            cdpPosition: parseInt(posicion),
+            cdpPosition: parseInt(posicion) +1,
             amount: parseFloat(valorInicial),
             ...rest,
           })),
@@ -252,8 +264,6 @@ useEffect(() => {
           onOk: async () => {
             try {
               const response = await cdpService.createCdp_(nuevoObjeto);
-            
-
               setTimeout(() => {
                 if (response['operation']['code'] == "OK") {
                   setMessage({
@@ -346,7 +356,6 @@ useEffect(() => {
         const currentFormIndex = indexOfFirstForm + index;
        // const currentFormData = formDataCdpRoute?.find((form) => form.id === currentFormIndex);
        const foundObject = totalDataRuta.find(obj => obj.id === currentFormIndex);
-
         return (
           <FormCreateRutaCDPComponent
           key={currentFormIndex}
@@ -399,10 +408,6 @@ useEffect(() => {
   }, [formDataCdpRoute]);
 
 
-  useEffect(() => {
-    console.log("verificacion por efecto icd",icdImportsData);
-    
-  }, [icdImportsData]);
   const handlePageChange = (page) => {
     if (page !== currentPage) {
       setCurrentPage(page);
