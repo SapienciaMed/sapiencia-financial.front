@@ -9,6 +9,7 @@ import { AppContext } from '../../../common/contexts/app.context';
 import { useNavigate } from 'react-router-dom';
 import { IDropdownProps } from '../../../common/interfaces/select.interface';
 import { useBudgetsService } from '../../functionality/budgetPosition/hooks/budgets-service.hook';
+import { usePosPreSapienciaService } from '../../functionality/hooks/pospre-sapiencia-service.hook';
 
 interface IArrayMgaAssoc {
     id: number,
@@ -31,7 +32,8 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
     const resolver = useYupValidationResolver(cdpMgaAssoc);
     const { setMessage,authorization } = useContext(AppContext);
     const { getCdpById, getActivitiesDetail, validate, createVinculationMGA,validateCDP } = useCdpService()
-    const { getAllCpc } = useBudgetsService()
+    const { getAllCpc,getAllBudgets } = useBudgetsService()
+    const { GetAllPosPreSapiencia } = usePosPreSapienciaService()
     const [arrayDataSelect, setArrayDataSelect] = useState({
         listDetailedActivityMGA: []
     })
@@ -41,6 +43,8 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
     const [activities, setActivities] = useState<IDropdownProps[]>([]);
     const [cpc, setCpc] = useState<any[]>([]);
     const [valorFinal, setValorFinal] = useState<any>();
+    const [pospreSapiencia, setPospreSapiencia] = useState<any>();
+    const [pospreSapienciaFinal, setPospreSapienciaFinal] = useState<any>();
     const navigate = useNavigate();
 
     const {
@@ -66,13 +70,19 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
                     setValue('pospreSapiencia', Object(val).pospreSapienciaCode)
                     setValue('finalValue', Object(val).idcFinalValue)
                     setValorFinal(Object(val).idcFinalValue)
+                    setPospreSapiencia(Object(val).pospreSapienciaCode)
                 })
             }
         }).catch((error) => console.log(error))
 
         getActivitiesDetail().then(res => {
             const activities = Object(res).data?.map(d => ({ id: d.activity.id, name: d.activity.activityDescriptionMGA, value: d.activity.id, activityId: d.activityId, activity: d.detailActivity, cost: d.unitCost, activitieMga: d.id, pospre: d.pospre }))
-            setActivities(activities)
+            let activitiesfilter = [];
+
+            if (activities && pospreSapienciaFinal) {
+                activitiesfilter = activities.filter(f => f.pospre === pospreSapienciaFinal);
+            }
+            setActivities(activitiesfilter)
         })
 
        /*  getAllCpc().then(res => {
@@ -85,7 +95,30 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
             setFilteredCpc(cpc)           
         })
 
-    }, [])
+        
+        
+    }, [pospreSapienciaFinal])
+    
+    useEffect(() => {
+        GetAllPosPreSapiencia().then(res => {
+            if (res.data && Array.isArray(res.data)) {
+                const filteredResults = res.data.filter(item => item.number == pospreSapiencia);
+    
+                if (filteredResults.length > 0 && filteredResults[0].hasOwnProperty('budgetId')) {
+                    setPospreSapienciaFinal(filteredResults[0].budgetId);
+                } else {
+                    console.log('No se encontraron resultados o el resultado no tiene la propiedad budgetId');
+                }
+            } else {
+                console.log('La respuesta no contiene un array o la propiedad esperada no existe');
+            }
+        });
+    
+        // Otras operaciones...
+    
+    }, [pospreSapiencia]);
+    
+    
 
  
     const selecte = watch('DetailedActivityMGA')
@@ -115,6 +148,7 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
     }, [arrayMgaAssoc])
 
     const onSubmit = handleSubmit(async (data: any) => {   
+        console.log(data)
      
         const sumaPercentage = arrayMgaAssoc.reduce((acumulador, elemento) => {
             return acumulador + elemento.percentage;
@@ -147,7 +181,7 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
             setMessage({
                 title: 'Validacion',
                 show: true,
-                description: "No se podra asociar, supera el valor del costo de la MGA.",
+                description: "No puede asociar esta MGA porque el costo de ella es menor al valor final de la ruta CDP seleccionada.",
                 OkTitle: "Aceptar",
                 background: true,
             });

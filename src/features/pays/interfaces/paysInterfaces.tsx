@@ -27,6 +27,7 @@ export interface IPagoDataSave {
     filedata: File;
     tipoArchivo: string;
     register: string;
+    mesDelAnio: number;
 }
 
 export interface IPagoDataBasicOriginalDataEdit {

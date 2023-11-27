@@ -35,12 +35,12 @@ interface FormularioProps {
   setAmountInfo: React.Dispatch<React.SetStateAction<FormInfoType>>;
   amountInfo: FormInfoType;
   posicionCdp?: number;
-  datasFounds: any; 
+  datasFounds: any;
 }
 
 
 
-const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({datasFounds, formSubmitted, isRequired = false, formNumber, handleEliminar, setAmountInfo, amountInfo, posicionCdp }) => {
+const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ datasFounds, formSubmitted, isRequired = false, formNumber, handleEliminar, setAmountInfo, amountInfo, posicionCdp }) => {
   const { setFormInfo, formInfo } = useContext(AppContext);
   const cdpService = useCdpService();
   const [proyecto, setProyecto] = useState('');
@@ -85,9 +85,9 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({datasFounds, for
     (Number(formNumber) > posicionCdp ? Number(formNumber) : posicionCdp) :
     Number(formNumber);
 
-    const onDeleteClick = () => {
-      handleEliminar(renderedFormNumber);
-    };
+  const onDeleteClick = () => {
+    handleEliminar(renderedFormNumber);
+  };
 
   const validateField = (field) => {
     if (formSubmitted && !field) {
@@ -99,64 +99,130 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({datasFounds, for
 
 
   useEffect(() => {
-    
-    console.log("vamos a ver",datasFounds);
-    if(datasFounds !== undefined) {
+    if (datasFounds !== undefined) {
       setBalance(datasFounds.balance);
     }
-   /*  setSaldo(parseInt(datasFounds.balance))
-    setBalance(datasFounds.balance);  */
   }, []);
 
 
 
   const fetchData = async () => {
-    if (pospreNewV && fondo && proyecto) {
-      try {
+
+    if (!datasFounds) {
+      if (pospreNewV && fondo && proyecto) {
+        try {
+          const objectSendData = {
+            posPreId: parseInt(pospreNewV),
+            foundId: parseInt(fondo),
+            projectId: parseInt(proyecto),
+          };
+          const response = await cdpService.getOneRpp(objectSendData);
+          if (typeof response === "object") {
+            let totalAmountsAssoc = parseFloat(response['totalIdc']);
+            let balanceFloat = parseFloat(response['balance']).toString().split('.');
+            let parteEntera = parseInt(balanceFloat[0]);
+            let totalAmountAvalible = parteEntera - totalAmountsAssoc;
+            setSaldo(totalAmountAvalible)
+            setBalance(totalAmountAvalible.toString());
+            setValorInicial(totalAmountAvalible.toString());
+          } else {
+            setMessage({
+              title: "!No hay datos relacionados!",
+              description: "No encontramos una ruta presupuestal con los datos que proporcionaste, intentalo de otra vez con nuevos datos",
+              show: true,
+              OkTitle: "cerrar",
+              onOk: () => {
+                setMessage({});
+              },
+              background: true,
+            });
+            setValorInicial('0');
+            return;
+
+          }
+
+        } catch (error) {
+          console.error('Error al obtener los datos:', error);
+        }
+      }
+
+    } else {
+      let response;
+      let tryJsonInfo
+      if (pospreNewV && fondo && proyecto) {
         const objectSendData = {
           posPreId: parseInt(pospreNewV),
           foundId: parseInt(fondo),
           projectId: parseInt(proyecto),
         };
-        const response = await cdpService.getOneRpp(objectSendData);
-        if (typeof (response) === "object") {
-          let totalAmountsAssoc = parseFloat(response['totalIdc']);
-          let balanceFloat = parseFloat(response['balance']).toString().split('.');
-          let parteEntera = parseInt(balanceFloat[0]);
-          let totalAmountAvalible = parteEntera - totalAmountsAssoc;
-
-          if(datasFounds.valorInicial != "0" && idRpp == datasFounds.idRpp){
-            setSaldo(datasFounds.balance)
-            setBalance(datasFounds.balance);
-            setValorInicial(datasFounds.valorInicial);
-          } else {
-            setSaldo(totalAmountAvalible)
-            setBalance(totalAmountAvalible.toString());
-            setValorInicial(totalAmountAvalible.toString());
-          }  
-          let tryJsonInfo = JSON.stringify(response);
+        response = await cdpService.getOneRpp(objectSendData);
+        if(response instanceof Object) {
+        
+          tryJsonInfo = JSON.stringify(response);
           tryJsonInfo = JSON.parse(tryJsonInfo)['id'].toString();
           setIdRpp(tryJsonInfo);
-        } else {
-          setMessage({
-            title: "!No hay datos relacionados!",
-            description: "No encontramos una ruta presupuestal con los datos que proporcionaste, intentalo de otra vez con nuevos datos",
-            show: true,
-            OkTitle: "cerrar",
-            onOk: () => {
-              setMessage({});
-            },
-            background: true,
-          });
-          setValorInicial('0');
-          return;
         }
-      } catch (error) {
-        console.error('Error al obtener los datos:', error);
+      }
+      // Caso 2: datasFounds tiene datos
+      if (datasFounds.valorInicial !== "0" && tryJsonInfo === datasFounds.idRpp) {
+        setSaldo(datasFounds.balance)
+        setBalance(datasFounds.balance);
+        setValorInicial(datasFounds.valorInicial);
+      } else if (datasFounds.valorInicial !== "0" && tryJsonInfo != datasFounds.idRpp) {
+        setSaldo(datasFounds.balance)
+        setBalance(datasFounds.balance);
+        setValorInicial(datasFounds.valorInicial);
+        let totalAmountsAssoc = parseFloat(response['totalIdc']);
+        let balanceFloat = parseFloat(response['balance']).toString().split('.');
+        let parteEntera = parseInt(balanceFloat[0]);
+        let totalAmountAvalible = parteEntera - totalAmountsAssoc;
+
+        setSaldo(totalAmountAvalible)
+        setBalance(totalAmountAvalible.toString());
+        setValorInicial(totalAmountAvalible.toString());
+      } else {
+        if (pospreNewV && fondo && proyecto) {
+          try {
+            const objectSendData = {
+              posPreId: parseInt(pospreNewV),
+              foundId: parseInt(fondo),
+              projectId: parseInt(proyecto),
+            };
+            const response = await cdpService.getOneRpp(objectSendData);
+            if (typeof response === "object") {
+              let totalAmountsAssoc = parseFloat(response['totalIdc']);
+              let balanceFloat = parseFloat(response['balance']).toString().split('.');
+              let parteEntera = parseInt(balanceFloat[0]);
+              let totalAmountAvalible = parteEntera - totalAmountsAssoc;
+
+              setSaldo(totalAmountAvalible)
+              setBalance(totalAmountAvalible.toString());
+              setValorInicial(totalAmountAvalible.toString());
+
+            } else {
+
+              setMessage({
+                title: "!No hay datos relacionados!",
+                description: "No encontramos una ruta presupuestal con los datos que proporcionaste, intentalo de otra vez con nuevos datos",
+                show: true,
+                OkTitle: "cerrar",
+                onOk: () => {
+                  setMessage({});
+                },
+                background: true,
+              });
+              setValorInicial('0');
+              return;
+            }
+          } catch (error) {
+            console.error('Error al obtener los datos:', error);
+          }
+        }
       }
     }
+
   };
-  
+
 
   useEffect(() => {
     fetchData();
@@ -215,8 +281,8 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({datasFounds, for
           id: renderedFormNumber,
           balance,
         };
-       
-        
+
+
         arrInfo.push(newObj);
         setFormDataCdpRoute([...arrInfo]);
       } else {
@@ -236,7 +302,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({datasFounds, for
         balance,
       };
       arrInfo.push(newObj);
-      setFormDataCdpRoute([...arrInfo]); 
+      setFormDataCdpRoute([...arrInfo]);
     }
 
   };
@@ -312,10 +378,10 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({datasFounds, for
             setAreaFuncional(area.areaFuntional.number);
           }
         });
-  
+
       }
     });
-    
+
   }, [proyecto]);
 
 
