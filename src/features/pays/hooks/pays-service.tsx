@@ -5,6 +5,7 @@ import { ApiResponse } from "../../../common/utils/api-response";
 export function usePaysServices() {
     const baseURL: string = process.env.urlApiFinancial;
     const roleUrl: string = "/api/v1/upload-masive";
+    const roleUrlPagos: string = "/api/v1/pag-pagos";
     const roleUrlA: string = "/api/v1/additions";
     const totalValuesUrl: string = "/api/v1/budget-records";   
     const { get, post, postFormData, put } = useCrudService( baseURL);
@@ -15,9 +16,14 @@ export function usePaysServices() {
         return post(`${roleUrl}${endpoint}`, data);
     }
 
+    async function getPays(data: any): Promise<ApiResponse<any>> {
+        const endpoint: string = "/get-paginated";
+        return post(`${roleUrlPagos}${endpoint}`, data);
+    }
+
     return {
         loadPays,
-      
+        getPays
      }
     };
 
