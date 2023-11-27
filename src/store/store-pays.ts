@@ -1,23 +1,23 @@
 import create, { SetState } from 'zustand';
 
 interface ErrorsStoreState {
-  infoErrors: any[]; 
-  otraVariable: string; 
+  infoErrors: any[];
+  tipoDocumentoLoad: string;
 }
 
 interface ErrorsStoreActions {
   setInfoErrors: (newValue: any[] | ((prev: any[]) => any[])) => void;
-  setOtraVariable: (newValue: string) => void; 
+  setTipoDocumentoLoad: (newValue: string) => void; 
 }
 
 const useStorePays = create<ErrorsStoreState & ErrorsStoreActions>((set: SetState<ErrorsStoreState & ErrorsStoreActions>) => ({
   infoErrors: [],
-  otraVariable: '', 
+  tipoDocumentoLoad: '',
   setInfoErrors: (newValue) => {
     set((state) => ({ infoErrors: typeof newValue === 'function' ? newValue(state.infoErrors) : newValue }));
   },
-  setOtraVariable: (newValue) => {
-    set((state) => ({ otraVariable: newValue }));
+  setTipoDocumentoLoad: (newValue) => { //
+    set((state) => ({ tipoDocumentoLoad: newValue }));
   },
 }));
 
