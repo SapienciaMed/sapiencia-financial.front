@@ -458,7 +458,7 @@ export function usePaysCrud() {
       });
     }else{
       setMessage({
-        title: "Carva de archivo",
+        title: "Carga de archivo",
         description: "El archivo no pudo ser cargado, revisa las validaciones",
         show: true,
         OkTitle: "Aceptar",
