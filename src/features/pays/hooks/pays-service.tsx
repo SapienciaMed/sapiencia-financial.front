@@ -21,9 +21,15 @@ export function usePaysServices() {
         return post(`${roleUrlPagos}${endpoint}`, data);
     }
 
+    async function validateExitsRp(data: any): Promise<ApiResponse<any>> {
+        const endpoint: string = "/validate-rp";
+        return post(`${roleUrlPagos}${endpoint}`, data);
+    }
+
     return {
         loadPays,
-        getPays
+        getPays,
+        validateExitsRp
      }
     };
 
