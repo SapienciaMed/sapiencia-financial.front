@@ -29,8 +29,10 @@ const PaysPage = () => {
         tableColumnsCdp,
         navigate,
         arraySelect,
-    } = useSearchPays();
 
+    } = useSearchPays();
+    const dateToday = new Date()
+    const actualFullYear = dateToday.getFullYear();
     return (
         <div className="main-page">
             <div className="card-table gap-0">
@@ -67,6 +69,7 @@ const PaysPage = () => {
                                             id={field.name}
                                             idInput={field.name}
                                             className="input-basic color-default-value"
+                                            defaultValue={actualFullYear.toString()}
                                             typeInput="number"
                                             register={register}
                                             label="Vigencia"
