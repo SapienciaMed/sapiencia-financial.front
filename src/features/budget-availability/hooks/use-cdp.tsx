@@ -171,9 +171,10 @@ export function useCdpCrud(cdpId?: string) {
             }
         ];
     
-        if (validateActionAccess('CDP_MGA_VINCULAR') || amountWatch.sapConsecutive !== null) {
+        if (amountWatch.sapConsecutive !== null) {
             actions.push({
                 icon: "LinkMga",
+                hide: !validateActionAccess('CDP_MGA_VINCULAR'),
                 onClick: (row) => {
                     navigate(`./mga-assoc/${row.id}`);
                 },
