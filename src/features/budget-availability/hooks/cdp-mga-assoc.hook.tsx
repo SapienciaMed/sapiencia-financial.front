@@ -31,7 +31,7 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
    
     const resolver = useYupValidationResolver(cdpMgaAssoc);
     const { setMessage,authorization } = useContext(AppContext);
-    const { getCdpById, getActivitiesDetail, validate, createVinculationMGA,validateCDP } = useCdpService()
+    const { getCdpById, getActivitiesDetail, validate, createVinculationMGA,validateCDP,getDetaileActivities } = useCdpService()
     const { getAllCpc,getAllBudgets } = useBudgetsService()
     const { GetAllPosPreSapiencia } = usePosPreSapienciaService()
     const [arrayDataSelect, setArrayDataSelect] = useState({
@@ -75,7 +75,7 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
             }
         }).catch((error) => console.log(error))
 
-        getActivitiesDetail().then(res => {
+       /*  getActivitiesDetail().then(res => {
             const activities = Object(res).data?.map(d => ({ id: d.activity.id, name: d.activity.activityDescriptionMGA, value: d.activity.id, activityId: d.activityId, activity: d.detailActivity, cost: d.unitCost, activitieMga: d.id, pospre: d.pospre }))
             let activitiesfilter = [];
 
@@ -83,7 +83,39 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
                 activitiesfilter = activities.filter(f => f.pospre === pospreSapienciaFinal);
             }
             setActivities(activitiesfilter)
-        })
+        }) */
+
+        getDetaileActivities(pospreSapienciaFinal).then(res => {
+            // Acceder al array dentro de data
+            const dataArray = res.data.array;
+        
+            // Iterar sobre el array y extraer la información deseada de cada objeto
+            const extractedData = dataArray.map(item => {
+                return {
+                    id: item.activityId,
+                    value: item.activityId,
+                    name: item.detailActivityDetailed,
+                    codeMga: item.codeMga,
+                    activityId: item.activityId,
+                    activity: item.activityDescriptionMGA,
+                    cost: item.totalCostActivityDetailed,
+                    activitieMga: item.activityId
+                    //pospre:
+
+                    // Agrega aquí más campos si necesitas
+                   /*  productDescription: item.productDescriptionMGA,
+                    name: item.activityDescriptionMGA,
+                    detailActivityDetailed: item.detailActivityDetailed,
+                    amountActivityDetailed: item.amountActivityDetailed,
+                    measurementActivityDetailedName: item.measurementActivityDetailedName,
+                    totalCostActivityDetailed: item.totalCostActivityDetailed */
+                };
+                
+            });
+            setActivities(extractedData)
+        
+        });
+        
 
        /*  getAllCpc().then(res => {
             const cpc = Object(res).data?.map(c => ({ id: id, name: c.ejercise, value: c.id}))
@@ -131,12 +163,12 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
         if (selecte) {
             const selectActivitie = activities.find(activity => activity.id == selecte);           
 
-            const filtered = filteredCpc.filter(item => item.budgetId == selectActivitie.pospre);            
+            const filtered = filteredCpc.filter(item => item.budgetId == pospreSapienciaFinal);            
 
             filtered.map(c => ({id: c.id, name: c.description, value: c.id}))
             setCpc(filtered);             
         }        
-    }, [selecte, filteredCpc]);
+    }, [selecte, filteredCpc,pospreSapienciaFinal]);
     
 
     
@@ -148,7 +180,6 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
     }, [arrayMgaAssoc])
 
     const onSubmit = handleSubmit(async (data: any) => {   
-        console.log(data)
      
         const sumaPercentage = arrayMgaAssoc.reduce((acumulador, elemento) => {
             return acumulador + elemento.percentage;
