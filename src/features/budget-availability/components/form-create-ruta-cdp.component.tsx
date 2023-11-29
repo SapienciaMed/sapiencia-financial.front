@@ -132,6 +132,8 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ countAssoc, dat
             setSaldo(totalAmountAvalible)
             setBalance(totalAmountAvalible.toString());
             setValorInicial(totalAmountAvalible.toString());
+          
+            
           } else {
             setMessage({
               title: "!No hay datos relacionados!",
@@ -175,18 +177,20 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ countAssoc, dat
         setSaldo(datasFounds.balance)
         setBalance(datasFounds.balance);
         setValorInicial(datasFounds.valorInicial);
+      
       } else if (datasFounds.valorInicial !== "0" && tryJsonInfo != datasFounds.idRpp) {
         setSaldo(datasFounds.balance)
         setBalance(datasFounds.balance);
         setValorInicial(datasFounds.valorInicial);
-        let totalAmountsAssoc = parseFloat(response['totalIdc']);
+   /*      let totalAmountsAssoc = parseFloat(response['totalIdc']);
         let balanceFloat = parseFloat(response['balance']).toString().split('.');
         let parteEntera = parseInt(balanceFloat[0]);
         let totalAmountAvalible = parteEntera - totalAmountsAssoc;
 
         setSaldo(totalAmountAvalible)
         setBalance(totalAmountAvalible.toString());
-        setValorInicial(totalAmountAvalible.toString());
+        setValorInicial(totalAmountAvalible.toString()); */
+        console.log("aqui no sete 3");
       } else {
         if (pospreNewV && fondo && proyecto) {
           try {
@@ -202,10 +206,11 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ countAssoc, dat
               let parteEntera = parseInt(balanceFloat[0]);
               let totalAmountAvalible = parteEntera - totalAmountsAssoc;
 
+
               setSaldo(totalAmountAvalible)
               setBalance(totalAmountAvalible.toString());
               setValorInicial(totalAmountAvalible.toString());
-
+        
             } else {
 
               setMessage({
@@ -393,7 +398,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ countAssoc, dat
 
   const handleValidateErrors = () =>{
     let infoErrors = [];
-    if(formSubmitted){
+   
       if(!proyecto){
         let objErrors = {'error':'error en proyecto'}
         infoErrors.push(objErrors)
@@ -416,12 +421,12 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ countAssoc, dat
       }else{
         setInfoErrors(infoErrors)
       }
-    }
+    
   }
 
   useEffect(() => { 
     handleValidateErrors()
-  },[proyecto,fondo,pospreNewV,valorInicial,formSubmitted])
+  },[proyecto,fondo,pospreNewV,valorInicial])
 
 
 
