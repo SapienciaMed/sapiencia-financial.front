@@ -171,70 +171,15 @@ const CdpCrudPage = () => {
   const handleGuardar = async () => {
     setFormSubmitted(true);
 
-
     if (infoErrors.length > 0) {
-
       console.log("estos son los error", infoErrors);
-
       return true;
-    } 
-    
-    let nuevoObjeto;
-    const onCancelNew = () => {
-      navigate("./");
-    };
-
-    //const icdArrWithBalanceCheck = objectSendData["icdArr"].slice(1);
-    const icdArrWithBalanceCheck = objectSendData["icdArr"].filter(item => {
-      if (Array.isArray(item)) {
-        return item.length > 0;
-      } else if (item !== undefined && item !== null) {
-        return item.idRppCode !== "0";
-      }
-      return false;
-    });
-
-    if (icdArrWithBalanceCheck.length === 0) {
-      console.log("array vacio");
-      return;
-    }
-
-    console.log(icdArrWithBalanceCheck);
-    console.log(icdArrWithBalanceCheck.length);
-
-    const hasEmptyFieldsOrZeros = icdArrWithBalanceCheck.some((item) => {
-      for (const key in item) {
-        if (key === 'posicion' || key === 'id') {
-          continue; // Saltar 'posicion' e 'id'
-        }
-
-        if (typeof item[key] === 'string' && (item[key].trim() === '' || item[key] === '0')) {
-          console.log("Campo vacío o con valor en 0 encontrado:", key, item[key]);
-          return true;
-        } else if (typeof item[key] === 'number' && item[key] === 0) {
-          console.log("Campo con valor en 0 encontrado:", key, item[key]);
-          return true;
-        }
-      }
-      return false;
-    });
-
-    const emptyHeadInfo = Array.isArray(formHeadInfo) && formHeadInfo.some((item) => {
-      if (item == null || item === "") {
-        console.log("Campo necesario");
-        return true;
-      }
-      return false;
-    });
-
-    if (hasEmptyFieldsOrZeros || emptyHeadInfo) {
-      console.log("Hay campos vacíos o con valores en 0. No se puede continuar.");
-
-      return;
-    }
-
-
-    try {
+    }else{
+      let nuevoObjeto;
+      const onCancelNew = () => {
+        navigate("./");
+      };
+  
       //const icdArrWithBalanceCheck = objectSendData["icdArr"].slice(1);
       const icdArrWithBalanceCheck = objectSendData["icdArr"].filter(item => {
         if (Array.isArray(item)) {
@@ -244,131 +189,183 @@ const CdpCrudPage = () => {
         }
         return false;
       });
-
-
-
-      const invalidBalances = icdArrWithBalanceCheck.filter(item => {
-        if (parseInt(item.valorInicial) >= parseInt(item.balance) || item.valorInicial === "0") {
-          return true; // Marcar como elemento inválido
+  
+      if (icdArrWithBalanceCheck.length === 0) {
+        console.log("array vacio");
+        return;
+      }
+  
+      const hasEmptyFieldsOrZeros = icdArrWithBalanceCheck.some((item) => {
+        for (const key in item) {
+          if (key === 'posicion' || key === 'id') {
+            continue; // Saltar 'posicion' e 'id'
+          }
+  
+          if (typeof item[key] === 'string' && (item[key].trim() === '' || item[key] === '0')) {
+            console.log("Campo vacío o con valor en 0 encontrado:", key, item[key]);
+            return true;
+          } else if (typeof item[key] === 'number' && item[key] === 0) {
+            console.log("Campo con valor en 0 encontrado:", key, item[key]);
+            return true;
+          }
         }
-        return false; // Marcar como elemento válido
+        return false;
       });
-
-      if (invalidBalances.length !== 0) {
-        setMessage({
-          title: "Validar valor inicial",
-          description: "Recuerda que el valor inicial no puede ser mayor o igual al saldo disponible de la ruta presupuestal",
-          show: true,
-          OkTitle: "Aceptar",
-          onOk: () => {
-            setMessage({});
-          },
-          background: true,
-        });
-
+  
+      const emptyHeadInfo = Array.isArray(formHeadInfo) && formHeadInfo.some((item) => {
+        if (item == null || item === "") {
+          console.log("Campo necesario");
+          return true;
+        }
+        return false;
+      });
+  
+      if (hasEmptyFieldsOrZeros || emptyHeadInfo) {
+        console.log("Hay campos vacíos o con valores en 0. No se puede continuar.");
+  
         return;
       }
-
-      if (invalidBalances.length === 0) {
-        const updatedIcdArr = icdArrWithBalanceCheck.map(({ balance, ...rest }) => rest);
-
-        nuevoObjeto = {
-          ...objectSendData,
-          exercise: objectSendData["exercise"],
-          date: objectSendData["date"] && typeof objectSendData["date"] === "string" ? objectSendData["date"].split("/").join("-") : null,
-          contractObject: objectSendData["contractObject"],
-          consecutive: 10,
-          icdArr: updatedIcdArr.map(({ proyecto, posicion, valorInicial, id, ...rest }) => ({
-            idRppCode: parseInt(proyecto),
-            cdpPosition: parseInt(posicion) + 1,
-            amount: parseFloat(valorInicial),
-            ...rest,
-          })),
-        };
-
-        await new Promise((resolve) => {
-          setObjectSendData(nuevoObjeto);
-          resolve('success');
+  
+      try {
+        //const icdArrWithBalanceCheck = objectSendData["icdArr"].slice(1);
+        const icdArrWithBalanceCheck = objectSendData["icdArr"].filter(item => {
+          if (Array.isArray(item)) {
+            return item.length > 0;
+          } else if (item !== undefined && item !== null) {
+            return item.idRppCode !== "0";
+          }
+          return false;
         });
-        setMessage({
-          title: "Guardar",
-          description: `¿Estás segur@ de guardar la informacion ?`,
-          show: true,
-          OkTitle: "Aceptar",
-          cancelTitle: "Cancelar",
-          onOk: async () => {
-            try {
-              const response = await cdpService.createCdp_(nuevoObjeto);
-              setTimeout(() => {
-                if (response['operation']['code'] == "OK") {
-                  setMessage({
-                    title: "Guardado",
-                    description: "Guardado Exitosamente!",
-                    show: true,
-                    OkTitle: "Cerrar",
-                    onOk: () => {
-                      //onCancelNew();
-                      navigate("./../");
-                      setMessage({
-                        title: "Consecutivo CDP Aurora",
-                        description: `Al CDP sele asignó el consecutivo ${response["data"]['consecutive']}`,
-                        show: true,
-                        OkTitle: "Cerrar",
-                        onOk: () => {
-                          setMessage({});
-                        },
-                      });
-                    },
-                    background: true,
-                  });
-                }
-
-                if (response['operation']['message'].indexOf("Ya existe") !== -1) {
-                  setMessage({
-                    title: "Validación de datos",
-                    description: "¡El dato ya existe!",
-                    show: true,
-                    OkTitle: "Cerrar",
-                    onOk: () => {
-                      onCancelNew();
-                      setMessage({});
-                    },
-                    background: true,
-                  });
-                  return
-                }
-
-                if (response['operation']['code'] === "FAIL") {
-                  setMessage({
-                    title: "Error al crear CDP",
-                    description: response['operation']['message'],
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                      onCancelNew();
-                      setMessage({});
-                    },
-                    background: true,
-                  });
-                  return
-                }
-              }, 1500);
-
-            } catch (error) {
-              console.error("Error al enviar los datos:", error);
-            }
-            setMessage({});
-          }, onCancel() {
-            onCancelNew();
-            setMessage({})
-          },
-          background: true,
+  
+  
+  
+        const invalidBalances = icdArrWithBalanceCheck.filter(item => {
+          if (parseInt(item.valorInicial) >= parseInt(item.balance) || item.valorInicial === "0") {
+            return true; // Marcar como elemento inválido
+          }
+          return false; // Marcar como elemento válido
         });
-        return;
+  
+        if (invalidBalances.length !== 0) {
+          setMessage({
+            title: "Validar valor inicial",
+            description: "Recuerda que el valor inicial no puede ser mayor o igual al saldo disponible de la ruta presupuestal",
+            show: true,
+            OkTitle: "Aceptar",
+            onOk: () => {
+              setMessage({});
+            },
+            background: true,
+          });
+  
+          return;
+        }
+  
+        if (invalidBalances.length === 0) {
+          const updatedIcdArr = icdArrWithBalanceCheck.map(({ balance, ...rest }) => rest);
+  
+          nuevoObjeto = {
+            ...objectSendData,
+            exercise: objectSendData["exercise"],
+            date: objectSendData["date"] && typeof objectSendData["date"] === "string" ? objectSendData["date"].split("/").join("-") : null,
+            contractObject: objectSendData["contractObject"],
+            consecutive: 10,
+            icdArr: updatedIcdArr.map(({ proyecto, posicion, valorInicial, id, ...rest }) => ({
+              idRppCode: parseInt(proyecto),
+              cdpPosition: parseInt(posicion) + 1,
+              amount: parseFloat(valorInicial),
+              ...rest,
+            })),
+          };
+  
+          await new Promise((resolve) => {
+            setObjectSendData(nuevoObjeto);
+            resolve('success');
+          });
+          setMessage({
+            title: "Guardar",
+            description: `¿Estás segur@ de guardar la informacion ?`,
+            show: true,
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
+            onOk: async () => {
+              try {
+                const response = await cdpService.createCdp_(nuevoObjeto);
+                setTimeout(() => {
+                  if (response['operation']['code'] == "OK") {
+                    setMessage({
+                      title: "Guardado",
+                      description: "Guardado Exitosamente!",
+                      show: true,
+                      OkTitle: "Cerrar",
+                      onOk: () => {
+                        //onCancelNew();
+                        navigate("./../");
+                        setMessage({
+                          title: "Consecutivo CDP Aurora",
+                          description: `Al CDP sele asignó el consecutivo ${response["data"]['consecutive']}`,
+                          show: true,
+                          OkTitle: "Cerrar",
+                          onOk: () => {
+                            setMessage({});
+                          },
+                        });
+                      },
+                      background: true,
+                    });
+                  }
+  
+                  if (response['operation']['message'].indexOf("Ya existe") !== -1) {
+                    setMessage({
+                      title: "Validación de datos",
+                      description: "¡El dato ya existe!",
+                      show: true,
+                      OkTitle: "Cerrar",
+                      onOk: () => {
+                        onCancelNew();
+                        setMessage({});
+                      },
+                      background: true,
+                    });
+                    return
+                  }
+  
+                  if (response['operation']['code'] === "FAIL") {
+                    setMessage({
+                      title: "Error al crear CDP",
+                      description: response['operation']['message'],
+                      show: true,
+                      OkTitle: "Aceptar",
+                      onOk: () => {
+                        onCancelNew();
+                        setMessage({});
+                      },
+                      background: true,
+                    });
+                    return
+                  }
+                }, 1500);
+  
+              } catch (error) {
+                console.error("Error al enviar los datos:", error);
+              }
+              setMessage({});
+            }, onCancel() {
+              onCancelNew();
+              setMessage({})
+            },
+            background: true,
+          });
+          return;
+        }
+      } catch (error) {
+        console.error("Error al enviar los datos:", error);
       }
-    } catch (error) {
-      console.error("Error al enviar los datos:", error);
-    }
+    } 
+
+
+
+
   };
 
 
