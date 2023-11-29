@@ -15,6 +15,7 @@ import { usePacCrud } from "../../pac/createPac/hook/pac-crud.hook";
 import { usePaysCrud } from "../hooks/pays.crud.hook"
 import UploadComponent from "../../pac/createPac/components/UploadComponent";
 import useStorePays from "../../../store/store-pays";
+import { Backdrop, CircularProgress } from '@mui/material';
 
 function LoadPays() {
   const {
@@ -42,7 +43,7 @@ function LoadPays() {
   const [isVisibleErrors, setIsVisibleErrors] = useState(false);
   const [isUploadFileSt, setIsUploadFileSt] = useState(false);
   const [errorsSt, setErrorsSt] = useState([]);
-  const { infoErrors, setInfoErrors } = useStorePays()
+  const { infoErrors, setInfoErrors,loadingSpinner } = useStorePays()
   const [defaultExercise, setDefaultExercise] = useState(actualFullYear.toString())
   const [showBtnValidation, setShowBtnValidation] = useState(false)
   const [showTableErrors, setShowTableErrors] = useState(false)
@@ -161,6 +162,12 @@ if(infoErrors.length > 0){
 
   return (
     <div className="crud-page">
+       <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loadingSpinner}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <div className="main-page full-height">
         <p className="text-black extra-large">Cargar pagos</p>
         <div className="card-user">

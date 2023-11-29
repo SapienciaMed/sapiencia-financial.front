@@ -22,7 +22,7 @@ export function usePaysCrud() {
   const [errorsPac, setErrorsPac] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [errorsLoad, setErrorsLoad] = useState([])
-  const { infoErrors, setInfoErrors } = useStorePays()
+  const { infoErrors, setInfoErrors, setLoadingSpinner } = useStorePays()
   const [selection, setSelection] = useState('')
 
   const api = usePaysServices();
@@ -82,6 +82,7 @@ export function usePaysCrud() {
   };
 
   async function processExcelFile(base64Data, tipoDocumento) {
+    setLoadingSpinner(true)
     setSelection(tipoDocumento)
     return new Promise( async (resolve, reject) => {
       let infoErrors = []
@@ -394,8 +395,10 @@ export function usePaysCrud() {
 
     const verification = await processExcelFile(base64Data, tipoDocumento);
     if (verification) {
+      setLoadingSpinner(false);
       if(selection !== "Pagos"){
         console.log("No esta disponible el guardado");
+        setLoadingSpinner(false);
         return;
       }
       let obInfo = {
@@ -457,6 +460,7 @@ export function usePaysCrud() {
         background: true,
       });
     }else{
+      setLoadingSpinner(false);
       setMessage({
         title: "Carga de archivo",
         description: "El archivo no pudo ser cargado, revisa las validaciones",
