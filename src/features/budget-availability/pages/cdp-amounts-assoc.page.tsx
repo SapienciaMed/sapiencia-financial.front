@@ -89,7 +89,9 @@ const CdpAmountAssoc = () => {
           }
     }; */
 
+    const [countNewFormsSt, setCountNewFormsSt] = useState(0)
     const handleAgregarFormulario = () => {
+        setCountNewFormsSt(countNewFormsSt+1)
         // Obtener el id consecutivo al último formulario
         const newFormulario = { id: formularios.length > 0 ? formularios[formularios.length - 1].id + 1 : 1 };
         setFormularios([...formularios, newFormulario]);
@@ -314,21 +316,11 @@ const CdpAmountAssoc = () => {
             const indexOfLastForm = currentPage * formsPerPage;
             const indexOfFirstForm = indexOfLastForm - formsPerPage;
             
+            console.log({cdpPosition})
             return formularios.slice(indexOfFirstForm, indexOfLastForm).map((form, index) => {
               const currentId = form.id;
-              const prueba = cdpPosition + index;
-
-              console.log(index);
-        console.log(form);
-        console.log(cdpPosition);
-        console.log(formularios.length);
-        console.log(indexOfLastForm + form.id);
-        console.log(cdpPosition + formularios.length);
-        console.log(index + cdpPosition);
-        console.log(currentId);
-    
-        console.log(prueba);
-    
+                
+        
         const foundObject = totalDataRuta.find(obj => obj.id === currentId);
           
               return (
@@ -342,7 +334,7 @@ const CdpAmountAssoc = () => {
                   setAmountInfo={setAmountInfo}
                   posicionCdp={(cdpPosition + formularios.length)-1}
                   datasFounds={foundObject}
-                  countAssoc={(cdpPosition + formularios.length)-1}
+                  countAssoc={currentPage== 1 ? cdpPosition + index+1 : cdpPosition+ index+1 + (currentPage-1)*formsPerPage }
                 />
               );
             });

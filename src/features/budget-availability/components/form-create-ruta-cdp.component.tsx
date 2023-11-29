@@ -430,7 +430,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ countAssoc, dat
       <div className="formulario">
         <div>
           <h2 className="h3-style" style={{ flex: 1 }}>
-            {renderedFormNumber + 1}. Ruta
+            {renderedFormNumber + 1}. Ruta {countAssoc}
           </h2>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             {!isRequired && (
