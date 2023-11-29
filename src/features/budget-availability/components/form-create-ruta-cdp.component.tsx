@@ -8,6 +8,7 @@ import { Grid } from '@mui/material';
 import useStore from '../../../store/store';
 import useStoreTwo from '../../../store/storeTwo';
 import useStoreIcd from '../../../store/store-icd';
+import useStoreCdp from '../../../store/store-cdp';
 export interface FormInfoType {
   idRppCode: string;
   posicion: string;
@@ -36,15 +37,17 @@ interface FormularioProps {
   amountInfo: FormInfoType;
   posicionCdp?: number;
   datasFounds: any;
+  countAssoc?: number;
 }
 
 
 
-const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ datasFounds, formSubmitted, isRequired = false, formNumber, handleEliminar, setAmountInfo, amountInfo, posicionCdp }) => {
+const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ countAssoc, datasFounds, formSubmitted, isRequired = false, formNumber, handleEliminar, setAmountInfo, amountInfo, posicionCdp }) => {
   const { setFormInfo, formInfo } = useContext(AppContext);
   const cdpService = useCdpService();
   const [proyecto, setProyecto] = useState('');
   const { icdImportsData, setIcdImportsData } = useStoreIcd();
+  const { infoErrors, setInfoErrors } = useStoreCdp();
   const [nombreProyecto, setNombreProyecto] = useState('');
   const [fondo, setFondo] = useState('');
   const [pospre, setPospre] = useState('0');
@@ -62,7 +65,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ datasFounds, fo
   const { totalDataRuta } = useStoreTwo();
   const [arrAmounts, setArrAmounts] = useState([])
   const [saldo, setSaldo] = useState(0)
-
+  
 
 
 
@@ -81,9 +84,13 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ datasFounds, fo
     name: item.name,
   }));
 
-  const renderedFormNumber = (posicionCdp && posicionCdp !== 0) ?
+  let renderedFormNumber = (posicionCdp && posicionCdp !== 0) ?
     (Number(formNumber) > posicionCdp ? Number(formNumber) : posicionCdp) :
     Number(formNumber);
+
+    /* if(countAssoc > renderedFormNumber){
+      renderedFormNumber = countAssoc;
+    } */
 
   const onDeleteClick = () => {
     handleEliminar(renderedFormNumber);
@@ -383,6 +390,38 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ datasFounds, fo
     });
 
   }, [proyecto]);
+
+  const handleValidateErrors = () =>{
+    let infoErrors = [];
+    if(formSubmitted){
+      if(!proyecto){
+        let objErrors = {'error':'error en proyecto'}
+        infoErrors.push(objErrors)
+      }
+      if(!fondo){
+        let objErrors = {'error':'error en fondo'}
+        infoErrors.push(objErrors)
+      }
+      if(!pospreNewV){
+        let objErrors = {'error':'error en pospre'}
+        infoErrors.push(objErrors)
+      }
+      if(!valorInicial || valorInicial === '0'){
+        let objErrors = {'error':'error en proyecto'}
+        infoErrors.push(objErrors)
+      }
+      
+      if(infoErrors.length === 0){
+        setInfoErrors([])
+      }else{
+        setInfoErrors(infoErrors)
+      }
+    }
+  }
+
+  useEffect(() => { 
+    handleValidateErrors()
+  },[proyecto,fondo,pospreNewV,valorInicial,formSubmitted])
 
 
 
