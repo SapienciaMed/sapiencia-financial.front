@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { EDirection } from "../../constants/input.enum";
 import { LabelComponent } from "./label.component";
 
 import { Control, Controller } from "react-hook-form";
 import { Dropdown } from "primereact/dropdown";
 import { IDropdownProps } from "../../interfaces/select.interface";
-
+import  useStorePays  from "../../../store/store-pays"
 interface ISelectProps<T> {
   idInput: string;
   control: Control<any>;
