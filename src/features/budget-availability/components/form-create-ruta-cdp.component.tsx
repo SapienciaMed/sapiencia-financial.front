@@ -393,7 +393,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ countAssoc, dat
 
   const handleValidateErrors = () =>{
     let infoErrors = [];
-    if(formSubmitted){
+   
       if(!proyecto){
         let objErrors = {'error':'error en proyecto'}
         infoErrors.push(objErrors)
@@ -416,12 +416,12 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ countAssoc, dat
       }else{
         setInfoErrors(infoErrors)
       }
-    }
+    
   }
 
   useEffect(() => { 
     handleValidateErrors()
-  },[proyecto,fondo,pospreNewV,valorInicial,formSubmitted])
+  },[proyecto,fondo,pospreNewV,valorInicial])
 
 
 
