@@ -80,6 +80,12 @@ export function useCdpService() {
         const endpoint: string = "/create-vinculation-mga";
         return post(`${getActivities}${endpoint}`,data);
     }
+   
+
+    async function getDetaileActivities(data:any): Promise<ApiResponse<any>> {
+        const endpoint: string = `/get-detailed-activities-api-planning-yesuseonpospre/${data}`;
+        return post(`${getActivities}${endpoint}`);
+    }
 
     return {
         createCdp,
@@ -95,7 +101,8 @@ export function useCdpService() {
         getActivitiesDetail,
         validate,
         validateCDP,
-        createVinculationMGA
+        createVinculationMGA,
+        getDetaileActivities
      }
     };
 
