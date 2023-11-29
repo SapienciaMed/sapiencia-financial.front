@@ -18,7 +18,7 @@ export function useAdditionAreaCrud(
   typeMovement?: string,
   actionForm?: string
 ) {
-  console.log(actionForm);
+  // console.log(actionForm);
   const resolver = useYupValidationResolver(fundsAdditionalValidation);
   const { setMessage } = useContext(AppContext);
   const {
