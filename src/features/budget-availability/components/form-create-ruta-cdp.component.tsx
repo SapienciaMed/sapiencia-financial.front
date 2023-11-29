@@ -88,9 +88,9 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ countAssoc, dat
     (Number(formNumber) > posicionCdp ? Number(formNumber) : posicionCdp) :
     Number(formNumber);
 
-    /* if(countAssoc > renderedFormNumber){
+    if(countAssoc > renderedFormNumber){
       renderedFormNumber = countAssoc;
-    } */
+    }
 
   const onDeleteClick = () => {
     handleEliminar(renderedFormNumber);
