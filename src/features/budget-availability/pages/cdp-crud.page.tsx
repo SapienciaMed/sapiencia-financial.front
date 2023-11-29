@@ -86,16 +86,9 @@ const CdpCrudPage = () => {
 
   const handleEliminar = (formNumber) => {
 
-
-    console.log(formNumber);
-    console.log(formNumber + 1);
-
     const information = setDataFinalSend((prevFormularios) =>
       prevFormularios.filter((form, index) => index !== (formNumber))
     );
-
-    console.log(information);
-
 
     setFormularios((prevFormularios) =>
       prevFormularios.filter((form, index) => index !== (formNumber))
@@ -107,16 +100,17 @@ const CdpCrudPage = () => {
       setCurrentPage((prevPage) => prevPage - 1);
     }
 
+    setObjectSendData([]);
+
+    const updatedTotalDataRuta = totalDataRuta.filter((item) => item.id !== formNumber);
+    setTotalDataRuta([]);
+
     const updatedIcdArr = objectSendData['icdArr']
       .filter((_, index) => index !== formNumber * 2)
       .filter((item) => Array.isArray(item) ? item.length > 0 : item !== undefined && item !== null);
     const updatedObjectSendData = { ...objectSendData, icdArr: updatedIcdArr };
     setObjectSendData(updatedObjectSendData);
-
-    console.log(updatedIcdArr);
-    console.log(updatedObjectSendData);
-
-
+    setTotalDataRuta(updatedTotalDataRuta);
   };
 
 
@@ -195,7 +189,7 @@ const CdpCrudPage = () => {
         return;
       }
   
-      const hasEmptyFieldsOrZeros = icdArrWithBalanceCheck.some((item) => {
+   /*    const hasEmptyFieldsOrZeros = icdArrWithBalanceCheck.some((item) => {
         for (const key in item) {
           if (key === 'posicion' || key === 'id') {
             continue; // Saltar 'posicion' e 'id'
@@ -210,7 +204,7 @@ const CdpCrudPage = () => {
           }
         }
         return false;
-      });
+      }); */
   
       const emptyHeadInfo = Array.isArray(formHeadInfo) && formHeadInfo.some((item) => {
         if (item == null || item === "") {
@@ -220,7 +214,7 @@ const CdpCrudPage = () => {
         return false;
       });
   
-      if (hasEmptyFieldsOrZeros || emptyHeadInfo) {
+      if (emptyHeadInfo) {
         console.log("Hay campos vacíos o con valores en 0. No se puede continuar.");
   
         return;
@@ -237,9 +231,11 @@ const CdpCrudPage = () => {
           return false;
         });
   
-  
+      
   
         const invalidBalances = icdArrWithBalanceCheck.filter(item => {
+          console.log(item);
+          
           if (parseInt(item.valorInicial) >= parseInt(item.balance) || item.valorInicial === "0") {
             return true; // Marcar como elemento inválido
           }
