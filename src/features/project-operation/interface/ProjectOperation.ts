@@ -4,7 +4,7 @@ export interface IProjectOperation {
     entityId: number;
     number: string;
     name: string;
-    isActivated: number;
+    isActivated: string;
     exercise: number;
     dateFrom: string;
     dateTo: string;
