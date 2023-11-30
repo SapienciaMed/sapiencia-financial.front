@@ -134,12 +134,12 @@ export function usePaysCrud() {
 
             if (isTitleEmpty) {
               console.log(`El título en la posición ${index} está vacío.`);
-              let objErrors = { "rowError": 1, "message": `El documento no cumple con la estructura` };
+              let objErrors = { "rowError": 1, "message": `El archivo no cumple con la estructura` };
               infoErrors.push(objErrors);
               return false;
             } else if (title !== titleExcel[index]) {
               console.log(`El título en la posición ${index} no coincide. Título actual: '${title}', Título esperado: '${titleExcel[index]}'`);
-              let objErrors = { "rowError": 1, "message": `El documento no cumple con la estructura` };
+              let objErrors = { "rowError": 1, "message": `El archivo no cumple con la estructura` };
               infoErrors.push(objErrors);
               return false;
             }
@@ -369,6 +369,7 @@ export function usePaysCrud() {
             setInfoErrors(infoErrors)
           } else {
             console.log('El archivo Excel no tiene el formato esperado. Detalles:');
+            setInfoErrors(infoErrors)
             // Puedes mostrar un mensaje al usuario o manejar la situación de alguna otra manera
           }
           if (infoErrors.length > 0) {
