@@ -74,6 +74,7 @@ const CdpAmountAssoc = () => {
     const [dataComplete, setDataComplete] = useState([]);
     const [lastValue, setLastValue] = useState(0);
     const [cdpPosition, setCdpPosition] = useState(0);
+    const [indexData, setIndexData] = useState(0)
     
 /* 
     const handleAgregarFormulario = () => {
@@ -311,23 +312,31 @@ const CdpAmountAssoc = () => {
         
         
         const renderFormsForCurrentPage = () => {
+
             const indexOfLastForm = currentPage * formsPerPage;
             const indexOfFirstForm = indexOfLastForm - formsPerPage;
+            const realVal = indexData+(formularios.length);
+            
+            console.log("Pruebita de nuevo", realVal+(formularios.length-1));
             
             return formularios.slice(indexOfFirstForm, indexOfLastForm).map((form, index) => {
               const currentId = form.id;
               const prueba = cdpPosition + index;
-
-              console.log(index);
-        console.log(form);
-        console.log(cdpPosition);
-        console.log(formularios.length);
-        console.log(indexOfLastForm + form.id);
-        console.log(cdpPosition + formularios.length);
-        console.log(index + cdpPosition);
-        console.log(currentId);
+              
+              
+                console.log(index);
+                console.log(form);
+                console.log(cdpPosition);
+                console.log(formularios.length);
+                console.log(indexOfLastForm + form.id);
+                console.log(cdpPosition + formularios.length);
+                console.log(index + cdpPosition);
+                console.log(currentId);
+            
+                console.log(prueba);
     
-        console.log(prueba);
+                console.log("LAST",(indexOfFirstForm+(formularios.length-1)));
+                console.log("first",indexOfFirstForm);
     
         const foundObject = totalDataRuta.find(obj => obj.id === currentId);
           
@@ -335,14 +344,14 @@ const CdpAmountAssoc = () => {
                 <FormCreateRutaCDPComponent
                   key={currentId}
                   isRequired={false}
-                  formNumber={currentId}
+                  formNumber={indexOfFirstForm+(formularios.length-1)}
                   handleEliminar={() => handleEliminar(currentId)}
                   formSubmitted={formSubmitted}
                   amountInfo={amountInfo}
                   setAmountInfo={setAmountInfo}
-                  posicionCdp={(cdpPosition + formularios.length)-1}
+                  posicionCdp={0}
                   datasFounds={foundObject}
-                  countAssoc={(cdpPosition + formularios.length)-1}
+                  countAssoc={indexOfFirstForm+(formularios.length-1)}
                 />
               );
             });
