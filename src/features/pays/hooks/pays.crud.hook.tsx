@@ -22,7 +22,7 @@ export function usePaysCrud() {
   const [errorsPac, setErrorsPac] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [errorsLoad, setErrorsLoad] = useState([])
-  const { infoErrors, setInfoErrors, setLoadingSpinner } = useStorePays()
+  const { infoErrors, setInfoErrors, setLoadingSpinner,setFieldErrors,fieldErrors } = useStorePays()
   const [selection, setSelection] = useState('')
 
   const api = usePaysServices();
@@ -388,7 +388,28 @@ export function usePaysCrud() {
   }
 
 
+
+ 
+    const updateFieldError = (fieldName: keyof typeof fieldErrors, hasError: string) => {
+      setFieldErrors({
+        [fieldName]: hasError,
+      });
+    };
+  
+
   const onSubmitPagPays = handleSubmit(async (data: IPagoDataSave) => {
+    
+    const { tipoArchivo, mesDelAnio, filedata } = data;
+
+    // Validar campos
+    if (data.tipoArchivo === undefined || data.mesDelAnio === undefined) {
+      updateFieldError('tipoArchivo', "vacio");
+      updateFieldError('mesDelAnio',"vacio");
+      return;
+      }else{
+        setFieldErrors({})
+      }
+
     let formData = new FormData();
     let fileExcel = data.filedata;
     const base64Data = await readFileAsBase64(fileExcel);
