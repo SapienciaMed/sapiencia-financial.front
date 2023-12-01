@@ -43,7 +43,7 @@ function LoadPays() {
   const [isVisibleErrors, setIsVisibleErrors] = useState(false);
   const [isUploadFileSt, setIsUploadFileSt] = useState(false);
   const [errorsSt, setErrorsSt] = useState([]);
-  const { infoErrors, setInfoErrors, loadingSpinner } = useStorePays()
+  const { infoErrors, setInfoErrors, loadingSpinner,fieldErrors } = useStorePays()
   const [defaultExercise, setDefaultExercise] = useState(actualFullYear.toString())
   const [showBtnValidation, setShowBtnValidation] = useState(false)
   const [showTableErrors, setShowTableErrors] = useState(false)
@@ -82,6 +82,8 @@ function LoadPays() {
 
   const tipoArchivo = watch('tipoArchivo');
 
+  
+
   let styleSelects = {
     display: 'none'
   }
@@ -117,36 +119,9 @@ function LoadPays() {
     console.log(tipoArchivo);
   }, [tipoArchivo]);
 
-  const [fieldErrors, setFieldErrors] = useState({
-    exercise: false,
-    tipoArchivo: false,
-    mesDelAnio: false,
-  });
-
-  const updateFieldError = (fieldName, hasError) => {
-    setFieldErrors((prevErrors) => ({
-      ...prevErrors,
-      [fieldName]: hasError,
-    }));
-  };
 
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
 
-    const tipoArchivoError = !defaultTipoArchivo;
-    const mesDelAnioError = !defaultMes;
-    updateFieldError('tipoArchivo', tipoArchivoError);
-    updateFieldError('mesDelAnio', mesDelAnioError);
-
-    if (tipoArchivoError || mesDelAnioError) {
-
-      console.error('Por favor, completa todos los campos.');
-      return;
-    }
-
-    onSubmitPagPays();
-  };
 
   const handleChange = (event) => {
     const enteredValue = event.target.value;
@@ -204,14 +179,14 @@ function LoadPays() {
         <p className="text-black extra-large">Cargar pagos</p>
         <div className="card-user">
           <FormComponent
-            action={handleSubmit}
+            action={onSubmitPagPays}
             id="form-load-pays"
             className="form-load-pays"
           >
             <section className="grid-form-2-container-reverse grid-column-e-proj-operation mt-5px">
               <InputComponent
                 idInput="exercise"
-                className={`input-basic medium ${fieldErrors.exercise ? 'error' : ''}`}
+                className={`input-basic medium`}
                 typeInput="text"
                 value={defaultExercise}
                 label="Vigencia"
