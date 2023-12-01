@@ -75,42 +75,84 @@ const CdpAmountAssoc = () => {
     const [lastValue, setLastValue] = useState(0);
     const [cdpPosition, setCdpPosition] = useState(0);
     const [indexData, setIndexData] = useState(0)
-    
-/* 
-    const handleAgregarFormulario = () => {
-        const newFormulario = { id: formCount };
-        setFormularios([...formularios, newFormulario]);
-        setFormCount(formCount);
 
+    /* 
+        const handleAgregarFormulario = () => {
+            const newFormulario = { id: formCount };
+            setFormularios([...formularios, newFormulario]);
+            setFormCount(formCount);
+    
+            if(!deleteRouteTwo){
+                setTimeout(() => {
+                  handleEliminar(1)
+                  setDeleteRouteTwo(true);
+                }, 500);
+              }
+        }; */
+
+    const [countNewFormsSt, setCountNewFormsSt] = useState([])
+    
+    
+    const handleAgregarFormulario = () => {
+        let arrData = formularios;
+          const nextId = formularios.reduce((max, obj) => (obj.id > max ? obj.id : max), 0) + 1;
+          const nextId2 = countNewFormsSt.reduce((max, obj) => (obj.id > max ? obj.id : max), 0) + 1;
+        console.log("nextID1", nextId)
+        console.log("nextID2", nextId2)
+    
+        let othersParams = {
+            "idRppCode": "0",
+            "valorInicial": "0",
+            "balance": "0",
+          
+        }
+
+        const newFormulario = {
+            id: nextId,
+            posicion: nextId, // Igualar posición al ID
+            ...othersParams,
+        };
+       // const newFormulario = { id: formularios.length > 0 ? formularios.reduce((max, obj) => (obj.id > max ? obj.id : max), 0)+1 : 0 };
+        arrData.push(newFormulario)
+        setCountNewFormsSt(arrData)
+    
+
+        setTimeout(() => console.log("formularios 2", countNewFormsSt), 1000);
         if(!deleteRouteTwo){
             setTimeout(() => {
-              handleEliminar(1)
-              setDeleteRouteTwo(true);
+              handleEliminar(nextId+1)
+              handleEliminar(nextId+1)
+              //setDeleteRouteTwo(true);
             }, 500);
           }
-    }; */
 
-    const handleAgregarFormulario = () => {
-        // Obtener el id consecutivo al último formulario
-        const newFormulario = { id: formularios.length > 0 ? formularios[formularios.length - 1].id + 1 : 1 };
-        setFormularios([...formularios, newFormulario]);
+    };
 
-      };
+    useEffect(()=>{
+        handleAgregarFormulario()
+    },[])
 
-  
 
     const handleEliminar = (formNumber) => {
-        setFormularios((prevFormularios) =>
-          prevFormularios.filter((_, index) => indexOfFirstForm + index !== formNumber)
+        // Remove form from countNewFormsSt
+        setCountNewFormsSt((prevFormularios) =>
+            prevFormularios.filter((_, index) => indexOfFirstForm + index !== formNumber)
         );
+    
+        // Update form count
         setFormCount((prevCount) => prevCount - 1);
-
-        
-    if (currentForms.length === 1 && currentPage > 1) {
-        setCurrentPage((prevPage) => prevPage - 1);
-      }
-      
-      };
+    
+        // Remove form from objectSendData
+    /*     setObjectSendData((prevFormularios) =>
+            prevFormularios.filter((_, index) => indexOfFirstForm + index !== formNumber)
+        ); */
+    
+        // If there's only one form on a non-first page, go to the previous page
+        if (currentForms.length === 1 && currentPage > 1) {
+            setCurrentPage((prevPage) => prevPage - 1);
+        }
+    };
+    
 
     useEffect(() => {
         if (Object.keys(amountInfo).length > 0) {
@@ -136,7 +178,7 @@ const CdpAmountAssoc = () => {
         let finalObj = {
             amounts: formularios
         };
-        
+
         setFormId(finalObj.amounts.length);
 
 
@@ -168,6 +210,9 @@ const CdpAmountAssoc = () => {
     const handleGuardar = async () => {
         setFormSubmitted(true);
 
+        console.log(objectSendData);
+        
+        return;
         let nuevoObjeto;
         const onCancelNew = () => {
             navigate("./");
@@ -198,11 +243,11 @@ const CdpAmountAssoc = () => {
 
                 const updatedIcdArr = icdArrWithBalanceCheck.map((item) => {
                     const valuesAreValid = Object.values(item).every(value => value !== null && value !== undefined && value !== '');
-                
+
                     if (!valuesAreValid) {
-                    return;
+                        return;
                     }
-                
+
                     const { balance, ...rest } = item;
                     return rest;
                 });
@@ -309,98 +354,120 @@ const CdpAmountAssoc = () => {
           ));
         }; */
 
-        
-        
-        const renderFormsForCurrentPage = () => {
 
-            const indexOfLastForm = currentPage * formsPerPage;
-            const indexOfFirstForm = indexOfLastForm - formsPerPage;
-            const realVal = indexData+(formularios.length);
-            
-            console.log("Pruebita de nuevo", realVal+(formularios.length-1));
-            
-            return formularios.slice(indexOfFirstForm, indexOfLastForm).map((form, index) => {
-              const currentId = form.id;
-              const prueba = cdpPosition + index;
-              
-              
-                console.log(index);
-                console.log(form);
-                console.log(cdpPosition);
-                console.log(formularios.length);
-                console.log(indexOfLastForm + form.id);
-                console.log(cdpPosition + formularios.length);
-                console.log(index + cdpPosition);
-                console.log(currentId);
-            
-                console.log(prueba);
-    
-                console.log("LAST",(indexOfFirstForm+(formularios.length-1)));
-                console.log("first",indexOfFirstForm);
-    
-        const foundObject = totalDataRuta.find(obj => obj.id === currentId);
-          
-              return (
+    let counter = 0;
+    const renderFormsForCurrentPage = () => {
+
+        const indexOfLastForm = currentPage * formsPerPage;
+        const indexOfFirstForm = indexOfLastForm - formsPerPage;
+        console.log({ cdpPosition })
+        console.log(formularios);
+
+        console.log("last", indexOfLastForm);
+        console.log("first", indexOfFirstForm);
+        return countNewFormsSt.slice(indexOfFirstForm, indexOfLastForm).map((form, index) => {
+            const currentId = form.id;
+
+            const foundObject = totalDataRuta.find(obj => obj.id === currentId);
+
+            return (
                 <FormCreateRutaCDPComponent
-                  key={currentId}
-                  isRequired={false}
-                  formNumber={indexOfFirstForm+(formularios.length-1)}
-                  handleEliminar={() => handleEliminar(currentId)}
-                  formSubmitted={formSubmitted}
-                  amountInfo={amountInfo}
-                  setAmountInfo={setAmountInfo}
-                  posicionCdp={0}
-                  datasFounds={foundObject}
-                  countAssoc={indexOfFirstForm+(formularios.length-1)}
+                    key={currentId}
+                    isRequired={false}
+                    formNumber={indexOfFirstForm + (countNewFormsSt.length - 1)}
+                    handleEliminar={() => handleEliminar(currentId)}
+                    formSubmitted={formSubmitted}
+                    amountInfo={amountInfo}
+                    setAmountInfo={setAmountInfo}
+                    posicionCdp={0}
+                    datasFounds={foundObject}
+                    countAssoc={currentPage == 1 ? cdpPosition + index + 1 :
+                        cdpPosition + index + 1 + (currentPage - 1) * formsPerPage}
                 />
-              );
-            });
-          };
-          
-          
-          
-          
-          
+            );
+        });
+    };
 
-        useEffect(() => {
-            // Check if formDataCdpRoute is not empty
-            if (formDataCdpRoute.length > 0) {
-              // Update dataComplete based on formDataCdpRoute
-              const newDataComplete = dataComplete.map((existingObj) => {
-                const matchingIndex = formDataCdpRoute.findIndex(
-                  (newObj) => newObj.id === existingObj.id
-                );
-        
-                if (matchingIndex !== -1) {
-                  // If the object exists in formDataCdpRoute, update it
-                  return formDataCdpRoute[matchingIndex];
-                }
-        
-                return existingObj;
-              });
-        
-              // Add new objects from formDataCdpRoute that don't exist in dataComplete
-              formDataCdpRoute.forEach((newObj) => {
-                const isNewObject = newDataComplete.every(
-                  (existingObj) => existingObj.id !== newObj.id
-                );
-        
-                if (isNewObject) {
-                  newDataComplete.push(newObj);
-                }
-              });
-        
-              setDataComplete(newDataComplete);
-            }
-            
-            setTotalDataRuta(dataComplete)
-            console.log(dataComplete);
-            
-            
-          }, [formDataCdpRoute]);
-        
+    
 
+   /*  const renderFormsForCurrentPage = () => {
+        const indexOfLastForm = currentPage * formsPerPage;
+        const indexOfFirstForm = indexOfLastForm - formsPerPage;
       
+        console.log({ cdpPosition });
+        console.log(formularios);
+      
+        return formularios.map((form, index) => {
+          const currentId = form.id;
+      
+          if (index >= indexOfFirstForm && index < indexOfLastForm) {
+            const foundObject = totalDataRuta.find(obj => obj.id === currentId);
+      
+            return (
+              <FormCreateRutaCDPComponent
+                key={currentId}
+                isRequired={false}
+                formNumber={index + 1}
+                handleEliminar={() => handleEliminar(currentId)}
+                formSubmitted={formSubmitted}
+                amountInfo={amountInfo}
+                setAmountInfo={setAmountInfo}
+                posicionCdp={0}
+                datasFounds={foundObject}
+                countAssoc={currentPage === 1 ? cdpPosition + index + 1 : cdpPosition + index + 1 + (currentPage - 1) * formsPerPage}
+              />
+            );
+          }
+      
+          return null; // Devuelve null para los formularios que no están en el rango de la página actual
+        });
+      }; */
+      
+
+
+
+
+
+
+    useEffect(() => {
+        // Check if formDataCdpRoute is not empty
+        if (formDataCdpRoute.length > 0) {
+            // Update dataComplete based on formDataCdpRoute
+            const newDataComplete = dataComplete.map((existingObj) => {
+                const matchingIndex = formDataCdpRoute.findIndex(
+                    (newObj) => newObj.id === existingObj.id
+                );
+
+                if (matchingIndex !== -1) {
+                    // If the object exists in formDataCdpRoute, update it
+                    return formDataCdpRoute[matchingIndex];
+                }
+
+                return existingObj;
+            });
+
+            // Add new objects from formDataCdpRoute that don't exist in dataComplete
+            formDataCdpRoute.forEach((newObj) => {
+                const isNewObject = newDataComplete.every(
+                    (existingObj) => existingObj.id !== newObj.id
+                );
+
+                if (isNewObject) {
+                    newDataComplete.push(newObj);
+                }
+            });
+
+            setDataComplete(newDataComplete);
+        }
+
+        setTotalDataRuta(dataComplete)
+        console.log(dataComplete);
+
+
+    }, [formDataCdpRoute]);
+
+
+
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
@@ -421,7 +488,7 @@ const CdpAmountAssoc = () => {
             if (amounts && amounts.length > 0) {
                 const lastAmount = amounts.length;
                 setCdpPosition(lastAmount);
-            }else if(amounts.length === 0){
+            } else if (amounts.length === 0) {
                 setCdpPosition(0);
             }
         });
@@ -443,7 +510,7 @@ const CdpAmountAssoc = () => {
                 formSubmitted={false}
                 information={dataHead}
             />
-            {formularios.length > 0 && (
+            {countNewFormsSt.length > 0 && (
                 <div>
                     {renderFormsForCurrentPage()}
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
