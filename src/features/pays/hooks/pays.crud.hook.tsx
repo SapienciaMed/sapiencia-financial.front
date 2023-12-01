@@ -84,6 +84,7 @@ export function usePaysCrud() {
   async function processExcelFile(base64Data, tipoDocumento) {
     setLoadingSpinner(true)
     setSelection(tipoDocumento)
+    setInfoErrors([])
     return new Promise( async (resolve, reject) => {
       let infoErrors = []
       const base64Content = base64Data.split(',')[1];
@@ -426,6 +427,7 @@ export function usePaysCrud() {
                   OkTitle: "Cerrar",
                   onOk: () => {
                     //onCancelNew();
+                    setInfoErrors([])
                     navigate("./../");
                     setMessage({})
                   },
@@ -436,7 +438,7 @@ export function usePaysCrud() {
 
               if (response['operation']['code'] === "FAIL") {
                 setMessage({
-                  title: "Error al crear CDP",
+                  title: "Error al cargar la informacion",
                   description: response['operation']['message'],
                   show: true,
                   OkTitle: "Aceptar",
