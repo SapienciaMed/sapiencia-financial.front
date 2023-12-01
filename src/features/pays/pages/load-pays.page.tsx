@@ -52,6 +52,7 @@ function LoadPays() {
     return newFile;
   };
 
+  useEffect(()=>{setInfoErrors([])},[])
   const uploadFileFn = (newFile: any) => {
     if (newFile.name) {
       setIsUploadFileSt(true);
