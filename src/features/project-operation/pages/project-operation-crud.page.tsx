@@ -9,7 +9,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { EDirection } from "../../../common/constants/input.enum";
 import { useProjectOperationCrud } from "../hook/project-operation-crud.hook";
 
-
 interface IAppProps {
   action: "new" | "edit";
 }
@@ -17,48 +16,54 @@ interface IAppProps {
 function ProjectOperationCrud({ action }: IAppProps) {
   const { id: projectOperationalId } = useParams();
   const navigate = useNavigate();
-  const [exerciseSt, setExerciseSt] = useState(null)
+  const [exerciseSt, setExerciseSt] = useState(null);
 
-  const { errors, onSubmitTab, showModal, setMessage, register, isAllowSave, control, dateFromDefaultSt, dateToDefaultSt, actualFullYear } = useProjectOperationCrud(projectOperationalId, exerciseSt);
+  const {
+    errors,
+    onSubmitTab,
+    showModal,
+    setMessage,
+    register,
+    control,
+    dateFromDefaultSt,
+    dateToDefaultSt,
+    actualFullYear,
+  } = useProjectOperationCrud(projectOperationalId, exerciseSt);
 
-  const [isModifyDateFrom, setIsModifyDateFrom] = useState(false)
-  const [isModifyDateTo, setIsModifyDateTo] = useState(false)
-  const [isBtnDisabled, setIsBtnDisabled] = useState(true)
+  const [isModifyDateFrom, setIsModifyDateFrom] = useState(false);
+  const [isModifyDateTo, setIsModifyDateTo] = useState(false);
+  const [isBtnDisabled, setIsBtnDisabled] = useState(true);
 
-  
-  const [dateFromDefaultStValidateDate, setDateFromDefaultStValidateDate] = useState(dateFromDefaultSt)
-  const [dateToDefaultStValidateDate, setDateToDefaultStValidateDate] = useState(dateToDefaultSt)
-
-useEffect(() => {
-
-  if(action=="edit"){
-    setIsBtnDisabled(true)
-  }else{
-    setIsBtnDisabled(false)
-  }
-}, [])
-
-
-
-  useEffect(() => {
-    setIsModifyDateFrom(true)
-  }, [ exerciseSt])
+  const [dateFromDefaultStValidateDate, setDateFromDefaultStValidateDate] =
+    useState(dateFromDefaultSt);
+  const [dateToDefaultStValidateDate, setDateToDefaultStValidateDate] =
+    useState(dateToDefaultSt);
 
   useEffect(() => {
-    setIsModifyDateTo(true)
-  }, [ exerciseSt])
-
-
-  useEffect(() => {
-    if (exerciseSt == "" || !exerciseSt || exerciseSt.length!=4) {
-      setDateFromDefaultStValidateDate("")
-      setDateToDefaultStValidateDate("")
-    }else{
-      setDateFromDefaultStValidateDate(dateFromDefaultSt)
-      setDateToDefaultStValidateDate(dateToDefaultSt)
+    if (action == "edit") {
+      setIsBtnDisabled(true);
+    } else {
+      setIsBtnDisabled(false);
     }
-  }, [exerciseSt])
+  }, []);
 
+  useEffect(() => {
+    setIsModifyDateFrom(true);
+  }, [exerciseSt]);
+
+  useEffect(() => {
+    setIsModifyDateTo(true);
+  }, [exerciseSt]);
+
+  useEffect(() => {
+    if (exerciseSt == "" || !exerciseSt || exerciseSt.length != 4) {
+      setDateFromDefaultStValidateDate("");
+      setDateToDefaultStValidateDate("");
+    } else {
+      setDateFromDefaultStValidateDate(dateFromDefaultSt);
+      setDateToDefaultStValidateDate(dateToDefaultSt);
+    }
+  }, [exerciseSt]);
 
   return (
     <div className="crud-page">
@@ -66,17 +71,16 @@ useEffect(() => {
         <p className="text-black extra-large">
           {action === "new" ? "Crear proyecto" : "Editar proyecto"}
         </p>
-        <div className="card-user" >
+        <div className="card-user">
           <FormComponent action={onSubmitTab} id="form-acts">
             <section className="grid-form-2-container-reverse grid-column-e-proj-operation mt-5px">
-
               <SelectComponent
                 idInput={`entityId`}
                 control={control}
-                label='Entidad CP'
+                label="Entidad CP"
                 className="select-basic medium"
                 classNameLabel="text-black big bold text-required"
-                placeholder={'Seleccionar'}
+                placeholder={"Seleccionar"}
                 data={[{ id: 1, name: "SAPI", value: 1 }]}
                 filter={true}
                 fieldArray={true}
@@ -86,10 +90,10 @@ useEffect(() => {
               <SelectComponent
                 idInput={`number`}
                 control={control}
-                label='Proyecto'
+                label="Proyecto"
                 className="select-basic medium"
                 classNameLabel="text-black big bold text-required"
-                placeholder={'Seleccionar'}
+                placeholder={"Seleccionar"}
                 data={[{ id: "1", name: "90000000", value: "1" }]}
                 filter={true}
                 fieldArray={true}
@@ -100,7 +104,7 @@ useEffect(() => {
                 idInput="name"
                 className="input-basic medium"
                 typeInput="text"
-                onChange={()=>setIsBtnDisabled(false)}
+                onChange={() => setIsBtnDisabled(false)}
                 register={register}
                 label="Denominación"
                 classNameLabel="text-black big bold text-required"
@@ -120,23 +124,23 @@ useEffect(() => {
                 min={actualFullYear}
                 disabled={action === "new" ? false : true}
               />
-
             </section>
             <section className="grid-form-2-container-reverse grid-column-four mt-5px">
               <SelectComponent
-                idInput={`isActivated`}
+                idInput="isActivated"
                 control={control}
-                label='Estado'
+                label="Estado"
                 className="select-basic medium"
                 classNameLabel="text-black big bold text-required"
-                //placeholder={'Seleccionar'}
                 data={[
                   { id: "1", name: "Activo", value: "1" },
                   { id: "0", name: "Inactivo", value: "0" },
                 ]}
+                direction={EDirection.column}
                 filter={true}
                 fieldArray={true}
                 errors={errors}
+                optionSelected={() => setIsBtnDisabled(false)}
               />
 
               <InputComponent
@@ -144,22 +148,41 @@ useEffect(() => {
                 className="input-basic medium"
                 typeInput="date"
                 register={register}
-                value={!isModifyDateFrom ? undefined : !exerciseSt || exerciseSt?.length==4 ? dateFromDefaultSt : undefined}
-                onChange={(e) => { setIsModifyDateFrom(false); setDateFromDefaultStValidateDate(e.target.value);;setIsBtnDisabled(false) }}
+                value={
+                  !isModifyDateFrom
+                    ? undefined
+                    : !exerciseSt || exerciseSt?.length == 4
+                    ? dateFromDefaultSt
+                    : undefined
+                }
+                onChange={(e) => {
+                  setIsModifyDateFrom(false);
+                  setDateFromDefaultStValidateDate(e.target.value);
+                  setIsBtnDisabled(false);
+                }}
                 label="Validez desde"
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
                 errors={errors}
               />
 
-
               <InputComponent
                 idInput="dateTo"
                 className="input-basic medium"
                 typeInput="date"
                 register={register}
-                value={!isModifyDateTo ? undefined : !exerciseSt || exerciseSt?.length==4 ? dateToDefaultSt : undefined}
-                onChange={(e) => { setIsModifyDateTo(false); setDateToDefaultStValidateDate(e.target.value);setIsBtnDisabled(false) }}
+                value={
+                  !isModifyDateTo
+                    ? undefined
+                    : !exerciseSt || exerciseSt?.length == 4
+                    ? dateToDefaultSt
+                    : undefined
+                }
+                onChange={(e) => {
+                  setIsModifyDateTo(false);
+                  setDateToDefaultStValidateDate(e.target.value);
+                  setIsBtnDisabled(false);
+                }}
                 label="Validez hasta"
                 classNameLabel="text-black big bold text-required"
                 direction={EDirection.column}
@@ -183,7 +206,9 @@ useEffect(() => {
                     cancelTitle: "Cancelar",
                     onOk: () => {
                       setMessage({});
-                      navigate("/gestion-financiera/presupuesto/proyecto-funcionamiento");
+                      navigate(
+                        "/gestion-financiera/presupuesto/proyecto-funcionamiento"
+                      );
                     },
                     onCancel() {
                       setMessage({});
@@ -195,7 +220,7 @@ useEffect(() => {
                 className="button-search"
                 value="Guardar"
                 type="submit"
-                form='form-acts'
+                form="form-acts"
                 disabled={isBtnDisabled}
               />
             </div>

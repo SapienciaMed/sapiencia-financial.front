@@ -22,8 +22,8 @@ export function usePaysCrud() {
   const [errorsPac, setErrorsPac] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [errorsLoad, setErrorsLoad] = useState([])
-  const { infoErrors, setInfoErrors } = useStorePays()
-
+  const { infoErrors, setInfoErrors, setLoadingSpinner,setFieldErrors,fieldErrors } = useStorePays()
+  const [selection, setSelection] = useState('')
 
   const api = usePaysServices();
 
@@ -82,7 +82,10 @@ export function usePaysCrud() {
   };
 
   async function processExcelFile(base64Data, tipoDocumento) {
-    return new Promise((resolve, reject) => {
+    setLoadingSpinner(true)
+    setSelection(tipoDocumento)
+    setInfoErrors([])
+    return new Promise( async (resolve, reject) => {
       let infoErrors = []
       const base64Content = base64Data.split(',')[1];
       const binaryData = atob(base64Content);
@@ -96,7 +99,7 @@ export function usePaysCrud() {
       const blob = new Blob([byteArray], { type: 'application/octet-stream' });
 
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         try {
           const workbook = XLSX.read(e.target.result, { type: 'binary' });
           const sheetName = workbook.SheetNames[0];
@@ -115,8 +118,13 @@ export function usePaysCrud() {
 
           switch (tipoDocumento) {
             case "Pagos":
-              titleDB = ["POSICION", "PAG_VALOR_CAUSADO", "PAG_VALOR_PAGADO", "PAG_CODVRP_VINCULACION_RP"];
-              titleExcel = ['Posicion', 'Causado', 'Pagado', 'Consecutivo RP SAP'];
+              titleDB = ["PAG_CODVRP_VINCULACION_RP","POSICION", "PAG_VALOR_CAUSADO", "PAG_VALOR_PAGADO", ];
+              titleExcel = ['Consecutivo RP SAP','Posicion', 'Causado', 'Pagado'];
+              break;
+            case "Funds":
+              titleDB = ["FND_DENOMINACION", "FND_DESCRIPCION", "FND_VIGENTE_DESDE", "FND_VIGENTE_HASTA"];
+              titleExcel = ['DENOMINACION', 'DESCRIPCION', 'VALIDEZ DE', 'VALIDEZ A'];
+
               break;
             // Agrega otros casos según sea necesario
 
@@ -127,9 +135,13 @@ export function usePaysCrud() {
 
             if (isTitleEmpty) {
               console.log(`El título en la posición ${index} está vacío.`);
+              let objErrors = { "rowError": 1, "message": `El archivo no cumple con la estructura` };
+              infoErrors.push(objErrors);
               return false;
             } else if (title !== titleExcel[index]) {
               console.log(`El título en la posición ${index} no coincide. Título actual: '${title}', Título esperado: '${titleExcel[index]}'`);
+              let objErrors = { "rowError": 1, "message": `El archivo no cumple con la estructura` };
+              infoErrors.push(objErrors);
               return false;
             }
 
@@ -137,17 +149,20 @@ export function usePaysCrud() {
           });
 
           if (isValidTitles) {
-            console.log('Los títulos coinciden. Procede con el procesamiento del archivo Excel.');
-            const merges = sheet['!merges'];
+           
             const uniqueRows = new Set();
-
+            
             for (let R = range.s.r + 1; R <= range.e.r; ++R) {
-              const rowData = {};
+              const merges = sheet['!merges'];
               if (merges !== undefined) {
+                
                 const isMergedRow = merges.some((merge) => R >= merge.s.r && R <= merge.e.r);
-                let objErrors = { "rowError": R, "message": `Error en la fila ${R}: La fila está combinada.` };
-                infoErrors.push(objErrors);
+                if(isMergedRow) {
+                  let objErrors = { "rowError": R, "message": `El archivo no cumple la estructura.` };
+                  infoErrors.push(objErrors);
+                }
               }
+              const rowData = {};
 
               let hasDuplicate = false;
               let isValidValues = true;
@@ -157,78 +172,205 @@ export function usePaysCrud() {
                 const cell_ref = XLSX.utils.encode_cell(cell_address);
                 const value = sheet[cell_ref]?.v;
 
-                switch (titleDB[C]) {
-                  case "POSICION":
-                    if (typeof value !== 'number' || !Number.isInteger(value)) {
-                      console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
-                      let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                      infoErrors.push(objErrors);
-                    }
-                    break;
-                  case "PAG_VALOR_CAUSADO":
-                    if (typeof value !== 'number') {
-                      console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número.`);
-                      let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                      infoErrors.push(objErrors);
-                    }
-                    break;
-                  case "PAG_VALOR_PAGADO":
-                    if (typeof value !== 'number') {
-                      console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número.`);
-                      let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                      infoErrors.push(objErrors);
-                    }
-                    break;
-                  case "PAG_CODVRP_VINCULACION_RP":
-                    if (typeof value !== 'number') {
-                      console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número.`);
-                      let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                      infoErrors.push(objErrors);
-                    }
-                    break;
+           
+
+                
+                if (tipoDocumento == "Pagos") {
+                  //validamos la existencia del RP
+                
+                 
+                  switch (titleDB[C]) {
+                    case "POSICION":
+                      if (typeof value !== 'number' || !Number.isInteger(value)) {
+                        if(value === undefined){}else{
+                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                          let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                          infoErrors.push(objErrors);
+                        }
+                      }
+                      break;
+                    case "PAG_VALOR_CAUSADO":
+                      if (typeof value !== 'number') {
+                     
+                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                          let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                          infoErrors.push(objErrors);
+                        
+                      }
+                      break;
+                    case "PAG_VALOR_PAGADO":
+                      if (typeof value !== 'number') {
+                        if(value === undefined){}else{
+                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                          let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                          infoErrors.push(objErrors);
+                        }
+                      }
+                      break;
+                    case "PAG_CODVRP_VINCULACION_RP":
+                      if (typeof value !== 'number') {
+                        if(value === undefined){}else{
+                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                          let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                          infoErrors.push(objErrors);
+                        }
+                      }
+                      break;
+
+                  }
+
+                } else if (tipoDocumento == "Funds") {
+                  switch (titleDB[C]) {
+                    case "FND_CODECP_ENTIDAD":
+                      if (typeof value !== 'string') {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                        let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                        infoErrors.push(objErrors);
+                      }
+                      break;
+                    case "FND_CODIGO":
+                      if (typeof value !== 'number' || !Number.isInteger(value)) {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
+                        if(value === undefined){}else{
+                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                          let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                          infoErrors.push(objErrors);
+                        }
+                      }
+                      break;
+                    case "DENOMINACION":
+                      if (typeof value !== 'string') {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                        let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                        infoErrors.push(objErrors);
+                      }
+                      break;
+                    case "DESCRIPCION":
+                      if (typeof value !== 'string') {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                        let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };;
+                        infoErrors.push(objErrors);
+                      }
+                      break;
+                    case "VALIDEZ DE":
+                      if (typeof value !== 'string') {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                        let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                        infoErrors.push(objErrors);
+                      }
+                      break;
+                    case "VALIDEZ A":
+                      if (typeof value !== 'string') {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                        let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                        infoErrors.push(objErrors);
+                      }
+                      break;
+
+                  }
 
                 }
 
                 // Validar si la celda está vacía
                 if (value === null || value === undefined || value === "") {
                   console.log(`Error en la fila ${R}, columna ${C + 1}: La celda está vacía.`);
-                  let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: La celda está vacía.` };
+                 // let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: La celda está vacía.` };
+                  let objErrors = { "rowError": R, "message": `Algún dato está vacío` };
                   infoErrors.push(objErrors);
                 }
 
                 rowData[titleDB[C]] = value;
               }
 
-              const rpSapValue = rowData['PAG_CODVRP_VINCULACION_RP'];
-              const posicionValue = rowData['POSICION'];
+              let rpSapValue, posicionValue
+              if (tipoDocumento == "Pagos") {
+                rpSapValue = rowData['PAG_CODVRP_VINCULACION_RP'];
+                posicionValue = rowData['POSICION'];
+              } else if (tipoDocumento == "Funds") {
+                rpSapValue = rowData['FND_CODIGO'];
 
-              if (rpSapValue !== undefined && posicionValue !== undefined) {
-                const key = `${rpSapValue}-${posicionValue}`;
+              }
 
-                if (uniqueRows.has(key)) {
-                  console.log(`Error en la fila ${R}: Duplicado encontrado para RP SAP '${rpSapValue}' y Posición '${posicionValue}'.`);
-                  let objErrors = { "rowError": R, "message": `Error en la fila ${R}: Duplicado encontrado para RP SAP '${rpSapValue}' y Posición '${posicionValue}'.` };
-                  infoErrors.push(objErrors);
-                  hasDuplicate = true;
-                } else {
-                  uniqueRows.add(key);
+
+              if (rpSapValue !== undefined) {
+                if (tipoDocumento === "Pagos" && posicionValue !== undefined) {
+                  const key = `${rpSapValue}-${posicionValue}`;
+
+                  if (uniqueRows.has(key)) {
+                    console.log(`Error en la fila ${R}: Duplicado encontrado para RP SAP '${rpSapValue}' y Posición '${posicionValue}'.`);
+                   // let objErrors = { "rowError": R, "message": `Error en la fila ${R}: Duplicado encontrado para RP SAP '${rpSapValue}' y Posición '${posicionValue}'.` };
+                    let objErrors = { "rowError": R, "message": `Tiene datos duplicados en el archivo` };
+                    infoErrors.push(objErrors);
+                    hasDuplicate = true;
+                  } else {
+                    uniqueRows.add(key);
+                  }
+                } else if (tipoDocumento === "Funds") {
+                  if (uniqueRows.has(rpSapValue)) {
+                    console.log(`Error en la fila ${R}: Duplicado encontrado para el codigo${rpSapValue}'.`);
+                   // let objErrors = { "rowError": R, "message": `Error en la fila ${R}: Duplicado encontrado para el CODIGO'${rpSapValue}'.` };
+                    let objErrors = { "rowError": R, "message": `Tiene datos duplicados en el archivo` };
+                    infoErrors.push(objErrors);
+                    hasDuplicate = true;
+                  } else {
+                    uniqueRows.add(rpSapValue);
+                  }
                 }
+              }
+              /* 
+                            if (rpSapValue !== undefined && posicionValue !== undefined) {
+                              const key = `${rpSapValue}-${posicionValue}`;
+              
+                              if (uniqueRows.has(key)) {
+                                console.log(`Error en la fila ${R}: Duplicado encontrado para RP SAP '${rpSapValue}' y Posición '${posicionValue}'.`);
+                                let objErrors = { "rowError": R, "message": `Error en la fila ${R}: Duplicado encontrado para RP SAP '${rpSapValue}' y Posición '${posicionValue}'.` };
+                                infoErrors.push(objErrors);
+                                hasDuplicate = true;
+                              } else {
+                                uniqueRows.add(key);
+                              }
+              
+                            } */
+              if (tipoDocumento == "Pagos") {
+                if (rowData['PAG_VALOR_CAUSADO'] === 0 && rowData['PAG_VALOR_PAGADO'] === 0) {
+                  console.log(`Error en la fila ${R}: Ambos 'PAG_VALOR_CAUSADO' y 'PAG_VALOR_PAGADO' no pueden ser 0.`);
+                 // let objErrors = { "rowError": R, "message": `Error en la fila ${R}: Ambos valor causado y valor pagado no pueden ser 0.` };
+                  let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura.` };
+                  infoErrors.push(objErrors);
+                }
+              }
+              if (tipoDocumento === "Pagos") {
+                const posicionValue = rowData['POSICION'];
+                const rpSapValue = rowData['PAG_CODVRP_VINCULACION_RP'];
 
+                const responseValidate = await api.validateExitsRp({
+                  "posicion": posicionValue,
+                  "consecutivoSap": rpSapValue
+                });
+
+                if (responseValidate['operation']['code'] == "FAIL") {
+                  let objErrors = { "rowError": R, "message": `EL RP no existe` };
+                  infoErrors.push(objErrors);
+
+                }else{
+                  let datos = responseValidate['data']['datas'];
+                  let valorFinal = datos.valorFinal;
+
+                  let sumValues = parseInt(rowData['PAG_VALOR_CAUSADO']) + parseInt(rowData['PAG_VALOR_PAGADO']);
+    
+                  if(sumValues < valorFinal){
+                    let objErrors = { "rowError": R, "message": `El valor del RP es mayor del valor causado+pagado` };
+                    infoErrors.push(objErrors);
+                  }
+                }
               }
 
-              if (rowData['PAG_VALOR_CAUSADO'] === 0 && rowData['PAG_VALOR_PAGADO'] === 0) {
-                console.log(`Error en la fila ${R}: Ambos 'PAG_VALOR_CAUSADO' y 'PAG_VALOR_PAGADO' no pueden ser 0.`);
-                let objErrors = { "rowError": R, "message": `Error en la fila ${R}: Ambos valor causado y valor pagado no pueden ser 0.` };
-                infoErrors.push(objErrors);
-              }
-
-              // Aquí tienes toda la información de la fila actual en el objeto rowData
-              console.log('Datos de la fila:', rowData);
             }
             console.log('Datos fila de errores:', infoErrors);
             setInfoErrors(infoErrors)
           } else {
             console.log('El archivo Excel no tiene el formato esperado. Detalles:');
+            setInfoErrors(infoErrors)
             // Puedes mostrar un mensaje al usuario o manejar la situación de alguna otra manera
           }
           if (infoErrors.length > 0) {
@@ -246,7 +388,28 @@ export function usePaysCrud() {
   }
 
 
+
+ 
+    const updateFieldError = (fieldName: keyof typeof fieldErrors, hasError: string) => {
+      setFieldErrors({
+        [fieldName]: hasError,
+      });
+    };
+  
+
   const onSubmitPagPays = handleSubmit(async (data: IPagoDataSave) => {
+    
+    const { tipoArchivo, mesDelAnio, filedata } = data;
+
+    // Validar campos
+    if (data.tipoArchivo === undefined || data.mesDelAnio === undefined) {
+      updateFieldError('tipoArchivo', "vacio");
+      updateFieldError('mesDelAnio',"vacio");
+      return;
+      }else{
+        setFieldErrors({})
+      }
+
     let formData = new FormData();
     let fileExcel = data.filedata;
     const base64Data = await readFileAsBase64(fileExcel);
@@ -254,66 +417,87 @@ export function usePaysCrud() {
     const mes = data.mesDelAnio;
 
     const verification = await processExcelFile(base64Data, tipoDocumento);
-  if(verification){
-    let obInfo = {
-      fileContent: base64Data,
-      documentType: tipoDocumento,
-      usuarioCreo: authorization.user.numberDocument,
-      mes:mes
+    if (verification) {
+      setLoadingSpinner(false);
+      if(selection !== "Pagos"){
+        console.log("No esta disponible el guardado");
+        setLoadingSpinner(false);
+        return;
+      }
+      let obInfo = {
+        fileContent: base64Data,
+        documentType: tipoDocumento,
+        usuarioCreo: authorization.user.numberDocument,
+        mes: mes
+      }
+      setMessage({
+        title: "Guardar Información",
+        description: `¿Estás segur@ de guardar la informacion ?`,
+        show: true,
+        OkTitle: "Aceptar",
+        cancelTitle: "Cancelar",
+        onOk: async () => {
+          try {
+            const response = await api.loadPays(obInfo)
+            setTimeout(() => {
+              if (response['operation']['code'] == "OK") {
+                setMessage({
+                  title: "Confirmación",
+                  description: "Guardado Exitosamente!",
+                  show: true,
+                  OkTitle: "Cerrar",
+                  onOk: () => {
+                    //onCancelNew();
+                    setInfoErrors([])
+                    navigate("./../");
+                    setMessage({})
+                  },
+                  background: true,
+                });
+              }
+
+
+              if (response['operation']['code'] === "FAIL") {
+                setMessage({
+                  title: "Error al cargar la informacion",
+                  description: response['operation']['message'],
+                  show: true,
+                  OkTitle: "Aceptar",
+                  onOk: () => {
+                    onCancelNew();
+                    setMessage({});
+                  },
+                  background: true,
+                });
+                return
+              }
+            }, 1500);
+
+          } catch (error) {
+            console.error("Error al enviar los datos:", error);
+          }
+          setMessage({});
+        }, onCancel() {
+          onCancelNew();
+          setMessage({})
+        },
+        background: true,
+      });
+    }else{
+      setLoadingSpinner(false);
+      setMessage({
+        title: "Carga de archivo",
+        description: "El archivo no pudo ser cargado, revisa las validaciones",
+        show: true,
+        OkTitle: "Aceptar",
+        onOk: () => {
+          onCancelNew();
+          setMessage({});
+        },
+        background: true,
+      });
     }
-    setMessage({
-      title: "Guardar Información",
-      description: `¿Estás segur@ de guardar la informacion ?`,
-      show: true,
-      OkTitle: "Aceptar",
-      cancelTitle: "Cancelar",
-      onOk: async () => {
-        try {
-          const response = await api.loadPays(obInfo)
-          setTimeout(() => {
-            if (response['operation']['code'] == "OK") {
-              setMessage({
-                title: "Confirmación",
-                description: "Guardado Exitosamente!",
-                show: true,
-                OkTitle: "Cerrar",
-                onOk: () => {
-                  //onCancelNew();
-                  navigate("./../");
-                },
-                background: true,
-              });
-            }
 
-
-            if (response['operation']['code'] === "FAIL") {
-              setMessage({
-                title: "Error al crear CDP",
-                description: response['operation']['message'],
-                show: true,
-                OkTitle: "Aceptar",
-                onOk: () => {
-                  onCancelNew();
-                  setMessage({});
-                },
-                background: true,
-              });
-              return
-            }
-          }, 1500);
-
-        } catch (error) {
-          console.error("Error al enviar los datos:", error);
-        }
-        setMessage({});
-      }, onCancel() {
-        onCancelNew();
-        setMessage({})
-      },
-      background: true,
-    });
-  }
-  
   });
 
   function loadTableData(searchCriteria?: object): void {

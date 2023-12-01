@@ -54,14 +54,14 @@ export function useManagementCenterAdditional(typeMovement: string) {
     const tableActions: ITableAction<IAdditionsWithMovements>[] = [
         {
             icon: "Detail",
-            hide:!validateActionAccess('ADICION_CONSULTAR'),
+            hide:typeMovement=='Adicion' ? !validateActionAccess('ADICION_VISUALIZAR') : !validateActionAccess('DISMINUCION_VISUALIZAR'),
             onClick: (row) => {
                 navigate(`./detail/${row.id}`);
             },
         },
         {
             icon: "Edit",
-            hide:!validateActionAccess('ADICION_EDITAR'),
+            hide: typeMovement=='Adicion' ? !validateActionAccess('ADICION_EDITAR') : !validateActionAccess('DISMINUCION_EDITAR'),
             onClick: (row) => {
                 navigate(`./edit/${row.id}`);
             },

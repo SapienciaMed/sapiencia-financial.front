@@ -13,6 +13,7 @@ import { log } from 'console';
 import useStore from '../../../store/store';
 import useStoreTwo from '../../../store/storeTwo';
 import useStoreIcd from '../../../store/store-icd';
+import useStoreCdp from "../../../store/store-cdp"
 
 interface FormInfoType {
   id: number;
@@ -32,6 +33,7 @@ interface FormularioProps {
 const CdpCrudPage = () => {
   const { formDataCdpRoute, setFormDataCdpRoute } = useStore();
   const { totalDataRuta, setTotalDataRuta } = useStoreTwo();
+  const { infoErrors, setInfoErrors } = useStoreCdp();
   const { icdImportsData } = useStoreIcd();
   const { setMessage } = useContext(AppContext);
   const { formInfo } = useContext(AppContext);
@@ -83,34 +85,38 @@ const CdpCrudPage = () => {
   };
 
   const handleEliminar = (formNumber) => {
-    setDataFinalSend((prevFormularios) =>
-      prevFormularios.filter((form,index) => index !== (formNumber))
+
+    const information = setDataFinalSend((prevFormularios) =>
+      prevFormularios.filter((form, index) => index !== (formNumber))
     );
-    
+
     setFormularios((prevFormularios) =>
-      prevFormularios.filter((form,index) => index !== (formNumber))
+      prevFormularios.filter((form, index) => index !== (formNumber))
     );
-  
+
     setFormCount((prevCount) => prevCount - 1);
-  
+
     if (currentForms.length === 1 && currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
     }
-  
-    const updatedIcdArr = objectSendData['icdArr']
-    .filter((_, index) => index !== formNumber * 2)
-    .filter((item) => Array.isArray(item) ? item.length > 0 : item !== undefined && item !== null);
-  const updatedObjectSendData = { ...objectSendData, icdArr: updatedIcdArr };
-  setObjectSendData(updatedObjectSendData);
 
+    setObjectSendData([]);
+
+    const updatedTotalDataRuta = totalDataRuta.filter((item) => item.id !== formNumber);
+    setTotalDataRuta([]);
+
+    const updatedIcdArr = objectSendData['icdArr']
+      .filter((_, index) => index !== formNumber * 2)
+      .filter((item) => Array.isArray(item) ? item.length > 0 : item !== undefined && item !== null);
+    const updatedObjectSendData = { ...objectSendData, icdArr: updatedIcdArr };
+    setObjectSendData(updatedObjectSendData);
+    setTotalDataRuta(updatedTotalDataRuta);
   };
-  
-  
-  
-  
-useEffect(() => {
-  handleAgregarFormulario()
-}, [])
+
+
+  useEffect(() => {
+    handleAgregarFormulario()
+  }, [])
 
   useEffect(() => {
 
@@ -133,8 +139,8 @@ useEffect(() => {
       icdArr: dataFinalSend
     };
     setObjectSendData(finalObj);
-    
-  }, [icdImportsData,formHeadInfo]);
+
+  }, [icdImportsData, formHeadInfo]);
 
   const handleCancel = () => {
     setMessage({
@@ -158,185 +164,207 @@ useEffect(() => {
 
   const handleGuardar = async () => {
     setFormSubmitted(true);
-    let nuevoObjeto;
-    const onCancelNew = () => {
-      navigate("./");
-    };
 
-    //const icdArrWithBalanceCheck = objectSendData["icdArr"].slice(1);
-    const icdArrWithBalanceCheck = objectSendData["icdArr"].filter(item => {
-      if (Array.isArray(item)) {
-          return item.length > 0;
-      } else if (item !== undefined && item !== null) {
-          return item.idRppCode !== "0";
-      }
-      return false;
-  });
+    if (infoErrors.length > 0) {
+      console.log("estos son los error", infoErrors);
+      return true;
+    }else{
+      let nuevoObjeto;
+      const onCancelNew = () => {
+        navigate("./");
+      };
   
-    const hasEmptyFieldsOrZeros = icdArrWithBalanceCheck.some((item) => {
-      for (const key in item) {
-        if (key === 'posicion' || key === 'id') {
-          continue; // Saltar 'posicion' e 'id'
-        }
-    
-        if (typeof item[key] === 'string' && (item[key].trim() === '' || item[key] === '0')) {
-          console.log("Campo vacío o con valor en 0 encontrado:", key, item[key]);
-          return true;
-        } else if (typeof item[key] === 'number' && item[key] === 0) {
-          console.log("Campo con valor en 0 encontrado:", key, item[key]);
-          return true;
-        }
-      }
-      return false;
-    });
-
-    const emptyHeadInfo = Array.isArray(formHeadInfo) && formHeadInfo.some((item) => {
-      if (item == null || item === "") {
-        console.log("Campo necesario");
-        return true;
-      }
-      return false;
-    });
-    
-    if (hasEmptyFieldsOrZeros || emptyHeadInfo) {
-      console.log("Hay campos vacíos o con valores en 0. No se puede continuar.");
-      
-      return;
-    }
-    
-
-    try {
       //const icdArrWithBalanceCheck = objectSendData["icdArr"].slice(1);
       const icdArrWithBalanceCheck = objectSendData["icdArr"].filter(item => {
         if (Array.isArray(item)) {
-            return item.length > 0;
+          return item.length > 0;
         } else if (item !== undefined && item !== null) {
-            return item.idRppCode !== "0";
+          return item.idRppCode !== "0";
         }
         return false;
-    });
-      const invalidBalances = icdArrWithBalanceCheck.filter(
-        (item) => parseInt(item.valorInicial) >= parseInt(item.balance)
-      );
-
-      if (invalidBalances.length !== 0) {
-        setMessage({
-          title: "Validar valor inicial",
-          description: "Recuerda que el valor inicial no puede ser mayor o igual al saldo disponible de la ruta presupuestal",
-          show: true,
-          OkTitle: "Aceptar",
-          onOk: () => {
-            setMessage({});
-          },
-          background: true,
-        });
-
+      });
+  
+      if (icdArrWithBalanceCheck.length === 0) {
+        console.log("array vacio");
         return;
       }
-
-      if (invalidBalances.length === 0) {
-        const updatedIcdArr = icdArrWithBalanceCheck.map(({ balance, ...rest }) => rest);
-
-        nuevoObjeto = {
-          ...objectSendData,
-          exercise: objectSendData["exercise"],
-          date: objectSendData["date"] && typeof objectSendData["date"] === "string" ? objectSendData["date"].split("/").join("-") : null,
-          contractObject: objectSendData["contractObject"],
-          consecutive: 10,
-          icdArr: updatedIcdArr.map(({ proyecto, posicion, valorInicial, id, ...rest }) => ({
-            idRppCode: parseInt(proyecto),
-            cdpPosition: parseInt(posicion) +1,
-            amount: parseFloat(valorInicial),
-            ...rest,
-          })),
-        };
-
-        await new Promise((resolve) => {
-          setObjectSendData(nuevoObjeto);
-          resolve('success');
-        });
-        setMessage({
-          title: "Guardar",
-          description: `¿Estás segur@ de guardar la informacion ?`,
-          show: true,
-          OkTitle: "Aceptar",
-          cancelTitle: "Cancelar",
-          onOk: async () => {
-            try {
-              const response = await cdpService.createCdp_(nuevoObjeto);
-              setTimeout(() => {
-                if (response['operation']['code'] == "OK") {
-                  setMessage({
-                    title: "Guardado",
-                    description: "Guardado Exitosamente!",
-                    show: true,
-                    OkTitle: "Cerrar",
-                    onOk: () => {
-                      //onCancelNew();
-                      navigate("./../");
-                      setMessage({
-                        title: "Consecutivo CDP Aurora",
-                        description: `Al CDP sele asignó el consecutivo ${response["data"]['consecutive']}`,
-                        show: true,
-                        OkTitle: "Cerrar",
-                        onOk: () => {
-                          setMessage({});
-                        },
-                      });
-                    },
-                    background: true,
-                  });
-                }
-              
-                if (response['operation']['message'].indexOf("Ya existe") !== -1) {
-                  setMessage({
-                    title: "Validación de datos",
-                    description: "¡El dato ya existe!",
-                    show: true,
-                    OkTitle: "Cerrar",
-                    onOk: () => {
-                      onCancelNew();
-                      setMessage({});
-                    },
-                    background: true,
-                  });
-                  return
-                }
-              
-                if (response['operation']['code'] === "FAIL") {
-                  setMessage({
-                    title: "Error al crear CDP",
-                    description: response['operation']['message'],
-                    show: true,
-                    OkTitle: "Aceptar",
-                    onOk: () => {
-                      onCancelNew();
-                      setMessage({});
-                    },
-                    background: true,
-                  });
-                  return
-                }
-              }, 1500);
-
-            } catch (error) {
-              console.error("Error al enviar los datos:", error);
-            }
-            setMessage({});
-          }, onCancel() {
-            onCancelNew();
-            setMessage({})
-          },
-          background: true,
-        });
+  
+   /*    const hasEmptyFieldsOrZeros = icdArrWithBalanceCheck.some((item) => {
+        for (const key in item) {
+          if (key === 'posicion' || key === 'id') {
+            continue; // Saltar 'posicion' e 'id'
+          }
+  
+          if (typeof item[key] === 'string' && (item[key].trim() === '' || item[key] === '0')) {
+            console.log("Campo vacío o con valor en 0 encontrado:", key, item[key]);
+            return true;
+          } else if (typeof item[key] === 'number' && item[key] === 0) {
+            console.log("Campo con valor en 0 encontrado:", key, item[key]);
+            return true;
+          }
+        }
+        return false;
+      }); */
+  
+      const emptyHeadInfo = Array.isArray(formHeadInfo) && formHeadInfo.some((item) => {
+        if (item == null || item === "") {
+          console.log("Campo necesario");
+          return true;
+        }
+        return false;
+      });
+  
+      if (emptyHeadInfo) {
+        console.log("Hay campos vacíos o con valores en 0. No se puede continuar.");
+  
         return;
       }
-    } catch (error) {
-      console.error("Error al enviar los datos:", error);
-    }
+  
+      try {
+        //const icdArrWithBalanceCheck = objectSendData["icdArr"].slice(1);
+        const icdArrWithBalanceCheck = objectSendData["icdArr"].filter(item => {
+          if (Array.isArray(item)) {
+            return item.length > 0;
+          } else if (item !== undefined && item !== null) {
+            return item.idRppCode !== "0";
+          }
+          return false;
+        });
+  
+      
+  
+        const invalidBalances = icdArrWithBalanceCheck.filter(item => {
+          console.log(item);
+          
+          if (parseInt(item.valorInicial) >= parseInt(item.balance) || item.valorInicial === "0") {
+            return true; // Marcar como elemento inválido
+          }
+          return false; // Marcar como elemento válido
+        });
+  
+        if (invalidBalances.length !== 0) {
+          setMessage({
+            title: "Validar valor inicial",
+            description: "Recuerda que el valor inicial no puede ser mayor o igual al saldo disponible de la ruta presupuestal",
+            show: true,
+            OkTitle: "Aceptar",
+            onOk: () => {
+              setMessage({});
+            },
+            background: true,
+          });
+  
+          return;
+        }
+  
+        if (invalidBalances.length === 0) {
+          const updatedIcdArr = icdArrWithBalanceCheck.map(({ balance, ...rest }) => rest);
+  
+          nuevoObjeto = {
+            ...objectSendData,
+            exercise: objectSendData["exercise"],
+            date: objectSendData["date"] && typeof objectSendData["date"] === "string" ? objectSendData["date"].split("/").join("-") : null,
+            contractObject: objectSendData["contractObject"],
+            consecutive: 10,
+            icdArr: updatedIcdArr.map(({ proyecto, posicion, valorInicial, id, ...rest }) => ({
+              idRppCode: parseInt(proyecto),
+              cdpPosition: parseInt(posicion) + 1,
+              amount: parseFloat(valorInicial),
+              ...rest,
+            })),
+          };
+  
+          await new Promise((resolve) => {
+            setObjectSendData(nuevoObjeto);
+            resolve('success');
+          });
+          setMessage({
+            title: "Guardar",
+            description: `¿Estás segur@ de guardar la informacion ?`,
+            show: true,
+            OkTitle: "Aceptar",
+            cancelTitle: "Cancelar",
+            onOk: async () => {
+              try {
+                const response = await cdpService.createCdp_(nuevoObjeto);
+                setTimeout(() => {
+                  if (response['operation']['code'] == "OK") {
+                    setMessage({
+                      title: "Guardado",
+                      description: "Guardado Exitosamente!",
+                      show: true,
+                      OkTitle: "Cerrar",
+                      onOk: () => {
+                        //onCancelNew();
+                        navigate("./../");
+                        setMessage({
+                          title: "Consecutivo CDP Aurora",
+                          description: `Al CDP sele asignó el consecutivo ${response["data"]['consecutive']}`,
+                          show: true,
+                          OkTitle: "Cerrar",
+                          onOk: () => {
+                            setMessage({});
+                          },
+                        });
+                      },
+                      background: true,
+                    });
+                  }
+  
+                  if (response['operation']['message'].indexOf("Ya existe") !== -1) {
+                    setMessage({
+                      title: "Validación de datos",
+                      description: "¡El dato ya existe!",
+                      show: true,
+                      OkTitle: "Cerrar",
+                      onOk: () => {
+                        onCancelNew();
+                        setMessage({});
+                      },
+                      background: true,
+                    });
+                    return
+                  }
+  
+                  if (response['operation']['code'] === "FAIL") {
+                    setMessage({
+                      title: "Error al crear CDP",
+                      description: response['operation']['message'],
+                      show: true,
+                      OkTitle: "Aceptar",
+                      onOk: () => {
+                        onCancelNew();
+                        setMessage({});
+                      },
+                      background: true,
+                    });
+                    return
+                  }
+                }, 1500);
+  
+              } catch (error) {
+                console.error("Error al enviar los datos:", error);
+              }
+              setMessage({});
+            }, onCancel() {
+              onCancelNew();
+              setMessage({})
+            },
+            background: true,
+          });
+          return;
+        }
+      } catch (error) {
+        console.error("Error al enviar los datos:", error);
+      }
+    } 
+
+
+
+
   };
 
-  
+
   const formsPerPage = 2;
   const [currentPage, setCurrentPage] = useState(1);
   const [dataComplete, setDataComplete] = useState([]);
@@ -349,24 +377,24 @@ useEffect(() => {
   const renderFormsForCurrentPage = () => {
     const indexOfLastForm = currentPage * formsPerPage;
     const indexOfFirstForm = indexOfLastForm - formsPerPage;
-  
+
     return formularios
       .slice(indexOfFirstForm, indexOfLastForm)
       .map((_, index) => {
         const currentFormIndex = indexOfFirstForm + index;
-       // const currentFormData = formDataCdpRoute?.find((form) => form.id === currentFormIndex);
-       const foundObject = totalDataRuta.find(obj => obj.id === currentFormIndex);
+        // const currentFormData = formDataCdpRoute?.find((form) => form.id === currentFormIndex);
+        const foundObject = totalDataRuta.find(obj => obj.id === currentFormIndex);
         return (
           <FormCreateRutaCDPComponent
-          key={currentFormIndex}
-          isRequired={currentFormIndex === 0}
-          formNumber={currentFormIndex}
-          handleEliminar={handleEliminar}
-          formSubmitted={formSubmitted}
-          amountInfo={formStates[currentFormIndex] || {}}
-          setAmountInfo={(updatedState) => updateFormState(currentFormIndex, updatedState)}
-          datasFounds={foundObject}
-        />
+            key={currentFormIndex}
+            isRequired={currentFormIndex === 0}
+            formNumber={currentFormIndex}
+            handleEliminar={handleEliminar}
+            formSubmitted={formSubmitted}
+            amountInfo={formStates[currentFormIndex] || {}}
+            setAmountInfo={(updatedState) => updateFormState(currentFormIndex, updatedState)}
+            datasFounds={foundObject}
+          />
         );
       });
   };
@@ -401,10 +429,10 @@ useEffect(() => {
 
       setDataComplete(newDataComplete);
     }
-    
+
     setTotalDataRuta(dataComplete)
-  
-    
+
+
   }, [formDataCdpRoute]);
 
 
@@ -416,7 +444,7 @@ useEffect(() => {
       const updatedFormData = formDataCdpRoute.slice(indexOfFirstForm, indexOfLastForm);
     }
   };
-  
+
 
   return (
     <div className='container-principal'>
@@ -430,17 +458,17 @@ useEffect(() => {
         </button>
       </div>
       <CdpheadCreate formSubmitted={formSubmitted} isDisabled={false} setFormHeadInfo={setFormHeadInfo} />
-       
-        <div>
-          {formularios.length > 0 && renderFormsForCurrentPage()}
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <CdpPaginator
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
-          </div>
+
+      <div>
+        {formularios.length > 0 && renderFormsForCurrentPage()}
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <CdpPaginator
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
+      </div>
 
       <div className="button-container component-container-create">
         <button onClick={handleCancel} className="cancel-btn">

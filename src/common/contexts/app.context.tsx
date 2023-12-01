@@ -1,5 +1,18 @@
-import React, { useState, createContext, useMemo, ReactElement, Dispatch, SetStateAction } from "react";
-import { IDataPaste, IHeadTransferData, IMessage, IMessageEdit, IobjectAddTransfer } from "../interfaces/global.interface";
+import React, {
+  useState,
+  createContext,
+  useMemo,
+  ReactElement,
+  Dispatch,
+  SetStateAction,
+} from "react";
+import {
+  IDataPaste,
+  IHeadTransferData,
+  IMessage,
+  IMessageEdit,
+  IobjectAddTransfer,
+} from "../interfaces/global.interface";
 import { IAuthorization } from "../interfaces/auth.interfaces";
 import { IPagingData } from "../utils/api-response";
 import { IEditPac } from "../../features/pac/interface/Pac";
@@ -19,11 +32,13 @@ interface IAppContext {
   dataPasteRedux: IDataPaste[];
   setDataPasteRedux: Dispatch<SetStateAction<IDataPaste[]>>;
   detailTransferData: IPagingData<IobjectAddTransfer>;
-  setDetailTransferData: Dispatch<SetStateAction<IPagingData<IobjectAddTransfer>>>;
+  setDetailTransferData: Dispatch<
+    SetStateAction<IPagingData<IobjectAddTransfer>>
+  >;
   isValue: boolean;
   setIsValue: Dispatch<SetStateAction<boolean>>;
-  condensedQueryData: IEditPac
-  setCondensedQueryData: Dispatch<SetStateAction<IEditPac>>
+  condensedQueryData: IEditPac;
+  setCondensedQueryData: Dispatch<SetStateAction<IEditPac>>;
   formInfo: FormInfoType;
   setFormInfo: Dispatch<SetStateAction<FormInfoType>>;
 }
@@ -67,17 +82,29 @@ export const AppContext = createContext<IAppContext>({
   },
   setFormInfo: () => {},
   condensedQueryData: {} as IEditPac,
-  setCondensedQueryData: () => {}
+  setCondensedQueryData: () => {},
 });
 
 export function AppContextProvider({ children }: IProps) {
   const [message, setMessage] = useState<IMessage>({} as IMessage);
-  const [authorization, setAuthorization] = useState<IAuthorization>({} as IAuthorization);
-  const [messageEdit, setMessageEdit] = useState<IMessageEdit>({} as IMessageEdit);
-  const [headTransferData, setHeadTransferData] = useState<IHeadTransferData>({} as IHeadTransferData);
-  const [addTransferData, setAddTransferData] = useState<IPagingData<IobjectAddTransfer>>({} as IPagingData<IobjectAddTransfer>);
-  const [dataPasteRedux, setDataPasteRedux] = useState<IDataPaste[]>({} as IDataPaste[]);
-  const [detailTransferData, setDetailTransferData] = useState<IPagingData<IobjectAddTransfer>>({} as IPagingData<IobjectAddTransfer>);
+  const [authorization, setAuthorization] = useState<IAuthorization>(
+    {} as IAuthorization
+  );
+  const [messageEdit, setMessageEdit] = useState<IMessageEdit>(
+    {} as IMessageEdit
+  );
+  const [headTransferData, setHeadTransferData] = useState<IHeadTransferData>(
+    {} as IHeadTransferData
+  );
+  const [addTransferData, setAddTransferData] = useState<
+    IPagingData<IobjectAddTransfer>
+  >({} as IPagingData<IobjectAddTransfer>);
+  const [dataPasteRedux, setDataPasteRedux] = useState<IDataPaste[]>(
+    {} as IDataPaste[]
+  );
+  const [detailTransferData, setDetailTransferData] = useState<
+    IPagingData<IobjectAddTransfer>
+  >({} as IPagingData<IobjectAddTransfer>);
   const [isValue, setIsValue] = useState<boolean>(null as boolean);
   const [formInfo, setFormInfo] = useState<FormInfoType>({
     idRppCode: "",
@@ -86,7 +113,9 @@ export function AppContextProvider({ children }: IProps) {
     balance: "",
     id: 0,
   });
-  const [condensedQueryData, setCondensedQueryData] = useState<IEditPac>({} as IEditPac)
+  const [condensedQueryData, setCondensedQueryData] = useState<IEditPac>(
+    {} as IEditPac
+  );
 
   function validateActionAccess(indicator: string): boolean {
     return authorization.allowedActions?.findIndex((i) => i === indicator) >= 0;
@@ -114,9 +143,19 @@ export function AppContextProvider({ children }: IProps) {
       formInfo,
       setFormInfo,
       condensedQueryData,
-      setCondensedQueryData
+      setCondensedQueryData,
     }),
-    [message, authorization, messageEdit, headTransferData, addTransferData, dataPasteRedux, detailTransferData, isValue, condensedQueryData]
+    [
+      message,
+      authorization,
+      messageEdit,
+      headTransferData,
+      addTransferData,
+      dataPasteRedux,
+      detailTransferData,
+      isValue,
+      condensedQueryData,
+    ]
   );
 
   return <AppContext.Provider value={values}>{children}</AppContext.Provider>;
