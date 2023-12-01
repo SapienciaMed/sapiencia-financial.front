@@ -88,10 +88,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ countAssoc, dat
     (Number(formNumber) > posicionCdp ? Number(formNumber) : posicionCdp) :
     Number(formNumber);
 
-    if(countAssoc > renderedFormNumber){
-      renderedFormNumber = countAssoc;
-    }
-
+  
   const onDeleteClick = () => {
     handleEliminar(renderedFormNumber);
   };
@@ -179,17 +176,17 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ countAssoc, dat
         setValorInicial(datasFounds.valorInicial);
       
       } else if (datasFounds.valorInicial !== "0" && tryJsonInfo != datasFounds.idRpp) {
-        setSaldo(datasFounds.balance)
+   /*      setSaldo(datasFounds.balance)
         setBalance(datasFounds.balance);
-        setValorInicial(datasFounds.valorInicial);
-   /*      let totalAmountsAssoc = parseFloat(response['totalIdc']);
+        setValorInicial(datasFounds.valorInicial); */
+        let totalAmountsAssoc = parseFloat(response['totalIdc']);
         let balanceFloat = parseFloat(response['balance']).toString().split('.');
         let parteEntera = parseInt(balanceFloat[0]);
         let totalAmountAvalible = parteEntera - totalAmountsAssoc;
 
         setSaldo(totalAmountAvalible)
         setBalance(totalAmountAvalible.toString());
-        setValorInicial(totalAmountAvalible.toString()); */
+        setValorInicial(totalAmountAvalible.toString());
         console.log("aqui no sete 3");
       } else {
         if (pospreNewV && fondo && proyecto) {
@@ -435,7 +432,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ countAssoc, dat
       <div className="formulario">
         <div>
           <h2 className="h3-style" style={{ flex: 1 }}>
-            {renderedFormNumber + 1}. Ruta
+            {countAssoc && countAssoc > 0 ? countAssoc : renderedFormNumber + 1}. Ruta
           </h2>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             {!isRequired && (
@@ -517,8 +514,8 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ countAssoc, dat
             <Grid item xs={12} sm={12} md={4}>
               <div className={`col-4`}>
                 <label>Posición <span>*</span></label>
-                <input type="text" readOnly className={`estilo-input bgSecondary`} value={renderedFormNumber + 1} onChange={handlePosicionChange} />
-                {formSubmitted && !(renderedFormNumber + 1) && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
+                <input type="text" readOnly className={`estilo-input bgSecondary`} value={countAssoc && countAssoc > 0 ? countAssoc : renderedFormNumber + 1} onChange={handlePosicionChange} />
+                {formSubmitted && !(countAssoc && countAssoc > 0 ? countAssoc : renderedFormNumber + 1) && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
               </div>
             </Grid>
             <Grid item xs={12} sm={12} md={4}>
