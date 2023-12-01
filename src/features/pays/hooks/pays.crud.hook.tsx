@@ -172,13 +172,8 @@ export function usePaysCrud() {
                 const cell_ref = XLSX.utils.encode_cell(cell_address);
                 const value = sheet[cell_ref]?.v;
 
-           
-
-                
                 if (tipoDocumento == "Pagos") {
                   //validamos la existencia del RP
-                
-                 
                   switch (titleDB[C]) {
                     case "POSICION":
                       if (typeof value !== 'number' || !Number.isInteger(value)) {
@@ -272,11 +267,13 @@ export function usePaysCrud() {
                 }
 
                 // Validar si la celda está vacía
-                if (value === null || value === undefined || value === "") {
-                  console.log(`Error en la fila ${R}, columna ${C + 1}: La celda está vacía.`);
-                 // let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: La celda está vacía.` };
-                  let objErrors = { "rowError": R, "message": `Algún dato está vacío` };
-                  infoErrors.push(objErrors);
+                
+                if(merges === undefined){
+                  if (value === null || value === undefined || value === "") {
+                    console.log(`Error en la fila ${R}, columna ${C + 1}: La celda está vacía.`);
+                    let objErrors = { "rowError": R, "message": `Algún dato está vacío` };
+                    infoErrors.push(objErrors);
+                  }
                 }
 
                 rowData[titleDB[C]] = value;
