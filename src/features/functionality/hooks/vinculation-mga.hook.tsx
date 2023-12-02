@@ -158,6 +158,10 @@ export function useVinculationMGAData(pospre: string, values?: IBudgetViewPage )
             onClick: (row) => {
                 const rows = [
                     {
+                        title: "Código proyecto",
+                        value: `${row.idProject}`
+                    },
+                    {
                         title: "Código",
                         value: `${row.consecutiveActivityDetailed}`
                     },
