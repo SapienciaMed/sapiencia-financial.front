@@ -2,58 +2,71 @@ import { useEffect, useState } from "react";
 import { ITabsMenuTemplate } from "../interfaces/tabs-menu.interface";
 
 interface IAppProps {
-    tabs: ITabsMenuTemplate[];
-    start?: ITabsMenuTemplate;
-    index?: number;
-    classNameProp?: string;
+  tabs: ITabsMenuTemplate[];
+  start?: ITabsMenuTemplate;
+  index?: number;
+  classNameProp?: string;
 }
 
-function TabListComponent({ tabs, classNameProp, start, index }: IAppProps): React.JSX.Element {
-
-    const tabList = {};
-    tabs.forEach((tab) => tabList[`${tab.title}`] = {
+function TabListComponent({
+  tabs,
+  classNameProp,
+  start,
+  index,
+}: IAppProps): React.JSX.Element {
+  const tabList = {};
+  tabs.forEach(
+    (tab) =>
+      (tabList[`${tab.title}`] = {
         content: tab.content,
-        action: tab.action
-    });
-    const [selectedTab, setSelectedTab] = useState<ITabsMenuTemplate>(start ? start : null);
-    
-    useEffect(() => {
-        if(!selectedTab) if(tabs.length !== 0) {
-            setSelectedTab(tabs[0]);
-        }
-    }, [tabs])
-    
-    useEffect(() => {
-        if(index){
-            setSelectedTab(tabs[index]);
-        }
-    }, [index])
+        action: tab.action,
+      })
+  );
+  const [selectedTab, setSelectedTab] = useState<ITabsMenuTemplate>(
+    start ? start : null
+  );
 
-    useEffect(() => {
-        if(selectedTab) if(selectedTab.action) selectedTab.action();
-    }, [selectedTab])
+  useEffect(() => {
+    if (!selectedTab)
+      if (tabs.length !== 0) {
+        setSelectedTab(tabs[0]);
+      }
+  }, [tabs]);
 
+  useEffect(() => {
+    if (index) {
+      setSelectedTab(tabs[index]);
+    }
+  }, [index]);
 
-    return (
-        <div className={`tabs-component ${classNameProp ? classNameProp : ""}`}>
-            <div className="tabs-selection">
-                {tabs.map((tab) => {
-                    let active = "";
-                    if(selectedTab) if(selectedTab.id === tab.id) active = "active";
-                    return (
-                        <div className={`tab-option ${active} font-size-responsive`} key={tab.id} onClick={() => {
-                                if(isNaN(parseInt(`${index}`))) setSelectedTab(tab);
-                            }}>
-                            {tab.title}
-                        </div>
-                    )
-                })}
+  useEffect(() => {
+    if (selectedTab) if (selectedTab.action) selectedTab.action();
+  }, [selectedTab]);
+
+  return (
+    <div className={`tabs-component ${classNameProp ? classNameProp : ""}`}>
+      <div className="tabs-selection">
+        {tabs.map((tab) => {
+          let active = "";
+          if (selectedTab) if (selectedTab.id === tab.id) active = "active";
+          return (
+            <div
+              className={`tab-option ${active} font-size-responsive`}
+              key={tab.id}
+              onClick={() => {
+                if (isNaN(parseInt(`${index}`))) setSelectedTab(tab);
+              }}
+            >
+              {tab.title}
             </div>
-            <div className="tabs-content">
-                {selectedTab ?tabList[`${selectedTab?.title}`].content : "no data"}
-            </div>
-        </div>
-    )
+          );
+        })}
+      </div>
+      <div className="tabs-content">
+        {selectedTab ? tabList[`${selectedTab?.title}`].content : "no data"}
+      </div>
+    </div>
+  );
 }
 
 export default TabListComponent;
