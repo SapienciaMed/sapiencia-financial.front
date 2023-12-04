@@ -2,6 +2,7 @@ import create, { SetState } from 'zustand';
 
 interface ErrorsStoreState {
   infoErrors: any[];
+  infoSearchPays: any[];
   tipoDocumentoLoad: string;
   loadingSpinner: boolean;
   fieldErrors: {
@@ -12,6 +13,7 @@ interface ErrorsStoreState {
 
 interface ErrorsStoreActions {
   setInfoErrors: (newValue: any[] | ((prev: any[]) => any[])) => void;
+  setInfoSearchPays: (newValue: any[] | ((prev: any[]) => any[])) => void;
   setTipoDocumentoLoad: (newValue: string) => void;
   setLoadingSpinner: (newValue: boolean) => void;
   setFieldErrors: (newValue: { tipoArchivo?: string; mesDelAnio?: string }) => void;
@@ -19,6 +21,7 @@ interface ErrorsStoreActions {
 
 const useStorePays = create<ErrorsStoreState & ErrorsStoreActions>((set: SetState<ErrorsStoreState & ErrorsStoreActions>) => ({
   infoErrors: [],
+  infoSearchPays: [],
   tipoDocumentoLoad: '',
   loadingSpinner: false,
   fieldErrors: {
@@ -36,6 +39,9 @@ const useStorePays = create<ErrorsStoreState & ErrorsStoreActions>((set: SetStat
   },
   setFieldErrors: (newValue) => {
     set((state) => ({ fieldErrors: { ...state.fieldErrors, ...newValue } }));
+  },
+  setInfoSearchPays: (newValue) => {
+    set((state) => ({ infoSearchPays: { ...state.infoSearchPays, ...newValue } }));
   },
 }));
 
