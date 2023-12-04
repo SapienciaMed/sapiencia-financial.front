@@ -219,22 +219,22 @@ function LoadPays() {
                   {
                     id: 3,
                     name: "Área funcional",
-                    value: "area_funcional",
+                    value: "AreaFuncional",
                   },
                   {
                     id: 4,
                     name: "Pospre origen y sapiencia",
-                    value: "pospre_o_s",
+                    value: "PospreSapiencia",
                   },
                   {
                     id: 5,
                     name: "Pospre origen y MGA",
-                    value: "pospre_o_m",
+                    value: "PospreMGA",
                   },
                   {
                     id: 6,
                     name: "Ruta y Ppto Inicial",
-                    value: "ruta_ppto",
+                    value: "RutaPptoInicial",
                   },
                 ]}
                 filter={true}
