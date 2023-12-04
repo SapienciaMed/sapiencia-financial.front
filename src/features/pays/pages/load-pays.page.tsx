@@ -52,6 +52,7 @@ function LoadPays() {
     return newFile;
   };
 
+  useEffect(()=>{setInfoErrors([])},[])
   const uploadFileFn = (newFile: any) => {
     if (newFile.name) {
       setIsUploadFileSt(true);
@@ -214,6 +215,26 @@ function LoadPays() {
                     id: 2,
                     name: "Fondos",
                     value: "Funds",
+                  },
+                  {
+                    id: 3,
+                    name: "Área funcional",
+                    value: "AreaFuncional",
+                  },
+                  {
+                    id: 4,
+                    name: "Pospre origen y sapiencia",
+                    value: "PospreSapiencia",
+                  },
+                  {
+                    id: 5,
+                    name: "Pospre origen y MGA",
+                    value: "PospreMGA",
+                  },
+                  {
+                    id: 6,
+                    name: "Ruta y Ppto Inicial",
+                    value: "RutaPptoInicial",
                   },
                 ]}
                 filter={true}
