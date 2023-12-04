@@ -13,6 +13,7 @@ import { Controller } from "react-hook-form";
 import { useSearchPays } from "../hooks/useSearchPays";
 import { EDirection } from "../../../common/constants/input.enum";
 import TableComponent from "../../../common/components/table.component";
+import TotalPays from "../components/totalPays.component";
 
 const PaysPage = () => {
     const { width } = useWidth();
@@ -146,6 +147,7 @@ const PaysPage = () => {
                     </FormComponent>
                 </section>
                 {showTable && (
+                    <>  
                     <div className="card-user mt-2rem">
                         <TableComponent
                             ref={tableComponentRef}
@@ -157,6 +159,9 @@ const PaysPage = () => {
                             title="Resultados de busqueda"
                         />
                     </div>
+                    <TotalPays />
+                    </>
+
                 )}
             </div>
         </div>
