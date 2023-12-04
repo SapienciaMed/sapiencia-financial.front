@@ -45,6 +45,7 @@ export interface ILastMoveEdit {
 }
 
 export interface IApiPlanningDetailedActivitiesSpecify {
+  idProject: number;      
   activityDetailedId: number;           
   consecutiveActivityDetailed: string;   
   detailActivityDetailed: string;       
