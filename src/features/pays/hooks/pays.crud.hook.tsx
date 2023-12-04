@@ -22,7 +22,7 @@ export function usePaysCrud() {
   const [errorsPac, setErrorsPac] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [errorsLoad, setErrorsLoad] = useState([])
-  const { infoErrors, setInfoErrors, setLoadingSpinner, setFieldErrors, fieldErrors } = useStorePays()
+  const { infoErrors, setInfoErrors, setLoadingSpinner, setFieldErrors, fieldErrors, setInfoSearchPays } = useStorePays()
   const [selection, setSelection] = useState('')
 
   const api = usePaysServices();
