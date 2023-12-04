@@ -282,8 +282,9 @@ function getIconElement(
         "Editar"
       ) : (
         <Icons.FaPencilAlt
-          className={`button grid-button button-edit ${isDisabled && "disable"
-            }`}
+          className={`button grid-button button-edit ${
+            isDisabled && "disable"
+          }`}
         />
       );
     case "Delete":
