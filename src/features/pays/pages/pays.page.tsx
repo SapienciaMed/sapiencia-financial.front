@@ -154,6 +154,7 @@ const PaysPage = () => {
                             isShowModal={true}
                             titleMessageModalNoResult="No hay resultados"
                             secondaryTitle="Pagos"
+                            title="Resultados de busqueda"
                         />
                     </div>
                 )}
