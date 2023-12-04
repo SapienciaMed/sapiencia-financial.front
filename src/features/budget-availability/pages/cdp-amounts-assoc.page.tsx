@@ -59,6 +59,7 @@ const CdpAmountAssoc = () => {
     const indexOfFirstForm = indexOfLastForm - formsPerPage;
     const currentForms = formularios.slice(indexOfFirstForm, indexOfLastForm);
     const totalForms = formularios.length;
+   // const [totalPages, setTotalPages] = useState(Math.ceil(totalForms / formsPerPage));
     const totalPages = Math.ceil(totalForms / formsPerPage);
     const [deleteRouteTwo, setDeleteRouteTwo] = useState(false);
     const { getCdpById } = useCdpService();
@@ -112,20 +113,19 @@ const CdpAmountAssoc = () => {
             posicion: nextId, // Igualar posición al ID
             ...othersParams,
         };
+
+        setFormularios([]);
        // const newFormulario = { id: formularios.length > 0 ? formularios.reduce((max, obj) => (obj.id > max ? obj.id : max), 0)+1 : 0 };
         arrData.push(newFormulario)
         setCountNewFormsSt(arrData)
-    
-
         setTimeout(() => console.log("formularios 2", countNewFormsSt), 1000);
-        if(!deleteRouteTwo){
-            setTimeout(() => {
-              handleEliminar(nextId+1)
-              handleEliminar(nextId+1)
+        setFormularios(countNewFormsSt)
+        
+        console.log(nextId);
+        console.log("newF", formularios);
+        setTimeout(() => {
               //setDeleteRouteTwo(true);
             }, 500);
-          }
-
     };
 
     useEffect(()=>{

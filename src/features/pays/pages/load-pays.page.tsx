@@ -216,6 +216,26 @@ function LoadPays() {
                     name: "Fondos",
                     value: "Funds",
                   },
+                  {
+                    id: 3,
+                    name: "Área funcional",
+                    value: "area_funcional",
+                  },
+                  {
+                    id: 4,
+                    name: "Pospre origen y sapiencia",
+                    value: "pospre_o_s",
+                  },
+                  {
+                    id: 5,
+                    name: "Pospre origen y MGA",
+                    value: "pospre_o_m",
+                  },
+                  {
+                    id: 6,
+                    name: "Ruta y Ppto Inicial",
+                    value: "ruta_ppto",
+                  },
                 ]}
                 filter={true}
                 errors={errors}
