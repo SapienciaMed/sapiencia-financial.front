@@ -17,6 +17,7 @@ import UploadComponent from "../../pac/createPac/components/UploadComponent";
 import useStorePays from "../../../store/store-pays";
 import { Backdrop, CircularProgress } from '@mui/material';
 import '../../../styles/pays.scss';
+
 function LoadPays() {
   const {
     errors,
@@ -90,7 +91,7 @@ function LoadPays() {
   }
 
   useEffect(() => {
-    console.log(tipoArchivo);
+    console.log("este es el vo",tipoArchivo);
 
   }, [tipoArchivo])
 
@@ -117,8 +118,8 @@ function LoadPays() {
 
   // useEffect to log 'tipoArchivo' changes
   useEffect(() => {
-    console.log(tipoArchivo);
-  }, [tipoArchivo]);
+    console.log(dropdown);
+  }, [dropdown]);
 
 
 
@@ -144,11 +145,14 @@ function LoadPays() {
     setShowTableErrors(true)
   }
 
+  const handleTipoArchivoChange = (selectedValue) => {
+    // Hacer algo con el valor seleccionado (selectedValue)
+    console.log("Tipo de archi:", selectedValue);
+    };
+
   useEffect(() => {
     if (infoErrors.length > 0) {
       setShowBtnValidation(true)
-      console.log(infoErrors);
-
     } else {
       setShowTableErrors(false)
       setShowBtnValidation(false)
@@ -240,6 +244,7 @@ function LoadPays() {
                 filter={true}
                 errors={errors}
                 direction={EDirection.column}
+                onChange={(event) => handleTipoArchivoChange(event.target.value)}
               >
                 {fieldErrors.tipoArchivo && (
                   <p className="error-message">Este campo es obligatorio</p>
