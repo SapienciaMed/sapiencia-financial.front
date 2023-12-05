@@ -14,6 +14,7 @@ import useStoreIcd from '../../../store/store-icd';
 
 
 
+
 interface FormInfoType {
     id: number;
     idRppCode: string;
@@ -60,7 +61,7 @@ const CdpAmountAssoc = () => {
     const currentForms = formularios.slice(indexOfFirstForm, indexOfLastForm);
     const totalForms = formularios.length;
    // const [totalPages, setTotalPages] = useState(Math.ceil(totalForms / formsPerPage));
-    const totalPages = Math.ceil(totalForms / formsPerPage);
+    let totalPages = Math.ceil(totalForms / formsPerPage);
     const [deleteRouteTwo, setDeleteRouteTwo] = useState(false);
     const { getCdpById } = useCdpService();
     const [dataHead, setDataHead] = useState<FormHeadInfo>({
@@ -76,7 +77,6 @@ const CdpAmountAssoc = () => {
     const [lastValue, setLastValue] = useState(0);
     const [cdpPosition, setCdpPosition] = useState(0);
     const [indexData, setIndexData] = useState(0)
-
     /* 
         const handleAgregarFormulario = () => {
             const newFormulario = { id: formCount };
@@ -105,7 +105,6 @@ const CdpAmountAssoc = () => {
             "idRppCode": "0",
             "valorInicial": "0",
             "balance": "0",
-          
         }
 
         const newFormulario = {
@@ -148,9 +147,14 @@ const CdpAmountAssoc = () => {
         ); */
     
         // If there's only one form on a non-first page, go to the previous page
-        if (currentForms.length === 1 && currentPage > 1) {
+        if (currentForms.length === 0 && currentPage > 1) {
             setCurrentPage((prevPage) => prevPage - 1);
         }
+        //setTotalPages(Math.ceil(currentForms.length / formsPerPage))
+
+        console.log(totalPages);
+        
+        
     };
     
 
@@ -360,14 +364,8 @@ const CdpAmountAssoc = () => {
 
         const indexOfLastForm = currentPage * formsPerPage;
         const indexOfFirstForm = indexOfLastForm - formsPerPage;
-        console.log({ cdpPosition })
-        console.log(formularios);
-
-        console.log("last", indexOfLastForm);
-        console.log("first", indexOfFirstForm);
         return countNewFormsSt.slice(indexOfFirstForm, indexOfLastForm).map((form, index) => {
             const currentId = form.id;
-
             const foundObject = totalDataRuta.find(obj => obj.id === currentId);
 
             return (
@@ -511,6 +509,8 @@ const CdpAmountAssoc = () => {
                 information={dataHead}
             />
             {countNewFormsSt.length > 0 && (
+            
+                
                 <div>
                     {renderFormsForCurrentPage()}
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
