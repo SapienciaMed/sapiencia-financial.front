@@ -1,5 +1,4 @@
 import React from "react";
-import { useVinculationMGAData } from "../../hooks/vinculation-mga.hook";
 import {
   ButtonComponent,
   FormComponent,
@@ -33,7 +32,7 @@ function BudgetsForm({ action }: IAppProps) {
     upDatePospreData,
     controlRegister,
   } = useBudgetsCrudData(budgetsId);
-  
+
   return (
     <div className="crud-page full-height">
       <div className="main-page full-height">
@@ -73,11 +72,11 @@ function BudgetsForm({ action }: IAppProps) {
                         onChange={field.onChange}
                         min={0}
                         disabled={action !== "new"}
-                      /> 
-                    )
+                      />
+                    );
                   }}
                 />
-                 <Controller
+                <Controller
                   control={controlRegister}
                   name={"ejercise"}
                   defaultValue=""
@@ -95,8 +94,8 @@ function BudgetsForm({ action }: IAppProps) {
                         errors={errors}
                         onChange={field.onChange}
                         disabled={action !== "new"}
-                      /> 
-                    )
+                      />
+                    );
                   }}
                 />
 
@@ -117,6 +116,7 @@ function BudgetsForm({ action }: IAppProps) {
               <div className="title-area">
                 <div className="text-black biggest bold">Datos básicos</div>
               </div>
+
               <div className="fund-denomination-container">
                 <Controller
                   control={controlRegister}
@@ -136,13 +136,11 @@ function BudgetsForm({ action }: IAppProps) {
                         direction={EDirection.column}
                         errors={errors}
                         onChange={field.onChange}
-                      /> 
-                    )
+                      />
+                    );
                   }}
                 />
-              </div>
 
-              <div className="fund-denomination-container">
                 <Controller
                   control={controlRegister}
                   name={"description"}
@@ -161,26 +159,37 @@ function BudgetsForm({ action }: IAppProps) {
                         direction={EDirection.column}
                         errors={errors}
                         onChange={field.onChange}
-                      /> 
-                    )
+                      />
+                    );
                   }}
                 />
               </div>
             </div>
-            {
-              action == 'edit' && 
-                <BudgetViewPage actions="edit" upDatePospreData={upDatePospreData} upDateVinculationData={upDateVinculationData} />
-            }
+            {action == "edit" && (
+              <BudgetViewPage
+                actions="edit"
+                upDatePospreData={upDatePospreData}
+                upDateVinculationData={upDateVinculationData}
+              />
+            )}
             <div className="mobile-actions mobile">
               <span
                 className="bold text-center button"
                 onClick={() => {
-                  confirmClose(action === "new" ? onCancelNew : onCancelEdit, action);
+                  confirmClose(
+                    action === "new" ? onCancelNew : onCancelEdit,
+                    action
+                  );
                 }}
               >
                 Cancelar
               </span>
-              <ButtonComponent value="Guardar" type="submit" className="button-main huge" disabled={action == 'edit' && isBtnDisable} />
+              <ButtonComponent
+                value="Guardar"
+                type="submit"
+                className="button-main huge"
+                disabled={action == "edit" && isBtnDisable}
+              />
             </div>
           </FormComponent>
         </div>
@@ -190,7 +199,10 @@ function BudgetsForm({ action }: IAppProps) {
           <span
             className="bold text-center button"
             onClick={() => {
-              confirmClose(action === "new" ? onCancelNew : onCancelEdit, action);
+              confirmClose(
+                action === "new" ? onCancelNew : onCancelEdit,
+                action
+              );
             }}
           >
             Cancelar
@@ -200,7 +212,7 @@ function BudgetsForm({ action }: IAppProps) {
             value="Guardar"
             type="submit"
             form="budgets-form"
-            disabled={action == 'edit' && isBtnDisable}
+            disabled={action == "edit" && isBtnDisable}
           />
         </div>
       </div>

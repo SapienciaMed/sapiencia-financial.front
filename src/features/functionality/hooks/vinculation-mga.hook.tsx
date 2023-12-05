@@ -16,13 +16,14 @@ import { SwitchComponent } from "../../../common/components/Form";
 import { useVinculationService } from "../hooks/vinculation-mga-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import { IBudgetViewPage } from "../interfaces/Budgets";
+import { formaterNumberToCurrency } from "../../../common/utils/helpers";
 
 interface IVinculationMGAFilters {
   inputCodigoMGA: string;
 }
 
 export function useVinculationMGAData(
-  pospre: string,
+  budgetsId: string,
   values?: IBudgetViewPage
 ) {
   const [lastMove, setLastMove] = useState([]);
@@ -102,6 +103,9 @@ export function useVinculationMGAData(
       {
         fieldName: "amountActivityDetailed",
         header: "Cantidad",
+         renderCell(row) {
+          return <span>{formaterNumberToCurrency(row.totalCostActivityDetailed)}</span>;
+        },
       },
       {
         fieldName: "totalCostActivityDetailed",
@@ -168,15 +172,7 @@ export function useVinculationMGAData(
         fieldName: "totalCostActivityDetailed",
         header: "Costo",
         renderCell(row) {
-          return (
-            <span>
-              {" "}
-              ${" "}
-              {row.totalCostActivityDetailed
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
-            </span>
-          );
+          return <span>{formaterNumberToCurrency(row.totalCostActivityDetailed)}</span>;
         },
       },
     ];
@@ -187,6 +183,10 @@ export function useVinculationMGAData(
         icon: "Detail",
         onClick: (row) => {
           const rows = [
+            {
+              title: "Código proyecto",
+              value: `${row.idProject}`,
+            },
             {
               title: "Código",
               value: `${row.consecutiveActivityDetailed}`,
@@ -244,14 +244,16 @@ export function useVinculationMGAData(
   useEffect(() => {
     values &&
       values.actions == "view" &&
-      loadTableData({ budgetId: Number(pospre) });
-    values && values.actions == "edit" && loadTableData();
+      loadTableData({ budgetId: Number(budgetsId) });
+    values &&
+      values.actions == "edit" &&
+      loadTableData({ budgetId: Number(budgetsId) });
   }, []);
 
   async function vinculateActivities(message?: boolean): Promise<void> {
     const dataVinculate = () => {
       const data = lastMove.map((obje) => ({
-        budgetId: Number(pospre),
+        budgetId: Number(budgetsId),
         activityId: obje.id.activityId,
         consecutiveActivityDetailed: obje.id.consecutiveActivityDetailed,
         detailedActivityId: obje.id.activityDetailedId,

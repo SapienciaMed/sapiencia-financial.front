@@ -10,12 +10,14 @@ import { IPagoFilters } from "../interfaces/paysInterfaces";
 import { paysLoad } from "../../../common/schemas/pays-schemas";
 import { usePaysServices } from "./pays-service";
 import useStorePays from "../../../store/store-pays";
+import { AppContext } from "../../../common/contexts/app.context";
 export const useSearchPays = () => {
   const { GetRoutesByValidity } = useCdpServices();
   const resolver = useYupValidationResolver(paysLoad);
   const tableComponentRef = useRef(null);
   const navigate = useNavigate();
-  const { setInfoSearchPays } = useStorePays()
+  const { infoErrors, setInfoErrors, setInfoSearchPays } = useStorePays()
+  const { validateActionAccess } = useContext(AppContext);
   const {
     handleSubmit,
     register,
@@ -142,6 +144,7 @@ export const useSearchPays = () => {
     tableComponentRef,
     tableColumnsCdp,
     navigate,
-    arraySelect
+    arraySelect,
+    validateActionAccess
   };
 };

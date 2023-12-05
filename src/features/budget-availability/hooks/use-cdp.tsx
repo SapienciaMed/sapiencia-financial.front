@@ -145,16 +145,17 @@ export function useCdpCrud(cdpId?: string) {
 
     ];
 
-   /*  const tableActions: ITableAction<any>[] = [
+    /* const tableActions: ITableAction<any>[] = [
         {
             icon: "Edit",
+            hide: !validateActionAccess('CDP_RUTAS_EDITAR'),
             onClick: (row) => {
                 navigate(`./edit/${row.id}`);
             },
         },
         {
             icon: "LinkMga",
-            hide: !validateActionAccess('CDP_MGA_VINCULAR'),
+            hide: !validateActionAccess('CDP_MGA_VINCULAR') && !amountWatch.sapConsecutive !== null,
             onClick: (row) => {
                 navigate(`./mga-assoc/${row.id}`);
             },
@@ -165,6 +166,7 @@ export function useCdpCrud(cdpId?: string) {
         const actions: ITableAction<any>[] = [
             {
                 icon: "Edit",
+                hide: !validateActionAccess('CDP_RUTAS_EDITAR'),
                 onClick: (row) => {
                     navigate(`./edit/${row.id}`);
                 },

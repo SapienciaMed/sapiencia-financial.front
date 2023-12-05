@@ -30,7 +30,7 @@ const PaysPage = () => {
         tableColumnsCdp,
         navigate,
         arraySelect,
-
+        validateActionAccess
     } = useSearchPays();
     const dateToday = new Date()
     const actualFullYear = dateToday.getFullYear();
@@ -41,17 +41,21 @@ const PaysPage = () => {
                     <div className="text-black weight-500 extra-large">Consultar Pago</div>
                     <div
                         className={`${width < 800
-                                ? "display-justify-space-between-pac"
-                                : "display-align-flex-end"
+                            ? "display-justify-space-between-pac"
+                            : "display-align-flex-end"
                             } gap-0 gap-05`}
                     >
-                        <div
-                            className="title-button font-big"
-                            onClick={() => navigate("./load-pays")}
-                        >
-                            Cargar pagos
-                            <AiOutlinePlusCircle />
-                        </div>
+                        {
+                            validateActionAccess('PAGOS_CARGAR') && (
+                                <div
+                                    className="title-button font-big"
+                                    onClick={() => navigate("./load-pays")}
+                                >
+                                    Cargar pagos
+                                    <AiOutlinePlusCircle />
+                                </div>
+                            )
+                        }
                     </div>
                 </section>
                 <section className="card-user">
