@@ -206,9 +206,10 @@ export function usePaysCrud() {
                     case "PAG_VALOR_CAUSADO":
                       if (typeof value !== 'number') {
 
-                        //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                        let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
-                        infoErrors.push(objErrors);
+                        if (value === undefined) { } else {
+                          let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                          infoErrors.push(objErrors);
+                        }
 
                       }
                       break;
