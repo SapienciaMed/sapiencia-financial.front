@@ -105,7 +105,7 @@ function BudgetRoutesPage(props: IAppProps): React.JSX.Element {
           <div className="card-form">
             <TableComponent
               ref={tableComponentRef}
-              url={`${process.env.urlApiFinancial}/api/v1/budget-routes/get-paginated`}
+              url={`${process.env.urlApiFinancial}/api/v1/budget-routes/get-paginatedV2`}
               columns={tableColumns}
               actions={tableActions}
               isShowModal={true}

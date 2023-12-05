@@ -59,7 +59,8 @@ export function SelectComponent({
   if (data) {
     const seleccione: IDropdownProps = { name: "Seleccione", value: null };
     const dataSelect = data.find(
-      (item) => item?.name === seleccione?.name && item?.value === seleccione?.value
+      (item) =>
+        item?.name === seleccione?.name && item?.value === seleccione?.value
     );
     if (!dataSelect) data.unshift(seleccione);
   }
