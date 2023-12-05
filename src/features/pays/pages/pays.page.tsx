@@ -56,9 +56,6 @@ const PaysPage = () => {
                 </section>
                 <section className="card-user">
                     <FormComponent action={onSubmit}>
-                        <div className="title-area">
-                            <label className="text-black biggest bold">Consultar Pago</label>
-                        </div>
                         <div className="funcionality-filters-container">
                             <Controller
                                 control={control}
@@ -88,7 +85,7 @@ const PaysPage = () => {
                                 control={control}
                                 className="select-basic"
                                 label="Mes"
-                                classNameLabel="text-black weight-500 biggest text-required"
+                                classNameLabel="text-black weight-500 biggest"
                                 placeholder={"Seleccionar"}
                                 data={arraySelect}
                                 direction={EDirection.column}
@@ -110,7 +107,7 @@ const PaysPage = () => {
                                             typeInput="number"
                                             register={register}
                                             label="Consecutivo RP SAP"
-                                            classNameLabel="text-black weight-500 biggest text-required"
+                                            classNameLabel="text-black weight-500 biggest"
                                             direction={EDirection.column}
                                             onChange={field.onChange}
                                             errors={errors}
