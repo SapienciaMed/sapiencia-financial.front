@@ -98,7 +98,7 @@ export const useSearchPays = () => {
       
         valorCausado += parseFloat(element.PAG_VALOR_CAUSADO)
         valorPagado += parseFloat(element.PAG_VALOR_PAGADO)
-        valorFinal += element.VRP_VALOR_FINAL
+        valorFinal += parseFloat(element.VRP_VALOR_FINAL)
 
       });
 
