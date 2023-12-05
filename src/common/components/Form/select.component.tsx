@@ -5,7 +5,7 @@ import { LabelComponent } from "./label.component";
 import { Control, Controller } from "react-hook-form";
 import { Dropdown } from "primereact/dropdown";
 import { IDropdownProps } from "../../interfaces/select.interface";
-import  useStorePays  from "../../../store/store-pays"
+import useStorePays from "../../../store/store-pays";
 interface ISelectProps<T> {
   idInput: string;
   control: Control<any>;
@@ -21,8 +21,8 @@ interface ISelectProps<T> {
   fieldArray?: boolean;
   filter?: boolean;
   emptyMessage?: string;
-  optionSelected?:Function;
-  isSearchByName?:boolean;
+  optionSelected?: Function;
+  isSearchByName?: boolean;
   isValidateName?: boolean;
   onChange?: (selectedOption: T) => void;
 }
@@ -54,12 +54,12 @@ export function SelectComponent({
   filter,
   emptyMessage = "Sin resultados.",
   optionSelected,
-  isValidateName = true
+  isValidateName = true,
 }: ISelectProps<any>): React.JSX.Element {
   if (data) {
     const seleccione: IDropdownProps = { name: "Seleccione", value: null };
     const dataSelect = data.find(
-      (item) => item.name === seleccione.name && item.value === seleccione.value
+      (item) => item?.name === seleccione?.name && item?.value === seleccione?.value
     );
     if (!dataSelect) data.unshift(seleccione);
   }
@@ -97,21 +97,34 @@ export function SelectComponent({
           name={idInput}
           control={control}
           render={({ field }) => {
-            return <Dropdown
-              	id={field.name}
-              	value={data?.find((row) => row.value === field.value)?.value || fieldArray && data.filter((row) => row.name != 'Seleccione' || row.value != undefined).find(value => value?.projectId == field?.value)?.value}
-              	onChange={(e) => {field.onChange(e.value); optionSelected && optionSelected(e.value)}}
-              	options={data}
-              	optionLabel="name"
-              	placeholder={placeholder}
-              	className={`${className} ${messageError() ? "p-invalid" : ""}`}
-              	disabled={disabled}
-              	filter={filter}
-              	emptyMessage={emptyMessage}
-              	emptyFilterMessage={emptyMessage}
-              	virtualScrollerOptions={{ itemSize: 38}}
-            	/>
-          	
+            return (
+              <Dropdown
+                id={field.name}
+                value={
+                  data?.find((row) => row?.value === field?.value)?.value ||
+                  (fieldArray &&
+                    data
+                      .filter(
+                        (row) =>
+                          row.name != "Seleccione" || row.value != undefined
+                      )
+                      .find((value) => value?.projectId == field?.value)?.value)
+                }
+                onChange={(e) => {
+                  field.onChange(e.value);
+                  optionSelected && optionSelected(e.value);
+                }}
+                options={data}
+                optionLabel="name"
+                placeholder={placeholder}
+                className={`${className} ${messageError() ? "p-invalid" : ""}`}
+                disabled={disabled}
+                filter={filter}
+                emptyMessage={emptyMessage}
+                emptyFilterMessage={emptyMessage}
+                virtualScrollerOptions={{ itemSize: 38 }}
+              />
+            );
           }}
         />
         {messageError() && <span className="icon-error"></span>}
