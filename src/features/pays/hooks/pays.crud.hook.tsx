@@ -22,7 +22,7 @@ export function usePaysCrud() {
   const [errorsPac, setErrorsPac] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [errorsLoad, setErrorsLoad] = useState([])
-  const { infoErrors, setInfoErrors, setLoadingSpinner, setFieldErrors, fieldErrors, setInfoSearchPays } = useStorePays()
+  const { infoErrors, setInfoErrors, setLoadingSpinner, setFieldErrors, fieldErrors, setInfoSearchPays, exerciseLoad } = useStorePays()
   const [selection, setSelection] = useState('')
   const [dataEmpty, setDataEmpty] = useState(false)
 
@@ -583,6 +583,8 @@ export function usePaysCrud() {
             // Puedes mostrar un mensaje al usuario o manejar la situación de alguna otra manera
           }
           if (infoErrors.length > 0) {
+            console.log(infoErrors);
+            
             resolve(false);
           } else {
             resolve(true);
@@ -627,26 +629,36 @@ export function usePaysCrud() {
       setFieldErrors({})
     }
 
+    
     let formData = new FormData();
     let fileExcel = data.filedata;
     const base64Data = await readFileAsBase64(fileExcel);
     const tipoDocumento = data.tipoArchivo;
     const mes = data.mesDelAnio;
+    const ejercicio = exerciseLoad;
 
+   
     const verification = await processExcelFile(base64Data, tipoDocumento);
-    if (verification) {
+    
+    if (verification === true) {
+  
+      
       setLoadingSpinner(false);
-      if (selection !== "Pagos") {
+    /*   if (selection !== "Pagos") {
         console.log("No esta disponible el guardado");
         setLoadingSpinner(false);
         return;
-      }
+      } */
+      let exercise = ejercicio.toString();
+      console.log("entr1", exercise);
       let obInfo = {
         fileContent: base64Data,
         documentType: tipoDocumento,
         usuarioCreo: authorization.user.numberDocument,
-        mes: mes
+        mes: mes,
+        ejercicio: ejercicio
       }
+
       setMessage({
         title: "Guardar Información",
         description: `¿Estás segur@ de guardar la informacion ?`,
