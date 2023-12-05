@@ -14,6 +14,8 @@ import { useFundsService } from "../../functionality/hooks/funds-service.hook";
 import { useBudgetRoutesService } from "./budget-routes-service.hook";
 import { useAdditionsTransfersService } from "../../managementCenter/hook/additions-transfers-service.hook";
 import { IBudgetsProjectInfo, IProjectAdditionList } from "../../functionality/interfaces/AdditionsTransfersInterfaces";
+import { IFunds } from "../../functionality/interfaces/Funds";
+import { IPosPreSapiencia } from "../../functionality/interfaces/PosPreSapiencia";
 
 export function useBudgetRoutesCrudData(id: string) {
     const resolver = useYupValidationResolver(budgetRoutesCrudValidator);
@@ -22,7 +24,7 @@ export function useBudgetRoutesCrudData(id: string) {
     const { getAllBudgets } = useBudgetsService();
     const { GetAllPosPreSapiencia } = usePosPreSapienciaService();
     const { getAllFunds } = useFundsService();
-    const { CreateBudgetRoutes, GetBudgetRoutes, UpdateBudgetRoutes } = useBudgetRoutesService();
+    const { CreateBudgetRoutes, GetBudgetRoutes, UpdateBudgetRoutes, GetFundsByProjectId, GetPospreByProjectAndFundId } = useBudgetRoutesService();
     const { authorization, setMessage } = useContext(AppContext);
     const {
         handleSubmit,
@@ -34,6 +36,7 @@ export function useBudgetRoutesCrudData(id: string) {
     } = useForm<IBudgetsRoutesCrudForm>({ resolver });
     const navigate = useNavigate();
 
+
     const [projectsData, setProjectsData] = useState<IDropdownProps[]>([]);
     const [budgetData, setBudgetData] = useState<IDropdownProps[]>([]);
     const [pospreSapienciaData, setPospreSapienciaData] = useState<IDropdownProps[]>([]);
@@ -42,6 +45,33 @@ export function useBudgetRoutesCrudData(id: string) {
     const [projectsVinculateData, setProjectsVinculateData] = useState<IProjectAdditionList[]>(null);
     const budgetSelected = watch("idBudget");
     const projectVinculationSelected = watch("idProjectVinculation");
+
+    const [proyecto, setProyecto] = useState('');
+    const [fondo, setFondo] = useState('');
+    const [fundsFiltersSt, setFundsFiltersSt] = useState<IFunds[]>([])
+    const [pospreFiltersSt, setPospreFiltersSt] = useState<IPosPreSapiencia[]>([])
+    const [isChangeInFilterFundSt, setIsChangeInFilterFundSt] = useState(false)
+    const [isChangeInFilterPospreSt, setIsChangeInFilterPospreSt] = useState(false)
+
+    // Segun proyecto seleccionado filtra los fondos asociados en la ruta presupuesta.
+    useEffect(() => {
+        GetFundsByProjectId(Number(proyecto)).then(res => {
+            setFundsFiltersSt(res.data)
+            setIsChangeInFilterFundSt(!isChangeInFilterFundSt)
+        })
+    }, [proyecto])
+
+    // Segun proyecto y fondo seleccionado filtra los pospres asociados en la ruta presupuesta.
+    useEffect(() => {
+        GetPospreByProjectAndFundId(Number(proyecto), Number(fondo)).then(res => {
+            setPospreFiltersSt(res.data)
+            setIsChangeInFilterPospreSt(!isChangeInFilterPospreSt)
+        })
+    }, [proyecto, fondo])
+
+
+
+
 
     async function loadInitList(): Promise<void> {
 
@@ -52,7 +82,7 @@ export function useBudgetRoutesCrudData(id: string) {
 
             const arrayProjects: IDropdownProps[] = viculateProjects.data.map((project) => {
 
-                return { name: `${project.projectId}`, value: project.id, areaFuncional: project.functionalAreaId, nameProject: `${project.projectId} - ${project.conceptProject}`  }
+                return { name: `${project.projectId}`, value: project.id, areaFuncional: project.functionalAreaId, nameProject: `${project.projectId} - ${project.conceptProject}` }
             });
 
             setProjectsData(arrayProjects);
@@ -82,6 +112,23 @@ export function useBudgetRoutesCrudData(id: string) {
         }
 
     }
+
+    // modificación de las listas de fundos y prospre segun selección
+    useEffect(() => {
+        const arrayFunds: IDropdownProps[] = fundsFiltersSt.map((fund) => {
+            return { name: fund.number.toString(), value: fund.id };
+        });
+        setFundsData(arrayFunds);
+    }, [isChangeInFilterFundSt])
+
+    useEffect(() => {
+        const arrayPosPreSapiencia: IDropdownProps[] = pospreFiltersSt.map((posPreSapiencia) => {
+            return { name: posPreSapiencia.number.toString(), value: posPreSapiencia.id, label: posPreSapiencia.number.toString() };
+        });
+        setPospreSapienciaDataCdp(arrayPosPreSapiencia);
+    }, [isChangeInFilterPospreSt])
+
+
 
     useEffect(() => {
         loadInitList().then(() => {
@@ -117,6 +164,7 @@ export function useBudgetRoutesCrudData(id: string) {
     }, [budgetSelected])
 
     useEffect(() => {
+
         if (projectVinculationSelected) {
             const projectVinculation = projectsVinculateData.find((projectV) => projectV.id === projectVinculationSelected);
             if (projectVinculation) {
@@ -237,5 +285,5 @@ export function useBudgetRoutesCrudData(id: string) {
         });
     }
 
-    return {pospreSapienciaDataCdp, projectsVinculateData, register, errors, controlRegister, onSubmitNewBudgetRoute, onSubmitEditBudgetRoute, onCancelNew, onCancelEdit, confirmClose, projectsData, budgetData, pospreSapienciaData, fundsData, projectVinculationSelected, setValueRegister };
+    return { pospreSapienciaDataCdp, projectsVinculateData, register, errors, controlRegister, onSubmitNewBudgetRoute, onSubmitEditBudgetRoute, onCancelNew, onCancelEdit, confirmClose, projectsData, budgetData, pospreSapienciaData, fundsData, projectVinculationSelected, setValueRegister, proyecto, setProyecto, fondo, setFondo };
 }

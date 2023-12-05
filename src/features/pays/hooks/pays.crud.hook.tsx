@@ -22,7 +22,7 @@ export function usePaysCrud() {
   const [errorsPac, setErrorsPac] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [errorsLoad, setErrorsLoad] = useState([])
-  const { infoErrors, setInfoErrors, setLoadingSpinner, setFieldErrors, fieldErrors } = useStorePays()
+  const { infoErrors, setInfoErrors, setLoadingSpinner, setFieldErrors, fieldErrors, setInfoSearchPays } = useStorePays()
   const [selection, setSelection] = useState('')
 
   const api = usePaysServices();
@@ -128,15 +128,15 @@ export function usePaysCrud() {
               break;
             case "AreaFuncional":
               titleDB = ["Codigo", "TipoProyecto", "Proyecto"];
-              titleExcel = ['Código', 'Tipo de Proyecto', 'Proyecto'];
+              titleExcel = ['Codigo', 'Tipo de Proyecto', 'Proyecto'];
               break;
             case "PospreSapiencia":
               titleDB = ["PospreOrigen", "DenominacionOrigen", "DescripcionOrigen", "ConsecutivoPospreSapiencia", "Ejercicio", "DescripcionSapiencia"];
-              titleExcel = ['Pospre Origen', 'Denominación Origen', 'Descripción Origen', 'Consecutivo pospre sapiencia', 'Ejercicio', 'Descripción sapiencia'];
+              titleExcel = ['Pospre Origen', 'Denominacion Origen', 'Descripcion Origen', 'Consecutivo pospre sapiencia', 'Ejercicio', 'Descripcion sapiencia'];
               break;
             case "PospreMGA":
               titleDB = ["PospreOrigen", "Proyecto", "CodigoProductoMGA", "ProductoMGA", "CodigoActividadMGA", "NombreActividadDetalleMGA"];
-              titleExcel = ['Pospre origen', 'Proyecto', 'Código producto MGA', 'Producto MGA', 'Código actividad MGA', 'Nombre actividad detalle MGA'];
+              titleExcel = ['Pospre origen', 'Proyecto', 'Codigo producto MGA', 'Producto MGA', 'Código actividad MGA', 'Nombre actividad detalle MGA'];
               break;
             case "RutaPptoInicial":
               titleDB = ["CentroGestor", "PospreOrigen", "PospreSapiencia", "AreaFuncional", "Fondo", "Proyecto", "ValorInicial"];
