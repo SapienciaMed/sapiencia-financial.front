@@ -146,14 +146,14 @@ const PaysPage = () => {
                 {showTable && (
                     <>  
                     <div className="card-user mt-2rem">
-                    
+                        <h3> Resultados de busqueda </h3>
                         <TableComponent
                             ref={tableComponentRef}
                             url={`${process.env.urlApiFinancial}/api/v1/pag-pagos/get-paginated`}
                             columns={tableColumnsCdp}
                             isShowModal={true}
                             titleMessageModalNoResult="No hay resultados"
-                            secondaryTitle="Resultados de busqueda"
+                            secondaryTitle="Pagos"
                         />
                     </div>
                     <TotalPays />
