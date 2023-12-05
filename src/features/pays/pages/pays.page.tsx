@@ -39,20 +39,7 @@ const PaysPage = () => {
             <div className="card-table gap-0">
                 <section className="title-area">
                     <div className="text-black weight-500 extra-large">Consultar Pago</div>
-                    <div
-                        className={`${width < 800
-                                ? "display-justify-space-between-pac"
-                                : "display-align-flex-end"
-                            } gap-0 gap-05`}
-                    >
-                        <div
-                            className="title-button font-big"
-                            onClick={() => navigate("./load-pays")}
-                        >
-                            Cargar pagos
-                            <AiOutlinePlusCircle />
-                        </div>
-                    </div>
+                    
                 </section>
                 <section className="card-user">
                     <FormComponent action={onSubmit}>
