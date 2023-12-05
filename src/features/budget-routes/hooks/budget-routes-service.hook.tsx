@@ -1,5 +1,7 @@
 import useCrudService from "../../../common/hooks/crud-service.hook";
 import { ApiResponse } from "../../../common/utils/api-response";
+import { IFunds } from "../../functionality/interfaces/Funds";
+import { IPosPreSapiencia } from "../../functionality/interfaces/PosPreSapiencia";
 import { IBudgetsRoutes } from "../interfaces/BudgetRoutesInterfaces";
 
 
@@ -26,5 +28,18 @@ export function useBudgetRoutesService() {
         return put(`${roleUrl}${endpoint}`, data);
     }
 
-    return { GetBudgetRoutes, CreateBudgetRoutes, UpdateBudgetRoutes }
+
+    // filtra en modelo de datos de ruta presupuestal.
+    async function GetFundsByProjectId(id: number): Promise<ApiResponse<IFunds[]>> {
+        const endpoint: string = `/get-funds-by-project/${id}`;
+        return get(`${roleUrl}${endpoint}`);
+    }
+    
+    // filtra en modelo de datos de ruta presupuestal.
+    async function GetPospreByProjectAndFundId(projectId: number,fundId:number): Promise<ApiResponse<IPosPreSapiencia[]>> {
+        const endpoint: string = `/get-pospre-by-project/${projectId}/fund/${fundId}`;
+        return get(`${roleUrl}${endpoint}`);
+    }
+
+    return { GetBudgetRoutes, CreateBudgetRoutes, UpdateBudgetRoutes, GetFundsByProjectId, GetPospreByProjectAndFundId }
 }

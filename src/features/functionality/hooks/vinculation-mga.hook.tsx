@@ -188,6 +188,10 @@ export function useVinculationMGAData(
         onClick: (row) => {
           const rows = [
             {
+              title: "Código proyecto",
+              value: `${row.idProject}`
+            },
+            {
               title: "Código",
               value: `${row.consecutiveActivityDetailed}`,
             },

@@ -20,6 +20,7 @@ import {
 import { InputNumberComponent } from "../../../common/components/Form/input-number.component";
 import { useWatch } from "react-hook-form";
 import { ICreateSourceForm } from "../transfer/interfaces/TransferAreaCrudInterface";
+import { useBudgetRoutesService } from "../../budget-routes/hooks/budget-routes-service.hook";
 
 interface IAppProps {
   controlRegister: Control<IAdditionsForm, any>;
@@ -53,8 +54,32 @@ function ScreenAddIncome({
   detail,
 }: IAppProps) {
   const { functionalArea, areas, funds, posPre } = arrayDataSelect;
-
+  const { GetFundsByProjectId, GetPospreByProjectAndFundId } = useBudgetRoutesService();
   const formOrigen = useWatch({ control: controlRegister, name: titleAdd });
+
+
+  const [fundsListFilterSt, setFundsListFilterSt] = useState([])
+  const [pospreListFilterSt, setPospreListFilterSt] = useState([])
+  useEffect(() => {
+    GetPospreByProjectAndFundId(Number(formOrigen[count].projectId), Number(formOrigen[count].funds)).then(res=>{
+      let pospreListFixed = res.data.map(e=>{
+        return ({name:e.number, value:e.id, id:e.id})
+      })
+      setPospreListFilterSt(pospreListFixed)
+    })
+  
+  }, [formOrigen])
+  
+  useEffect(() => {
+    GetFundsByProjectId(Number(formOrigen[count].projectId)).then(res=>{
+      let fundsListFixed = res.data.map(e=>{
+        return ({name:e.number, value:e.id, id:e.id})
+      })
+      setFundsListFilterSt(fundsListFixed)
+    })
+  
+  }, [formOrigen])
+  
 
   const [projectIdSelectedSt, setProjectIdSelectedSt] = useState<string>("");
   const [areaIdSelectedSt, setAreaIdSelectedSt] = useState<number | string>();
@@ -85,6 +110,11 @@ function ScreenAddIncome({
       processFunctionalArea(option);
     }
   };
+
+  /* const optionSelectedFund = (option:any)=>{
+    alert(option)
+  } */
+
 
   const processFunctionalArea = (option: any) => {
     const areaList: IDropdownPropsFuctionalArea[] = functionalArea
@@ -191,7 +221,7 @@ function ScreenAddIncome({
               placeholder={"Seleccionar"}
               filter={true}
               fieldArray={true}
-              data={funds}
+              data={/* funds */fundsListFilterSt}
               errors={errors}
               disabled={detail}
             />
@@ -204,7 +234,7 @@ function ScreenAddIncome({
               placeholder={"Seleccionar"}
               filter={true}
               fieldArray={true}
-              data={posPre}
+              data={/* posPre */pospreListFilterSt}
               errors={errors}
               disabled={detail}
             />
