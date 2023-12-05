@@ -160,6 +160,7 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
             );
           })}
         </div>
+        { actions ?   
         <div className="card-footer">
           <section className="position-absolute top text-black bold text-center">
             {" "}
@@ -175,7 +176,8 @@ const TableComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
               </div>
             ))}
           </section>
-        </div>
+        </div> : ''
+      }
       </div>
     );
   };

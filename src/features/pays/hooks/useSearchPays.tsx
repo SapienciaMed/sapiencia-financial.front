@@ -28,7 +28,6 @@ export const useSearchPays = () => {
   } = useForm<IPagoFilters>({
     resolver,
     mode: "all",
-    
   });
   const inputValue = watch(['exercise','mes','vinculacionRpCode']);
 
@@ -84,24 +83,19 @@ export const useSearchPays = () => {
     if (data) {
       setShowTable(true);
       loadTableData(data);
-      //aqui vamos a sacar los totales
       let response = await getPays(data);
-
       let informationResponse = response['data'];
       let valorFinal = 0;
       let valorCausado = 0;
       let valorPagado = 0;
       let pendientePago = 0;
       let pendienteCausado = 0;
-
       
       let arr = [];
       informationResponse['array'].forEach(element => {
-      
         valorCausado += parseFloat(element.PAG_VALOR_CAUSADO)
         valorPagado += parseFloat(element.PAG_VALOR_PAGADO)
         valorFinal += parseFloat(element.VRP_VALOR_FINAL)
-
       });
 
       pendientePago = valorFinal -valorPagado
