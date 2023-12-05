@@ -14,7 +14,6 @@ export function useProjectOperationCrud(
   exerciseSt: number
 ) {
   const dateToday = new Date();
-
   const resolver = useYupValidationResolver(projectOperationCrudValidator);
   const { setMessage } = useContext(AppContext);
 
@@ -71,6 +70,10 @@ export function useProjectOperationCrud(
     watch,
     getValues,
   } = useForm<IProjectOperation>({
+    defaultValues: {
+      exercise: actualFullYear,
+      name: "Funcionamiento",
+    },
     mode: "onSubmit",
     resolver,
   });
@@ -84,7 +87,6 @@ export function useProjectOperationCrud(
   }, [watch]);
 
   const onSubmitTab = handleSubmit(async (data: IProjectOperation) => {
-
     data.userCreate = "Usuario";
     data.exercise = exerciseSt;
 
