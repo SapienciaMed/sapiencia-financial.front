@@ -623,14 +623,23 @@ export function usePaysCrud() {
   const onSubmitPagPays = handleSubmit(async (data: IPagoDataSave) => {
 
     const { tipoArchivo, mesDelAnio, filedata } = data;
-
+    let tryReturn = false;
+    
     // Validar campos
-    if (data.tipoArchivo === undefined || data.mesDelAnio === undefined) {
+    if (data.tipoArchivo === undefined) {
       updateFieldError('tipoArchivo', "vacio");
+      tryReturn = true;
+    }
+
+    if(data.mesDelAnio === undefined) {
       updateFieldError('mesDelAnio', "vacio");
-      return;
-    } else {
-      setFieldErrors({})
+      tryReturn = true;
+    }
+
+    if(tryReturn){
+
+      console.log("no es posible continuar");
+      return
     }
 
     
