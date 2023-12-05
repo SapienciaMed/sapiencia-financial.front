@@ -45,11 +45,10 @@ interface FormularioProps {
 const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ countAssoc, datasFounds, formSubmitted, isRequired = false, formNumber, handleEliminar, setAmountInfo, amountInfo, posicionCdp }) => {
   const { setFormInfo, formInfo } = useContext(AppContext);
   const cdpService = useCdpService();
-  const [proyecto, setProyecto] = useState('');
   const { icdImportsData, setIcdImportsData } = useStoreIcd();
   const { infoErrors, setInfoErrors } = useStoreCdp();
   const [nombreProyecto, setNombreProyecto] = useState('');
-  const [fondo, setFondo] = useState('');
+  //const [fondo, setFondo] = useState('');
   const [pospre, setPospre] = useState('0');
   const [pospreNewV, setPospreNewV] = useState('');
   const [posPre1, setPosPre1] = useState();
@@ -77,7 +76,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ countAssoc, dat
     balance: balance,
   };
 
-  const { pospreSapienciaDataCdp, projectsVinculateData, projectsData, fundsData, pospreSapienciaData, budgetData, register, errors, controlRegister, projectVinculationSelected, setValueRegister } = useBudgetRoutesCrudData('');
+  const { pospreSapienciaDataCdp, projectsVinculateData, projectsData, fundsData, pospreSapienciaData, budgetData, register, errors, controlRegister, projectVinculationSelected, setValueRegister, proyecto, setProyecto, fondo, setFondo } = useBudgetRoutesCrudData('');
 
   const convertedOptionsPosPre = pospreSapienciaDataCdp.map((item) => ({
     value: String(item.value),
@@ -429,6 +428,7 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({ countAssoc, dat
 
   return (
     <div className='containerOne'>
+      
       <div className="formulario">
         <div>
           <h2 className="h3-style" style={{ flex: 1 }}>

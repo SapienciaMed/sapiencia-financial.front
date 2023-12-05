@@ -84,7 +84,7 @@ export const useSearchCdp = () => {
     },
     {
       icon: "Edit",
-      hide:!validateActionAccess('CDP_RUTAS_EDITAR'),
+      hide:!validateActionAccess('DATOS_BASICOS_CDP_EDITAR'),
       onClick: (row) => {
         const id = row.id;
         navigate(`/gestion-financiera/cdp/edit/${id}`);

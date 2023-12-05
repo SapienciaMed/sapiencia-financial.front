@@ -30,7 +30,7 @@ const PaysPage = () => {
         tableColumnsCdp,
         navigate,
         arraySelect,
-
+        validateActionAccess
     } = useSearchPays();
     const dateToday = new Date()
     const actualFullYear = dateToday.getFullYear();

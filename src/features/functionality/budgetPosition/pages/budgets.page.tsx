@@ -8,9 +8,8 @@ import { EDirection } from "../../../../common/constants/input.enum";
 import { useBudgetsData } from "../hooks/budgets.hook";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { Controller } from "react-hook-form";
-interface IAppProps {}
 
-function BudgetsPage(props: IAppProps): React.JSX.Element {
+function BudgetsPage(): React.JSX.Element {
   const {
     tableActions,
     tableColumns,

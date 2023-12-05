@@ -71,7 +71,9 @@ function BulkLoad() {
   return (
     <div className="crud-page">
       <div className="main-page full-height">
-        <p className="text-black extra-large">Cargar pagos</p>
+        
+            <p className="text-black extra-large">Cargar pagos</p>
+          
         <div className="card-user">
           <FormComponent
             action={onSubmitPagPays}
@@ -123,79 +125,79 @@ function BulkLoad() {
                     name: "Ppto Inicial",
                     value: "5",
                   },
-                 
+
                 ]}
                 filter={true}
                 errors={errors}
                 direction={EDirection.column}
               />
 
-            <div className="div-upload">
-              <br />
-              <br />
+              <div className="div-upload">
+                <br />
+                <br />
 
-              <div className="display-align-flex-center">
-                <div>
-                  <label
-                    className="upload-label"
-                    style={{ display: "flex", alignItems: "center", color: "#533893" }}
-                    htmlFor="modal"
-                  >
-                    Seleccionar archivo{" "}
-                    <svg
-                      width="16"
-                      height="17"
-                      viewBox="0 0 16 17"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
+                <div className="display-align-flex-center">
+                  <div>
+                    <label
+                      className="upload-label"
+                      style={{ display: "flex", alignItems: "center", color: "#533893" }}
+                      htmlFor="modal"
                     >
-                      <path
-                        d="M8.00008 5.83331V11.1666"
-                        stroke="#533893"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></path>
-                      <path
-                        d="M10.6666 8.50002H5.33325"
-                        stroke="#533893"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></path>
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M8 14.5V14.5C4.686 14.5 2 11.814 2 8.5V8.5C2 5.186 4.686 2.5 8 2.5V2.5C11.314 2.5 14 5.186 14 8.5V8.5C14 11.814 11.314 14.5 8 14.5Z"
-                        stroke="#533893"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></path>
-                    </svg>
-                  </label>
-                  {file != undefined ? (
-                    <label className="text-red-500">{file.name}</label>
-                  ) : (
-                    <></>
-                  )}
-                  <Button
-                    label="Show"
-                    type="button"
-                    style={{ display: "none" }}
-                    name="modal"
-                    id="modal"
-                    onClick={() => setVisible(true)}
-                  />
-                </div>
+                      Seleccionar archivo{" "}
+                      <svg
+                        width="16"
+                        height="17"
+                        viewBox="0 0 16 17"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M8.00008 5.83331V11.1666"
+                          stroke="#533893"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        ></path>
+                        <path
+                          d="M10.6666 8.50002H5.33325"
+                          stroke="#533893"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        ></path>
+                        <path
+                          fill-rule="evenodd"
+                          clip-rule="evenodd"
+                          d="M8 14.5V14.5C4.686 14.5 2 11.814 2 8.5V8.5C2 5.186 4.686 2.5 8 2.5V2.5C11.314 2.5 14 5.186 14 8.5V8.5C14 11.814 11.314 14.5 8 14.5Z"
+                          stroke="#533893"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        ></path>
+                      </svg>
+                    </label>
+                    {file != undefined ? (
+                      <label className="text-red-500">{file.name}</label>
+                    ) : (
+                      <></>
+                    )}
+                    <Button
+                      label="Show"
+                      type="button"
+                      style={{ display: "none" }}
+                      name="modal"
+                      id="modal"
+                      onClick={() => setVisible(true)}
+                    />
+                  </div>
 
-                <ButtonComponent
-                  className="button-clean-fields button-border"
-                  value="Validación"
-                  type="button"
-                  action={() => setIsVisibleErrors(!isVisibleErrors)}
-                />
-              {/*   {errorsSt.length > 0 && (
+                  <ButtonComponent
+                    className="button-clean-fields button-border"
+                    value="Validación"
+                    type="button"
+                    action={() => setIsVisibleErrors(!isVisibleErrors)}
+                  />
+                  {/*   {errorsSt.length > 0 && (
                   <ButtonComponent
                     className="button-clean-fields button-border"
                     value="Validación"
@@ -203,50 +205,50 @@ function BulkLoad() {
                     action={() => setIsVisibleErrors(!isVisibleErrors)}
                   />
                 )} */}
-              </div>
-
-              <Dialog
-                header="Si tienes más de un documento, se deben unir en un solo archivo para ser cargados"
-                className="text-center div-modal movil"
-                visible={visible}
-                onHide={() => setVisible(false)}
-                pt={{
-                  root: { style: { width: "35em" } },
-                }}
-              >
-                <Controller
-                  name="file"
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <>
-                      <UploadComponent
-                        id={field.name}
-                        dataArchivo={(e: File) => {
-                          if (e && e.name) {
-                            field.onChange(getFile(e));
-                            uploadFileFn(e);
-                            setVisible(false)
-                          }
-                        }}
-                        showModal={(e: boolean) => {
-                          field.onChange(setVisible(e));
-                        }}
-                      />
-                    </>
-                  )}
-                />
-                <div style={{ padding: "1rem" }}>
-                  <Button
-                    className="mt-8"
-                    type="button"
-                    style={{ backgroundColor: "533893" }}
-                    onClick={() => setVisible(false)}
-                    label="Cancelar"
-                    rounded
-                  />
                 </div>
-              </Dialog>
-            </div>
+
+                <Dialog
+                  header="Si tienes más de un documento, se deben unir en un solo archivo para ser cargados"
+                  className="text-center div-modal movil"
+                  visible={visible}
+                  onHide={() => setVisible(false)}
+                  pt={{
+                    root: { style: { width: "35em" } },
+                  }}
+                >
+                  <Controller
+                    name="file"
+                    control={control}
+                    render={({ field, fieldState }) => (
+                      <>
+                        <UploadComponent
+                          id={field.name}
+                          dataArchivo={(e: File) => {
+                            if (e && e.name) {
+                              field.onChange(getFile(e));
+                              uploadFileFn(e);
+                              setVisible(false)
+                            }
+                          }}
+                          showModal={(e: boolean) => {
+                            field.onChange(setVisible(e));
+                          }}
+                        />
+                      </>
+                    )}
+                  />
+                  <div style={{ padding: "1rem" }}>
+                    <Button
+                      className="mt-8"
+                      type="button"
+                      style={{ backgroundColor: "533893" }}
+                      onClick={() => setVisible(false)}
+                      label="Cancelar"
+                      rounded
+                    />
+                  </div>
+                </Dialog>
+              </div>
             </section>
 
             <input
@@ -257,21 +259,21 @@ function BulkLoad() {
           </FormComponent>
         </div>
         <br />
-          <div
-            className={
-              !isVisibleTable ? "card-user isVisible" : "card-user isNotVisible"
-            }
-          >
-            <TableDataPropComponent
-              ref={tableComponentRef}
-              dataTable={dataTableSt}
-              columns={tableColumns}
-              isShowModal={false}
-              titleMessageModalNoResult={"No se encontraron registros"}
-              secondaryTitle="Validaciones"
-            />
-          </div>
-     {/*    {isVisibleErrors && dataTableSt.length > 0 && errorsSt.length > 0 && (
+        <div
+          className={
+            !isVisibleTable ? "card-user isVisible" : "card-user isNotVisible"
+          }
+        >
+          <TableDataPropComponent
+            ref={tableComponentRef}
+            dataTable={dataTableSt}
+            columns={tableColumns}
+            isShowModal={false}
+            titleMessageModalNoResult={"No se encontraron registros"}
+            secondaryTitle="Validaciones"
+          />
+        </div>
+        {/*    {isVisibleErrors && dataTableSt.length > 0 && errorsSt.length > 0 && (
           <div
             className={
               !isVisibleTable ? "card-user isVisible" : "card-user isNotVisible"
@@ -290,16 +292,16 @@ function BulkLoad() {
       </div>
 
       <div className="container-button-bot-2">
-      <ButtonLoadingComponent
-            className="button-main huge hover-three"
-            value="Guardar"
-            form="form-load-pays"
-            type="submit"
-           
-            disabled={!isUploadFileSt}
-            isLoading={isLoading}
-          />
-        
+        <ButtonLoadingComponent
+          className="button-main huge hover-three"
+          value="Guardar"
+          form="form-load-pays"
+          type="submit"
+
+          disabled={!isUploadFileSt}
+          isLoading={isLoading}
+        />
+
       </div>
     </div>
   );
