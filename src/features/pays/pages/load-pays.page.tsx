@@ -22,7 +22,6 @@ function LoadPays() {
   const {
     errors,
     onSubmitPagPays,
-    // showModal,
     setMessage,
     register,
     isAllowSave,
@@ -36,9 +35,6 @@ function LoadPays() {
   } = usePaysCrud();
 
   const btnUploadFileRef = useRef(null);
-
-  /* let uploadFileRef = useRef<HTMLInputElement>(null) */
-
   const [visible, setVisible] = useState<boolean>(false);
   const [file, setFile] = useState<File>(null);
   const [isVisibleErrors, setIsVisibleErrors] = useState(false);
@@ -48,6 +44,7 @@ function LoadPays() {
   const [defaultExercise, setDefaultExercise] = useState(actualFullYear.toString())
   const [showBtnValidation, setShowBtnValidation] = useState(false)
   const [showTableErrors, setShowTableErrors] = useState(false)
+  const [showMonth, setShowMonth] = useState(false)
   const getFile = (newFile: File) => {
     setFile(newFile);
     return newFile;
@@ -78,23 +75,6 @@ function LoadPays() {
   ];
   const { watch } = useForm();
 
-  const defaultExercise_ = watch('exercise');
-  const defaultTipoArchivo = watch('tipoArchivo');
-  const defaultMes = watch('mesDelAnio');
-
-  const tipoArchivo = watch('tipoArchivo');
-
-  
-
-  let styleSelects = {
-    display: 'none'
-  }
-
-  useEffect(() => {
-    console.log("este es el vo",tipoArchivo);
-
-  }, [tipoArchivo])
-
   const mesesOptions = mesesDelAnio.map((mes, index) => ({
     id: index + 1,
     name: mes,
@@ -113,17 +93,6 @@ function LoadPays() {
     setErrorsSt([]);
     setIsVisibleErrors(false);
   }, [file]);
-  var dropdown = document.getElementById('tipoArchivo');
-
-
-  // useEffect to log 'tipoArchivo' changes
-  useEffect(() => {
-    console.log(dropdown);
-  }, [dropdown]);
-
-
-
-
 
   const handleChange = (event) => {
     const enteredValue = event.target.value;
@@ -146,8 +115,7 @@ function LoadPays() {
   }
 
   const handleTipoArchivoChange = (selectedValue) => {
-    // Hacer algo con el valor seleccionado (selectedValue)
-    console.log("Tipo de archi:", selectedValue);
+     selectedValue === "Pagos" ? setShowMonth(true) : setShowMonth(false)
     };
 
   useEffect(() => {
@@ -244,13 +212,15 @@ function LoadPays() {
                 filter={true}
                 errors={errors}
                 direction={EDirection.column}
-                onChange={(event) => handleTipoArchivoChange(event.target.value)}
+                optionSelected={(event) => handleTipoArchivoChange(event)}
               >
                 {fieldErrors.tipoArchivo && (
                   <p className="error-message">Este campo es obligatorio</p>
                 )}
               </SelectComponent>
-              <SelectComponent
+ {
+   showMonth ? 
+   <SelectComponent
                 idInput="mesDelAnio"
                 control={control}
                 label="Mes"
@@ -266,6 +236,11 @@ function LoadPays() {
                   <p className="error-message">Este campo es obligatorio</p>
                 )}
               </SelectComponent>
+              :
+              ''
+ }
+              
+
               <div className="div-upload">
                 <br />
                 <br />
