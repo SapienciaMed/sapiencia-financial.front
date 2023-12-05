@@ -22,7 +22,7 @@ interface IVinculationMGAFilters {
 }
 
 export function useVinculationMGAData(
-  pospre: string,
+  budgetsId: string,
   values?: IBudgetViewPage
 ) {
   const [lastMove, setLastMove] = useState([]);
@@ -248,14 +248,14 @@ export function useVinculationMGAData(
   useEffect(() => {
     values &&
       values.actions == "view" &&
-      loadTableData({ budgetId: Number(pospre) });
-    values && values.actions == "edit" && loadTableData();
+      loadTableData({ budgetId: Number(budgetsId) });
+    values && values.actions == "edit" && loadTableData({ budgetId: Number(budgetsId) });
   }, []);
 
   async function vinculateActivities(message?: boolean): Promise<void> {
     const dataVinculate = () => {
       const data = lastMove.map((obje) => ({
-        budgetId: Number(pospre),
+        budgetId: Number(budgetsId),
         activityId: obje.id.activityId,
         consecutiveActivityDetailed: obje.id.consecutiveActivityDetailed,
         detailedActivityId: obje.id.activityDetailedId,

@@ -28,6 +28,7 @@ export interface IPagoDataSave {
     tipoArchivo: string;
     register: string;
     mesDelAnio: number;
+    exercise?: string;
 }
 
 export interface IPagoDataBasicOriginalDataEdit {

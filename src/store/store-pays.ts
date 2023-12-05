@@ -4,6 +4,7 @@ interface ErrorsStoreState {
   infoErrors: any[];
   infoSearchPays: any[];
   tipoDocumentoLoad: string;
+  exerciseLoad: string;
   loadingSpinner: boolean;
   fieldErrors: {
     tipoArchivo?: string;
@@ -15,6 +16,7 @@ interface ErrorsStoreActions {
   setInfoErrors: (newValue: any[] | ((prev: any[]) => any[])) => void;
   setInfoSearchPays: (newValue: any[] | ((prev: any[]) => any[])) => void;
   setTipoDocumentoLoad: (newValue: string) => void;
+  setExerciseLoad: (newValue: string) => void;
   setLoadingSpinner: (newValue: boolean) => void;
   setFieldErrors: (newValue: { tipoArchivo?: string; mesDelAnio?: string }) => void;
 }
@@ -23,6 +25,7 @@ const useStorePays = create<ErrorsStoreState & ErrorsStoreActions>((set: SetStat
   infoErrors: [],
   infoSearchPays: [],
   tipoDocumentoLoad: '',
+  exerciseLoad: '',
   loadingSpinner: false,
   fieldErrors: {
     tipoArchivo: '',
@@ -33,6 +36,9 @@ const useStorePays = create<ErrorsStoreState & ErrorsStoreActions>((set: SetStat
   },
   setTipoDocumentoLoad: (newValue) => {
     set((state) => ({ tipoDocumentoLoad: newValue }));
+  },
+  setExerciseLoad: (newValue) => {
+    set((state) => ({ exerciseLoad: newValue }));
   },
   setLoadingSpinner: (newValue) => {
     set((state) => ({ loadingSpinner: newValue }));

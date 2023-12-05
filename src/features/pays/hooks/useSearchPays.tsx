@@ -45,7 +45,7 @@ export const useSearchPays = () => {
     },
     {
       fieldName: "CONSECUTIVO_SAP",
-      header: "Consecutivo SAP RP",
+      header: "Consecutivo RP SAP",
     },
     {
       fieldName: "VRP_POSICION",
@@ -100,7 +100,7 @@ export const useSearchPays = () => {
       
         valorCausado += parseFloat(element.PAG_VALOR_CAUSADO)
         valorPagado += parseFloat(element.PAG_VALOR_PAGADO)
-        valorFinal += element.VRP_VALOR_FINAL
+        valorFinal += parseFloat(element.VRP_VALOR_FINAL)
 
       });
 
