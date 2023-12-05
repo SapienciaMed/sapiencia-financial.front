@@ -83,6 +83,7 @@ export function usePaysCrud() {
   };
 
   async function processExcelFile(base64Data, tipoDocumento) {
+    let dataVacia = false;
     setLoadingSpinner(true)
     setDataEmpty(false)
     setSelection(tipoDocumento)
@@ -205,9 +206,10 @@ export function usePaysCrud() {
                     case "PAG_VALOR_CAUSADO":
                       if (typeof value !== 'number') {
 
-                        //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                        let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
-                        infoErrors.push(objErrors);
+                        if (value === undefined) { } else {
+                          let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                          infoErrors.push(objErrors);
+                        }
 
                       }
                       break;
@@ -497,6 +499,7 @@ export function usePaysCrud() {
                     let objErrors = { "rowError": R, "message": `Algún dato está vacío` };
                     infoErrors.push(objErrors);
                     setDataEmpty(true)
+                    dataVacia = true;
                   }
                 }
 
@@ -549,13 +552,12 @@ export function usePaysCrud() {
                 const posicionValue = rowData['POSICION'];
                 const rpSapValue = rowData['PAG_CODVRP_VINCULACION_RP'];
 
-                if (dataEmpty) {
-
+                if (!dataVacia) {
                   const responseValidate = await api.validateExitsRp({
                     "posicion": posicionValue,
                     "consecutivoSap": rpSapValue
                   });
-
+ 
                   if (responseValidate['operation']['code'] == "FAIL") {
                     let objErrors = { "rowError": R, "message": `EL RP no existe` };
                     infoErrors.push(objErrors);
@@ -564,7 +566,9 @@ export function usePaysCrud() {
                     let valorFinal = datos.valorFinal;
   
                     let sumValues = parseInt(rowData['PAG_VALOR_CAUSADO']) + parseInt(rowData['PAG_VALOR_PAGADO']);
-  
+                    console.log(sumValues);
+                    console.log(valorFinal);
+                    
                     if (sumValues < valorFinal) {
                       let objErrors = { "rowError": R, "message": `El valor del RP es mayor del valor causado+pagado` };
                       infoErrors.push(objErrors);

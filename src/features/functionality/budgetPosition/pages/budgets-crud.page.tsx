@@ -116,7 +116,8 @@ function BudgetsForm({ action }: IAppProps) {
               <div className="title-area">
                 <div className="text-black biggest bold">Datos básicos</div>
               </div>
-              <div className="fund-data-container">
+
+              <div className="fund-denomination-container">
                 <Controller
                   control={controlRegister}
                   name={"denomination"}

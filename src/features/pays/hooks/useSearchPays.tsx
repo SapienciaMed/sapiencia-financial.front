@@ -10,12 +10,14 @@ import { IPagoFilters } from "../interfaces/paysInterfaces";
 import { paysLoad } from "../../../common/schemas/pays-schemas";
 import { usePaysServices } from "./pays-service";
 import useStorePays from "../../../store/store-pays";
+import { AppContext } from "../../../common/contexts/app.context";
 export const useSearchPays = () => {
   const { GetRoutesByValidity } = useCdpServices();
   const resolver = useYupValidationResolver(paysLoad);
   const tableComponentRef = useRef(null);
   const navigate = useNavigate();
   const { infoErrors, setInfoErrors, setInfoSearchPays } = useStorePays()
+  const { validateActionAccess } = useContext(AppContext);
   const {
     handleSubmit,
     register,
@@ -43,7 +45,7 @@ export const useSearchPays = () => {
     },
     {
       fieldName: "CONSECUTIVO_SAP",
-      header: "Consecutivo SAP RP",
+      header: "Consecutivo RP SAP",
     },
     {
       fieldName: "VRP_POSICION",
@@ -98,7 +100,7 @@ export const useSearchPays = () => {
       
         valorCausado += parseFloat(element.PAG_VALOR_CAUSADO)
         valorPagado += parseFloat(element.PAG_VALOR_PAGADO)
-        valorFinal += element.VRP_VALOR_FINAL
+        valorFinal += parseFloat(element.VRP_VALOR_FINAL)
 
       });
 
@@ -148,6 +150,7 @@ export const useSearchPays = () => {
     tableComponentRef,
     tableColumnsCdp,
     navigate,
-    arraySelect
+    arraySelect,
+    validateActionAccess
   };
 };
