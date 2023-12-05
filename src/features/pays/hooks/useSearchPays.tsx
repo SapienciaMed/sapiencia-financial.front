@@ -43,7 +43,7 @@ export const useSearchPays = () => {
     },
     {
       fieldName: "CONSECUTIVO_SAP",
-      header: "Consecutivo SAP RP",
+      header: "Consecutivo RP SAP",
     },
     {
       fieldName: "VRP_POSICION",
