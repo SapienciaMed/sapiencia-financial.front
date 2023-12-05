@@ -19,7 +19,7 @@ export function usePacCrud() {
 
   const resolver = useYupValidationResolver(pacCrudValidator);
 
-  const { setMessage, authorization } = useContext(AppContext);
+  const { setMessage, authorization, validateActionAccess } = useContext(AppContext);
 
   const { uploadPac } = usePacService()
 
@@ -280,6 +280,6 @@ export function usePacCrud() {
     tableComponentRef,
     errorsPac,
     isLoading,
-    onSubmitPagPays
+    onSubmitPagPays,
   };
 }
