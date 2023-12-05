@@ -41,18 +41,19 @@ function LoadPays() {
   const [isVisibleErrors, setIsVisibleErrors] = useState(false);
   const [isUploadFileSt, setIsUploadFileSt] = useState(false);
   const [errorsSt, setErrorsSt] = useState([]);
-  const { infoErrors, setInfoErrors, loadingSpinner,fieldErrors, setExerciseLoad } = useStorePays()
+  const { infoErrors, setInfoErrors, loadingSpinner, fieldErrors, setExerciseLoad, setFieldErrors } = useStorePays()
   const [defaultExercise, setDefaultExercise] = useState(actualFullYear.toString())
   const [showBtnValidation, setShowBtnValidation] = useState(false)
   const [showTableErrors, setShowTableErrors] = useState(false)
   const [showMonth, setShowMonth] = useState(false)
+  const [isEmptyMonth, setIsEmptyMonth] = useState(false)
   const navigate = useNavigate();
   const getFile = (newFile: File) => {
     setFile(newFile);
     return newFile;
   };
 
-  useEffect(()=>{setInfoErrors([])},[])
+  useEffect(() => { setInfoErrors([]) }, [])
   const uploadFileFn = (newFile: any) => {
     if (newFile.name) {
       setIsUploadFileSt(true);
@@ -61,9 +62,9 @@ function LoadPays() {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     setExerciseLoad(actualFullYear.toString());
-  },[])
+  }, [])
 
   const mesesDelAnio = [
     "Enero",
@@ -123,8 +124,17 @@ function LoadPays() {
   }
 
   const handleTipoArchivoChange = (selectedValue) => {
-     selectedValue === "Pagos" ? setShowMonth(true) : setShowMonth(false)
-    };
+    selectedValue === "Pagos" ? setShowMonth(true) : setShowMonth(false)
+    delete fieldErrors['tipoArchivo'];
+  };
+
+  const handleChangeMonth = (selectedValue) => {
+    delete fieldErrors['mesDelAnio'];
+    setIsEmptyMonth(true);
+    console.log(fieldErrors);
+    console.log(selectedValue);
+    console.log(fieldErrors);
+  };
 
   useEffect(() => {
     if (infoErrors.length > 0) {
@@ -226,28 +236,29 @@ function LoadPays() {
                   <p className="error-message">Este campo es obligatorio</p>
                 )}
               </SelectComponent>
- {
-   showMonth ? 
-   <SelectComponent
-                idInput="mesDelAnio"
-                control={control}
-                label="Mes"
-                className={`select-basic medium ${fieldErrors.mesDelAnio ? 'error' : ''}`}
-                classNameLabel="text-black big bold text-required"
-                placeholder="Seleccionar"
-                data={mesesOptions}
-                filter={true}
-                errors={errors}
-                direction={EDirection.column}
-              >
-                {fieldErrors.mesDelAnio && (
-                  <p className="error-message">Este campo es obligatorio</p>
-                )}
-              </SelectComponent>
-              :
-              ''
- }
-              
+              {
+                showMonth ?
+                  <SelectComponent
+                    idInput="mesDelAnio"
+                    control={control}
+                    label="Mes"
+                    className={`select-basic medium ${fieldErrors.mesDelAnio ? 'error' : ''}`}
+                    classNameLabel="text-black big bold text-required"
+                    placeholder="Seleccionar"
+                    data={mesesOptions}
+                    filter={true}
+                    errors={errors}
+                    direction={EDirection.column}
+                    optionSelected={(event) => handleChangeMonth(event)}
+                  >
+                    {fieldErrors.mesDelAnio  &&(
+                      <p className="error-message">Este campo es obligatorio</p>
+                    )}
+                  </SelectComponent>
+                  :
+                  ''
+              }
+
 
               <div className="div-upload">
                 <br />
