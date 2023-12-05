@@ -16,6 +16,7 @@ import { SwitchComponent } from "../../../common/components/Form";
 import { useVinculationService } from "../hooks/vinculation-mga-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import { IBudgetViewPage } from "../interfaces/Budgets";
+import { formaterNumberToCurrency } from "../../../common/utils/helpers";
 
 interface IVinculationMGAFilters {
   inputCodigoMGA: string;
@@ -102,6 +103,9 @@ export function useVinculationMGAData(
       {
         fieldName: "amountActivityDetailed",
         header: "Cantidad",
+         renderCell(row) {
+          return <span>{formaterNumberToCurrency(row.totalCostActivityDetailed)}</span>;
+        },
       },
       {
         fieldName: "totalCostActivityDetailed",
@@ -168,15 +172,7 @@ export function useVinculationMGAData(
         fieldName: "totalCostActivityDetailed",
         header: "Costo",
         renderCell(row) {
-          return (
-            <span>
-              {" "}
-              ${" "}
-              {row.totalCostActivityDetailed
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
-            </span>
-          );
+          return <span>{formaterNumberToCurrency(row.totalCostActivityDetailed)}</span>;
         },
       },
     ];
@@ -189,7 +185,7 @@ export function useVinculationMGAData(
           const rows = [
             {
               title: "Código proyecto",
-              value: `${row.idProject}`
+              value: `${row.idProject}`,
             },
             {
               title: "Código",
@@ -249,7 +245,9 @@ export function useVinculationMGAData(
     values &&
       values.actions == "view" &&
       loadTableData({ budgetId: Number(budgetsId) });
-    values && values.actions == "edit" && loadTableData({ budgetId: Number(budgetsId) });
+    values &&
+      values.actions == "edit" &&
+      loadTableData({ budgetId: Number(budgetsId) });
   }, []);
 
   async function vinculateActivities(message?: boolean): Promise<void> {
