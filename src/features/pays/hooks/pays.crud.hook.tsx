@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import { useForm } from 'react-hook-form';
 import { AppContext } from "../../../common/contexts/app.context";
 import { IMessage } from "../../../common/interfaces/global.interface";
@@ -613,6 +613,14 @@ export function usePaysCrud() {
     });
   };
 
+
+  useEffect(()=> {
+    async (data: IPagoDataSave) => {
+      const { tipoArchivo, mesDelAnio } = data;
+      console.log("hola mund",data);
+      
+    }
+  },[])
 
   const onSubmitPagPays = handleSubmit(async (data: IPagoDataSave) => {
 
