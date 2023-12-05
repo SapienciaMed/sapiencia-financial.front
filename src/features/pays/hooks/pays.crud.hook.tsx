@@ -24,6 +24,7 @@ export function usePaysCrud() {
   const [errorsLoad, setErrorsLoad] = useState([])
   const { infoErrors, setInfoErrors, setLoadingSpinner, setFieldErrors, fieldErrors, setInfoSearchPays } = useStorePays()
   const [selection, setSelection] = useState('')
+  const [dataEmpty, setDataEmpty] = useState(false)
 
   const api = usePaysServices();
 
@@ -83,6 +84,7 @@ export function usePaysCrud() {
 
   async function processExcelFile(base64Data, tipoDocumento) {
     setLoadingSpinner(true)
+    setDataEmpty(false)
     setSelection(tipoDocumento)
     setInfoErrors([])
     return new Promise(async (resolve, reject) => {
@@ -175,6 +177,7 @@ export function usePaysCrud() {
                 if (isMergedRow) {
                   let objErrors = { "rowError": R, "message": `El archivo no cumple la estructura.` };
                   infoErrors.push(objErrors);
+                  setDataEmpty(true)
                 }
               }
               const rowData = {};
@@ -279,7 +282,7 @@ export function usePaysCrud() {
 
                   }
 
-                }else if(tipoDocumento == "AreaFuncional"){
+                } else if (tipoDocumento == "AreaFuncional") {
                   switch (titleDB[C]) {
                     case "Codigo":
                       if (typeof value !== 'number' || !Number.isInteger(value)) {
@@ -306,7 +309,7 @@ export function usePaysCrud() {
                       }
                       break;
                   }
-                }else if(tipoDocumento == "PospreSapiencia"){
+                } else if (tipoDocumento == "PospreSapiencia") {
                   switch (titleDB[C]) {
                     case "PospreOrigen":
                       if (typeof value !== 'number' || !Number.isInteger(value)) {
@@ -363,7 +366,7 @@ export function usePaysCrud() {
                       }
                       break;
                   }
-                }else if(tipoDocumento == "PospreMGA"){
+                } else if (tipoDocumento == "PospreMGA") {
                   switch (titleDB[C]) {
                     case "PospreOrigen":
                       if (typeof value !== 'number' || !Number.isInteger(value)) {
@@ -417,7 +420,7 @@ export function usePaysCrud() {
                       }
                       break;
                   }
-                }else if(tipoDocumento == "RutaPptoInicial"){
+                } else if (tipoDocumento == "RutaPptoInicial") {
                   switch (titleDB[C]) {
                     case "CentroGestor":
                       if (typeof value !== 'number' || !Number.isInteger(value)) {
@@ -493,6 +496,7 @@ export function usePaysCrud() {
                     console.log(`Error en la fila ${R}, columna ${C + 1}: La celda está vacía.`);
                     let objErrors = { "rowError": R, "message": `Algún dato está vacío` };
                     infoErrors.push(objErrors);
+                    setDataEmpty(true)
                   }
                 }
 
@@ -515,7 +519,6 @@ export function usePaysCrud() {
 
                   if (uniqueRows.has(key)) {
                     console.log(`Error en la fila ${R}: Duplicado encontrado para RP SAP '${rpSapValue}' y Posición '${posicionValue}'.`);
-                    // let objErrors = { "rowError": R, "message": `Error en la fila ${R}: Duplicado encontrado para RP SAP '${rpSapValue}' y Posición '${posicionValue}'.` };
                     let objErrors = { "rowError": R, "message": `Tiene datos duplicados en el archivo` };
                     infoErrors.push(objErrors);
                     hasDuplicate = true;
@@ -525,7 +528,6 @@ export function usePaysCrud() {
                 } else if (tipoDocumento === "Funds") {
                   if (uniqueRows.has(rpSapValue)) {
                     console.log(`Error en la fila ${R}: Duplicado encontrado para el codigo${rpSapValue}'.`);
-                    // let objErrors = { "rowError": R, "message": `Error en la fila ${R}: Duplicado encontrado para el CODIGO'${rpSapValue}'.` };
                     let objErrors = { "rowError": R, "message": `Tiene datos duplicados en el archivo` };
                     infoErrors.push(objErrors);
                     hasDuplicate = true;
@@ -534,20 +536,7 @@ export function usePaysCrud() {
                   }
                 }
               }
-              /* 
-                            if (rpSapValue !== undefined && posicionValue !== undefined) {
-                              const key = `${rpSapValue}-${posicionValue}`;
-              
-                              if (uniqueRows.has(key)) {
-                                console.log(`Error en la fila ${R}: Duplicado encontrado para RP SAP '${rpSapValue}' y Posición '${posicionValue}'.`);
-                                let objErrors = { "rowError": R, "message": `Error en la fila ${R}: Duplicado encontrado para RP SAP '${rpSapValue}' y Posición '${posicionValue}'.` };
-                                infoErrors.push(objErrors);
-                                hasDuplicate = true;
-                              } else {
-                                uniqueRows.add(key);
-                              }
-              
-                            } */
+
               if (tipoDocumento == "Pagos") {
                 if (rowData['PAG_VALOR_CAUSADO'] === 0 && rowData['PAG_VALOR_PAGADO'] === 0) {
                   console.log(`Error en la fila ${R}: Ambos 'PAG_VALOR_CAUSADO' y 'PAG_VALOR_PAGADO' no pueden ser 0.`);
@@ -560,26 +549,29 @@ export function usePaysCrud() {
                 const posicionValue = rowData['POSICION'];
                 const rpSapValue = rowData['PAG_CODVRP_VINCULACION_RP'];
 
-                const responseValidate = await api.validateExitsRp({
-                  "posicion": posicionValue,
-                  "consecutivoSap": rpSapValue
-                });
+                if (dataEmpty) {
 
-                if (responseValidate['operation']['code'] == "FAIL") {
-                  let objErrors = { "rowError": R, "message": `EL RP no existe` };
-                  infoErrors.push(objErrors);
+                  const responseValidate = await api.validateExitsRp({
+                    "posicion": posicionValue,
+                    "consecutivoSap": rpSapValue
+                  });
 
-                } else {
-                  let datos = responseValidate['data']['datas'];
-                  let valorFinal = datos.valorFinal;
-
-                  let sumValues = parseInt(rowData['PAG_VALOR_CAUSADO']) + parseInt(rowData['PAG_VALOR_PAGADO']);
-
-                  if (sumValues < valorFinal) {
-                    let objErrors = { "rowError": R, "message": `El valor del RP es mayor del valor causado+pagado` };
+                  if (responseValidate['operation']['code'] == "FAIL") {
+                    let objErrors = { "rowError": R, "message": `EL RP no existe` };
                     infoErrors.push(objErrors);
+                  }else {
+                    let datos = responseValidate['data']['datas'];
+                    let valorFinal = datos.valorFinal;
+  
+                    let sumValues = parseInt(rowData['PAG_VALOR_CAUSADO']) + parseInt(rowData['PAG_VALOR_PAGADO']);
+  
+                    if (sumValues < valorFinal) {
+                      let objErrors = { "rowError": R, "message": `El valor del RP es mayor del valor causado+pagado` };
+                      infoErrors.push(objErrors);
+                    }
                   }
-                }
+
+                } 
               }
 
             }
@@ -614,13 +606,13 @@ export function usePaysCrud() {
   };
 
 
-  useEffect(()=> {
+  useEffect(() => {
     async (data: IPagoDataSave) => {
       const { tipoArchivo, mesDelAnio } = data;
-      console.log("hola mund",data);
-      
+      console.log("hola mund", data);
+
     }
-  },[])
+  }, [])
 
   const onSubmitPagPays = handleSubmit(async (data: IPagoDataSave) => {
 
