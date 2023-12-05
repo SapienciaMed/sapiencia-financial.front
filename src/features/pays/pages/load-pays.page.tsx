@@ -17,6 +17,7 @@ import UploadComponent from "../../pac/createPac/components/UploadComponent";
 import useStorePays from "../../../store/store-pays";
 import { Backdrop, CircularProgress } from '@mui/material';
 import '../../../styles/pays.scss';
+import { useNavigate } from "react-router-dom";
 
 function LoadPays() {
   const {
@@ -40,11 +41,12 @@ function LoadPays() {
   const [isVisibleErrors, setIsVisibleErrors] = useState(false);
   const [isUploadFileSt, setIsUploadFileSt] = useState(false);
   const [errorsSt, setErrorsSt] = useState([]);
-  const { infoErrors, setInfoErrors, loadingSpinner,fieldErrors } = useStorePays()
+  const { infoErrors, setInfoErrors, loadingSpinner,fieldErrors, setExerciseLoad } = useStorePays()
   const [defaultExercise, setDefaultExercise] = useState(actualFullYear.toString())
   const [showBtnValidation, setShowBtnValidation] = useState(false)
   const [showTableErrors, setShowTableErrors] = useState(false)
   const [showMonth, setShowMonth] = useState(false)
+  const navigate = useNavigate();
   const getFile = (newFile: File) => {
     setFile(newFile);
     return newFile;
@@ -58,6 +60,10 @@ function LoadPays() {
       setIsUploadFileSt(false);
     }
   };
+
+  useEffect(()=>{
+    setExerciseLoad(actualFullYear.toString());
+  },[])
 
   const mesesDelAnio = [
     "Enero",
@@ -104,8 +110,10 @@ function LoadPays() {
 
       if (enteredValue.length === maxYearLength && !isNaN(enteredYear) && enteredYear < currentYear) {
         setDefaultExercise(currentYear.toString());
+        setExerciseLoad(currentYear.toString());
       } else {
         setDefaultExercise(enteredValue);
+        setExerciseLoad(enteredValue.toString());
       }
     }
   };
@@ -400,7 +408,7 @@ function LoadPays() {
       <div className="buttons-bot" style={{ position: 'fixed', bottom: 0, right: 0, display: 'flex', justifyContent: 'flex-end', width: '25%', marginBottom: '15px', marginRight: '15px' }}>
         <span
           className="bold text-center button"
-          onClick={() => { console.log("gola") }}
+          onClick={() => { navigate("./../"); }}
           style={{
             marginTop: '10px',
             marginRight: '10px',
