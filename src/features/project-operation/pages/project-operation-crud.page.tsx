@@ -8,6 +8,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { EDirection } from "../../../common/constants/input.enum";
 import { useProjectOperationCrud } from "../hook/project-operation-crud.hook";
+import { Controller } from "react-hook-form";
 
 interface IAppProps {
   action: "new" | "edit";
@@ -17,7 +18,6 @@ function ProjectOperationCrud({ action }: IAppProps) {
   const { id: projectOperationalId } = useParams();
   const navigate = useNavigate();
   const [exerciseSt, setExerciseSt] = useState(null);
-
   const {
     errors,
     onSubmitTab,
@@ -25,45 +25,9 @@ function ProjectOperationCrud({ action }: IAppProps) {
     setMessage,
     register,
     control,
-    dateFromDefaultSt,
-    dateToDefaultSt,
     actualFullYear,
-  } = useProjectOperationCrud(projectOperationalId, exerciseSt);
-
-  const [isModifyDateFrom, setIsModifyDateFrom] = useState(false);
-  const [isModifyDateTo, setIsModifyDateTo] = useState(false);
-  const [isBtnDisabled, setIsBtnDisabled] = useState(true);
-
-  const [dateFromDefaultStValidateDate, setDateFromDefaultStValidateDate] =
-    useState(dateFromDefaultSt);
-  const [dateToDefaultStValidateDate, setDateToDefaultStValidateDate] =
-    useState(dateToDefaultSt);
-
-  useEffect(() => {
-    if (action == "edit") {
-      setIsBtnDisabled(true);
-    } else {
-      setIsBtnDisabled(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    setIsModifyDateFrom(true);
-  }, [exerciseSt]);
-
-  useEffect(() => {
-    setIsModifyDateTo(true);
-  }, [exerciseSt]);
-
-  useEffect(() => {
-    if (exerciseSt == "" || !exerciseSt || exerciseSt.length != 4) {
-      setDateFromDefaultStValidateDate("");
-      setDateToDefaultStValidateDate("");
-    } else {
-      setDateFromDefaultStValidateDate(dateFromDefaultSt);
-      setDateToDefaultStValidateDate(dateToDefaultSt);
-    }
-  }, [exerciseSt]);
+    isBtnDisabled,
+  } = useProjectOperationCrud(projectOperationalId, exerciseSt, action);
 
   return (
     <div className="crud-page">
@@ -94,35 +58,49 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 className="select-basic medium"
                 classNameLabel="text-black big bold text-required"
                 placeholder={"Seleccionar"}
-                data={[{ id: "1", name: "90000000", value: "1" }]}
+                data={[{ id: "1", name: "9000000", value: "1" }]}
                 filter={true}
                 fieldArray={true}
                 errors={errors}
                 disabled={true}
               />
-              <InputComponent
-                idInput="name"
-                className="input-basic medium"
-                typeInput="text"
-                onChange={() => setIsBtnDisabled(false)}
-                register={register}
-                label="Denominación"
-                classNameLabel="text-black big bold text-required"
-                direction={EDirection.column}
-                errors={errors}
+              <Controller
+                control={control}
+                name={"name"}
+                render={({ field }) => (
+                  <InputComponent
+                    id={field.name}
+                    idInput={field.name}
+                    className="input-basic medium"
+                    typeInput="text"
+                    register={register}
+                    onChange={field.onChange}
+                    label="Denominación"
+                    classNameLabel="text-black big bold text-required"
+                    direction={EDirection.column}
+                    errors={errors}
+                  />
+                )}
               />
-              <InputComponent
-                idInput="exercise"
-                className="input-basic medium"
-                typeInput="number"
-                register={register}
-                label="Vigencia"
-                classNameLabel="text-black big bold text-required"
-                direction={EDirection.column}
-                errors={errors}
-                onChange={(e) => setExerciseSt(e.target.value)}
-                min={actualFullYear}
-                disabled={action === "new" ? false : true}
+              <Controller
+                control={control}
+                name={"exercise"}
+                render={({ field }) => (
+                  <InputComponent
+                    id={field.name}
+                    idInput={field.name}
+                    className="input-basic medium"
+                    typeInput="number"
+                    register={register}
+                    label="Vigencia"
+                    classNameLabel="text-black big bold text-required"
+                    direction={EDirection.column}
+                    errors={errors}
+                    onChange={(e) => setExerciseSt(e.target.value)}
+                    min={actualFullYear}
+                    disabled={action === "new" ? false : true}
+                  />
+                )}
               />
             </section>
             <section className="grid-form-2-container-reverse grid-column-four mt-5px">
@@ -140,91 +118,81 @@ function ProjectOperationCrud({ action }: IAppProps) {
                 filter={true}
                 fieldArray={true}
                 errors={errors}
-                optionSelected={() => setIsBtnDisabled(false)}
               />
-
-              <InputComponent
-                idInput="dateFrom"
-                className="input-basic medium"
-                typeInput="date"
-                register={register}
-                value={
-                  !isModifyDateFrom
-                    ? undefined
-                    : !exerciseSt || exerciseSt?.length == 4
-                    ? dateFromDefaultSt
-                    : undefined
-                }
-                onChange={(e) => {
-                  setIsModifyDateFrom(false);
-                  setDateFromDefaultStValidateDate(e.target.value);
-                  setIsBtnDisabled(false);
-                }}
-                label="Validez desde"
-                classNameLabel="text-black big bold text-required"
-                direction={EDirection.column}
-                errors={errors}
+              <Controller
+                control={control}
+                name={"dateFrom"}
+                render={({ field }) => (
+                  <InputComponent
+                    id={field.name}
+                    idInput={field.name}
+                    className="input-basic medium"
+                    typeInput="date"
+                    register={register}
+                    onChange={field.onChange}
+                    label="Validez desde"
+                    classNameLabel="text-black big bold text-required"
+                    direction={EDirection.column}
+                    errors={errors}
+                  />
+                )}
               />
-
-              <InputComponent
-                idInput="dateTo"
-                className="input-basic medium"
-                typeInput="date"
-                register={register}
-                value={
-                  !isModifyDateTo
-                    ? undefined
-                    : !exerciseSt || exerciseSt?.length == 4
-                    ? dateToDefaultSt
-                    : undefined
-                }
-                onChange={(e) => {
-                  setIsModifyDateTo(false);
-                  setDateToDefaultStValidateDate(e.target.value);
-                  setIsBtnDisabled(false);
-                }}
-                label="Validez hasta"
-                classNameLabel="text-black big bold text-required"
-                direction={EDirection.column}
-                errors={errors}
+              <Controller
+                control={control}
+                name={"dateTo"}
+                render={({ field }) => (
+                  <InputComponent
+                    id={field.name}
+                    idInput={field.name}
+                    className="input-basic medium"
+                    typeInput="date"
+                    register={register}
+                    onChange={field.onChange}
+                    label="Validez hasta"
+                    classNameLabel="text-black big bold text-required"
+                    direction={EDirection.column}
+                    errors={errors}
+                  />
+                )}
               />
             </section>
+            <section className="container-button-core mt-24px">
+              <div className="display-align-flex-center">
+                <ButtonComponent
+                  form="useQueryForm"
+                  value="Cancelar"
+                  type="button"
+                  className="button-clean-fields bold"
+                  action={() => {
+                    showModal({
+                      title: "Cancelar",
+                      description:
+                        "¿Está segur@ que desea cancelar el proyecto?",
+                      show: true,
+                      OkTitle: "Aceptar",
+                      cancelTitle: "Cancelar",
+                      onOk: () => {
+                        setMessage({});
+                        navigate(
+                          "/gestion-financiera/presupuesto/proyecto-funcionamiento"
+                        );
+                      },
+                      onCancel() {
+                        setMessage({});
+                      },
+                    });
+                  }}
+                />
+                <ButtonComponent
+                  className="button-search"
+                  value="Guardar"
+                  type="submit"
+                  form="form-acts"
+                  disabled={!isBtnDisabled}
+                />
+              </div>
+            </section>
           </FormComponent>
-          <section className="container-button-core mt-24px">
-            <div className="display-align-flex-center">
-              <ButtonComponent
-                form="useQueryForm"
-                value="Cancelar"
-                type="button"
-                className="button-clean-fields bold"
-                action={() => {
-                  showModal({
-                    title: "Cancelar",
-                    description: "¿Está segur@ que desea cancelar el proyecto?",
-                    show: true,
-                    OkTitle: "Aceptar",
-                    cancelTitle: "Cancelar",
-                    onOk: () => {
-                      setMessage({});
-                      navigate(
-                        "/gestion-financiera/presupuesto/proyecto-funcionamiento"
-                      );
-                    },
-                    onCancel() {
-                      setMessage({});
-                    },
-                  });
-                }}
-              />
-              <ButtonComponent
-                className="button-search"
-                value="Guardar"
-                type="submit"
-                form="form-acts"
-                disabled={isBtnDisabled}
-              />
-            </div>
-          </section>
         </div>
       </div>
     </div>

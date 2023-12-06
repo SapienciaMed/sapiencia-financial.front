@@ -11,10 +11,28 @@ import { EResponseCodes } from "../../../common/constants/api.enum";
 
 export function useProjectOperationCrud(
   projectOperationalId: string,
-  exerciseSt: number
+  exerciseSt: number,
+  action: string
 ) {
   const dateToday = new Date();
   const resolver = useYupValidationResolver(projectOperationCrudValidator);
+  const {
+    handleSubmit,
+    register,
+    control,
+    formState: { errors, isValid },
+    setValue: setValueRegister,
+    watch,
+    getValues,
+  } = useForm<IProjectOperation>({
+    resolver,
+    mode: "all",
+  });
+  const inputValueName = watch(["name"]);
+  const inputValueIsActivated = watch(["isActivated"]);
+  const inputValueDateFrom = watch(["dateFrom"]);
+  const inputValueDateTo = watch(["dateTo"]);
+  const inputValue = watch(["name", "isActivated", "dateFrom", "dateTo"]);
   const { setMessage } = useContext(AppContext);
 
   const {
@@ -32,6 +50,9 @@ export function useProjectOperationCrud(
 
   const [dateFromDefaultSt, setDateFromDefaultSt] = useState(dateFromDefault);
   const [dateToDefaultSt, setDateToDefaultSt] = useState(dateToDefault);
+  const [isBtnDisabled, setIsBtnDisabled] = useState(false);
+  const [projectOperationSt, setProjectOperationSt] = useState<any>({});
+  const [newExercise, setNewExercise] = useState(0);
 
   useEffect(() => {
     setValueRegister("dateFrom", "");
@@ -52,6 +73,7 @@ export function useProjectOperationCrud(
         setDateToDefaultSt(`${exerciseSt}-12-31`);
         setValueRegister("dateFrom", `${exerciseSt}-01-01`);
         setValueRegister("dateTo", `${exerciseSt}-12-31`);
+        setNewExercise(+exerciseSt);
       } else {
         setValueRegister("dateFrom", `${exerciseSt}-01-01`);
         setValueRegister("dateTo", `${exerciseSt}-12-31`);
@@ -60,23 +82,6 @@ export function useProjectOperationCrud(
       }
     }
   }, [exerciseSt]);
-
-  const {
-    handleSubmit,
-    register,
-    control,
-    formState: { errors },
-    setValue: setValueRegister,
-    watch,
-    getValues,
-  } = useForm<IProjectOperation>({
-    defaultValues: {
-      exercise: actualFullYear,
-      name: "Funcionamiento",
-    },
-    mode: "onSubmit",
-    resolver,
-  });
 
   // Effect que activa el watch que detecta los cambios en todo el form
   const [isAllowSave, setIsAllowSave] = useState(false);
@@ -87,8 +92,11 @@ export function useProjectOperationCrud(
   }, [watch]);
 
   const onSubmitTab = handleSubmit(async (data: IProjectOperation) => {
-    data.userCreate = "Usuario";
-    data.exercise = exerciseSt;
+    if (action === "new") {
+      data.userCreate = "Usuario";
+      data.exercise = newExercise;
+    }
+    data.number = "9000000";
 
     showModal({
       title: "Guardar",
@@ -117,7 +125,6 @@ export function useProjectOperationCrud(
       ? await createProjectOperation(data)
       : await UpdateProjectOperation(data.id, data);
 
-    // console.log({ response });
     if (response.operation.code == "OK" && !Object(response).data.data?.errno) {
       showModal({
         title: "Guardado",
@@ -175,8 +182,6 @@ export function useProjectOperationCrud(
     });
   };
 
-  const [projectOperationSt, setProjectOperationSt] = useState();
-
   useEffect(() => {
     GetProjectOperation(parseInt(projectOperationalId)).then((response) => {
       if (response.operation.code === EResponseCodes.OK) {
@@ -187,16 +192,50 @@ export function useProjectOperationCrud(
 
   useEffect(() => {
     if (!projectOperationSt) return;
-    setValueRegister("id", Object(projectOperationSt).id);
-    setValueRegister("name", Object(projectOperationSt).name);
-    setValueRegister("exercise", Object(projectOperationSt).exercise);
-    setValueRegister(
-      "isActivated",
-      `${Object(projectOperationSt).isActivated}`
-    );
-    setValueRegister("dateFrom", Object(projectOperationSt).dateFrom);
-    setValueRegister("dateTo", Object(projectOperationSt).dateTo);
+
+    if (action === "new") {
+      setValueRegister("name", "Funcionamiento");
+      setValueRegister("exercise", !exerciseSt ? actualFullYear : exerciseSt);
+      setValueRegister("dateFrom", dateFromDefaultSt);
+      setValueRegister("dateTo", dateToDefaultSt);
+      setValueRegister("entityId", 1);
+      setValueRegister("isActivated", `1`);
+      setValueRegister("number", "1");
+    } else {
+      setValueRegister("id", Object(projectOperationSt).id);
+      setValueRegister("name", Object(projectOperationSt).name);
+      setValueRegister("exercise", Object(projectOperationSt).exercise);
+      setValueRegister(
+        "isActivated",
+        `${Object(projectOperationSt).isActivated}`
+      );
+      setValueRegister("dateFrom", projectOperationSt.dateFrom);
+      setValueRegister("dateTo", projectOperationSt.dateTo);
+      setValueRegister("entityId", 1);
+      setValueRegister("number", "1");
+    }
   }, [projectOperationSt]);
+
+  useEffect(() => {
+    setIsBtnDisabled(() => {
+      if (action === "new") {
+        return inputValue.some((value) => value != "" && value != undefined);
+      } else {
+        if (
+          inputValueName.some((value) => value != projectOperationSt.name) ||
+          inputValueIsActivated.some(
+            (value) => value != projectOperationSt.isActivated
+          ) ||
+          inputValueDateFrom.some(
+            (value) => value != projectOperationSt.dateFrom
+          ) ||
+          inputValueDateTo.some((value) => value != projectOperationSt.dateTo)
+        ) {
+          return true;
+        }
+      }
+    });
+  }, [inputValue]);
 
   return {
     control,
@@ -211,5 +250,8 @@ export function useProjectOperationCrud(
     dateFromDefaultSt,
     dateToDefaultSt,
     actualFullYear,
+    isBtnDisabled,
+    setIsBtnDisabled,
+    isValid,
   };
 }
