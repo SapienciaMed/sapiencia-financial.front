@@ -199,7 +199,7 @@ export function useProjectOperationCrud(
       setValueRegister("dateFrom", dateFromDefaultSt);
       setValueRegister("dateTo", dateToDefaultSt);
       setValueRegister("entityId", 1);
-      setValueRegister("isActivated", `1`);
+      setValueRegister("isActivated", `0`);
       setValueRegister("number", "1");
     } else {
       setValueRegister("id", Object(projectOperationSt).id);
