@@ -125,8 +125,8 @@ export function usePaysCrud() {
               titleExcel = ['Consecutivo RP SAP', 'Posicion', 'Causado', 'Pagado'];
               break;
             case "Funds":
-              titleDB = ["FND_DENOMINACION", "FND_DESCRIPCION", "FND_VIGENTE_DESDE", "FND_VIGENTE_HASTA"];
-              titleExcel = ['DENOMINACION', 'DESCRIPCION', 'VALIDEZ DE', 'VALIDEZ A'];
+              titleDB = ["FND_CODECP_ENTIDAD","FND_NUMERO","FND_DENOMINACION", "FND_DESCRIPCION", "FND_VIGENTE_DESDE", "FND_VIGENTE_HASTA"];
+              titleExcel = ['ENTIDAD CP','CODIGO','DENOMINACION', 'DESCRIPCION', 'VALIDEZ DE', 'VALIDEZ A'];
 
               break;
             case "AreaFuncional":
@@ -557,25 +557,25 @@ export function usePaysCrud() {
                     "posicion": posicionValue,
                     "consecutivoSap": rpSapValue
                   });
- 
+
                   if (responseValidate['operation']['code'] == "FAIL") {
                     let objErrors = { "rowError": R, "message": `EL RP no existe` };
                     infoErrors.push(objErrors);
-                  }else {
+                  } else {
                     let datos = responseValidate['data']['datas'];
                     let valorFinal = datos.valorFinal;
-  
+
                     let sumValues = parseInt(rowData['PAG_VALOR_CAUSADO']) + parseInt(rowData['PAG_VALOR_PAGADO']);
                     console.log(sumValues);
                     console.log(valorFinal);
-                    
+
                     if (sumValues < valorFinal) {
                       let objErrors = { "rowError": R, "message": `El valor del RP es mayor del valor causado+pagado` };
                       infoErrors.push(objErrors);
                     }
                   }
 
-                } 
+                }
               }
 
             }
@@ -588,7 +588,7 @@ export function usePaysCrud() {
           }
           if (infoErrors.length > 0) {
             console.log(infoErrors);
-            
+
             resolve(false);
           } else {
             resolve(true);
@@ -624,25 +624,26 @@ export function usePaysCrud() {
 
     const { tipoArchivo, mesDelAnio, filedata } = data;
     let tryReturn = false;
-    
+
     // Validar campos
     if (data.tipoArchivo === undefined) {
       updateFieldError('tipoArchivo', "vacio");
       tryReturn = true;
     }
-
-    if(data.mesDelAnio === undefined) {
-      updateFieldError('mesDelAnio', "vacio");
-      tryReturn = true;
+    if (tipoArchivo == "Pagos") {
+      if (data.mesDelAnio === undefined) {
+        updateFieldError('mesDelAnio', "vacio");
+        tryReturn = true;
+      }
     }
 
-    if(tryReturn){
+    if (tryReturn) {
 
       console.log("no es posible continuar");
       return
     }
 
-    
+
     let formData = new FormData();
     let fileExcel = data.filedata;
     const base64Data = await readFileAsBase64(fileExcel);
@@ -650,18 +651,18 @@ export function usePaysCrud() {
     const mes = data.mesDelAnio;
     const ejercicio = exerciseLoad;
 
-   
+
     const verification = await processExcelFile(base64Data, tipoDocumento);
-    
+
     if (verification === true) {
-  
-      
+
+
       setLoadingSpinner(false);
-    /*   if (selection !== "Pagos") {
-        console.log("No esta disponible el guardado");
-        setLoadingSpinner(false);
-        return;
-      } */
+      /*   if (selection !== "Pagos") {
+          console.log("No esta disponible el guardado");
+          setLoadingSpinner(false);
+          return;
+        } */
       let exercise = ejercicio.toString();
       console.log("entr1", exercise);
       let obInfo = {
