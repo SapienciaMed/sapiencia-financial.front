@@ -189,23 +189,6 @@ const CdpCrudPage = () => {
         return;
       }
   
-   /*    const hasEmptyFieldsOrZeros = icdArrWithBalanceCheck.some((item) => {
-        for (const key in item) {
-          if (key === 'posicion' || key === 'id') {
-            continue; // Saltar 'posicion' e 'id'
-          }
-  
-          if (typeof item[key] === 'string' && (item[key].trim() === '' || item[key] === '0')) {
-            console.log("Campo vacío o con valor en 0 encontrado:", key, item[key]);
-            return true;
-          } else if (typeof item[key] === 'number' && item[key] === 0) {
-            console.log("Campo con valor en 0 encontrado:", key, item[key]);
-            return true;
-          }
-        }
-        return false;
-      }); */
-  
       const emptyHeadInfo = Array.isArray(formHeadInfo) && formHeadInfo.some((item) => {
         if (item == null || item === "") {
           console.log("Campo necesario");
@@ -358,10 +341,6 @@ const CdpCrudPage = () => {
         console.error("Error al enviar los datos:", error);
       }
     } 
-
-
-
-
   };
 
 
@@ -400,7 +379,6 @@ const CdpCrudPage = () => {
   };
 
   useEffect(() => {
-    // Check if formDataCdpRoute is not empty
     if (formDataCdpRoute.length > 0) {
       // Update dataComplete based on formDataCdpRoute
       const newDataComplete = dataComplete.map((existingObj) => {
