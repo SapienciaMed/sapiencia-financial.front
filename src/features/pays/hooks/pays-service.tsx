@@ -21,6 +21,11 @@ export function usePaysServices() {
         return post(`${roleUrlPagos}${endpoint}`, data);
     }
 
+    async function getAllFunds(): Promise<ApiResponse<any>> {
+        const endpoint: string = `/api/v1/funds/get-all/`;
+        return get(`${endpoint}`);
+    }
+
     async function validateExitsRp(data: any): Promise<ApiResponse<any>> {
         const endpoint: string = "/validate-rp";
         return post(`${roleUrlPagos}${endpoint}`, data);
@@ -29,7 +34,8 @@ export function usePaysServices() {
     return {
         loadPays,
         getPays,
-        validateExitsRp
+        validateExitsRp,
+        getAllFunds
      }
     };
 
