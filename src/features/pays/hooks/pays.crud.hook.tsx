@@ -167,7 +167,12 @@ export function usePaysCrud() {
           });
 
           if (isValidTitles) {
-
+            let DatFundsInfp = []
+            if(tipoDocumento === "Funds"){
+              const responseValidate = await api.getAllFunds();
+              let dataResponse = responseValidate?.data
+              DatFundsInfp.push(dataResponse)
+            }
             const uniqueRows = new Set();
 
             for (let R = range.s.r + 1; R <= range.e.r; ++R) {
@@ -243,7 +248,7 @@ export function usePaysCrud() {
                         infoErrors.push(objErrors);
                       }
                       break;
-                    case "FND_CODIGO":
+                    case "FND_NUMERO":
                       if (typeof value !== 'number' || !Number.isInteger(value)) {
                         console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
                         if (value === undefined) { } else {
@@ -511,7 +516,7 @@ export function usePaysCrud() {
                 rpSapValue = rowData['PAG_CODVRP_VINCULACION_RP'];
                 posicionValue = rowData['POSICION'];
               } else if (tipoDocumento == "Funds") {
-                rpSapValue = rowData['FND_CODIGO'];
+                rpSapValue = rowData['FND_NUMERO'];
 
               }
 
@@ -575,6 +580,20 @@ export function usePaysCrud() {
                     }
                   }
 
+                }
+              }else if(tipoDocumento === "Funds"){
+               let isExisting = false;
+               
+                DatFundsInfp.forEach(element => {
+                  
+                  if(element.number === rowData['FND_NUMERO'].toString()){
+                    isExisting = true; 
+                  }
+                });
+
+                if(isExisting){
+                  let objErrors = { "rowError": R, "message": `el fondo ya existe.` };
+                  infoErrors.push(objErrors);
                 }
               }
 
