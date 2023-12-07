@@ -58,8 +58,9 @@ const CdpAmountAssoc = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const indexOfLastForm = currentPage * formsPerPage;
     const indexOfFirstForm = indexOfLastForm - formsPerPage;
-    const currentForms = formularios.slice(indexOfFirstForm, indexOfLastForm);
-    const totalForms = formularios.length;
+    const [countNewFormsSt, setCountNewFormsSt] = useState([])
+    const currentForms = countNewFormsSt.slice(indexOfFirstForm, indexOfLastForm);
+    const totalForms = countNewFormsSt.length;
    // const [totalPages, setTotalPages] = useState(Math.ceil(totalForms / formsPerPage));
     let totalPages = Math.ceil(totalForms / formsPerPage);
     const [deleteRouteTwo, setDeleteRouteTwo] = useState(false);
@@ -91,11 +92,11 @@ const CdpAmountAssoc = () => {
               }
         }; */
 
-    const [countNewFormsSt, setCountNewFormsSt] = useState([])
+
     
     
     const handleAgregarFormulario = () => {
-        let arrData = formularios;
+        let arrData = countNewFormsSt;
           const nextId = formularios.reduce((max, obj) => (obj.id > max ? obj.id : max), 0) + 1;
           const nextId2 = countNewFormsSt.reduce((max, obj) => (obj.id > max ? obj.id : max), 0) + 1;
         console.log("nextID1", nextId)
@@ -108,8 +109,8 @@ const CdpAmountAssoc = () => {
         }
 
         const newFormulario = {
-            id: nextId,
-            posicion: nextId, // Igualar posición al ID
+            id: nextId2,
+            posicion: nextId2, // Igualar posición al ID
             ...othersParams,
         };
 
@@ -117,26 +118,44 @@ const CdpAmountAssoc = () => {
        // const newFormulario = { id: formularios.length > 0 ? formularios.reduce((max, obj) => (obj.id > max ? obj.id : max), 0)+1 : 0 };
         arrData.push(newFormulario)
         setCountNewFormsSt(arrData)
-        setTimeout(() => console.log("formularios 2", countNewFormsSt), 1000);
+        setTimeout(() => console.log("formularios 2", arrData), 500);
         setFormularios(countNewFormsSt)
         
         console.log(nextId);
-        console.log("newF", formularios);
+        console.log("newF", countNewFormsSt);
         setTimeout(() => {
               //setDeleteRouteTwo(true);
             }, 500);
     };
 
-    useEffect(()=>{
+/*     useEffect(()=>{
         handleAgregarFormulario()
-    },[])
+    },[]) */
 
 
-    const handleEliminar = (formNumber) => {
+    const handleEliminar = async (formNumber) => {
+        console.log("formNumber",formNumber);
+        console.log("firstIndex",indexOfFirstForm);
+        console.log("counTNewSt",countNewFormsSt);
+        console.log("currentPage",currentPage);
+        console.log("currentForms",currentForms);
+    
         // Remove form from countNewFormsSt
-        setCountNewFormsSt((prevFormularios) =>
+ /*        setCountNewFormsSt((prevFormularios) =>
             prevFormularios.filter((_, index) => indexOfFirstForm + index !== formNumber)
         );
+    */
+   let newSize = 0;
+        setCountNewFormsSt((prevFormularios) => {
+            // Usa filter para excluir el formulario con el id correspondiente
+            const updatedFormularios = prevFormularios.filter((data) => data.id !== formNumber);
+            
+            // Imprime el array actualizado
+            console.log("counTNewStSSQ AC", updatedFormularios);
+            newSize = updatedFormularios.length;
+            return updatedFormularios;
+          });
+          
     
         // Update form count
         setFormCount((prevCount) => prevCount - 1);
@@ -145,16 +164,20 @@ const CdpAmountAssoc = () => {
     /*     setObjectSendData((prevFormularios) =>
             prevFormularios.filter((_, index) => indexOfFirstForm + index !== formNumber)
         ); */
-    
-        // If there's only one form on a non-first page, go to the previous page
-        if (currentForms.length === 0 && currentPage > 1) {
-            setCurrentPage((prevPage) => prevPage - 1);
-        }
-        //setTotalPages(Math.ceil(currentForms.length / formsPerPage))
 
-        console.log(totalPages);
-        
-        
+   
+      let formulaTotalData = newSize / totalPages;
+      console.log("este es el numero",formulaTotalData);
+      console.log("esas",newSize);
+      
+      if (currentPage > 1 ) {
+        if (formulaTotalData % 1 === 0) {
+            setCurrentPage((prevPage) => prevPage - 1);
+          } else {
+            console.log("Es un número float");
+          }
+    
+        }
     };
     
 
