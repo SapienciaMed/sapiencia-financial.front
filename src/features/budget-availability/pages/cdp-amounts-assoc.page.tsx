@@ -120,7 +120,7 @@ const CdpAmountAssoc = () => {
         setObjectSendData((prevForm) => {
             let arrDataInformation = prevForm['amounts'];
             let newArrDataObj = [];
-            const updatedFormularios = arrDataInformation.filter((data) => data.id !== formNumber);
+            const updatedFormularios = arrDataInformation?.filter((data) => data.id !== formNumber);
             return updatedFormularios;
         });
 
@@ -201,11 +201,23 @@ const CdpAmountAssoc = () => {
             navigate("./");
         };
         try {
-            const icdArrWithBalanceCheck = objectSendData["amounts"];
-
-            const invalidBalances = icdArrWithBalanceCheck.filter(
-                (item) => parseInt(item.valorInicial) >= parseInt(item.balance)
-            );
+            const icdArrWithBalanceCheck = objectSendData["amounts"].filter(item => {
+                if (Array.isArray(item)) {
+                  return item.length > 0;
+                } else if (item !== undefined && item !== null) {
+                  return item.idRppCode !== "0";
+                }
+                return false;
+              });
+        
+            const invalidBalances = icdArrWithBalanceCheck.filter(item => {
+                console.log(item);
+                
+                if (parseInt(item.valorInicial) >= parseInt(item.balance) || item.valorInicial === "0") {
+                  return true; // Marcar como elemento inválido
+                }
+                return false; // Marcar como elemento válido
+              });
 
             if (invalidBalances.length !== 0) {
                 setMessage({
