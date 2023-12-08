@@ -5,14 +5,18 @@ import { useTransferAreaCrudPage } from '../hook/transfer-area-crud.hook';
 import { Controller } from 'react-hook-form';
 import { EDirection } from '../../../../common/constants/input.enum';
 import TableDetailComponent from '../../components/table-detail.component';
+import { useParams } from 'react-router-dom';
 
 interface IAppProps {
-    actionForm: "new" | "edit";
-  }
+    actionForm: "new" | "edit" | "view";
+}
 
 function TransferAreaCrudPage({ actionForm }: IAppProps) {
-    const {control, errors, tableColumns, tableActions, isBtnDisable, isAddBtnDisable, tableComponentRef, detailTransferData, totalTransfer,
-        onSubmit, register, onCancel, handleFormSubmit } = useTransferAreaCrudPage()
+
+    const { id } = useParams()
+
+    const { control, errors, tableColumns, tableActions, isBtnDisable, isAddBtnDisable, tableComponentRef, detailTransferData, totalTransfer,
+        onSubmit, register, onCancel, handleFormSubmit } = useTransferAreaCrudPage(actionForm, id)
 
     return (
         <div className="crud-page full-height">
@@ -20,24 +24,29 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
             <section className="main-page full-height">
                 <div className="card-table">
                     <p className="text-black extra-large">
-                        {actionForm === "new" ? "Crear Traslado" : "Editar Traslado"}
+                        {actionForm === "new" ? "Crear Traslado" : actionForm === "edit" ? "Editar Traslado" : "Visualizar Traslado"}
                     </p>
 
                     <section className="card-user">
-                            <div className="title-area"> 
-                                <label className="text-black biggest bold">
-                                    Datos básicos
-                                </label>
-                                <div className='title-button text-three large' style={{marginTop: '0px'}}>
-                                    <ButtonComponent 
-                                        className={`button-clean-fields color-lila ${ isAddBtnDisable && 'color-gray'}`}
-                                        value='Añadir valores '  
-                                        action={() => { !isAddBtnDisable && handleFormSubmit() }}
-                                        disabled={isAddBtnDisable}  
-                                    /> 
-                                    <BiPlusCircle className={`${isAddBtnDisable && 'color-gray'}`}/>
-                                </div>
-                            </div>
+                        <div className="title-area">
+                            <label className="text-black biggest bold">
+                                Datos básicos
+                            </label>
+                            {
+                                actionForm !== 'view' && (
+                                    <div className='title-button text-three large' style={{ marginTop: '0px' }}>
+                                        <ButtonComponent
+                                            className={`button-clean-fields color-lila ${isAddBtnDisable && 'color-gray'}`}
+                                            value='Añadir valores '
+                                            action={() => { !isAddBtnDisable && handleFormSubmit() }}
+                                            disabled={isAddBtnDisable}
+                                        />
+                                        <BiPlusCircle className={`${isAddBtnDisable && 'color-gray'}`} />
+                                    </div>
+                                )
+                            }
+
+                        </div>
                         <FormComponent action={onSubmit} id="transfer-form" className="funds-form">
                             <div className="funcionality-filters-container">
                                 <Controller
@@ -58,7 +67,8 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                                                 direction={EDirection.column}
                                                 errors={errors}
                                                 onChange={field.onChange}
-                                            /> 
+                                                disabled={actionForm == 'view'}
+                                            />
                                         )
                                     }}
                                 />
@@ -80,7 +90,8 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                                                 direction={EDirection.column}
                                                 errors={errors}
                                                 onChange={field.onChange}
-                                            /> 
+                                                disabled={actionForm == 'view'}
+                                            />
                                         )
                                     }}
                                 />
@@ -102,26 +113,27 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                                             direction={EDirection.column}
                                             errors={errors}
                                             onChange={field.onChange}
-                                        /> 
+                                            disabled={actionForm == 'view'}
+                                        />
                                     )
                                 }}
                             />
                         </FormComponent>
                     </section>
-
+                    <>{JSON.stringify(detailTransferData)}</>            
                     {
-                        detailTransferData?.array?.length > 0 && 
-                            <section className="card-user mt-24px">
-                                <TableDetailComponent
-                                    ref={tableComponentRef}
-                                    columns={tableColumns}
-                                    actions={tableActions}
-                                    isShowModal={true}
-                                    titleMessageModalNoResult={"Traslado"}
-                                    ownData={detailTransferData}
-                                    secondaryTitle='Detalles de la ruta'
-                                />
-                            </section>
+                        detailTransferData?.array?.length == 0 &&
+                        <section className="card-user mt-24px">
+                            <TableDetailComponent
+                                ref={tableComponentRef}
+                                columns={tableColumns}
+                                actions={tableActions}
+                                isShowModal={true}
+                                titleMessageModalNoResult={"Traslado"}
+                                ownData={detailTransferData}
+                                secondaryTitle='Detalles de la ruta'
+                            />
+                        </section>
                     }
 
                 </div>
@@ -130,7 +142,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
             <section className="container-button-bot-2">
                 <div className='content-label'>
                     <label className="text-black biggest"> Total Traslado:</label>
-                    <label className="text-black biggest" style={{color: '#533893'}}> $ {totalTransfer} </label>
+                    <label className="text-black biggest" style={{ color: '#533893' }}> $ {totalTransfer} </label>
                 </div>
                 <div className="buttons-bot">
                     <span
@@ -148,7 +160,7 @@ function TransferAreaCrudPage({ actionForm }: IAppProps) {
                     />
                 </div>
             </section>
-            
+
         </div>
     )
 }

@@ -3,7 +3,8 @@ import { IArrayDataSelect, ITransferMovesGroups } from "../interfaces/global.int
 import { generarIdAleatorio } from "./randomGenerate";
 
 export function filterElementsMeetConditions(arrayDataSelect: IArrayDataSelect, transferMovesGroups: ITransferMovesGroups[]): any[] {
-
+  console.log("***** ", arrayDataSelect)
+  console.log("*****111 ", transferMovesGroups)
   const functionalArea = (type) => {
     const item = arrayDataSelect?.functionalArea?.find(item => item.id == type);
     if (item) {

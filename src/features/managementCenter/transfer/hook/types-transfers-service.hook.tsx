@@ -26,11 +26,17 @@ export function useTypesTranfersService() {
         const endpoint: string = "/save-data";
         return post(`${roleUrl}${endpoint}`,data);
     }
+    
+    async function getTransferById(id: string): Promise<ApiResponse<any>> {
+        const endpoint: string = `/get-by-id/${id}`;
+        return get(`${roleUrl}${endpoint}`);
+    }
 
     return { 
         GetTypesTransfers,
         GetTransfers,
         validateCreateTransfer,
-        createTransfer
+        createTransfer,
+        getTransferById
      }
 }
