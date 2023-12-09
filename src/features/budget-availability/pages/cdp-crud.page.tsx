@@ -164,7 +164,12 @@ const CdpCrudPage = () => {
 
   const handleGuardar = async () => {
     setFormSubmitted(true);
-
+    if(objectSendData['contractObject'] == "" || objectSendData['contractObject'] == null){
+      console.log("No hay objeto contractual");
+      return;
+    }
+    
+ 
     if (infoErrors.length > 0) {
       console.log("estos son los error", infoErrors);
       return true;
