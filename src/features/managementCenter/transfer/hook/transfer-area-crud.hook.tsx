@@ -11,10 +11,16 @@ import {
   ITableElement,
 } from "../../../../common/interfaces/table.interfaces";
 import DetailsSelectedProjectComponent from "../../components/details-selected-project.component";
-import { IArrayDataSelect, IobjectAddTransfer } from "../../../../common/interfaces/global.interface";
+import {
+  IArrayDataSelect,
+  IobjectAddTransfer,
+} from "../../../../common/interfaces/global.interface";
 import { useTypesTranfersService } from "./types-transfers-service.hook";
 import { EResponseCodes } from "../../../../common/constants/api.enum";
-import { cleanTransferContext, filterElementsMeetConditions } from "../../../../common/utils";
+import {
+  cleanTransferContext,
+  filterElementsMeetConditions,
+} from "../../../../common/utils";
 import { handleCommonError } from "../../../../common/utils/handle-common-error";
 import { useAdditionsTransfersService } from "../../hook/additions-transfers-service.hook";
 
@@ -52,7 +58,7 @@ export function useTransferAreaCrudPage(actionForm, id) {
 
   const { createTransfer, getTransferById } = useTypesTranfersService();
   const { GetFundsList, GetProjectsList, GetPosPreSapienciaList } =
-    useAdditionsTransfersService();  
+    useAdditionsTransfersService();
 
   const {
     handleSubmit,
@@ -62,7 +68,7 @@ export function useTransferAreaCrudPage(actionForm, id) {
     watch,
     setValue,
   } = useForm<IBasicTransfers>({
-    resolver
+    resolver,
   });
 
   const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
@@ -175,6 +181,8 @@ export function useTransferAreaCrudPage(actionForm, id) {
               return acc;
             }, []);
 
+            console.log({ arrayEntitiesPosPres });
+
             setArrayDataSelect((prevState) => ({
               ...prevState,
               posPre: arrayEntitiesPosPres,
@@ -194,15 +202,57 @@ export function useTransferAreaCrudPage(actionForm, id) {
   }, [arrayDataSelect]);
 
   useEffect(() => {
-    if (id) {
-      getTransferById(id).then(res => {
-        setValue('actAdminDistrict',res.data.head[0].actAdminDistrict)
-        setValue('actAdminSapiencia',res.data.head[0].actAdminSapiencia)
-        setValue('observations',res.data.head[0].observations)
-        setTotalTransfer(res.data.head[0].value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."))
-        
+    if (
+      id &&
+      arrayDataSelect.functionalArea.length &&
+      arrayDataSelect.funds.length &&
+      arrayDataSelect.posPre.length
+    ) {
+      getTransferById(id).then((res) => {
+        setValue("actAdminDistrict", res.data.head[0].actAdminDistrict);
+        setValue("actAdminSapiencia", res.data.head[0].actAdminSapiencia);
+        setValue("observations", res.data.head[0].observations);
+        setTotalTransfer(
+          res.data.head[0].value
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        );
+
         // TODO CONSULTAR TRASLADO: PASA AL CONTEXTO LOS DETALLER DE LAS TRNSFERENCIAS PARA QUE SE MUESTRE
         // EN LA VISTA PRINCIPAL EL RESUMEN. EL OBJETO QUE SIGUE ES EL QUE ESTA PENDIENTE ESTRUCTURA....
+
+        console.log("---------------------------------");
+        const dataDetail = [
+          {
+            // Revisar Este ID para saber si se necesita crear uno aleatorio o debe ser algo especifico
+            id: "qrZv2s8Vmuj3vAQxsQbzsdaw",
+            data: [],
+          },
+        ];
+        for (const i of res.data.details) {
+          console.log({ i });
+          dataDetail[0].data.push({
+            type: i.type,
+            managerCenter: i.budgetRoute.managementCenter,
+            projectId: i.budgetRoute.idProjectVinculation,
+            fundId: i.budgetRoute.idFund,
+            budgetPosition: i.budgetRoute.idPospreSapiencia,
+            value: parseInt(i.value),
+            // Revisar El Find de este, recordemos que puede tener un nombre de proyecto directe a su ID
+            // o preguntar si este caso hipotetico no puede existir // revisar filterElementsMeetConditions linea 45 ( namesMatchingProject )
+            nameProject:
+              i.budgetRoute.projectVinculation.type === "Inversion"
+                ? `${i.budgetRoute.projectVinculation.investmentProjectId}`
+                : `${i.budgetRoute.projectVinculation.operationProjectId}`,
+            // Revisar El Find de este, recordemos que puede tener un nombre de un Id de area funcional para varios proyectos
+            // revisar filterElementsMeetConditions linea 14 ( functionalArea )
+            functionalArea: i.budgetRoute.projectVinculation.functionalAreaId,
+          });
+        }
+        console.log({ dataDetail });
+        console.log({ res: res.data });
+        console.log("---------------------------------");
+
         setDetailTransferData({
           //se manda en el context los datos sin los id y ser visualizado en detalles
           array: [
@@ -210,12 +260,7 @@ export function useTransferAreaCrudPage(actionForm, id) {
               headTransfer: res.data.head[0],
               transferMovesGroups: filterElementsMeetConditions(
                 arrayDataSelect,
-                res.data.details.map(e=>{
-                  return ({
-                    id:e.id,
-                    data:[...e]
-                  })
-                })
+                dataDetail
               ),
             },
           ],
@@ -223,13 +268,13 @@ export function useTransferAreaCrudPage(actionForm, id) {
             total: res.data.details.length,
           },
         });
-
-
-      })
+      });
     }
-  }, [arrayDataSelect])
-
-
+  }, [
+    arrayDataSelect.functionalArea,
+    arrayDataSelect.funds,
+    arrayDataSelect.posPre,
+  ]);
 
   const inputValue = watch([
     "actAdminDistrict",
@@ -258,9 +303,6 @@ export function useTransferAreaCrudPage(actionForm, id) {
       );
     }
   }, [inputValues]);
-
-
-
 
   useEffect(() => {
     showModalDetail?.show &&
@@ -540,8 +582,9 @@ export function useTransferAreaCrudPage(actionForm, id) {
     const month = date.getMonth() + 1;
     const year = date.getFullYear();
 
-    return `${year}-${month < 10 ? "0" + month : month}-${day < 10 ? "0" + day : day
-      }`;
+    return `${year}-${month < 10 ? "0" + month : month}-${
+      day < 10 ? "0" + day : day
+    }`;
   };
 
   const onAddvalues = async (data: IBasicTransfers) => {
