@@ -125,8 +125,8 @@ export function usePaysCrud() {
               titleExcel = ['Consecutivo RP SAP', 'Posicion', 'Causado', 'Pagado'];
               break;
             case "Funds":
-              titleDB = ["FND_CODECP_ENTIDAD","FND_NUMERO","FND_DENOMINACION", "FND_DESCRIPCION", "FND_VIGENTE_DESDE", "FND_VIGENTE_HASTA"];
-              titleExcel = ['ENTIDAD CP','CODIGO','DENOMINACION', 'DESCRIPCION', 'VALIDEZ DE', 'VALIDEZ A'];
+              titleDB = ["FND_CODECP_ENTIDAD", "FND_NUMERO", "FND_DENOMINACION", "FND_DESCRIPCION", "FND_VIGENTE_DESDE", "FND_VIGENTE_HASTA"];
+              titleExcel = ['ENTIDAD CP', 'CODIGO', 'DENOMINACION', 'DESCRIPCION', 'VALIDEZ DE', 'VALIDEZ A'];
 
               break;
             case "AreaFuncional":
@@ -167,12 +167,7 @@ export function usePaysCrud() {
           });
 
           if (isValidTitles) {
-            let DatFundsInfp = []
-            if(tipoDocumento === "Funds"){
-              const responseValidate = await api.getAllFunds();
-              let dataResponse = responseValidate?.data
-              DatFundsInfp.push(dataResponse)
-            }
+       
             const uniqueRows = new Set();
 
             for (let R = range.s.r + 1; R <= range.e.r; ++R) {
@@ -581,17 +576,13 @@ export function usePaysCrud() {
                   }
 
                 }
-              }else if(tipoDocumento === "Funds"){
-               let isExisting = false;
-               
-                DatFundsInfp.forEach(element => {
-                  
-                  if(element.number === rowData['FND_NUMERO'].toString()){
-                    isExisting = true; 
-                  }
-                });
-
-                if(isExisting){
+              } else if (tipoDocumento === "Funds") {
+                let dataVerify = {
+                  "numero": rowData['FND_NUMERO'].toString()
+                }
+ 
+                const responseValidate = await api.getAllFunds(dataVerify);
+                if(responseValidate['operation'].message === "Fondo ya existente."){
                   let objErrors = { "rowError": R, "message": `el fondo ya existe.` };
                   infoErrors.push(objErrors);
                 }
