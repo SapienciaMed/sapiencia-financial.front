@@ -25,7 +25,18 @@ export function usePaysServices() {
         const endpoint: string = `/api/v1/funds/get-funds-by-number/`;
         return post(`${endpoint}`, data);
     }
+    
+    async function getAllAF(): Promise<ApiResponse<any>> {
+        const endpoint: string = `/api/v1/functional-area/get-all/`;
+        return get(`${endpoint}`);
+    }
+ 
+    async function getAllProjects(): Promise<ApiResponse<any>> {
+        const endpoint: string = `/api/v1/projects/get-all/`;
+        return get(`${endpoint}`);
+    }
 
+    
     async function validateExitsRp(data: any): Promise<ApiResponse<any>> {
         const endpoint: string = "/validate-rp";
         return post(`${roleUrlPagos}${endpoint}`, data);
@@ -35,7 +46,9 @@ export function usePaysServices() {
         loadPays,
         getPays,
         validateExitsRp,
-        getAllFunds
+        getAllFunds,
+        getAllAF,
+        getAllProjects
     }
 };
 

@@ -83,6 +83,11 @@ export function usePaysCrud() {
   };
 
   async function processExcelFile(base64Data, tipoDocumento) {
+    const responseAllAF = await api.getAllAF();
+    const responseAllProject = await api.getAllProjects();
+    let infoArrAF = responseAllAF.data;
+    let infoArrProject = responseAllProject.data;
+    
     let dataVacia = false;
     setLoadingSpinner(true)
     setDataEmpty(false)
@@ -287,19 +292,38 @@ export function usePaysCrud() {
                 } else if (tipoDocumento == "AreaFuncional") {
                   switch (titleDB[C]) {
                     case "Codigo":
-                      if (typeof value !== 'number' || !Number.isInteger(value)) {
-                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
-                        if (value === undefined) { } else {
-                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                          let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
-                          infoErrors.push(objErrors);
-                        }
+                      if (typeof value !== 'string') {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                        let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                        infoErrors.push(objErrors);
                       }
+                     
+                      
+                      infoArrAF.forEach(element => {
+
+                        if(element.number === value){
+                          infoArrProject.forEach(datosProject => {
+                            if(datosProject.functionalAreaId === element.id){
+                              let objErrors = { "rowError": R, "message": `El Área funcional ya existe con ese proyecto` };
+                              infoErrors.push(objErrors);
+                            }
+                          });
+                        }
+                        
+                        
+                      });
+                    
                       break;
                     case "TipoProyecto":
                       if (typeof value !== 'string') {
                         console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
                         let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                        infoErrors.push(objErrors);
+                      }
+
+                      if (value != 'inversion' || value != 'funcionamiento') {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                        let objErrors = { "rowError": R, "message": `El tipo de proyecto solo puede ser: inversion ó funcionamiento` };
                         infoErrors.push(objErrors);
                       }
                       break;
@@ -460,6 +484,7 @@ export function usePaysCrud() {
                         let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
                         infoErrors.push(objErrors);
                       }
+
                       break;
                     case "Fondo":
                       if (typeof value !== 'number' || !Number.isInteger(value)) {
@@ -566,8 +591,6 @@ export function usePaysCrud() {
                     let valorFinal = datos.valorFinal;
 
                     let sumValues = parseInt(rowData['PAG_VALOR_CAUSADO']) + parseInt(rowData['PAG_VALOR_PAGADO']);
-                    console.log(sumValues);
-                    console.log(valorFinal);
 
                     if (sumValues < valorFinal) {
                       let objErrors = { "rowError": R, "message": `El valor del RP es mayor del valor causado+pagado` };
