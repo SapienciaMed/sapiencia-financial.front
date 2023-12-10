@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useContext } from 'react';
-import FormCreateRutaCDPComponent from '../components/form-create-ruta-cdp.component';
-import { useCdpService } from '../hooks/cdp-service';
-import '../../../styles/from-create-cdp.scss';
-import Icons from '../components/Icons'
+import React, { useState, useEffect, useContext } from "react";
+import FormCreateRutaCDPComponent from "../components/form-create-ruta-cdp.component";
+import { useCdpService } from "../hooks/cdp-service";
+import "../../../styles/from-create-cdp.scss";
+import Icons from "../components/Icons";
 import { useNavigate } from "react-router-dom";
-import { AppContext } from '../../../common/contexts/app.context';
-import CdpHeadFormComponent from '../components/cdp-head-form.component';
-import CdpheadCreate from '../components/cdp-head-create.component';
-import PaginatorComponent from '../components/paginator-cdp.component';
-import CdpPaginator from '../components/cdp-paginator.component';
-import { log } from 'console';
-import useStore from '../../../store/store';
-import useStoreTwo from '../../../store/storeTwo';
-import useStoreIcd from '../../../store/store-icd';
-import useStoreCdp from "../../../store/store-cdp"
+import { AppContext } from "../../../common/contexts/app.context";
+import CdpHeadFormComponent from "../components/cdp-head-form.component";
+import CdpheadCreate from "../components/cdp-head-create.component";
+import PaginatorComponent from "../components/paginator-cdp.component";
+import CdpPaginator from "../components/cdp-paginator.component";
+import { log } from "console";
+import useStore from "../../../store/store";
+import useStoreTwo from "../../../store/storeTwo";
+import useStoreIcd from "../../../store/store-icd";
+import useStoreCdp from "../../../store/store-cdp";
 
 interface FormInfoType {
   id: number;
@@ -27,7 +27,6 @@ interface FormularioProps {
   formNumber: number;
   handleEliminar: (formNumber: number) => void;
   formSubmitted?: boolean;
-
 }
 
 const CdpCrudPage = () => {
@@ -39,8 +38,8 @@ const CdpCrudPage = () => {
   const { formInfo } = useContext(AppContext);
   const [formCount, setFormCount] = useState(1);
   const [formularios, setFormularios] = useState([]);
-  const [formHeadInfo, setFormHeadInfo] = useState({})
-  const [objectSendData, setObjectSendData] = useState({})
+  const [formHeadInfo, setFormHeadInfo] = useState({});
+  const [objectSendData, setObjectSendData] = useState({});
   const cdpService = useCdpService();
   const navigate = useNavigate();
   const [proyectoError, setProyectoError] = useState(false);
@@ -85,13 +84,12 @@ const CdpCrudPage = () => {
   };
 
   const handleEliminar = (formNumber) => {
-
     const information = setDataFinalSend((prevFormularios) =>
-      prevFormularios.filter((form, index) => index !== (formNumber))
+      prevFormularios.filter((form, index) => index !== formNumber)
     );
 
     setFormularios((prevFormularios) =>
-      prevFormularios.filter((form, index) => index !== (formNumber))
+      prevFormularios.filter((form, index) => index !== formNumber)
     );
 
     setFormCount((prevCount) => prevCount - 1);
@@ -102,44 +100,42 @@ const CdpCrudPage = () => {
 
     setObjectSendData([]);
 
-    const updatedTotalDataRuta = totalDataRuta.filter((item) => item.id !== formNumber);
+    const updatedTotalDataRuta = totalDataRuta.filter(
+      (item) => item.id !== formNumber
+    );
     setTotalDataRuta([]);
 
-    const updatedIcdArr = objectSendData['icdArr']
+    const updatedIcdArr = objectSendData["icdArr"]
       .filter((_, index) => index !== formNumber * 2)
-      .filter((item) => Array.isArray(item) ? item.length > 0 : item !== undefined && item !== null);
+      .filter((item) =>
+        Array.isArray(item)
+          ? item.length > 0
+          : item !== undefined && item !== null
+      );
     const updatedObjectSendData = { ...objectSendData, icdArr: updatedIcdArr };
     setObjectSendData(updatedObjectSendData);
     setTotalDataRuta(updatedTotalDataRuta);
   };
 
+  useEffect(() => {
+    handleAgregarFormulario();
+  }, []);
 
   useEffect(() => {
-    handleAgregarFormulario()
-  }, [])
-
-  useEffect(() => {
-
-    const index = dataFinalSend.findIndex(item => item.id === icdImportsData['id']);
+    const index = dataFinalSend.findIndex(
+      (item) => item.id === icdImportsData["id"]
+    );
 
     if (index !== -1) {
-      setDataFinalSend(prevData => {
+      setDataFinalSend((prevData) => {
         const newData = [...prevData];
         newData[index] = icdImportsData;
+
         return newData;
       });
     } else {
-      setDataFinalSend(prevData => [...prevData, icdImportsData]);
+      setDataFinalSend((prevData) => [...prevData, icdImportsData]);
     }
-
-    let finalObj = {
-      date: formHeadInfo['date'],
-      contractObject: formHeadInfo['contractObject'],
-      exercise: formHeadInfo['exercise'],
-      icdArr: dataFinalSend
-    };
-    setObjectSendData(finalObj);
-
   }, [icdImportsData, formHeadInfo]);
 
   const handleCancel = () => {
@@ -159,93 +155,82 @@ const CdpCrudPage = () => {
       },
       background: true,
     });
-
-  }
+  };
 
   const handleGuardar = async () => {
     setFormSubmitted(true);
 
+    let newObjectSendData = {
+      date: formHeadInfo["date"],
+      contractObject: formHeadInfo["contractObject"],
+      exercise: formHeadInfo["exercise"],
+      icdArr: dataFinalSend,
+    };
+    setObjectSendData(newObjectSendData);
+
     if (infoErrors.length > 0) {
-      console.log("estos son los error", infoErrors);
       return true;
-    }else{
+    } else {
       let nuevoObjeto;
       const onCancelNew = () => {
         navigate("./");
       };
-  
-      //const icdArrWithBalanceCheck = objectSendData["icdArr"].slice(1);
-      const icdArrWithBalanceCheck = objectSendData["icdArr"].filter(item => {
-        if (Array.isArray(item)) {
-          return item.length > 0;
-        } else if (item !== undefined && item !== null) {
-          return item.idRppCode !== "0";
-        }
-        return false;
-      });
-  
-      if (icdArrWithBalanceCheck.length === 0) {
-        console.log("array vacio");
-        return;
-      }
-  
-   /*    const hasEmptyFieldsOrZeros = icdArrWithBalanceCheck.some((item) => {
-        for (const key in item) {
-          if (key === 'posicion' || key === 'id') {
-            continue; // Saltar 'posicion' e 'id'
-          }
-  
-          if (typeof item[key] === 'string' && (item[key].trim() === '' || item[key] === '0')) {
-            console.log("Campo vacío o con valor en 0 encontrado:", key, item[key]);
-            return true;
-          } else if (typeof item[key] === 'number' && item[key] === 0) {
-            console.log("Campo con valor en 0 encontrado:", key, item[key]);
-            return true;
-          }
-        }
-        return false;
-      }); */
-  
-      const emptyHeadInfo = Array.isArray(formHeadInfo) && formHeadInfo.some((item) => {
-        if (item == null || item === "") {
-          console.log("Campo necesario");
-          return true;
-        }
-        return false;
-      });
-  
-      if (emptyHeadInfo) {
-        console.log("Hay campos vacíos o con valores en 0. No se puede continuar.");
-  
-        return;
-      }
-  
-      try {
-        //const icdArrWithBalanceCheck = objectSendData["icdArr"].slice(1);
-        const icdArrWithBalanceCheck = objectSendData["icdArr"].filter(item => {
+
+      const icdArrWithBalanceCheck = newObjectSendData["icdArr"].filter(
+        (item) => {
           if (Array.isArray(item)) {
             return item.length > 0;
           } else if (item !== undefined && item !== null) {
             return item.idRppCode !== "0";
           }
           return false;
+        }
+      );
+
+      if (icdArrWithBalanceCheck.length === 0) {
+        return;
+      }
+
+      const emptyHeadInfo =
+        Array.isArray(formHeadInfo) &&
+        formHeadInfo.some((item) => {
+          if (item == null || item === "") {
+            return true;
+          }
+          return false;
         });
-  
-      
-  
-        const invalidBalances = icdArrWithBalanceCheck.filter(item => {
-          console.log(item);
-          
-          if (parseInt(item.valorInicial) >= parseInt(item.balance) || item.valorInicial === "0") {
+
+      if (emptyHeadInfo) {
+        return;
+      }
+
+      try {
+        const icdArrWithBalanceCheck = newObjectSendData["icdArr"].filter(
+          (item) => {
+            if (Array.isArray(item)) {
+              return item.length > 0;
+            } else if (item !== undefined && item !== null) {
+              return item.idRppCode !== "0";
+            }
+            return false;
+          }
+        );
+
+        const invalidBalances = icdArrWithBalanceCheck.filter((item) => {
+          if (
+            parseInt(item.valorInicial) >= parseInt(item.balance) ||
+            item.valorInicial === "0"
+          ) {
             return true; // Marcar como elemento inválido
           }
           return false; // Marcar como elemento válido
         });
-  
+
         if (invalidBalances.length !== 0) {
           setMessage({
             title: "Validar valor inicial",
-            description: "Recuerda que el valor inicial no puede ser mayor o igual al saldo disponible de la ruta presupuestal",
+            description:
+              "Recuerda que el valor inicial no puede ser mayor o igual al saldo disponible de la ruta presupuestal",
             show: true,
             OkTitle: "Aceptar",
             onOk: () => {
@@ -253,30 +238,38 @@ const CdpCrudPage = () => {
             },
             background: true,
           });
-  
+
           return;
         }
-  
+
         if (invalidBalances.length === 0) {
-          const updatedIcdArr = icdArrWithBalanceCheck.map(({ balance, ...rest }) => rest);
-  
+          const updatedIcdArr = icdArrWithBalanceCheck.map(
+            ({ balance, ...rest }) => rest
+          );
+
           nuevoObjeto = {
-            ...objectSendData,
-            exercise: objectSendData["exercise"],
-            date: objectSendData["date"] && typeof objectSendData["date"] === "string" ? objectSendData["date"].split("/").join("-") : null,
-            contractObject: objectSendData["contractObject"],
+            ...newObjectSendData,
+            exercise: newObjectSendData["exercise"],
+            date:
+              newObjectSendData["date"] &&
+              typeof newObjectSendData["date"] === "string"
+                ? newObjectSendData["date"].split("/").join("-")
+                : null,
+            contractObject: newObjectSendData["contractObject"],
             consecutive: 10,
-            icdArr: updatedIcdArr.map(({ proyecto, posicion, valorInicial, id, ...rest }) => ({
-              idRppCode: parseInt(proyecto),
-              cdpPosition: parseInt(posicion) + 1,
-              amount: parseFloat(valorInicial),
-              ...rest,
-            })),
+            icdArr: updatedIcdArr.map(
+              ({ proyecto, posicion, valorInicial, id, ...rest }) => ({
+                idRppCode: parseInt(proyecto),
+                cdpPosition: parseInt(posicion) + 1,
+                amount: parseFloat(valorInicial),
+                ...rest,
+              })
+            ),
           };
-  
+
           await new Promise((resolve) => {
             setObjectSendData(nuevoObjeto);
-            resolve('success');
+            resolve("success");
           });
           setMessage({
             title: "Guardar",
@@ -288,7 +281,7 @@ const CdpCrudPage = () => {
               try {
                 const response = await cdpService.createCdp_(nuevoObjeto);
                 setTimeout(() => {
-                  if (response['operation']['code'] == "OK") {
+                  if (response["operation"]["code"] == "OK") {
                     setMessage({
                       title: "Guardado",
                       description: "Guardado Exitosamente!",
@@ -299,7 +292,7 @@ const CdpCrudPage = () => {
                         navigate("./../");
                         setMessage({
                           title: "Consecutivo CDP Aurora",
-                          description: `Al CDP sele asignó el consecutivo ${response["data"]['consecutive']}`,
+                          description: `Al CDP sele asignó el consecutivo ${response["data"]["consecutive"]}`,
                           show: true,
                           OkTitle: "Cerrar",
                           onOk: () => {
@@ -310,8 +303,10 @@ const CdpCrudPage = () => {
                       background: true,
                     });
                   }
-  
-                  if (response['operation']['message'].indexOf("Ya existe") !== -1) {
+
+                  if (
+                    response["operation"]["message"].indexOf("Ya existe") !== -1
+                  ) {
                     setMessage({
                       title: "Validación de datos",
                       description: "¡El dato ya existe!",
@@ -323,13 +318,13 @@ const CdpCrudPage = () => {
                       },
                       background: true,
                     });
-                    return
+                    return;
                   }
-  
-                  if (response['operation']['code'] === "FAIL") {
+
+                  if (response["operation"]["code"] === "FAIL") {
                     setMessage({
                       title: "Error al crear CDP",
-                      description: response['operation']['message'],
+                      description: response["operation"]["message"],
                       show: true,
                       OkTitle: "Aceptar",
                       onOk: () => {
@@ -338,17 +333,17 @@ const CdpCrudPage = () => {
                       },
                       background: true,
                     });
-                    return
+                    return;
                   }
                 }, 1500);
-  
               } catch (error) {
                 console.error("Error al enviar los datos:", error);
               }
               setMessage({});
-            }, onCancel() {
+            },
+            onCancel() {
               onCancelNew();
-              setMessage({})
+              setMessage({});
             },
             background: true,
           });
@@ -357,13 +352,8 @@ const CdpCrudPage = () => {
       } catch (error) {
         console.error("Error al enviar los datos:", error);
       }
-    } 
-
-
-
-
+    }
   };
-
 
   const formsPerPage = 2;
   const [currentPage, setCurrentPage] = useState(1);
@@ -383,7 +373,9 @@ const CdpCrudPage = () => {
       .map((_, index) => {
         const currentFormIndex = indexOfFirstForm + index;
         // const currentFormData = formDataCdpRoute?.find((form) => form.id === currentFormIndex);
-        const foundObject = totalDataRuta.find(obj => obj.id === currentFormIndex);
+        const foundObject = totalDataRuta.find(
+          (obj) => obj.id === currentFormIndex
+        );
         return (
           <FormCreateRutaCDPComponent
             key={currentFormIndex}
@@ -392,7 +384,9 @@ const CdpCrudPage = () => {
             handleEliminar={handleEliminar}
             formSubmitted={formSubmitted}
             amountInfo={formStates[currentFormIndex] || {}}
-            setAmountInfo={(updatedState) => updateFormState(currentFormIndex, updatedState)}
+            setAmountInfo={(updatedState) =>
+              updateFormState(currentFormIndex, updatedState)
+            }
             datasFounds={foundObject}
           />
         );
@@ -430,38 +424,41 @@ const CdpCrudPage = () => {
       setDataComplete(newDataComplete);
     }
 
-    setTotalDataRuta(dataComplete)
-
-
+    setTotalDataRuta(dataComplete);
   }, [formDataCdpRoute]);
-
 
   const handlePageChange = (page) => {
     if (page !== currentPage) {
       setCurrentPage(page);
       const indexOfLastForm = page * formsPerPage;
       const indexOfFirstForm = indexOfLastForm - formsPerPage;
-      const updatedFormData = formDataCdpRoute.slice(indexOfFirstForm, indexOfLastForm);
+      const updatedFormData = formDataCdpRoute.slice(
+        indexOfFirstForm,
+        indexOfLastForm
+      );
     }
   };
 
-
   return (
-    <div className='container-principal'>
+    <div className="container-principal">
       <div className="agregar-ruta-container">
         <h2>Crear CDP</h2>
-        <button onClick={handleAgregarFormulario} className='agregar-ruta'>
+        <button onClick={handleAgregarFormulario} className="agregar-ruta">
           <div className="button-content">
             <Icons />
             <span>Agregar Ruta</span>
           </div>
         </button>
       </div>
-      <CdpheadCreate formSubmitted={formSubmitted} isDisabled={false} setFormHeadInfo={setFormHeadInfo} />
+      <CdpheadCreate
+        formSubmitted={formSubmitted}
+        isDisabled={false}
+        setFormHeadInfo={setFormHeadInfo}
+      />
 
       <div>
         {formularios.length > 0 && renderFormsForCurrentPage()}
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{ display: "flex", justifyContent: "center" }}>
           <CdpPaginator
             currentPage={currentPage}
             totalPages={totalPages}
