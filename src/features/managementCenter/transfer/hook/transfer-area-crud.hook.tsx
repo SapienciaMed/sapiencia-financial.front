@@ -11,12 +11,21 @@ import {
   ITableElement,
 } from "../../../../common/interfaces/table.interfaces";
 import DetailsSelectedProjectComponent from "../../components/details-selected-project.component";
-import { IobjectAddTransfer } from "../../../../common/interfaces/global.interface";
+import {
+  IArrayDataSelect,
+  IobjectAddTransfer,
+} from "../../../../common/interfaces/global.interface";
 import { useTypesTranfersService } from "./types-transfers-service.hook";
 import { EResponseCodes } from "../../../../common/constants/api.enum";
-import { cleanTransferContext } from "../../../../common/utils";
+import {
+  cleanTransferContext,
+  filterElementsMeetConditions,
+} from "../../../../common/utils";
+import { handleCommonError } from "../../../../common/utils/handle-common-error";
+import { useAdditionsTransfersService } from "../../hook/additions-transfers-service.hook";
+import { useProjectsInvesmentService } from "./projects-investment-service.hook";
 
-export function useTransferAreaCrudPage() {
+export function useTransferAreaCrudPage(actionForm, id) {
   const tableComponentRef = useRef(null);
   const resolver = useYupValidationResolver(transferAreaCrudValidator);
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(false);
@@ -48,7 +57,11 @@ export function useTransferAreaCrudPage() {
     detailTransferData,
   } = useContext(AppContext);
 
-  const { createTransfer } = useTypesTranfersService();
+  const { createTransfer, getTransferById } = useTypesTranfersService();
+  const { GetFundsList, GetProjectsList, GetPosPreSapienciaList } =
+    useAdditionsTransfersService();
+    /* const { GetProjectInvestmentPaginated } = useProjectsInvesmentService() */
+
 
   const {
     handleSubmit,
@@ -57,7 +70,202 @@ export function useTransferAreaCrudPage() {
     control,
     watch,
     setValue,
-  } = useForm<IBasicTransfers>({ resolver });
+  } = useForm<IBasicTransfers>({
+    resolver,
+  });
+
+  const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
+    functionalArea: [],
+    areas: [],
+    funds: [],
+    posPre: [],
+  });
+
+  useEffect(() => {
+    if (
+      !arrayDataSelect.functionalArea.length &&
+      !arrayDataSelect.funds.length &&
+      !arrayDataSelect.posPre.length
+    ) {
+      GetProjectsList()
+        .then((response) => {
+          if (response.operation.code === EResponseCodes.OK) {
+            const projectArray = response.data || [];
+
+            const seenNames = new Set();
+            const arrayEntitiesProject = projectArray.reduce((acc, item) => {
+              const description = item.conceptProject;
+              const name = item.projectId;
+              const value = item.id;
+              const id = item.id;
+              const area = [
+                {
+                  name: item.areaFuntional.number,
+                  value: item.areaFuntional.id,
+                  id: item.areaFuntional.id,
+                },
+              ];
+
+              if (!seenNames.has(name)) {
+                seenNames.add(name);
+                acc.push({ name, value, id, area, description });
+              }
+
+              return acc;
+            }, []);
+
+            setArrayDataSelect((prevState) => ({
+              ...prevState,
+              functionalArea: arrayEntitiesProject,
+            }));
+          } else {
+            handleCommonError({
+              response,
+              setMessage,
+              navigate,
+              setAddTransferData,
+              setDetailTransferData,
+            });
+          }
+        })
+        .catch((error) => console.log(error));
+
+      GetFundsList({ page: "1", perPage: "1" })
+        .then((response) => {
+          if (response.operation.code === EResponseCodes.OK) {
+            const typeTransfersFunds = response.data?.array || [];
+
+            const seenNames = new Set();
+            const arrayEntitiesFund = typeTransfersFunds.reduce((acc, item) => {
+              const name = item.number;
+              const value = item.id;
+              const id = item.id;
+
+              if (!seenNames.has(name)) {
+                seenNames.add(name);
+                acc.push({ name, value, id });
+              }
+
+              return acc;
+            }, []);
+
+            setArrayDataSelect((prevState) => ({
+              ...prevState,
+              funds: arrayEntitiesFund,
+            }));
+          } else {
+            handleCommonError({
+              response,
+              setMessage,
+              navigate,
+              setAddTransferData,
+              setDetailTransferData,
+            });
+          }
+        })
+        .catch((error) => console.log(error));
+
+      GetPosPreSapienciaList()
+        .then((response) => {
+          if (response.operation.code === EResponseCodes.OK) {
+            const posPresapientes = response.data?.array || [];
+
+            const seenNames = new Set();
+            const arrayEntitiesPosPres = posPresapientes.reduce((acc, item) => {
+              const name = item.number;
+              const value = item.id;
+              const id = item.id;
+
+              if (!seenNames.has(name)) {
+                seenNames.add(name);
+                acc.push({ name, value, id });
+              }
+
+              return acc;
+            }, []);
+
+            console.log({ arrayEntitiesPosPres });
+
+            setArrayDataSelect((prevState) => ({
+              ...prevState,
+              posPre: arrayEntitiesPosPres,
+            }));
+          } else {
+            handleCommonError({
+              response,
+              setMessage,
+              navigate,
+              setAddTransferData,
+              setDetailTransferData,
+            });
+          }
+        })
+        .catch((error) => console.log(error));
+    }
+  }, [arrayDataSelect]);
+  
+  useEffect(() => {
+    if (
+      id &&
+      arrayDataSelect.functionalArea.length &&
+      arrayDataSelect.funds.length &&
+      arrayDataSelect.posPre.length
+    ) {
+      getTransferById(id).then((res) => {
+        setValue("actAdminDistrict", res.data.head[0].actAdminDistrict);
+        setValue("actAdminSapiencia", res.data.head[0].actAdminSapiencia);
+        setValue("observations", res.data.head[0].observations);
+        setTotalTransfer(
+          res.data.head[0].value
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        );
+
+        const dataDetail = [
+          {
+            // Revisar Este ID para saber si se necesita crear uno aleatorio o debe ser algo especifico
+            id: "qrZv2s8Vmuj3vAQxsQbzsdaw",
+            data: [],
+          },
+        ];
+        for (const i of res.data.details) {
+          dataDetail[0].data.push({
+            type: i.type,
+            managerCenter: i.budgetRoute.managementCenter,
+            projectId: i.budgetRoute.idProjectVinculation,
+            fundId: i.budgetRoute.idFund,
+            budgetPosition: i.budgetRoute.idPospreSapiencia,
+            value: parseInt(i.value),
+            nameProject:
+              i.budgetRoute.projectVinculation.type === "Inversion"
+                ? `${i.projectInvestment.name}`
+                : `${i.budgetRoute.projectVinculation.functionalProject.name}`,
+            functionalArea: i.budgetRoute.projectVinculation.areaFuntional.id/* i.budgetRoute.projectVinculation.functionalAreaId, */
+          });
+        }
+        
+        setDetailTransferData({
+          //se manda en el context los datos sin los id y ser visualizado en detalles
+          array: [
+            {
+              headTransfer: res.data.head[0],
+              transferMovesGroups: filterElementsMeetConditions(
+                arrayDataSelect,
+                dataDetail
+              ),
+            },
+          ],
+          meta: {
+            total: res.data.details.length,
+          },
+        });
+      });
+    }
+  }, [
+    arrayDataSelect.functionalArea,
+    arrayDataSelect.funds,
+    arrayDataSelect.posPre,
+  ]);
 
   const inputValue = watch([
     "actAdminDistrict",
@@ -247,6 +455,10 @@ export function useTransferAreaCrudPage() {
     },
   ];
 
+
+
+
+
   const tableActions: ITableAction<any>[] = [
     {
       icon: "Detail",
@@ -283,25 +495,27 @@ export function useTransferAreaCrudPage() {
 
         setShowModalDetail({ show: true, row: rows, total: total_transfer });
       },
-    },
-    {
-      icon: "Delete",
-      onClick: (row) => {
-        setMessage({
-          title: "Eliminar traslado",
-          show: true,
-          OkTitle: "Aceptar",
-          cancelTitle: "Cancelar",
-          description: "¿Estás segur@ que desea eliminar el traslado?",
-          onOk: () => {
-            cleanTransferContext({ setAddTransferData, setDetailTransferData });
-            setMessage({});
-          },
-          background: true,
-        });
-      },
-    },
+    }
   ];
+
+  actionForm!='view' && tableActions.push({
+    icon: "Delete",
+    onClick: (row) => {
+      setMessage({
+        title: "Eliminar traslado",
+        show: true,
+        OkTitle: "Aceptar",
+        cancelTitle: "Cancelar",
+        description: "¿Estás segur@ que desea eliminar el traslado?",
+        onOk: () => {
+          cleanTransferContext({ setAddTransferData, setDetailTransferData });
+          setMessage({});
+        },
+        background: true,
+      });
+    },
+  })
+
 
   const onShowModalDetail = (
     title: string,
