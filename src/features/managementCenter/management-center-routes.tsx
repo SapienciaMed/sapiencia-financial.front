@@ -22,7 +22,10 @@ export const ManagementCenterRoutes = () => {
 
       <Route path={"/traslado"} element={<ManagementCenterTransferPage/> } />
       <Route path={"/traslado/create"} element={<TransferAreaCrudPage actionForm="new"/>} />
+      <Route path={"/traslado/edit/:id"} element={<TransferAreaCrudPage actionForm="edit"/>} />
+      <Route path={"/traslado/view/:id"} element={<TransferAreaCrudPage actionForm="view"/>} />
       <Route path={"/traslado/create/anadir-traslado"} element={<AddFundsCrudPage/>} />
+      <Route path={"/traslado/edit/:id/anadir-traslado"} element={<AddFundsCrudPage/>} />
 
       <Route path={"/disminucion"} element={<ManagementCenterAdditionalPage typeMovement="Disminucion"/>} />
       <Route path={"/disminucion/create"} element={<AdditionAreaCrudPage actionForm="new" typeMovement="Disminucion"/>} />
