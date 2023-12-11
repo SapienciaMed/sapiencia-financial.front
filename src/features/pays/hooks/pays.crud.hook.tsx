@@ -1,7 +1,7 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { AppContext } from "../../../common/contexts/app.context";
-import { IMessage } from "../../../common/interfaces/global.interface";
+// import { IMessage } from "../../../common/interfaces/global.interface";
 import { useNavigate } from "react-router-dom";
 import { IPagoDataSave } from "../interfaces/paysInterfaces";
 import { ITableElement } from "../../../common/interfaces/table.interfaces";
