@@ -9,25 +9,21 @@ export function filterElementsMeetConditions(
   arrayDataSelect: IArrayDataSelect,
   transferMovesGroups: ITransferMovesGroups[]
 ): any[] {
-  console.log("***** ", arrayDataSelect);
-  console.log("*****111 ", transferMovesGroups);
   const functionalArea = (type) => {
     const item = arrayDataSelect?.functionalArea?.find(
-      (item) => item.id == type
+      (item) => item.area.find(a=>a.id==type)
     );
     if (item) {
-      const areaItem = item?.area?.find((area) => area.projectId == type);
+      const areaItem = item?.area?.find((area) => area.id == type);
       return areaItem ? areaItem?.name : null;
     }
     return null;
   };
-
   const namesMatchingFunds = (type) => {
     const testFindNamesMatchingFunds = arrayDataSelect?.funds.find(
       (item1) => item1.value == parseInt(type)
     )?.name;
-    console.log({ testFindNamesMatchingFunds });
-
+    
     return arrayDataSelect?.funds.find((item1) => item1.value == parseInt(type))
       ?.name;
   };
@@ -51,7 +47,6 @@ export function filterElementsMeetConditions(
       (item1) => item1.value == parseInt(type)
     )?.name;
   };
-
   const resultado = [
     ...transferMovesGroups.map((item) => ({
       data: item.data.map((it) => ({

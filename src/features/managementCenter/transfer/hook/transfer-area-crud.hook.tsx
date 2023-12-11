@@ -23,6 +23,7 @@ import {
 } from "../../../../common/utils";
 import { handleCommonError } from "../../../../common/utils/handle-common-error";
 import { useAdditionsTransfersService } from "../../hook/additions-transfers-service.hook";
+import { useProjectsInvesmentService } from "./projects-investment-service.hook";
 
 export function useTransferAreaCrudPage(actionForm, id) {
   const tableComponentRef = useRef(null);
@@ -59,6 +60,8 @@ export function useTransferAreaCrudPage(actionForm, id) {
   const { createTransfer, getTransferById } = useTypesTranfersService();
   const { GetFundsList, GetProjectsList, GetPosPreSapienciaList } =
     useAdditionsTransfersService();
+    /* const { GetProjectInvestmentPaginated } = useProjectsInvesmentService() */
+
 
   const {
     handleSubmit,
@@ -200,7 +203,7 @@ export function useTransferAreaCrudPage(actionForm, id) {
         .catch((error) => console.log(error));
     }
   }, [arrayDataSelect]);
-
+  
   useEffect(() => {
     if (
       id &&
@@ -218,10 +221,6 @@ export function useTransferAreaCrudPage(actionForm, id) {
             .replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         );
 
-        // TODO CONSULTAR TRASLADO: PASA AL CONTEXTO LOS DETALLER DE LAS TRNSFERENCIAS PARA QUE SE MUESTRE
-        // EN LA VISTA PRINCIPAL EL RESUMEN. EL OBJETO QUE SIGUE ES EL QUE ESTA PENDIENTE ESTRUCTURA....
-
-        console.log("---------------------------------");
         const dataDetail = [
           {
             // Revisar Este ID para saber si se necesita crear uno aleatorio o debe ser algo especifico
@@ -230,7 +229,6 @@ export function useTransferAreaCrudPage(actionForm, id) {
           },
         ];
         for (const i of res.data.details) {
-          console.log({ i });
           dataDetail[0].data.push({
             type: i.type,
             managerCenter: i.budgetRoute.managementCenter,
@@ -238,21 +236,14 @@ export function useTransferAreaCrudPage(actionForm, id) {
             fundId: i.budgetRoute.idFund,
             budgetPosition: i.budgetRoute.idPospreSapiencia,
             value: parseInt(i.value),
-            // Revisar El Find de este, recordemos que puede tener un nombre de proyecto directe a su ID
-            // o preguntar si este caso hipotetico no puede existir // revisar filterElementsMeetConditions linea 45 ( namesMatchingProject )
             nameProject:
               i.budgetRoute.projectVinculation.type === "Inversion"
-                ? `${i.budgetRoute.projectVinculation.investmentProjectId}`
-                : `${i.budgetRoute.projectVinculation.operationProjectId}`,
-            // Revisar El Find de este, recordemos que puede tener un nombre de un Id de area funcional para varios proyectos
-            // revisar filterElementsMeetConditions linea 14 ( functionalArea )
-            functionalArea: i.budgetRoute.projectVinculation.functionalAreaId,
+                ? `${i.projectInvestment.name}`
+                : `${i.budgetRoute.projectVinculation.functionalProject.name}`,
+            functionalArea: i.budgetRoute.projectVinculation.areaFuntional.id/* i.budgetRoute.projectVinculation.functionalAreaId, */
           });
         }
-        console.log({ dataDetail });
-        console.log({ res: res.data });
-        console.log("---------------------------------");
-
+        
         setDetailTransferData({
           //se manda en el context los datos sin los id y ser visualizado en detalles
           array: [
@@ -464,6 +455,10 @@ export function useTransferAreaCrudPage(actionForm, id) {
     },
   ];
 
+
+
+
+
   const tableActions: ITableAction<any>[] = [
     {
       icon: "Detail",
@@ -500,25 +495,27 @@ export function useTransferAreaCrudPage(actionForm, id) {
 
         setShowModalDetail({ show: true, row: rows, total: total_transfer });
       },
-    },
-    {
-      icon: "Delete",
-      onClick: (row) => {
-        setMessage({
-          title: "Eliminar traslado",
-          show: true,
-          OkTitle: "Aceptar",
-          cancelTitle: "Cancelar",
-          description: "¿Estás segur@ que desea eliminar el traslado?",
-          onOk: () => {
-            cleanTransferContext({ setAddTransferData, setDetailTransferData });
-            setMessage({});
-          },
-          background: true,
-        });
-      },
-    },
+    }
   ];
+
+  actionForm!='view' && tableActions.push({
+    icon: "Delete",
+    onClick: (row) => {
+      setMessage({
+        title: "Eliminar traslado",
+        show: true,
+        OkTitle: "Aceptar",
+        cancelTitle: "Cancelar",
+        description: "¿Estás segur@ que desea eliminar el traslado?",
+        onOk: () => {
+          cleanTransferContext({ setAddTransferData, setDetailTransferData });
+          setMessage({});
+        },
+        background: true,
+      });
+    },
+  })
+
 
   const onShowModalDetail = (
     title: string,

@@ -99,6 +99,7 @@ function TabAddFundsPage({ control, register, arrayDataSelect, setValue, getValu
             <div className="tabs-component">
                 <div className="title-area">
                     <div className="display-justify-flex-center p-rating" style={{ width: "100%"}}>
+                        
                         <div className="tabs-selection">
                             {
                                 tabs.map((tab) => {
