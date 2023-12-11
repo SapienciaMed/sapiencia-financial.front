@@ -167,7 +167,7 @@ function LoadPays() {
         <CircularProgress color="inherit" />
       </Backdrop>
       <div className="main-page full-height">
-        <p className="text-black extra-large">Cargar pagos</p>
+        <p className="text-black extra-large">Carga Masiva Presupuesto</p>
         <div className="card-user">
           <FormComponent
             action={onSubmitPagPays}
