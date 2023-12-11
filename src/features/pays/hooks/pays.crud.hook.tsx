@@ -87,7 +87,7 @@ export function usePaysCrud() {
     const responseAllProject = await api.getAllProjects();
     let infoArrAF = responseAllAF.data;
     let infoArrProject = responseAllProject.data;
-    
+
     let dataVacia = false;
     setLoadingSpinner(true)
     setDataEmpty(false)
@@ -172,7 +172,7 @@ export function usePaysCrud() {
           });
 
           if (isValidTitles) {
-       
+
             const uniqueRows = new Set();
 
             for (let R = range.s.r + 1; R <= range.e.r; ++R) {
@@ -297,22 +297,22 @@ export function usePaysCrud() {
                         let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
                         infoErrors.push(objErrors);
                       }
-                     
-                      
+
+
                       infoArrAF.forEach(element => {
 
-                        if(element.number === value){
+                        if (element.number === value) {
                           infoArrProject.forEach(datosProject => {
-                            if(datosProject.functionalAreaId === element.id){
+                            if (datosProject.functionalAreaId === element.id) {
                               let objErrors = { "rowError": R, "message": `El Área funcional ya existe con ese proyecto` };
                               infoErrors.push(objErrors);
                             }
                           });
                         }
-                        
-                        
+
+
                       });
-                    
+
                       break;
                     case "TipoProyecto":
                       if (typeof value !== 'string') {
@@ -321,11 +321,14 @@ export function usePaysCrud() {
                         infoErrors.push(objErrors);
                       }
 
-                      if (value != 'inversion' || value != 'funcionamiento') {
-                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                      let valueFunction: string = "funcionamiento";
+                      let valueInvertion: string = "inversion";
+                      if (value == valueInvertion || value == valueFunction) {
+                      } else {
                         let objErrors = { "rowError": R, "message": `El tipo de proyecto solo puede ser: inversion ó funcionamiento` };
                         infoErrors.push(objErrors);
                       }
+
                       break;
                     case "Proyecto":
                       if (typeof value !== 'string') {
@@ -336,12 +339,24 @@ export function usePaysCrud() {
                       break;
                   }
                 } else if (tipoDocumento == "PospreSapiencia") {
+                  console.log(titleDB["PospreOrigen"]);
+                  
+
+/*                   let objData = {
+                    "pprNumero": titleDB["PospreOrigen"].value.toString(),
+                    "pprEjercicio": parseInt(titleDB["PospreOrigen"].value),
+                    "ppsPosicion": parseInt(titleDB["ConsecutivoPospreSapiencia"].value),
+                  }
+                  let responseVerifyData = await api.getPospreByParams(objData) */
+                /*   if (responseVerifyData.data.length > 0) {
+                    let objErrors = { "rowError": R, "message": `El Pospre sapiencia ya existe para esa vigencia` };
+                    infoErrors.push(objErrors);
+                  } */
                   switch (titleDB[C]) {
                     case "PospreOrigen":
                       if (typeof value !== 'number' || !Number.isInteger(value)) {
                         console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
                         if (value === undefined) { } else {
-                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
                           let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
                           infoErrors.push(objErrors);
                         }
@@ -603,9 +618,9 @@ export function usePaysCrud() {
                 let dataVerify = {
                   "numero": rowData['FND_NUMERO'].toString()
                 }
- 
+
                 const responseValidate = await api.getAllFunds(dataVerify);
-                if(responseValidate['operation'].message === "Fondo ya existente."){
+                if (responseValidate['operation'].message === "Fondo ya existente.") {
                   let objErrors = { "rowError": R, "message": `el fondo ya existe.` };
                   infoErrors.push(objErrors);
                 }
@@ -671,7 +686,6 @@ export function usePaysCrud() {
     }
 
     if (tryReturn) {
-
       console.log("no es posible continuar");
       return
     }
@@ -725,7 +739,9 @@ export function usePaysCrud() {
                   onOk: () => {
                     //onCancelNew();
                     setInfoErrors([])
-                    navigate("./../");
+                    if (tipoArchivo === "Pagos") {
+                      navigate("./../");
+                    }
                     setMessage({})
                   },
                   background: true,
