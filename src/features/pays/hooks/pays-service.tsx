@@ -25,6 +25,11 @@ export function usePaysServices() {
         const endpoint: string = `/api/v1/funds/get-funds-by-number/`;
         return post(`${endpoint}`, data);
     }
+
+    async function getPospreByParams(data): Promise<ApiResponse<any>> {
+        const endpoint: string = `/api/v1/pospre-sapiencia/get-validate-masive/`;
+        return post(`${endpoint}`, data);
+    }
     
     async function getAllAF(): Promise<ApiResponse<any>> {
         const endpoint: string = `/api/v1/functional-area/get-all/`;
@@ -48,7 +53,8 @@ export function usePaysServices() {
         validateExitsRp,
         getAllFunds,
         getAllAF,
-        getAllProjects
+        getAllProjects,
+        getPospreByParams
     }
 };
 
