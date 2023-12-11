@@ -141,7 +141,7 @@ export const useSearchCdp = () => {
           );
           setArraySelect(responseFilterDataSelects);
         } catch (error) {
-          console.log({ queryGetDataFilters: error });
+          // console.log({ queryGetDataFilters: error });
         }
       } else {
         setArraySelect([]);
