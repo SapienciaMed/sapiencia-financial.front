@@ -37,8 +37,6 @@ function CdpheadCreate(prop: Props) {
 
     const handleInputChange = (name, target) => {
         let value = target.value;
-        setExercise(year.toString())
-        
         switch (name) {
             case "exercise":
                 setExercise(value);
@@ -52,7 +50,7 @@ function CdpheadCreate(prop: Props) {
 
         let objInformationHead = {
             date: date,
-            exercise: year.toString(),
+            exercise: exercise,
             contractObject: contractObject,
         };
 
@@ -63,12 +61,12 @@ function CdpheadCreate(prop: Props) {
     useEffect(() => {
         let objRpp = {
             date: date.toString(),
-            exercise: year.toString(),
+            exercise,
             contractObject,
         };
         setFormHeadInfoState(objRpp);
         setFormHeadInfo(objRpp);
-    }, [exercise, contractObject, date,year]);
+    }, [exercise, contractObject, date]);
 
     const validateField = (field) => {
         if (formSubmitted && !field) {
@@ -96,7 +94,6 @@ function CdpheadCreate(prop: Props) {
                                 disabled={false}
                                 id="fecha-elegida"
                                 className={validateField(date)}
-
                             />
                             {formSubmitted && date === "" && <p className="aviso-campo" style={{ color: "red" }}>Este campo es obligatorio</p>}
                         </div>
@@ -123,7 +120,7 @@ function CdpheadCreate(prop: Props) {
                                             classNameLabel="text-black weight-500 biggest"
                                             direction={EDirection.column}
                                             errors={errors}
-                                            onChange={(e) => handleInputChange('exercise', e.target)}
+                                            onChange={(e) => handleInputChange(field.name, e.target)}
                                             disabled={true}
                                             style={{ marginTop: '3.2px' }}
                                         />

@@ -39,17 +39,28 @@ export function useBudgeRecordCrudv2() {
 
     const tableComponentRef = useRef(null);
 
-    // Crea un objeto Date con el primer día del mes siguiente
-    
+    // se suma un dia adicional por ajuste
+    const lastDayPerMont = {
+        "01": 32,
+        "02": 29,
+        "03": 32,
+        "04": 31,
+        "05": 32,
+        "06": 31,
+        "07": 32,
+        "08": 32,
+        "09": 31,
+        "10": 32,
+        "11": 31,
+        "12": 32,
+    }
+
     const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth() + 1;
     const formattedMonth = month < 10 ? `0${month}` : month;
-    const siguienteMes = new Date(year, month + 1, 1);
+    const lastDateMonth = `${year}-${formattedMonth}-${lastDayPerMont[formattedMonth]}`
 
-    // Resta un día al primer día del mes siguiente para obtener el último día del mes actual
-    const lastDayMonth = new Date(siguienteMes.getTime() - 1).getDate();
-    
     const {
         handleSubmit,
         register,
@@ -67,7 +78,7 @@ export function useBudgeRecordCrudv2() {
             supplierId: null,
             contractorDocument: '',
             documentDate: new Date(today),
-            dateValidity: new Date(year,month-1,lastDayMonth,23,59,59),
+            dateValidity: new Date(lastDateMonth),
             dependencyId: null,
             contractualObject: '',
             componentId: null,
@@ -295,7 +306,7 @@ export function useBudgeRecordCrudv2() {
                 }
 
                 const dataCdp = res.data.array.map(e => {
-                    return e.amounts.filter(e=>e.isActive==1).map(el => {
+                    return e.amounts.map(el => {
 
                         let rpAmountsAssoc = el.linkRpcdps.reduce((acumulator, obj) => {
                             return acumulator + obj.finalAmount;
@@ -321,6 +332,7 @@ export function useBudgeRecordCrudv2() {
 
 
     useEffect(() => {
+
 
         const dataCdp = dataAmounts.map(el => {
             return ({
