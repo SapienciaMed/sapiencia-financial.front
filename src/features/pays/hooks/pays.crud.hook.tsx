@@ -83,6 +83,11 @@ export function usePaysCrud() {
   };
 
   async function processExcelFile(base64Data, tipoDocumento) {
+    const responseAllAF = await api.getAllAF();
+    const responseAllProject = await api.getAllProjects();
+    let infoArrAF = responseAllAF.data;
+    let infoArrProject = responseAllProject.data;
+
     let dataVacia = false;
     setLoadingSpinner(true)
     setDataEmpty(false)
@@ -125,8 +130,8 @@ export function usePaysCrud() {
               titleExcel = ['Consecutivo RP SAP', 'Posicion', 'Causado', 'Pagado'];
               break;
             case "Funds":
-              titleDB = ["FND_CODECP_ENTIDAD","FND_NUMERO","FND_DENOMINACION", "FND_DESCRIPCION", "FND_VIGENTE_DESDE", "FND_VIGENTE_HASTA"];
-              titleExcel = ['ENTIDAD CP','CODIGO','DENOMINACION', 'DESCRIPCION', 'VALIDEZ DE', 'VALIDEZ A'];
+              titleDB = ["FND_CODECP_ENTIDAD", "FND_NUMERO", "FND_DENOMINACION", "FND_DESCRIPCION", "FND_VIGENTE_DESDE", "FND_VIGENTE_HASTA"];
+              titleExcel = ['ENTIDAD CP', 'CODIGO', 'DENOMINACION', 'DESCRIPCION', 'VALIDEZ DE', 'VALIDEZ A'];
 
               break;
             case "AreaFuncional":
@@ -243,7 +248,7 @@ export function usePaysCrud() {
                         infoErrors.push(objErrors);
                       }
                       break;
-                    case "FND_CODIGO":
+                    case "FND_NUMERO":
                       if (typeof value !== 'number' || !Number.isInteger(value)) {
                         console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
                         if (value === undefined) { } else {
@@ -287,14 +292,27 @@ export function usePaysCrud() {
                 } else if (tipoDocumento == "AreaFuncional") {
                   switch (titleDB[C]) {
                     case "Codigo":
-                      if (typeof value !== 'number' || !Number.isInteger(value)) {
-                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
-                        if (value === undefined) { } else {
-                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                          let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
-                          infoErrors.push(objErrors);
-                        }
+                      if (typeof value !== 'string') {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                        let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                        infoErrors.push(objErrors);
                       }
+
+
+                      infoArrAF.forEach(element => {
+
+                        if (element.number === value) {
+                          infoArrProject.forEach(datosProject => {
+                            if (datosProject.functionalAreaId === element.id) {
+                              let objErrors = { "rowError": R, "message": `El Área funcional ya existe con ese proyecto` };
+                              infoErrors.push(objErrors);
+                            }
+                          });
+                        }
+
+
+                      });
+
                       break;
                     case "TipoProyecto":
                       if (typeof value !== 'string') {
@@ -302,6 +320,15 @@ export function usePaysCrud() {
                         let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
                         infoErrors.push(objErrors);
                       }
+
+                      let valueFunction: string = "funcionamiento";
+                      let valueInvertion: string = "inversion";
+                      if (value == valueInvertion || value == valueFunction) {
+                      } else {
+                        let objErrors = { "rowError": R, "message": `El tipo de proyecto solo puede ser: inversion ó funcionamiento` };
+                        infoErrors.push(objErrors);
+                      }
+
                       break;
                     case "Proyecto":
                       if (typeof value !== 'string') {
@@ -312,12 +339,24 @@ export function usePaysCrud() {
                       break;
                   }
                 } else if (tipoDocumento == "PospreSapiencia") {
+                  console.log(titleDB["PospreOrigen"]);
+                  
+
+/*                   let objData = {
+                    "pprNumero": titleDB["PospreOrigen"].value.toString(),
+                    "pprEjercicio": parseInt(titleDB["PospreOrigen"].value),
+                    "ppsPosicion": parseInt(titleDB["ConsecutivoPospreSapiencia"].value),
+                  }
+                  let responseVerifyData = await api.getPospreByParams(objData) */
+                /*   if (responseVerifyData.data.length > 0) {
+                    let objErrors = { "rowError": R, "message": `El Pospre sapiencia ya existe para esa vigencia` };
+                    infoErrors.push(objErrors);
+                  } */
                   switch (titleDB[C]) {
                     case "PospreOrigen":
                       if (typeof value !== 'number' || !Number.isInteger(value)) {
                         console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
                         if (value === undefined) { } else {
-                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
                           let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
                           infoErrors.push(objErrors);
                         }
@@ -460,6 +499,7 @@ export function usePaysCrud() {
                         let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
                         infoErrors.push(objErrors);
                       }
+
                       break;
                     case "Fondo":
                       if (typeof value !== 'number' || !Number.isInteger(value)) {
@@ -511,7 +551,7 @@ export function usePaysCrud() {
                 rpSapValue = rowData['PAG_CODVRP_VINCULACION_RP'];
                 posicionValue = rowData['POSICION'];
               } else if (tipoDocumento == "Funds") {
-                rpSapValue = rowData['FND_CODIGO'];
+                rpSapValue = rowData['FND_NUMERO'];
 
               }
 
@@ -566,8 +606,6 @@ export function usePaysCrud() {
                     let valorFinal = datos.valorFinal;
 
                     let sumValues = parseInt(rowData['PAG_VALOR_CAUSADO']) + parseInt(rowData['PAG_VALOR_PAGADO']);
-                    console.log(sumValues);
-                    console.log(valorFinal);
 
                     if (sumValues < valorFinal) {
                       let objErrors = { "rowError": R, "message": `El valor del RP es mayor del valor causado+pagado` };
@@ -575,6 +613,16 @@ export function usePaysCrud() {
                     }
                   }
 
+                }
+              } else if (tipoDocumento === "Funds") {
+                let dataVerify = {
+                  "numero": rowData['FND_NUMERO'].toString()
+                }
+
+                const responseValidate = await api.getAllFunds(dataVerify);
+                if (responseValidate['operation'].message === "Fondo ya existente.") {
+                  let objErrors = { "rowError": R, "message": `el fondo ya existe.` };
+                  infoErrors.push(objErrors);
                 }
               }
 
@@ -638,7 +686,6 @@ export function usePaysCrud() {
     }
 
     if (tryReturn) {
-
       console.log("no es posible continuar");
       return
     }
@@ -692,7 +739,9 @@ export function usePaysCrud() {
                   onOk: () => {
                     //onCancelNew();
                     setInfoErrors([])
-                    navigate("./../");
+                    if (tipoArchivo === "Pagos") {
+                      navigate("./../");
+                    }
                     setMessage({})
                   },
                   background: true,
