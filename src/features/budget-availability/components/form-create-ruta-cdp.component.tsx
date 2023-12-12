@@ -149,6 +149,10 @@ const FormCreateRutaCDPComponent: React.FC<FormularioProps> = ({
             setSaldo(totalAmountAvalible);
             setBalance(totalAmountAvalible.toString());
             setValorInicial(totalAmountAvalible.toString());
+
+            let tryJsonInfo = JSON.stringify(response);
+            tryJsonInfo = JSON.parse(tryJsonInfo)['id'].toString();
+            setIdRpp(tryJsonInfo);
           } else {
             setMessage({
               title: "!No hay datos relacionados!",

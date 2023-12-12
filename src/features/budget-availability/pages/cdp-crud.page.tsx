@@ -136,6 +136,15 @@ const CdpCrudPage = () => {
     } else {
       setDataFinalSend((prevData) => [...prevData, icdImportsData]);
     }
+
+    let finalObj = {
+      date:formHeadInfo['date'],
+      contractObject: formHeadInfo['contractObject'],
+      exercise: formHeadInfo['exercise'],
+      icdArr: dataFinalSend
+    }
+
+    setObjectSendData(finalObj)
   }, [icdImportsData, formHeadInfo]);
 
   const handleCancel = () => {
@@ -159,6 +168,10 @@ const CdpCrudPage = () => {
 
   const handleGuardar = async () => {
     setFormSubmitted(true);
+    if(objectSendData['contractObject'] == "" || objectSendData['contractObject'] == null){
+      console.log("No hay objecto contractual")
+      return;
+    }
 
     let newObjectSendData = {
       date: formHeadInfo["date"],

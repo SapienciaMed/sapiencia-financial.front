@@ -89,16 +89,16 @@ export function usePaysCrud() {
   };
 
   async function processExcelFile(base64Data, tipoDocumento) {
+    let dataVacia = false;
+    setLoadingSpinner(true)
+    setDataEmpty(false)
+    setSelection(tipoDocumento)
+    setInfoErrors([])
     const responseAllAF = await api.getAllAF();
     const responseAllProject = await api.getAllProjects();
     let infoArrAF = responseAllAF.data;
     let infoArrProject = responseAllProject.data;
-
-    let dataVacia = false;
-    setLoadingSpinner(true);
-    setDataEmpty(false);
-    setSelection(tipoDocumento);
-    setInfoErrors([]);
+    
     return new Promise(async (resolve, reject) => {
       let infoErrors = [];
       const base64Content = base64Data.split(",")[1];
@@ -121,6 +121,7 @@ export function usePaysCrud() {
           const range = XLSX.utils.decode_range(sheet["!ref"]);
           const titles = [];
 
+          
           for (let C = range.s.c; C <= range.e.c; ++C) {
             const cell_address = { c: C, r: 0 };
             const cell_ref = XLSX.utils.encode_cell(cell_address);
@@ -147,12 +148,16 @@ export function usePaysCrud() {
               break;
             case "Funds":
               titleDB = [
+                "FND_CODECP_ENTIDAD",
+                "FND_NUMERO",
                 "FND_DENOMINACION",
                 "FND_DESCRIPCION",
                 "FND_VIGENTE_DESDE",
                 "FND_VIGENTE_HASTA",
               ];
               titleExcel = [
+                "ENTIDAD CP",
+                "CODIGO",
                 "DENOMINACION",
                 "DESCRIPCION",
                 "VALIDEZ DE",
@@ -350,7 +355,7 @@ export function usePaysCrud() {
                         infoErrors.push(objErrors);
                       }
                       break;
-                    case "FND_CODIGO":
+                    case "FND_NUMERO":
                       if (
                         typeof value !== "number" ||
                         !Number.isInteger(value)
@@ -500,133 +505,77 @@ export function usePaysCrud() {
                       }
                       break;
                   }
-                } else if (tipoDocumento == "PospreSapiencia") {
-                  console.log(titleDB["PospreOrigen"]);
+                  } else if (tipoDocumento == "PospreSapiencia") {
+                    console.log(value);
+                    
+                    return;
 
-                  /*                   let objData = {
-                    "pprNumero": titleDB["PospreOrigen"].value.toString(),
-                    "pprEjercicio": parseInt(titleDB["PospreOrigen"].value),
-                    "ppsPosicion": parseInt(titleDB["ConsecutivoPospreSapiencia"].value),
-                  }
-                  let responseVerifyData = await api.getPospreByParams(objData) */
+  /*                   let objData = {
+                      "pprNumero": titleDB["PospreOrigen"].value.toString(),
+                      "pprEjercicio": parseInt(titleDB["PospreOrigen"].value),
+                      "ppsPosicion": parseInt(titleDB["ConsecutivoPospreSapiencia"].value),
+                    }
+                    let responseVerifyData = await api.getPospreByParams(objData) */
                   /*   if (responseVerifyData.data.length > 0) {
-                    let objErrors = { "rowError": R, "message": `El Pospre sapiencia ya existe para esa vigencia` };
-                    infoErrors.push(objErrors);
-                  } */
-                  switch (titleDB[C]) {
-                    case "PospreOrigen":
-                      if (
-                        typeof value !== "number" ||
-                        !Number.isInteger(value)
-                      ) {
-                        console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
-                          }: El valor '${value}' no es un número entero.`
-                        );
-                        if (value === undefined) {
-                        } else {
-                          let objErrors = {
-                            rowError: R,
-                            message: `el archivo no cumple la estructura`,
-                          };
+                      let objErrors = { "rowError": R, "message": `El Pospre sapiencia ya existe para esa vigencia` };
+                      infoErrors.push(objErrors);
+                    } */
+                    switch (titleDB[C]) {
+                      case "PospreOrigen":
+                        if (typeof value !== 'number' || !Number.isInteger(value)) {
+                          console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
+                          if (value === undefined) { } else {
+                            let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                            infoErrors.push(objErrors);
+                          }
+                        }
+                        break;
+                      case "DenominacionOrigen":
+                        if (typeof value !== 'number' || !Number.isInteger(value)) {
+                          console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
+                          if (value === undefined) { } else {
+                            //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                            let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                            infoErrors.push(objErrors);
+                          }
+                        }
+                        break;
+                      case "DescripcionOrigen":
+                        if (typeof value !== 'string') {
+                          console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                          let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
                           infoErrors.push(objErrors);
                         }
-                      }
-                      break;
-                    case "DenominacionOrigen":
-                      if (
-                        typeof value !== "number" ||
-                        !Number.isInteger(value)
-                      ) {
-                        console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
-                          }: El valor '${value}' no es un número entero.`
-                        );
-                        if (value === undefined) {
-                        } else {
-                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                          let objErrors = {
-                            rowError: R,
-                            message: `el archivo no cumple la estructura`,
-                          };
+                        break;
+                      case "ConsecutivoPospreSapiencia":
+                        if (typeof value !== 'number' || !Number.isInteger(value)) {
+                          console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
+                          if (value === undefined) { } else {
+                            //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                            let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                            infoErrors.push(objErrors);
+                          }
+                        }
+                        break;
+                      case "Ejercicio":
+                        if (typeof value !== 'number' || !Number.isInteger(value)) {
+                          console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
+                          if (value === undefined) { } else {
+                            //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                            let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                            infoErrors.push(objErrors);
+                          }
+                        }
+                        break;
+                      case "DescripcionSapiencia":
+                        if (typeof value !== 'string') {
+                          console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                          let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
                           infoErrors.push(objErrors);
                         }
-                      }
-                      break;
-                    case "DescripcionOrigen":
-                      if (typeof value !== "string") {
-                        console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
-                          }: El valor '${value}' no es una cadena de texto.`
-                        );
-                        let objErrors = {
-                          rowError: R,
-                          message: `el archivo no cumple la estructura`,
-                        };
-                        infoErrors.push(objErrors);
-                      }
-                      break;
-                    case "ConsecutivoPospreSapiencia":
-                      if (
-                        typeof value !== "number" ||
-                        !Number.isInteger(value)
-                      ) {
-                        console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
-                          }: El valor '${value}' no es un número entero.`
-                        );
-                        if (value === undefined) {
-                        } else {
-                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                          let objErrors = {
-                            rowError: R,
-                            message: `el archivo no cumple la estructura`,
-                          };
-                          infoErrors.push(objErrors);
-                        }
-                      }
-                      break;
-                    case "Ejercicio":
-                      if (
-                        typeof value !== "number" ||
-                        !Number.isInteger(value)
-                      ) {
-                        console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
-                          }: El valor '${value}' no es un número entero.`
-                        );
-                        if (value === undefined) {
-                        } else {
-                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                          let objErrors = {
-                            rowError: R,
-                            message: `el archivo no cumple la estructura`,
-                          };
-                          infoErrors.push(objErrors);
-                        }
-                      }
-                      break;
-                    case "DescripcionSapiencia":
-                      if (typeof value !== "string") {
-                        console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
-                          }: El valor '${value}' no es una cadena de texto.`
-                        );
-                        let objErrors = {
-                          rowError: R,
-                          message: `el archivo no cumple la estructura`,
-                        };
-                        infoErrors.push(objErrors);
-                      }
-                      break;
-                  }
-                } else if (tipoDocumento == "PospreMGA") {
+                        break;
+                    }
+                  } else if (tipoDocumento == "PospreMGA") {
                   switch (titleDB[C]) {
                     case "PospreOrigen":
                       if (
@@ -900,7 +849,7 @@ export function usePaysCrud() {
                 rpSapValue = rowData["PAG_CODVRP_VINCULACION_RP"];
                 posicionValue = rowData["POSICION"];
               } else if (tipoDocumento == "Funds") {
-                rpSapValue = rowData["FND_CODIGO"];
+                rpSapValue = rowData["FND_NUMERO"];
               }
 
               if (rpSapValue !== undefined) {
@@ -1051,9 +1000,12 @@ export function usePaysCrud() {
       tryReturn = true;
     }
 
-    if (data.mesDelAnio === undefined) {
-      updateFieldError("mesDelAnio", "vacio");
-      tryReturn = true;
+
+    if(tipoArchivo == "Pagos"){
+      if (data.mesDelAnio === undefined) {
+        updateFieldError("mesDelAnio", "vacio");
+        tryReturn = true;
+      }
     }
 
     if (tryReturn) {
@@ -1072,11 +1024,7 @@ export function usePaysCrud() {
 
     if (verification === true) {
       setLoadingSpinner(false);
-      /*   if (selection !== "Pagos") {
-        console.log("No esta disponible el guardado");
-        setLoadingSpinner(false);
-        return;
-      } */
+
       let exercise = ejercicio.toString();
       console.log("entr1", exercise);
       let obInfo = {
