@@ -98,7 +98,7 @@ export function usePaysCrud() {
     const responseAllProject = await api.getAllProjects();
     let infoArrAF = responseAllAF.data;
     let infoArrProject = responseAllProject.data;
-    
+
     return new Promise(async (resolve, reject) => {
       let infoErrors = [];
       const base64Content = base64Data.split(",")[1];
@@ -121,12 +121,47 @@ export function usePaysCrud() {
           const range = XLSX.utils.decode_range(sheet["!ref"]);
           const titles = [];
 
-          
+
           for (let C = range.s.c; C <= range.e.c; ++C) {
             const cell_address = { c: C, r: 0 };
             const cell_ref = XLSX.utils.encode_cell(cell_address);
             titles.push(sheet[cell_ref]?.v || "Undefined Title");
           }
+
+          const data = [];
+          for (let row = range.s.r + 1; row <= range.e.r; row++) {
+            const rowData = {};
+
+            for (let col = range.s.c; col <= range.e.c; col++) {
+              const cellAddress = { c: col, r: row };
+              const cellRef = XLSX.utils.encode_cell(cellAddress);
+              const title = titles[col - range.s.c];
+              const value = sheet[cellRef] ? sheet[cellRef].v : undefined;
+              let titleNew = title.replace(/ /g, "_").toLowerCase();
+              // Puedes agregar el título de la columna como propiedad y el valor como valor
+              rowData[titleNew] = value;
+            }
+
+            data.push(rowData);
+          }
+
+          if (tipoDocumento === "PospreSapiencia") {
+            data.forEach(async (element, index) => {
+              let objData = {
+                "pprNumero": element.pospre_origen.toString(),
+                "pprEjercicio": parseInt(element.ejercicio),
+                "ppsPosicion": parseInt(element.consecutivo_pospre_sapiencia),
+              }
+              let responseVerifyData = await api.getPospreByParams(objData)
+              if (responseVerifyData.data.length > 0) {
+                let objErrors = { "rowError": index+1, "message": `El Pospre sapiencia ya existe para esa vigencia` };
+                infoErrors.push(objErrors);
+              }
+
+            });
+          }
+          console.log(data);
+
 
           // Inicio de validaciones
           let titleDB, titleExcel;
@@ -344,8 +379,7 @@ export function usePaysCrud() {
                     case "FND_CODECP_ENTIDAD":
                       if (typeof value !== "string") {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es una cadena de texto.`
                         );
                         let objErrors = {
@@ -361,8 +395,7 @@ export function usePaysCrud() {
                         !Number.isInteger(value)
                       ) {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es un número entero.`
                         );
                         if (value === undefined) {
@@ -379,8 +412,7 @@ export function usePaysCrud() {
                     case "DENOMINACION":
                       if (typeof value !== "string") {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es una cadena de texto.`
                         );
                         let objErrors = {
@@ -393,8 +425,7 @@ export function usePaysCrud() {
                     case "DESCRIPCION":
                       if (typeof value !== "string") {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es una cadena de texto.`
                         );
                         let objErrors = {
@@ -407,8 +438,7 @@ export function usePaysCrud() {
                     case "VALIDEZ DE":
                       if (typeof value !== "string") {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es una cadena de texto.`
                         );
                         let objErrors = {
@@ -421,8 +451,7 @@ export function usePaysCrud() {
                     case "VALIDEZ A":
                       if (typeof value !== "string") {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es una cadena de texto.`
                         );
                         let objErrors = {
@@ -434,12 +463,29 @@ export function usePaysCrud() {
                       break;
                   }
                 } else if (tipoDocumento == "AreaFuncional") {
+
+                  const validarEstructura = (value) => {
+                    const patron = /^\d{8}\.\d{4}\.\d{2}$/;
+
+                    if (!patron.test(value)) {
+                      console.log(
+                        `Error en la validación de la fila ${R}, columna ${C + 1}: El valor '${value}' no cumple con la estructura esperada.`
+                      );
+                      let objErrors = {
+                        rowError: R,
+                        message: `El codigo no cumple con la estructura esperada`,
+                      };
+                      infoErrors.push(objErrors);
+                    }
+                  }
+
                   switch (titleDB[C]) {
                     case "Codigo":
+
+                      validarEstructura(value)
                       if (typeof value !== "string") {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es una cadena de texto.`
                         );
                         let objErrors = {
@@ -467,8 +513,7 @@ export function usePaysCrud() {
                     case "TipoProyecto":
                       if (typeof value !== "string") {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es una cadena de texto.`
                         );
                         let objErrors = {
@@ -493,8 +538,7 @@ export function usePaysCrud() {
                     case "Proyecto":
                       if (typeof value !== "string") {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es una cadena de texto.`
                         );
                         let objErrors = {
@@ -505,77 +549,95 @@ export function usePaysCrud() {
                       }
                       break;
                   }
-                  } else if (tipoDocumento == "PospreSapiencia") {
-                    console.log(value);
-                    
-                    return;
+                } else if (tipoDocumento == "PospreSapiencia") {
+                  console.log(value);
+                  let objTryData = {}
+                  let pprN = "";
+                  let pprE = 0;
+                  let ppsP = 0;
+                  if (titleDB[C] == "PospreOrigen") {
+                    objTryData['pprN'] = value;
+                    pprN = value
+                  }
+                  if (titleDB[C] == "Ejercicio") {
+                    objTryData['pprE'] = value;
+                    pprE = value
+                  }
+                  if (titleDB[C] == "ConsecutivoPospreSapiencia") {
+                    objTryData['ppsP'] = value;
+                    ppsP = value
+                  }
 
-  /*                   let objData = {
-                      "pprNumero": titleDB["PospreOrigen"].value.toString(),
-                      "pprEjercicio": parseInt(titleDB["PospreOrigen"].value),
-                      "ppsPosicion": parseInt(titleDB["ConsecutivoPospreSapiencia"].value),
-                    }
-                    let responseVerifyData = await api.getPospreByParams(objData) */
+
+
+                  console.log(objTryData);
+
+                  /*                   let objData = {
+                                      "pprNumero": titleDB["PospreOrigen"].value.toString(),
+                                      "pprEjercicio": parseInt(titleDB["PospreOrigen"].value),
+                                      "ppsPosicion": parseInt(titleDB["ConsecutivoPospreSapiencia"].value),
+                                    }
+                                    let responseVerifyData = await api.getPospreByParams(objData) */
                   /*   if (responseVerifyData.data.length > 0) {
                       let objErrors = { "rowError": R, "message": `El Pospre sapiencia ya existe para esa vigencia` };
                       infoErrors.push(objErrors);
                     } */
-                    switch (titleDB[C]) {
-                      case "PospreOrigen":
-                        if (typeof value !== 'number' || !Number.isInteger(value)) {
-                          console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
-                          if (value === undefined) { } else {
-                            let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
-                            infoErrors.push(objErrors);
-                          }
-                        }
-                        break;
-                      case "DenominacionOrigen":
-                        if (typeof value !== 'number' || !Number.isInteger(value)) {
-                          console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
-                          if (value === undefined) { } else {
-                            //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                            let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
-                            infoErrors.push(objErrors);
-                          }
-                        }
-                        break;
-                      case "DescripcionOrigen":
-                        if (typeof value !== 'string') {
-                          console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                  switch (titleDB[C]) {
+                    case "PospreOrigen":
+                      if (typeof value !== 'number' || !Number.isInteger(value)) {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
+                        if (value === undefined) { } else {
                           let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
                           infoErrors.push(objErrors);
                         }
-                        break;
-                      case "ConsecutivoPospreSapiencia":
-                        if (typeof value !== 'number' || !Number.isInteger(value)) {
-                          console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
-                          if (value === undefined) { } else {
-                            //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                            let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
-                            infoErrors.push(objErrors);
-                          }
-                        }
-                        break;
-                      case "Ejercicio":
-                        if (typeof value !== 'number' || !Number.isInteger(value)) {
-                          console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
-                          if (value === undefined) { } else {
-                            //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                            let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
-                            infoErrors.push(objErrors);
-                          }
-                        }
-                        break;
-                      case "DescripcionSapiencia":
-                        if (typeof value !== 'string') {
-                          console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                      }
+                      break;
+                    case "DenominacionOrigen":
+                      if (typeof value !== 'number' || !Number.isInteger(value)) {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
+                        if (value === undefined) { } else {
+                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
                           let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
                           infoErrors.push(objErrors);
                         }
-                        break;
-                    }
-                  } else if (tipoDocumento == "PospreMGA") {
+                      }
+                      break;
+                    case "DescripcionOrigen":
+                      if (typeof value !== 'string') {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                        let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                        infoErrors.push(objErrors);
+                      }
+                      break;
+                    case "ConsecutivoPospreSapiencia":
+                      if (typeof value !== 'number' || !Number.isInteger(value)) {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
+                        if (value === undefined) { } else {
+                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                          let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                          infoErrors.push(objErrors);
+                        }
+                      }
+                      break;
+                    case "Ejercicio":
+                      if (typeof value !== 'number' || !Number.isInteger(value)) {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
+                        if (value === undefined) { } else {
+                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                          let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                          infoErrors.push(objErrors);
+                        }
+                      }
+                      break;
+                    case "DescripcionSapiencia":
+                      if (typeof value !== 'string') {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es una cadena de texto.`);
+                        let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                        infoErrors.push(objErrors);
+                      }
+                      break;
+                  }
+                } else if (tipoDocumento == "PospreMGA") {
                   switch (titleDB[C]) {
                     case "PospreOrigen":
                       if (
@@ -583,8 +645,7 @@ export function usePaysCrud() {
                         !Number.isInteger(value)
                       ) {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es un número entero.`
                         );
                         if (value === undefined) {
@@ -601,8 +662,7 @@ export function usePaysCrud() {
                     case "Proyecto":
                       if (typeof value !== "string") {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es una cadena de texto.`
                         );
                         let objErrors = {
@@ -618,8 +678,7 @@ export function usePaysCrud() {
                         !Number.isInteger(value)
                       ) {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es un número entero.`
                         );
                         if (value === undefined) {
@@ -636,8 +695,7 @@ export function usePaysCrud() {
                     case "ProductoMGA":
                       if (typeof value !== "string") {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es una cadena de texto.`
                         );
                         let objErrors = {
@@ -653,8 +711,7 @@ export function usePaysCrud() {
                         !Number.isInteger(value)
                       ) {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es un número entero.`
                         );
                         if (value === undefined) {
@@ -671,8 +728,7 @@ export function usePaysCrud() {
                     case "NombreActividadDetalleMGA":
                       if (typeof value !== "string") {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es una cadena de texto.`
                         );
                         let objErrors = {
@@ -691,8 +747,7 @@ export function usePaysCrud() {
                         !Number.isInteger(value)
                       ) {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es un número entero.`
                         );
                         if (value === undefined) {
@@ -712,8 +767,7 @@ export function usePaysCrud() {
                         !Number.isInteger(value)
                       ) {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es un número entero.`
                         );
                         if (value === undefined) {
@@ -733,8 +787,7 @@ export function usePaysCrud() {
                         !Number.isInteger(value)
                       ) {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es un número entero.`
                         );
                         if (value === undefined) {
@@ -751,8 +804,7 @@ export function usePaysCrud() {
                     case "AreaFuncional":
                       if (typeof value !== "string") {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es una cadena de texto.`
                         );
                         let objErrors = {
@@ -769,8 +821,7 @@ export function usePaysCrud() {
                         !Number.isInteger(value)
                       ) {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es un número entero.`
                         );
                         if (value === undefined) {
@@ -787,8 +838,7 @@ export function usePaysCrud() {
                     case "Proyecto":
                       if (typeof value !== "string") {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es una cadena de texto.`
                         );
                         let objErrors = {
@@ -804,8 +854,7 @@ export function usePaysCrud() {
                         !Number.isInteger(value)
                       ) {
                         console.log(
-                          `Error en la fila ${R}, columna ${
-                            C + 1
+                          `Error en la fila ${R}, columna ${C + 1
                           }: El valor '${value}' no es un número entero.`
                         );
                         if (value === undefined) {
@@ -827,8 +876,7 @@ export function usePaysCrud() {
                 if (merges === undefined) {
                   if (value === null || value === undefined || value === "") {
                     console.log(
-                      `Error en la fila ${R}, columna ${
-                        C + 1
+                      `Error en la fila ${R}, columna ${C + 1
                       }: La celda está vacía.`
                     );
                     let objErrors = {
@@ -1001,7 +1049,7 @@ export function usePaysCrud() {
     }
 
 
-    if(tipoArchivo == "Pagos"){
+    if (tipoArchivo == "Pagos") {
       if (data.mesDelAnio === undefined) {
         updateFieldError("mesDelAnio", "vacio");
         tryReturn = true;
