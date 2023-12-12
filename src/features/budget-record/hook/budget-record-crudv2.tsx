@@ -125,7 +125,6 @@ export function useBudgeRecordCrudv2() {
     const { supplierType, contractorDocument, consecutiveCdpAurora, consecutiveCdpSap} = watch()
 
     useEffect(() => {
-        console.log({selectedAmounts, isBtnSearchAmountsSt})
         if (
             selectedAmounts?.length>0
             ) {
