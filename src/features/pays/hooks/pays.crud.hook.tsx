@@ -120,7 +120,7 @@ export function usePaysCrud() {
           const sheet = workbook.Sheets[sheetName];
           const range = XLSX.utils.decode_range(sheet["!ref"]);
           const titles = [];
-
+          const dataInformationProjects = []
 
           for (let C = range.s.c; C <= range.e.c; ++C) {
             const cell_address = { c: C, r: 0 };
@@ -128,39 +128,69 @@ export function usePaysCrud() {
             titles.push(sheet[cell_ref]?.v || "Undefined Title");
           }
 
-          const data = [];
-          for (let row = range.s.r + 1; row <= range.e.r; row++) {
-            const rowData = {};
+          
 
-            for (let col = range.s.c; col <= range.e.c; col++) {
-              const cellAddress = { c: col, r: row };
-              const cellRef = XLSX.utils.encode_cell(cellAddress);
-              const title = titles[col - range.s.c];
-              const value = sheet[cellRef] ? sheet[cellRef].v : undefined;
-              let titleNew = title.replace(/ /g, "_").toLowerCase();
-              // Puedes agregar el título de la columna como propiedad y el valor como valor
-              rowData[titleNew] = value;
+          if (tipoDocumento === "PospreSapiencia" || tipoDocumento === "AreaFuncional") {
+            const data = [];
+            for (let row = range.s.r + 1; row <= range.e.r; row++) {
+              const rowData = {};
+
+              for (let col = range.s.c; col <= range.e.c; col++) {
+                const cellAddress = { c: col, r: row };
+                const cellRef = XLSX.utils.encode_cell(cellAddress);
+                const title = titles[col - range.s.c];
+                const value = sheet[cellRef] ? sheet[cellRef].v : undefined;
+                let titleNew = title.replace(/ /g, "_").toLowerCase();
+                rowData[titleNew] = value;
+              }
+  
+              data.push(rowData);
             }
 
-            data.push(rowData);
+            if(tipoDocumento === "PospreSapiencia" ){
+              data.forEach(async (element, index) => {
+                let objData = {
+                  "pprNumero": element.pospre_origen.toString(),
+                  "pprEjercicio": parseInt(element.ejercicio),
+                  "ppsPosicion": parseInt(element.consecutivo_pospre_sapiencia),
+                }
+                let responseVerifyData = await api.getPospreByParams(objData)
+                if (responseVerifyData.data.length > 0) {
+                  let objErrors = { "rowError": index+1, "message": `El Pospre sapiencia ya existe para esa vigencia` };
+                  infoErrors.push(objErrors);
+                }
+  
+              });
+            }
+
+            if (tipoDocumento === "AreaFuncional") {
+              let arrayFilterProject = [];
+
+              data.forEach((element) => {
+                arrayFilterProject.push(element.proyecto.toString());
+              });
+            
+              let objProjectInfo = {
+                "codeList": arrayFilterProject
+              };
+            
+              const getInfoProjectsApi = await api.getProjectDataApi(objProjectInfo);
+              let arrInformation = getInfoProjectsApi.data;
+            
+              let arrBpin = arrInformation.map(element => element.bpin);
+               
+              data.forEach((element, index) => {
+                if (!arrBpin.includes(element.proyecto.toString())) {
+                  let objErrors = { "rowError": index + 1, "message": `El proyecto no existe` };
+                  infoErrors.push(objErrors);
+                }
+              });
+            }
+            
           }
 
-          if (tipoDocumento === "PospreSapiencia") {
-            data.forEach(async (element, index) => {
-              let objData = {
-                "pprNumero": element.pospre_origen.toString(),
-                "pprEjercicio": parseInt(element.ejercicio),
-                "ppsPosicion": parseInt(element.consecutivo_pospre_sapiencia),
-              }
-              let responseVerifyData = await api.getPospreByParams(objData)
-              if (responseVerifyData.data.length > 0) {
-                let objErrors = { "rowError": index+1, "message": `El Pospre sapiencia ya existe para esa vigencia` };
-                infoErrors.push(objErrors);
-              }
+       
 
-            });
-          }
-          console.log(data);
 
 
           // Inicio de validaciones
@@ -536,16 +566,12 @@ export function usePaysCrud() {
 
                       break;
                     case "Proyecto":
-                      if (typeof value !== "string") {
-                        console.log(
-                          `Error en la fila ${R}, columna ${C + 1
-                          }: El valor '${value}' no es una cadena de texto.`
-                        );
-                        let objErrors = {
-                          rowError: R,
-                          message: `el archivo no cumple la estructura`,
-                        };
-                        infoErrors.push(objErrors);
+                      if (typeof value !== 'number' || !Number.isInteger(value)) {
+                        console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
+                        if (value === undefined) { } else {
+                          let objErrors = { "rowError": R, "message": `el archivo no cumple la estructura` };
+                          infoErrors.push(objErrors);
+                        }
                       }
                       break;
                   }
@@ -980,6 +1006,8 @@ export function usePaysCrud() {
                   }
                 }
               } else if (tipoDocumento === "Funds") {
+                console.log(rowData);
+                
                 let dataVerify = {
                   numero: rowData["FND_NUMERO"].toString(),
                 };
