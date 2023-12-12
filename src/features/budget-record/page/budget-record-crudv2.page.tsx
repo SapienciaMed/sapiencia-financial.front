@@ -240,7 +240,7 @@ function BudgetRecordCrudPagev2() {
         </FormComponent>
       </div>
       {
-        isAllowSave && (
+        isAllowSave && dataAmounts.length>0 && (
           <div className="funcionality-buttons-container">
             <span
               className="bold text-center button"
