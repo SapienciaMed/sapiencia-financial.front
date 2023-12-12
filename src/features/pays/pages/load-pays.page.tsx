@@ -47,6 +47,7 @@ function LoadPays() {
   const [showTableErrors, setShowTableErrors] = useState(false)
   const [showMonth, setShowMonth] = useState(false)
   const [isEmptyMonth, setIsEmptyMonth] = useState(false)
+  const [isPay, setIsPay] = useState(false)
   const navigate = useNavigate();
   const getFile = (newFile: File) => {
     setFile(newFile);
@@ -125,6 +126,7 @@ function LoadPays() {
 
   const handleTipoArchivoChange = (selectedValue) => {
     selectedValue === "Pagos" ? setShowMonth(true) : setShowMonth(false)
+    selectedValue === "Pagos" ? setIsPay(true) : setIsPay(false)
     delete fieldErrors['tipoArchivo'];
   };
 
@@ -251,7 +253,7 @@ function LoadPays() {
                     direction={EDirection.column}
                     optionSelected={(event) => handleChangeMonth(event)}
                   >
-                    {fieldErrors.mesDelAnio  &&(
+                    {fieldErrors.mesDelAnio && (
                       <p className="error-message">Este campo es obligatorio</p>
                     )}
                   </SelectComponent>
@@ -419,7 +421,12 @@ function LoadPays() {
       <div className="buttons-bot" style={{ position: 'fixed', bottom: 0, right: 0, display: 'flex', justifyContent: 'flex-end', width: '25%', marginBottom: '15px', marginRight: '15px' }}>
         <span
           className="bold text-center button"
-          onClick={() => { navigate("./../"); }}
+          onClick={() => {
+            setInfoErrors([]);
+            if (isPay) {
+              navigate("./../");
+            }
+          }}
           style={{
             marginTop: '10px',
             marginRight: '10px',
@@ -440,8 +447,6 @@ function LoadPays() {
           isLoading={isLoading}
         />
       </div>
-
-
     </div>
   );
 }
