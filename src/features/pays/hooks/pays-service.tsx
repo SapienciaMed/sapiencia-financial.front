@@ -27,6 +27,11 @@ export function usePaysServices() {
     return post(`${endpoint}`, data);
   }
 
+  async function getProjectDataApi(data): Promise<ApiResponse<any>> {
+    const endpoint: string = `https://sapiencia-strategic-direction-api-ukyunq2uxa-uc.a.run.app/api/v1/project/get-by-filters`
+    return post(`${endpoint}`, data);
+  }
+
   async function getAllAF(): Promise<ApiResponse<any>> {
     const endpoint: string = `/api/v1/functional-area/get-all/`;
     return get(`${endpoint}`);
@@ -50,5 +55,6 @@ export function usePaysServices() {
     getAllAF,
     getAllProjects,
     getPospreByParams,
+    getProjectDataApi,
   };
 }
