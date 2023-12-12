@@ -28,7 +28,6 @@ function DetailsRouteValuesComponent({ rows, total, onOk, onShowModalDetail }: I
     return (
         <div className="display-flex-direction-column full-width">
             <label className="text-black large">Detalle de la ruta</label>
-
             <table className="details-table-2 card-grid-item">
                 {
                     rows?.map((datos) => {
