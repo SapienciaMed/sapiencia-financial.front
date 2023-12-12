@@ -21,7 +21,7 @@ export function usePaysCrud() {
   const tableComponentRef = useRef(null);
   const [errorsPac, setErrorsPac] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [errorsLoad, setErrorsLoad] = useState([]);
+  const [aditionalData, setAditionalData] = useState([]);
   const {
     infoErrors,
     setInfoErrors,
@@ -94,6 +94,8 @@ export function usePaysCrud() {
     setDataEmpty(false)
     setSelection(tipoDocumento)
     setInfoErrors([])
+    
+    let infoSendVPY = [];
     const responseAllAF = await api.getAllAF();
     const responseAllProject = await api.getAllProjects();
     let infoArrAF = responseAllAF.data;
@@ -127,8 +129,6 @@ export function usePaysCrud() {
             const cell_ref = XLSX.utils.encode_cell(cell_address);
             titles.push(sheet[cell_ref]?.v || "Undefined Title");
           }
-
-          
 
           if (tipoDocumento === "PospreSapiencia" || tipoDocumento === "AreaFuncional") {
             const data = [];
@@ -178,12 +178,17 @@ export function usePaysCrud() {
               let arrInformation = getInfoProjectsApi.data;
             
               let arrBpin = arrInformation.map(element => element.bpin);
-               
-              data.forEach((element, index) => {
-                if (!arrBpin.includes(element.proyecto.toString())) {
-                  let objErrors = { "rowError": index + 1, "message": `El proyecto no existe` };
-                  infoErrors.push(objErrors);
-                }
+
+                arrInformation.forEach(element => {
+                  let objProjectInfo = {id: element.id, bpin: element.bpin}
+                  infoSendVPY.push(objProjectInfo)
+                });
+
+                data.forEach((element, index) => {
+                  if (!arrBpin.includes(element.proyecto.toString())) {
+                    let objErrors = { "rowError": index + 1, "message": `El proyecto no existe` };
+                    infoErrors.push(objErrors);
+                  }
               });
             }
             
