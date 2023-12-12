@@ -1,8 +1,4 @@
-import React, {
-  useState,
-  forwardRef,
-  useContext,
-} from "react";
+import React, { useState, forwardRef, useContext } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { DataView } from "primereact/dataview";
@@ -19,21 +15,23 @@ import {
 import { classNames } from "primereact/utils";
 import * as Icons from "react-icons/fa";
 import { useWidth } from "../../../common/hooks/use-width";
-import { ITableAction, ITableElement } from "../../../common/interfaces/table.interfaces";
+import {
+  ITableAction,
+  ITableElement,
+} from "../../../common/interfaces/table.interfaces";
 import { Dropdown } from "primereact/dropdown";
 import { IPagingData } from "../../../common/utils/api-response";
 import { IobjectAddTransfer } from "../../../common/interfaces/global.interface";
 
-
 interface IProps<T> {
   title?: string;
-  secondaryTitle?:string;
+  secondaryTitle?: string;
   columns: ITableElement<T>[];
   actions?: ITableAction<T>[];
   searchItems?: object;
   isShowModal: boolean;
   titleMessageModalNoResult?: string;
-  ownData: IPagingData<IobjectAddTransfer>
+  ownData: IPagingData<IobjectAddTransfer>;
 }
 
 interface IRef {
@@ -41,13 +39,7 @@ interface IRef {
 }
 
 const TableDetailComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
-  const {
-    title,
-    secondaryTitle,
-    columns,
-    actions,
-    ownData, 
-  } = props;
+  const { title, secondaryTitle, columns, actions, ownData } = props;
 
   const [perPage, setPerPage] = useState<number>(10);
   const [first, setFirst] = useState<number>(0);
@@ -58,7 +50,6 @@ const TableDetailComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
     setPerPage(event.rows);
     setFirst(event.first);
   }
-
 
   const mobilTemplate = (item) => {
     return (
@@ -79,14 +70,16 @@ const TableDetailComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
           })}
         </div>
         <div className="card-footer">
-          <section className="position-absolute top text-black bold text-center"> Acciones </section>
+          <section className="position-absolute top text-black bold text-center">
+            {" "}
+            Acciones{" "}
+          </section>
           <section className="section-action">
             {actions?.map((action) => (
               <div key={action.icon} onClick={() => action.onClick(item)}>
                 {getIconElement(action.icon, "src")}
               </div>
             ))}
-
           </section>
         </div>
       </div>
@@ -106,7 +99,7 @@ const TableDetailComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
         onPageChange={onPageChange}
         leftContent={
           <p className="header-information text-black bold biggest">
-            { secondaryTitle ?? 'Resultados de búsqueda'}
+            {secondaryTitle ?? "Resultados de búsqueda"}
           </p>
         }
       />
@@ -114,7 +107,7 @@ const TableDetailComponent = forwardRef<IRef, IProps<any>>((props, ref) => {
       {width > 830 ? (
         <DataTable
           className="spc-table full-height"
-          value={ownData?.array|| []}
+          value={ownData?.array || []}
           scrollable={true}
         >
           {columns.map((col) => (

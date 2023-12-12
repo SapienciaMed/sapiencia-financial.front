@@ -6,7 +6,7 @@ import { AppContext } from "../../../common/contexts/app.context";
 export function useDetailsSelectedProject(option: string, id: string ) {
     
     const { detailTransferData } = useContext(AppContext);
-
+    console.log({detailTransferData})
     const getFoundProject = (type: string) => {
         const foundProject = detailTransferData.array[0].transferMovesGroups?.find((value) => value.id == id && value.data?.some(data => data.type == type))
         return foundProject?.data.filter(u => u.type == type)
@@ -14,7 +14,6 @@ export function useDetailsSelectedProject(option: string, id: string ) {
     
     const originValue = getFoundProject('Origen')
     const destinationValue  = getFoundProject('Destino')
-
     const total = originValue.reduce((accumulatedSum, item) => {
         return accumulatedSum + item.value
     }, 0);

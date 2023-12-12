@@ -17,6 +17,7 @@ import { useVinculationService } from "../hooks/vinculation-mga-service.hook";
 import { EResponseCodes } from "../../../common/constants/api.enum";
 import { IBudgetViewPage } from "../interfaces/Budgets";
 import { formaterNumberToCurrency } from "../../../common/utils/helpers";
+import { useNavigate } from 'react-router-dom';
 
 interface IVinculationMGAFilters {
   inputCodigoMGA: string;
@@ -26,6 +27,7 @@ export function useVinculationMGAData(
   budgetsId: string,
   values?: IBudgetViewPage
 ) {
+  const navigate = useNavigate()
   const [lastMove, setLastMove] = useState([]);
   const [lastMoveEdit, setLastMoveEdit] = useState<ILastMoveEdit[]>([]);
 
@@ -267,7 +269,7 @@ export function useVinculationMGAData(
 
     setMessage({
       title: "Vinculación MGA",
-      description: "¿Estás segur@ de Vinculaciar MGA",
+      description: "¿Estás segur@ de Vinculaciar MGA?",
       show: true,
       OkTitle: "Aceptar",
       cancelTitle: "Cancelar",
@@ -280,6 +282,7 @@ export function useVinculationMGAData(
               show: true,
               OkTitle: "Aceptar",
               onOk: () => {
+                navigate("/gestion-financiera/presupuesto/posicion-presupuestaria")
                 setMessage({});
               },
               background: true,
