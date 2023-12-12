@@ -17,7 +17,7 @@ export function useAssociatePac() {
     const { listDinamicsAssociations, CreateAssociations } = useAssociatePacService()
     const resolver = useYupValidationResolver( validationAssociatePac );
     const [ isBtnDisable, setIsBtnDisable ] = useState<boolean>(false)
-    const { setMessage } = useContext(AppContext);
+    const { setMessage, authorization } = useContext(AppContext);
     const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
     const [ showSpinner,   setShowSpinner ] = useState(false)
     const [projectIdSelectedSt, setProjectIdSelectedSt] = useState<string>('')
@@ -220,6 +220,7 @@ export function useAssociatePac() {
             idPospreSapiencia: parseInt(data.pospreSapiencia),
             idBudget: arrayDataSelect.listPospreSapi.find(us => us.id == data.pospreSapiencia).idPosPreOrig,
             budgetSapiencia: parseInt(data.sapienciaBudget),
+            userCreate:authorization.user.numberDocument,
             annualization: {
                 type: "Programado",
                 jan: parseInt(data.programmed?.january),

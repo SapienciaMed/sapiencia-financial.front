@@ -201,6 +201,8 @@ export interface ICreateAssociation {
     idBudget?: number;
     budgetSapiencia?: number;
     annualization?: IAnnualRoute;
+    userModify?:string;
+    userCreate?:string;
 }
 
 export interface IPacEdit {

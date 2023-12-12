@@ -126,13 +126,13 @@ export function useBudgeRecordCrudv2() {
 
     useEffect(() => {
         if (
-            selectedAmounts?.length>0 && isBtnSearchAmountsSt
+            selectedAmounts?.length>0
             ) {
             setIsAllowSave(true)
         }else{
             setIsAllowSave(false)
         }
-    }, [selectedAmounts])
+    }, [isBtnSearchAmountsSt, selectedAmounts])
     
 
     const messageValidateSupplier = (type: string) => {
