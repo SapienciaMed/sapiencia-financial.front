@@ -10,8 +10,8 @@ export function filterElementsMeetConditions(
   transferMovesGroups: ITransferMovesGroups[]
 ): any[] {
   const functionalArea = (type) => {
-    const item = arrayDataSelect?.functionalArea?.find(
-      (item) => item.area.find(a=>a.id==type)
+    const item = arrayDataSelect?.functionalArea?.find((item) =>
+      item.area?.find((a) => a?.id == type)
     );
     if (item) {
       const areaItem = item?.area?.find((area) => area.id == type);
@@ -23,7 +23,7 @@ export function filterElementsMeetConditions(
     const testFindNamesMatchingFunds = arrayDataSelect?.funds.find(
       (item1) => item1.value == parseInt(type)
     )?.name;
-    
+
     return arrayDataSelect?.funds.find((item1) => item1.value == parseInt(type))
       ?.name;
   };
