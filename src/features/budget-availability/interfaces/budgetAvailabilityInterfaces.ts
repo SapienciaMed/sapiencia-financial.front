@@ -84,9 +84,6 @@ export interface ICdpMgaAssoc{
 export interface ICdpMgaAssocFromProps {
   control: Control<ICdpMgaAssoc, any>,
   errors: FieldErrors<ICdpMgaAssoc>,
-  arrayDataSelect: {
-      listDetailedActivityMGA: any[];
-  },
   disableAddButton: boolean,
   arrayMgaAssoc: any[],
   register: UseFormRegister<ICdpMgaAssoc>,

@@ -18,7 +18,6 @@ function CdpMgaAssocFormComponent(props: ICdpMgaAssocFromProps) {
   const {
     control,
     errors,
-    arrayDataSelect,
     disableAddButton,
     arrayMgaAssoc,
     register,

@@ -31,12 +31,9 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
    
     const resolver = useYupValidationResolver(cdpMgaAssoc);
     const { setMessage,authorization } = useContext(AppContext);
-    const { getCdpById, getActivitiesDetail, validate, createVinculationMGA,validateCDP,getDetaileActivities } = useCdpService()
-    const { getAllCpc,getAllBudgets } = useBudgetsService()
+    const { getCdpById,  validate, createVinculationMGA,validateCDP,getDetaileActivities } = useCdpService()
+    const { getAllCpc } = useBudgetsService()
     const { GetAllPosPreSapiencia } = usePosPreSapienciaService()
-    const [arrayDataSelect, setArrayDataSelect] = useState({
-        listDetailedActivityMGA: []
-    })
     const [arrayMgaAssoc, setArrayMgaAssoc] = useState<IArrayMgaAssoc[]>([])
     const [nextId, setNextId] = useState(1);
     const [disableAddButton, setDisableAddButton] = useState(false)
@@ -44,7 +41,7 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
     const [cpc, setCpc] = useState<any[]>([]);
     const [valorFinal, setValorFinal] = useState<any>();
     const [pospreSapiencia, setPospreSapiencia] = useState<any>();
-    const [pospreSapienciaFinal, setPospreSapienciaFinal] = useState<any>();
+    const [pospreId, setPospreSapienciaFinal] = useState<any>();
     const navigate = useNavigate();
 
     const {
@@ -75,61 +72,37 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
             }
         }).catch((error) => console.log(error))
 
-       /*  getActivitiesDetail().then(res => {
-            const activities = Object(res).data?.map(d => ({ id: d.activity.id, name: d.activity.activityDescriptionMGA, value: d.activity.id, activityId: d.activityId, activity: d.detailActivity, cost: d.unitCost, activitieMga: d.id, pospre: d.pospre }))
-            let activitiesfilter = [];
-
-            if (activities && pospreSapienciaFinal) {
-                activitiesfilter = activities.filter(f => f.pospre === pospreSapienciaFinal);
-            }
-            setActivities(activitiesfilter)
-        }) */
-
-        getDetaileActivities(pospreSapienciaFinal).then(res => {
-            // Acceder al array dentro de data
-            const dataArray = res.data.array;
-        
-            // Iterar sobre el array y extraer la información deseada de cada objeto
-            const extractedData = dataArray.map(item => {
-                return {
-                    id: item.activityId,
-                    value: item.activityId,
-                    name: item.detailActivityDetailed,
-                    codeMga: item.codeMga,
-                    activityId: item.activityId,
-                    activity: item.activityDescriptionMGA,
-                    cost: item.totalCostActivityDetailed,
-                    activitieMga: item.activityId
-                    //pospre:
-
-                    // Agrega aquí más campos si necesitas
-                   /*  productDescription: item.productDescriptionMGA,
-                    name: item.activityDescriptionMGA,
-                    detailActivityDetailed: item.detailActivityDetailed,
-                    amountActivityDetailed: item.amountActivityDetailed,
-                    measurementActivityDetailedName: item.measurementActivityDetailedName,
-                    totalCostActivityDetailed: item.totalCostActivityDetailed */
-                };
-                
+        if(pospreId) {
+            getDetaileActivities(pospreId).then(res => {
+                // Acceder al array dentro de data
+                const dataArray = res.data.array;
+            
+                // Iterar sobre el array y extraer la información deseada de cada objeto
+                const extractedData = dataArray.map(item => {
+                    return {
+                        id: item.id,
+                        value: item.id,
+                        name: `${item.consecutiveActivityDetailed} - ${item.detailActivityDetailed}`,
+                        codeMga: item.codeMga,
+                        activityId: item.activityId,
+                        activity: item.activityDescriptionMGA,
+                        cost: item.totalCostActivityDetailed,
+                        activitieMga: item.activityId
+                    };
+                    
+                });
+                setActivities(extractedData)
+            
             });
-            setActivities(extractedData)
-        
-        });
-        
-
-       /*  getAllCpc().then(res => {
-            const cpc = Object(res).data?.map(c => ({ id: id, name: c.ejercise, value: c.id}))
-            setCpc(cpc)           
-        }) */
-
+            
+        }
+  
         getAllCpc().then(res => {
             const cpc = Object(res).data?.map(c => ({ id: c.id, name: c.description, value: c.id, budgetId: c.budgetId}))
             setFilteredCpc(cpc)           
         })
-
-        
-        
-    }, [pospreSapienciaFinal])
+   
+    }, [pospreId])
     
     useEffect(() => {
         GetAllPosPreSapiencia().then(res => {
@@ -161,14 +134,10 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
     
     useEffect(() => {
         if (selecte) {
-            const selectActivitie = activities.find(activity => activity.id == selecte);           
-
-            const filtered = filteredCpc.filter(item => item.budgetId == pospreSapienciaFinal);            
-
-            filtered.map(c => ({id: c.id, name: c.description, value: c.id}))
+            const filtered = filteredCpc.filter(item => item.budgetId == pospreId);            
             setCpc(filtered);             
         }        
-    }, [selecte, filteredCpc,pospreSapienciaFinal]);
+    }, [selecte, filteredCpc,pospreId]);
     
 
     
@@ -185,7 +154,6 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
             return acumulador + elemento.percentage;
         }, 0);
 
-        const valorActividad = arrayDataSelect?.listDetailedActivityMGA.find(val => val.value == data.DetailedActivityMGA)?.costActivity
         const percentageTotalValue = (parseInt(data.percentageAffected) * parseInt(data.finalValue)) / 100
 
         //setear valores
@@ -388,7 +356,6 @@ export function useCdpMgaAssoc(id?: string, idRoute?: string) {
     return {
         errors,
         control,
-        arrayDataSelect,
         arrayMgaAssoc,
         disableAddButton,
         register,

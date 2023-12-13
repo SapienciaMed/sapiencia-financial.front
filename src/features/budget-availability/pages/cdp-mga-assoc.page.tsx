@@ -7,7 +7,7 @@ const CdpMgaAssocPage = () => {
     //const { id: cdpId } = useParams();
     const { id, idRoute } = useParams();
    
-    const { control, errors, arrayDataSelect, disableAddButton, arrayMgaAssoc, 
+    const { control, errors, disableAddButton, arrayMgaAssoc, 
         register, onSubmit, deleteElement, onCancel, handleSaveSubmit,activities,cpc } = useCdpMgaAssoc(id,idRoute)
 
     return (
@@ -20,7 +20,6 @@ const CdpMgaAssocPage = () => {
                 <CdpMgaAssocFormComponent 
                     control={control}
                     errors={errors}
-                    arrayDataSelect={arrayDataSelect}
                     disableAddButton={disableAddButton}
                     arrayMgaAssoc={arrayMgaAssoc}
                     activities={activities}
