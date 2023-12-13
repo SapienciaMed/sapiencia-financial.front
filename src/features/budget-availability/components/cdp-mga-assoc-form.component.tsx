@@ -118,7 +118,7 @@ function CdpMgaAssocFormComponent(props: ICdpMgaAssocFromProps) {
             className="input-basic medium"
             typeInput="text"
             register={register}
-            label="Pospre Sapiensia"
+            label="Pospre Sapiencia"
             classNameLabel="text-black weight-500 biggest bold"
             direction={EDirection.column}
             disabled={true}
