@@ -186,7 +186,6 @@ function AreaCreateExpense({
   const calculateTotal = () => {
     const values = getValues("gasto");
     const total = values?.reduce((acc, curr) => {
-      //const value = parseFloat(curr.value.replace(/\./g, '').replace(/,/g, '.'));
       const value = parseFloat(curr.value);
       return acc + (isNaN(value) ? 0 : value);
     }, 0);
