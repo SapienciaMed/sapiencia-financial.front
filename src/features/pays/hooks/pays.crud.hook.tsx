@@ -87,6 +87,7 @@ export function usePaysCrud() {
       reader.readAsDataURL(file);
     });
   };
+  let infoSendVPY = [];
 
   async function processExcelFile(base64Data, tipoDocumento) {
     let dataVacia = false;
@@ -95,7 +96,7 @@ export function usePaysCrud() {
     setSelection(tipoDocumento)
     setInfoErrors([])
     
-    let infoSendVPY = [];
+
     const responseAllAF = await api.getAllAF();
     const responseAllProject = await api.getAllProjects();
     let infoArrAF = responseAllAF.data;
@@ -123,6 +124,7 @@ export function usePaysCrud() {
           const range = XLSX.utils.decode_range(sheet["!ref"]);
           const titles = [];
           const dataInformationProjects = []
+       
 
           for (let C = range.s.c; C <= range.e.c; ++C) {
             const cell_address = { c: C, r: 0 };
@@ -165,7 +167,6 @@ export function usePaysCrud() {
 
             if (tipoDocumento === "AreaFuncional") {
               let arrayFilterProject = [];
-
               data.forEach((element) => {
                 arrayFilterProject.push(element.proyecto.toString());
               });
@@ -179,25 +180,19 @@ export function usePaysCrud() {
             
               let arrBpin = arrInformation.map(element => element.bpin);
 
-                arrInformation.forEach(element => {
-                  let objProjectInfo = {id: element.id, bpin: element.bpin}
+              data.forEach((element, index) => {
+                if (!arrBpin.includes(element.proyecto.toString())) {
+                  let objErrors = { "rowError": index + 1, "message": `El proyecto no existe` };
+                  infoErrors.push(objErrors);
+                }
+            });
+
+                arrInformation.forEach((element,index) => {
+                  let objProjectInfo = {id: element.id, bpin: element.bpin, tipoProyecto: data[index].tipo_de_proyecto}
                   infoSendVPY.push(objProjectInfo)
                 });
-
-                data.forEach((element, index) => {
-                  if (!arrBpin.includes(element.proyecto.toString())) {
-                    let objErrors = { "rowError": index + 1, "message": `El proyecto no existe` };
-                    infoErrors.push(objErrors);
-                  }
-              });
-            }
-            
+              }
           }
-
-       
-
-
-
           // Inicio de validaciones
           let titleDB, titleExcel;
 
@@ -530,7 +525,7 @@ export function usePaysCrud() {
                         infoErrors.push(objErrors);
                       }
 
-                      infoArrAF.forEach((element) => {
+                   /*    infoArrAF.forEach((element) => {
                         if (element.number === value) {
                           infoArrProject.forEach((datosProject) => {
                             if (datosProject.functionalAreaId === element.id) {
@@ -542,7 +537,20 @@ export function usePaysCrud() {
                             }
                           });
                         }
+                      }); */
+
+                      infoArrAF.forEach((element) => {
+                        const matchingProject = infoArrProject.find((datosProject) => datosProject.functionalAreaId === element.id);
+                      
+                        if (element.number === value && matchingProject) {
+                          let objErrors = {
+                            rowError: R,
+                            message: `El Área funcional ya existe con ese proyecto`,
+                          };
+                          infoErrors.push(objErrors);
+                        }
                       });
+                      
 
                       break;
                     case "TipoProyecto":
@@ -1107,13 +1115,14 @@ export function usePaysCrud() {
       setLoadingSpinner(false);
 
       let exercise = ejercicio.toString();
-      console.log("entr1", exercise);
+
       let obInfo = {
         fileContent: base64Data,
         documentType: tipoDocumento,
         usuarioCreo: authorization.user.numberDocument,
         mes: mes,
-        ejercicio: ejercicio,
+        ejercicio: ejercicio, 
+        aditionalData:infoSendVPY
       };
 
       setMessage({
