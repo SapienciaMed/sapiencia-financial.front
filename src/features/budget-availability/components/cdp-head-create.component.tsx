@@ -37,6 +37,7 @@ function CdpheadCreate(prop: Props) {
 
     const handleInputChange = (name, target) => {
         let value = target.value;
+        setExercise(year.toString())
         switch (name) {
             case "exercise":
                 setExercise(value);
@@ -50,7 +51,7 @@ function CdpheadCreate(prop: Props) {
 
         let objInformationHead = {
             date: date,
-            exercise: exercise,
+            exercise: year.toString(),
             contractObject: contractObject,
         };
 
@@ -61,12 +62,12 @@ function CdpheadCreate(prop: Props) {
     useEffect(() => {
         let objRpp = {
             date: date.toString(),
-            exercise,
+            exercise:year.toString(),
             contractObject,
         };
         setFormHeadInfoState(objRpp);
         setFormHeadInfo(objRpp);
-    }, [exercise, contractObject, date]);
+    }, [exercise, contractObject, date, year]);
 
     const validateField = (field) => {
         if (formSubmitted && !field) {

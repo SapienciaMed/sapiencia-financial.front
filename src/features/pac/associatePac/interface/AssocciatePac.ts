@@ -18,4 +18,6 @@ export interface IAssocciatePac{
     programmed: {
         [key: string]: string;
     };
+    userModify?:string;
+    userCreate?:string;
 }

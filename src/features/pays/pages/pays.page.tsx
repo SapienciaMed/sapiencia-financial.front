@@ -13,6 +13,7 @@ import { Controller } from "react-hook-form";
 import { useSearchPays } from "../hooks/useSearchPays";
 import { EDirection } from "../../../common/constants/input.enum";
 import TableComponent from "../../../common/components/table.component";
+import TotalPays from "../components/totalPays.component";
 
 const PaysPage = () => {
     const { width } = useWidth();
@@ -29,7 +30,7 @@ const PaysPage = () => {
         tableColumnsCdp,
         navigate,
         arraySelect,
-
+        validateActionAccess
     } = useSearchPays();
     const dateToday = new Date()
     const actualFullYear = dateToday.getFullYear();
@@ -38,26 +39,10 @@ const PaysPage = () => {
             <div className="card-table gap-0">
                 <section className="title-area">
                     <div className="text-black weight-500 extra-large">Consultar Pago</div>
-                    <div
-                        className={`${width < 800
-                                ? "display-justify-space-between-pac"
-                                : "display-align-flex-end"
-                            } gap-0 gap-05`}
-                    >
-                        <div
-                            className="title-button font-big"
-                            onClick={() => navigate("./load-pays")}
-                        >
-                            Cargar pagos
-                            <AiOutlinePlusCircle />
-                        </div>
-                    </div>
+                    
                 </section>
                 <section className="card-user">
                     <FormComponent action={onSubmit}>
-                        <div className="title-area">
-                            <label className="text-black biggest bold">Consultar Pago</label>
-                        </div>
                         <div className="funcionality-filters-container">
                             <Controller
                                 control={control}
@@ -87,7 +72,7 @@ const PaysPage = () => {
                                 control={control}
                                 className="select-basic"
                                 label="Mes"
-                                classNameLabel="text-black weight-500 biggest text-required"
+                                classNameLabel="text-black weight-500 biggest"
                                 placeholder={"Seleccionar"}
                                 data={arraySelect}
                                 direction={EDirection.column}
@@ -109,7 +94,7 @@ const PaysPage = () => {
                                             typeInput="number"
                                             register={register}
                                             label="Consecutivo RP SAP"
-                                            classNameLabel="text-black weight-500 biggest text-required"
+                                            classNameLabel="text-black weight-500 biggest"
                                             direction={EDirection.column}
                                             onChange={field.onChange}
                                             errors={errors}
@@ -146,7 +131,9 @@ const PaysPage = () => {
                     </FormComponent>
                 </section>
                 {showTable && (
+                    <>  
                     <div className="card-user mt-2rem">
+                        <h3> Resultados de busqueda </h3>
                         <TableComponent
                             ref={tableComponentRef}
                             url={`${process.env.urlApiFinancial}/api/v1/pag-pagos/get-paginated`}
@@ -156,6 +143,9 @@ const PaysPage = () => {
                             secondaryTitle="Pagos"
                         />
                     </div>
+                    <TotalPays />
+                    </>
+
                 )}
             </div>
         </div>

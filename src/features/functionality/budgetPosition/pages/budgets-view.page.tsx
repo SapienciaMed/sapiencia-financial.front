@@ -83,8 +83,7 @@ function BudgetsForm() {
                   classNameLabel="text-black biggest bold"
                   disabled={true}
                 />
-              </div>
-              <div className="fund-denomination-container">
+
                 <InputComponent
                   idInput="description"
                   register={register}

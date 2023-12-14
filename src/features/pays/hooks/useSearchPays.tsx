@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState,useContext } from "react";
 import { useForm } from "react-hook-form";
 import useYupValidationResolver from "../../../common/hooks/form-validator.hook";
 import { budgetAvailabilityValidator } from "../../../common/schemas/budget-availability-schemas";
@@ -10,13 +10,14 @@ import { IPagoFilters } from "../interfaces/paysInterfaces";
 import { paysLoad } from "../../../common/schemas/pays-schemas";
 import { usePaysServices } from "./pays-service";
 import useStorePays from "../../../store/store-pays";
-
+import { AppContext } from "../../../common/contexts/app.context";
 export const useSearchPays = () => {
   const { GetRoutesByValidity } = useCdpServices();
   const resolver = useYupValidationResolver(paysLoad);
   const tableComponentRef = useRef(null);
   const navigate = useNavigate();
-  const { infoErrors, setInfoErrors } = useStorePays()
+  const { infoErrors, setInfoErrors, setInfoSearchPays } = useStorePays()
+  const { validateActionAccess } = useContext(AppContext);
   const {
     handleSubmit,
     register,
@@ -27,7 +28,6 @@ export const useSearchPays = () => {
   } = useForm<IPagoFilters>({
     resolver,
     mode: "all",
-    
   });
   const inputValue = watch(['exercise','mes','vinculacionRpCode']);
 
@@ -44,7 +44,7 @@ export const useSearchPays = () => {
     },
     {
       fieldName: "CONSECUTIVO_SAP",
-      header: "Consecutivo SAP RP",
+      header: "Consecutivo RP SAP",
     },
     {
       fieldName: "VRP_POSICION",
@@ -76,20 +76,37 @@ export const useSearchPays = () => {
       tableComponentRef.current.loadData(searchCriteria);
     }
   }
- /*  const onSubmit = handleSubmit(async (data: any ) => {
-   let response = await getPays(data);
-   let informationReal = response['data']['array'];
-   console.log(informationReal);
-   loadTableData(informationReal);
-   setShowTable(true);
-    
-  }); */
+
 
   const onSubmit = handleSubmit(async (data: any) => {
     clearRequestFilters(data);
     if (data) {
       setShowTable(true);
       loadTableData(data);
+      let response = await getPays(data);
+      let informationResponse = response['data'];
+      let valorFinal = 0;
+      let valorCausado = 0;
+      let valorPagado = 0;
+      let pendientePago = 0;
+      let pendienteCausado = 0;
+      
+      let arr = [];
+      informationResponse['array'].forEach(element => {
+        valorCausado += parseFloat(element.PAG_VALOR_CAUSADO)
+        valorPagado += parseFloat(element.PAG_VALOR_PAGADO)
+        valorFinal += parseFloat(element.VRP_VALOR_FINAL)
+      });
+
+      pendientePago = valorFinal -valorPagado
+      pendienteCausado = valorFinal -valorCausado
+
+      arr.push({
+        valorCausado,pendienteCausado,valorPagado,pendientePago
+      });
+
+      setInfoSearchPays(arr)
+      
     }
   });
 
@@ -127,6 +144,7 @@ export const useSearchPays = () => {
     tableComponentRef,
     tableColumnsCdp,
     navigate,
-    arraySelect
+    arraySelect,
+    validateActionAccess
   };
 };

@@ -16,12 +16,13 @@ import { usePaysCrud } from "../hooks/pays.crud.hook"
 import UploadComponent from "../../pac/createPac/components/UploadComponent";
 import useStorePays from "../../../store/store-pays";
 import { Backdrop, CircularProgress } from '@mui/material';
+import '../../../styles/pays.scss';
+import { useNavigate } from "react-router-dom";
 
 function LoadPays() {
   const {
     errors,
     onSubmitPagPays,
-    // showModal,
     setMessage,
     register,
     isAllowSave,
@@ -35,23 +36,25 @@ function LoadPays() {
   } = usePaysCrud();
 
   const btnUploadFileRef = useRef(null);
-
-  /* let uploadFileRef = useRef<HTMLInputElement>(null) */
-
   const [visible, setVisible] = useState<boolean>(false);
   const [file, setFile] = useState<File>(null);
   const [isVisibleErrors, setIsVisibleErrors] = useState(false);
   const [isUploadFileSt, setIsUploadFileSt] = useState(false);
   const [errorsSt, setErrorsSt] = useState([]);
-  const { infoErrors, setInfoErrors,loadingSpinner } = useStorePays()
+  const { infoErrors, setInfoErrors, loadingSpinner, fieldErrors, setExerciseLoad, setFieldErrors } = useStorePays()
   const [defaultExercise, setDefaultExercise] = useState(actualFullYear.toString())
   const [showBtnValidation, setShowBtnValidation] = useState(false)
   const [showTableErrors, setShowTableErrors] = useState(false)
+  const [showMonth, setShowMonth] = useState(false)
+  const [isEmptyMonth, setIsEmptyMonth] = useState(false)
+  const [isPay, setIsPay] = useState(false)
+  const navigate = useNavigate();
   const getFile = (newFile: File) => {
     setFile(newFile);
     return newFile;
   };
 
+  useEffect(() => { setInfoErrors([]) }, [])
   const uploadFileFn = (newFile: any) => {
     if (newFile.name) {
       setIsUploadFileSt(true);
@@ -59,6 +62,10 @@ function LoadPays() {
       setIsUploadFileSt(false);
     }
   };
+
+  useEffect(() => {
+    setExerciseLoad(actualFullYear.toString());
+  }, [])
 
   const mesesDelAnio = [
     "Enero",
@@ -75,30 +82,6 @@ function LoadPays() {
     "Diciembre",
   ];
   const { watch } = useForm();
-  const tipoArchivo = watch('tipoArchivo');
-
-  let styleSelects = {
-    display: 'none'
-  }
-
-  useEffect(() => {
-    console.log(tipoArchivo);
-
-  }, [tipoArchivo])
-  const handleTipoArchivoChange = (event) => {
-    console.log("holaa");
-
-
-    let variable = "Pagos";
-
-    if (variable === "Pagos") {
-
-    };
-    console.log(event);
-
-    //setTipoArchivo(selectedTipoArchivo);
-  };
-
 
   const mesesOptions = mesesDelAnio.map((mes, index) => ({
     id: index + 1,
@@ -118,34 +101,51 @@ function LoadPays() {
     setErrorsSt([]);
     setIsVisibleErrors(false);
   }, [file]);
-  var dropdown = document.getElementById('tipoArchivo');
-
-
-  // useEffect to log 'tipoArchivo' changes
-  useEffect(() => {
-    console.log(tipoArchivo);
-  }, [tipoArchivo]);
 
   const handleChange = (event) => {
+    const enteredValue = event.target.value;
+    const maxYearLength = 4;
 
-    console.log("hola", event.target.value);
-    setDefaultExercise(event.target.value)
-    // Puedes realizar validaciones u otras acciones según sea necesario
+    if (/^\d*$/.test(enteredValue) && enteredValue.length <= maxYearLength) {
+      const enteredYear = parseInt(enteredValue, 10);
+      const currentYear = new Date().getFullYear();
+
+      if (enteredValue.length === maxYearLength && !isNaN(enteredYear) && enteredYear < currentYear) {
+        setDefaultExercise(currentYear.toString());
+        setExerciseLoad(currentYear.toString());
+      } else {
+        setDefaultExercise(enteredValue);
+        setExerciseLoad(enteredValue.toString());
+      }
+    }
   };
-
 
   const handleShowValidation = () => {
     setShowTableErrors(true)
   }
 
+  const handleTipoArchivoChange = (selectedValue) => {
+    selectedValue === "Pagos" ? setShowMonth(true) : setShowMonth(false)
+    selectedValue === "Pagos" ? setIsPay(true) : setIsPay(false)
+    delete fieldErrors['tipoArchivo'];
+  };
+
+  const handleChangeMonth = (selectedValue) => {
+    delete fieldErrors['mesDelAnio'];
+    setIsEmptyMonth(true);
+    console.log(fieldErrors);
+    console.log(selectedValue);
+    console.log(fieldErrors);
+  };
+
   useEffect(() => {
-if(infoErrors.length > 0){
-  setShowBtnValidation(true)
-}else{
-  setShowTableErrors(false)
-  setShowBtnValidation(false)
-}
-  },[infoErrors])
+    if (infoErrors.length > 0) {
+      setShowBtnValidation(true)
+    } else {
+      setShowTableErrors(false)
+      setShowBtnValidation(false)
+    }
+  }, [infoErrors])
 
   const styleButtonValidation = {
     width: '152px',
@@ -162,14 +162,14 @@ if(infoErrors.length > 0){
 
   return (
     <div className="crud-page">
-       <Backdrop
+      <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loadingSpinner}
       >
         <CircularProgress color="inherit" />
       </Backdrop>
       <div className="main-page full-height">
-        <p className="text-black extra-large">Cargar pagos</p>
+        <p className="text-black extra-large">Carga Masiva Presupuesto</p>
         <div className="card-user">
           <FormComponent
             action={onSubmitPagPays}
@@ -179,7 +179,7 @@ if(infoErrors.length > 0){
             <section className="grid-form-2-container-reverse grid-column-e-proj-operation mt-5px">
               <InputComponent
                 idInput="exercise"
-                className="input-basic medium"
+                className={`input-basic medium`}
                 typeInput="text"
                 value={defaultExercise}
                 label="Vigencia"
@@ -188,14 +188,13 @@ if(infoErrors.length > 0){
                 errors={errors}
                 disabled={false}
                 onChange={handleChange}
-
               />
 
               <SelectComponent
                 idInput="tipoArchivo"
                 control={control}
                 label="Tipo de archivo"
-                className="select-basic medium"
+                className={`select-basic medium ${fieldErrors.tipoArchivo ? 'error' : ''}`}
                 classNameLabel="text-black big bold text-required"
                 placeholder={"Seleccionar"}
                 data={[
@@ -205,30 +204,63 @@ if(infoErrors.length > 0){
                     value: "Pagos",
                   },
                   {
-                    id: 1,
+                    id: 2,
                     name: "Fondos",
                     value: "Funds",
+                  },
+                  {
+                    id: 3,
+                    name: "Área funcional",
+                    value: "AreaFuncional",
+                  },
+                  {
+                    id: 4,
+                    name: "Pospre origen y sapiencia",
+                    value: "PospreSapiencia",
+                  },
+                  {
+                    id: 5,
+                    name: "Pospre origen y MGA",
+                    value: "PospreMGA",
+                  },
+                  {
+                    id: 6,
+                    name: "Ruta y Ppto Inicial",
+                    value: "RutaPptoInicial",
                   },
                 ]}
                 filter={true}
                 errors={errors}
                 direction={EDirection.column}
-                onChange={handleTipoArchivoChange}
+                optionSelected={(event) => handleTipoArchivoChange(event)}
+              >
+                {fieldErrors.tipoArchivo && (
+                  <p className="error-message">Este campo es obligatorio</p>
+                )}
+              </SelectComponent>
+              {
+                showMonth ?
+                  <SelectComponent
+                    idInput="mesDelAnio"
+                    control={control}
+                    label="Mes"
+                    className={`select-basic medium ${fieldErrors.mesDelAnio ? 'error' : ''}`}
+                    classNameLabel="text-black big bold text-required"
+                    placeholder="Seleccionar"
+                    data={mesesOptions}
+                    filter={true}
+                    errors={errors}
+                    direction={EDirection.column}
+                    optionSelected={(event) => handleChangeMonth(event)}
+                  >
+                    {fieldErrors.mesDelAnio && (
+                      <p className="error-message">Este campo es obligatorio</p>
+                    )}
+                  </SelectComponent>
+                  :
+                  ''
+              }
 
-              />
-
-              <SelectComponent
-                idInput="mesDelAnio"
-                control={control}
-                label="Mes"
-                className="select-basic medium"
-                classNameLabel="text-black big bold text-required"
-                placeholder="Seleccionar"
-                data={mesesOptions}
-                filter={true}
-                errors={errors}
-                direction={EDirection.column}
-              />
 
               <div className="div-upload">
                 <br />
@@ -294,14 +326,14 @@ if(infoErrors.length > 0){
                       id="validaciones"
                       onClick={handleShowValidation}
                     >
-                      <span>Validación  
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" viewBox="0 0 20 21" fill="none">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M1.13575 13.498C0.95475 13.193 0.95475 12.807 1.13575 12.502C3.04075 9.279 6.52075 6.5 10.0007 6.5C13.4807 6.5 16.9597 9.279 18.8647 12.501C19.0457 12.807 19.0457 13.194 18.8647 13.5C16.9597 16.721 13.4807 19.5 10.0007 19.5C6.52075 19.5 3.04075 16.721 1.13575 13.498Z" stroke="#058CC1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M12.1218 10.879C13.2938 12.051 13.2938 13.95 12.1218 15.122C10.9498 16.294 9.05076 16.294 7.87876 15.122C6.70676 13.95 6.70676 12.051 7.87876 10.879C9.05076 9.707 10.9508 9.707 12.1218 10.879" stroke="#058CC1" stroke-width="1.4286" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M10.0008 1V3.5" stroke="#058CC1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M3.00076 3L4.68076 5" stroke="#058CC1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M17.0007 3L15.3207 5" stroke="#058CC1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                      </svg>
+                      <span>Validación
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" viewBox="0 0 20 21" fill="none">
+                          <path fill-rule="evenodd" clip-rule="evenodd" d="M1.13575 13.498C0.95475 13.193 0.95475 12.807 1.13575 12.502C3.04075 9.279 6.52075 6.5 10.0007 6.5C13.4807 6.5 16.9597 9.279 18.8647 12.501C19.0457 12.807 19.0457 13.194 18.8647 13.5C16.9597 16.721 13.4807 19.5 10.0007 19.5C6.52075 19.5 3.04075 16.721 1.13575 13.498Z" stroke="#058CC1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                          <path d="M12.1218 10.879C13.2938 12.051 13.2938 13.95 12.1218 15.122C10.9498 16.294 9.05076 16.294 7.87876 15.122C6.70676 13.95 6.70676 12.051 7.87876 10.879C9.05076 9.707 10.9508 9.707 12.1218 10.879" stroke="#058CC1" stroke-width="1.4286" stroke-linecap="round" stroke-linejoin="round" />
+                          <path d="M10.0008 1V3.5" stroke="#058CC1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                          <path d="M3.00076 3L4.68076 5" stroke="#058CC1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                          <path d="M17.0007 3L15.3207 5" stroke="#058CC1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
                       </span>
                     </Button>
                   </div>
@@ -389,7 +421,12 @@ if(infoErrors.length > 0){
       <div className="buttons-bot" style={{ position: 'fixed', bottom: 0, right: 0, display: 'flex', justifyContent: 'flex-end', width: '25%', marginBottom: '15px', marginRight: '15px' }}>
         <span
           className="bold text-center button"
-          onClick={() => { console.log("gola") }}
+          onClick={() => {
+            setInfoErrors([]);
+            if (isPay) {
+              navigate("./../");
+            }
+          }}
           style={{
             marginTop: '10px',
             marginRight: '10px',
@@ -410,8 +447,6 @@ if(infoErrors.length > 0){
           isLoading={isLoading}
         />
       </div>
-
-
     </div>
   );
 }

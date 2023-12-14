@@ -12,7 +12,7 @@ export const useSearchCdp = () => {
   const { GetRoutesByValidity } = useCdpServices();
   const resolver = useYupValidationResolver(budgetAvailabilityValidator);
   const tableComponentRef = useRef(null);
-  const { validateActionAccess } = useContext(AppContext)
+  const { validateActionAccess } = useContext(AppContext);
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -62,10 +62,10 @@ export const useSearchCdp = () => {
       header: "RP asociados",
       renderCell: (row) => {
         const containRp = row.amounts.filter((amount) => {
-          return amount.linkRpcdps.filter(e=>e.isActive===1);
+          return amount.linkRpcdps.filter((e) => e.isActive === 1);
         });
 
-        return <>{containRp.length >0 ? 'Si' : 'No'}</>;
+        return <>{containRp.length > 0 ? "Si" : "No"}</>;
       },
     },
     {
@@ -77,14 +77,14 @@ export const useSearchCdp = () => {
   const tableActionsCdp: any[] = [
     {
       icon: "Detail",
-      hide:!validateActionAccess('CDP_VISUALIZAR'),
+      hide: !validateActionAccess("CDP_VISUALIZAR"),
       onClick: (row) => {
         navigate(`./view/${row.id}`);
       },
     },
     {
       icon: "Edit",
-      hide:!validateActionAccess('CDP_RUTAS_EDITAR'),
+      hide: !validateActionAccess("DATOS_BASICOS_CDP_EDITAR"),
       onClick: (row) => {
         const id = row.id;
         navigate(`/gestion-financiera/cdp/edit/${id}`);
@@ -92,14 +92,14 @@ export const useSearchCdp = () => {
     },
     {
       icon: "Add",
-      hide:!validateActionAccess('CDP_RUTAS_VINCULAR'),
+      hide: !validateActionAccess("CDP_RUTAS_VINCULAR"),
       onClick: (row) => {
         navigate(`./assoc-amounts/${row.id}`);
       },
     },
     {
       icon: "Rp",
-      hide:!validateActionAccess('CDP_VISUALIZAR_RP'),
+      hide: !validateActionAccess("CDP_VISUALIZAR_RP"),
       onClick: (row) => {
         navigate(`/gestion-financiera/cdp/rp/${row.id}`);
       },
@@ -141,7 +141,7 @@ export const useSearchCdp = () => {
           );
           setArraySelect(responseFilterDataSelects);
         } catch (error) {
-          console.log({ queryGetDataFilters: error });
+          // console.log({ queryGetDataFilters: error });
         }
       } else {
         setArraySelect([]);
@@ -176,6 +176,6 @@ export const useSearchCdp = () => {
     arraySelect,
     initialDate,
     endDate,
-    validateActionAccess
+    validateActionAccess,
   };
 };
