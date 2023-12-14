@@ -95,7 +95,7 @@ export function usePaysCrud() {
     setDataEmpty(false)
     setSelection(tipoDocumento)
     setInfoErrors([])
-    
+
 
     const responseAllAF = await api.getAllAF();
     const responseAllProject = await api.getAllProjects();
@@ -124,7 +124,7 @@ export function usePaysCrud() {
           const range = XLSX.utils.decode_range(sheet["!ref"]);
           const titles = [];
           const dataInformationProjects = []
-       
+
 
           for (let C = range.s.c; C <= range.e.c; ++C) {
             const cell_address = { c: C, r: 0 };
@@ -145,11 +145,11 @@ export function usePaysCrud() {
                 let titleNew = title.replace(/ /g, "_").toLowerCase();
                 rowData[titleNew] = value;
               }
-  
+
               data.push(rowData);
             }
 
-            if(tipoDocumento === "PospreSapiencia" ){
+            if (tipoDocumento === "PospreSapiencia") {
               data.forEach(async (element, index) => {
                 let objData = {
                   "pprNumero": element.pospre_origen.toString(),
@@ -158,10 +158,10 @@ export function usePaysCrud() {
                 }
                 let responseVerifyData = await api.getPospreByParams(objData)
                 if (responseVerifyData.data.length > 0) {
-                  let objErrors = { "rowError": index+1, "message": `El Pospre sapiencia ya existe para esa vigencia` };
+                  let objErrors = { "rowError": index + 1, "message": `El Pospre sapiencia ya existe para esa vigencia` };
                   infoErrors.push(objErrors);
                 }
-  
+
               });
             }
 
@@ -170,14 +170,14 @@ export function usePaysCrud() {
               data.forEach((element) => {
                 arrayFilterProject.push(element.proyecto.toString());
               });
-            
+
               let objProjectInfo = {
                 "codeList": arrayFilterProject
               };
-            
+
               const getInfoProjectsApi = await api.getProjectDataApi(objProjectInfo);
               let arrInformation = getInfoProjectsApi.data;
-            
+
               let arrBpin = arrInformation.map(element => element.bpin);
 
               data.forEach((element, index) => {
@@ -185,13 +185,13 @@ export function usePaysCrud() {
                   let objErrors = { "rowError": index + 1, "message": `El proyecto no existe` };
                   infoErrors.push(objErrors);
                 }
-            });
+              });
 
-                arrInformation.forEach((element,index) => {
-                  let objProjectInfo = {id: element.id, bpin: element.bpin, tipoProyecto: data[index].tipo_de_proyecto}
-                  infoSendVPY.push(objProjectInfo)
-                });
-              }
+              arrInformation.forEach((element, index) => {
+                let objProjectInfo = { id: element.id, bpin: element.bpin, tipoProyecto: data[index].tipo_de_proyecto }
+                infoSendVPY.push(objProjectInfo)
+              });
+            }
           }
           // Inicio de validaciones
           let titleDB, titleExcel;
@@ -525,23 +525,23 @@ export function usePaysCrud() {
                         infoErrors.push(objErrors);
                       }
 
-                   /*    infoArrAF.forEach((element) => {
-                        if (element.number === value) {
-                          infoArrProject.forEach((datosProject) => {
-                            if (datosProject.functionalAreaId === element.id) {
-                              let objErrors = {
-                                rowError: R,
-                                message: `El Área funcional ya existe con ese proyecto`,
-                              };
-                              infoErrors.push(objErrors);
-                            }
-                          });
-                        }
-                      }); */
+                      /*    infoArrAF.forEach((element) => {
+                           if (element.number === value) {
+                             infoArrProject.forEach((datosProject) => {
+                               if (datosProject.functionalAreaId === element.id) {
+                                 let objErrors = {
+                                   rowError: R,
+                                   message: `El Área funcional ya existe con ese proyecto`,
+                                 };
+                                 infoErrors.push(objErrors);
+                               }
+                             });
+                           }
+                         }); */
 
                       infoArrAF.forEach((element) => {
                         const matchingProject = infoArrProject.find((datosProject) => datosProject.functionalAreaId === element.id);
-                      
+
                         if (element.number === value && matchingProject) {
                           let objErrors = {
                             rowError: R,
@@ -550,7 +550,7 @@ export function usePaysCrud() {
                           infoErrors.push(objErrors);
                         }
                       });
-                      
+
 
                       break;
                     case "TipoProyecto":
@@ -1020,7 +1020,20 @@ export function usePaysCrud() {
                 }
               } else if (tipoDocumento === "Funds") {
                 console.log(rowData);
-                
+                let validezOne = rowData['FND_VIGENTE_DESDE'];
+                let validezTwo = rowData['FND_VIGENTE_HASTA'];
+
+                const dateOne = new Date(validezOne);
+                const dateTwo = new Date(validezTwo);
+
+                if (dateOne > dateTwo) {
+                  let objErrors = {
+                    rowError: R,
+                    message: `Error en fechas`,
+                  };
+                  infoErrors.push(objErrors);
+
+                }
                 let dataVerify = {
                   numero: rowData["FND_NUMERO"].toString(),
                 };
@@ -1121,8 +1134,8 @@ export function usePaysCrud() {
         documentType: tipoDocumento,
         usuarioCreo: authorization.user.numberDocument,
         mes: mes,
-        ejercicio: ejercicio, 
-        aditionalData:infoSendVPY
+        ejercicio: ejercicio,
+        aditionalData: infoSendVPY
       };
 
       setMessage({
