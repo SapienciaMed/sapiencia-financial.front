@@ -128,8 +128,10 @@ const CdpAmountAssoc = () => {
       let totalPagesNew = newSize / 2;
       let formulaTotalData = newSize / totalPagesNew;
       if (currentPage > 1) {
-        if (!Number.isInteger(currentPage)) {
-          setCurrentPage((prevPage) => prevPage - 1)
+        if (Number.isInteger(currentPage)) {
+        }else{
+          setCurrentPage(
+            (prevPage) => prevPage - 1)
         }
       }
     }
@@ -337,7 +339,7 @@ const CdpAmountAssoc = () => {
         return (
           <FormCreateRutaCDPComponent
             key={currentId}
-            isRequired={false}
+            isRequired={currentId === 1 ? true : false}
             formNumber={indexOfFirstForm + (countNewFormsSt.length - 1)}
             handleEliminar={() => handleEliminar(currentId)}
             formSubmitted={formSubmitted}
