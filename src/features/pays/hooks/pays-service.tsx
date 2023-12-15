@@ -42,6 +42,11 @@ export function usePaysServices() {
     return get(`${endpoint}`);
   }
 
+  async function getAllBudgets(): Promise<ApiResponse<any>> {
+    const endpoint: string = `/api/v1/budgets/get-all/`;
+    return get(`${endpoint}`);
+  }
+
   async function getAllProjects(): Promise<ApiResponse<any>> {
     const endpoint: string = `/api/v1/projects/get-all/`;
     return get(`${endpoint}`);
@@ -61,5 +66,6 @@ export function usePaysServices() {
     getAllProjects,
     getPospreByParams,
     getProjectDataApi,
+    getAllBudgets
   };
 }
