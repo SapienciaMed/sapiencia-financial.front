@@ -206,8 +206,6 @@ export function useFunctionalAreaCrudData(id: string) {
     if (!id) return;
     GetFunctionalArea(Number(id)).then((response) => {
       if (response.operation.code === EResponseCodes.OK) {
-        console.log({ res: response.data });
-
         setValueRegister("number", response.data.number);
         setValueRegister("denomination", response.data.denomination);
         setValueRegister("description", response.data.description);
