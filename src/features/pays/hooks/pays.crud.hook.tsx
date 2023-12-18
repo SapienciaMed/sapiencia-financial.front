@@ -1045,7 +1045,7 @@ export function usePaysCrud() {
 
 
     
-    if (verification === true && errors.length==0) {
+    if (verification === true && errors.length>0) {
       setLoadingSpinner(false);
       console.log({dataRoutesToInsertStFixedRef})
       let exercise = ejercicio.toString();

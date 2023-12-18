@@ -54,7 +54,7 @@ export function ValidateRouteAnInitialBudget() {
 
         // registra la ruta presupuesta que no existe
         if (
-            manageCenterFound &&
+            !manageCenterFound &&
             PospreOrigenFound &&
             pospreSapienciaFound &&
             fundFound
