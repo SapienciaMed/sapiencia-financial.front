@@ -159,33 +159,18 @@ export function usePaysCrud() {
                 let objData = {
                   "pprNumero": element.pospre_origen.toString(),
                   "pprEjercicio": parseInt(element.ejercicio),
-                  "ppsPosicion": parseInt(element.consecutivo_pospre_sapiencia),
+                  "ppsPosicion": element.consecutivo_pospre_sapiencia,
                 }
 
 
-                console.log("objData", objData);
-                
                 let responseVerifyData = await api.getPospreByParams(objData)
-                console.log(responseVerifyData);
+         
                 
                 if (responseVerifyData.data.length > 0) {
                   let objErrors = { "rowError": index + 1, "message": `El Pospre sapiencia ya existe para esa vigencia` };
                   infoErrors.push(objErrors);
                 }
-                //existencia en planeacion
-                if (matchingObject) {
-                  let pospre = {
-                    "pospreId": matchingObject.id
-                  };
-                  const getInfoProjectsApi = await api.getProjectDataApi(pospre);
-                  if (getInfoProjectsApi.data.length === 0) {
-                    let objErrors = { "rowError": index + 1, "message": `No existe el Pospre Origen en planeación` };
-                    infoErrors.push(objErrors);
-                  }else{
-                    let objProjectInfo = { id: matchingObject.id}
-                    infoSendVPY.push(objProjectInfo)
-                  }
-                }
+            
               });
             }
 
