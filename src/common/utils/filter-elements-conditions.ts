@@ -9,6 +9,7 @@ export function filterElementsMeetConditions(
   arrayDataSelect: IArrayDataSelect,
   transferMovesGroups: ITransferMovesGroups[]
 ): any[] {
+  console.log({arrayDataSelect, transferMovesGroups})
   const functionalArea = (type) => {
     const item = arrayDataSelect?.functionalArea?.find((item) =>
       item.area?.find((a) => a?.id == type)

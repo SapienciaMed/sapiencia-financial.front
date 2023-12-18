@@ -315,7 +315,7 @@ export function useTransferAreaCrudPage(actionForm, id) {
   useEffect(() => {
     if (addTransferData?.array?.length > 0) {
       setIsAddBtnDisable(addTransferData?.array?.length > 0);
-      addTransferData.array.map((item) => {
+      addTransferData.array.forEach((item) => {
         setValue("actAdminDistrict", item.headTransfer.actAdminDistrict);
         setValue("actAdminSapiencia", item.headTransfer.actAdminSapiencia);
         setValue("observations", item.headTransfer.observations);
