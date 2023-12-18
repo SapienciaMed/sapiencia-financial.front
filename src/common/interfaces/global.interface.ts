@@ -11,9 +11,10 @@ export interface IMessage {
   onOk?: () => void;
   onCancel?: () => void;
   onClickOutClose?: boolean;
+  onCloseButton?: boolean;
   onClose?: () => void;
-  titleBack?: string,
-  onBack?: () => void,
+  titleBack?: string;
+  onBack?: () => void;
   background?: boolean;
 }
 
@@ -36,7 +37,7 @@ export interface IGenericList {
   grouper: string;
   itemCode: string;
   itemDescription: string;
-  additionalFields?: object
+  additionalFields?: object;
 }
 
 export interface IAdditionalField {
@@ -45,56 +46,55 @@ export interface IAdditionalField {
   fieldName?: string;
 }
 
-
-export interface IArrayDataSelect{
-  functionalArea: IDropdownProps[],
-  areas?: IDropdownProps[],
-  funds: IDropdownProps[],
-  posPre: IDropdownProps[]
+export interface IArrayDataSelect {
+  functionalArea: IDropdownProps[];
+  areas?: IDropdownProps[];
+  funds: IDropdownProps[];
+  posPre: IDropdownProps[];
 }
 
-export interface IDropdownPropsFuctionalArea{
-  description?:string;
-  name: string,
+export interface IDropdownPropsFuctionalArea {
+  description?: string;
+  name: string;
   value: string | number;
-  projectId?: string | number,
-  id?: string | number,
+  projectId?: string | number;
+  id?: string | number;
 }
 
-export interface IobjectAddTransfer{
-  headTransfer?: IHeadTransferData,
-  transferMovesGroups: ITransferMovesGroups[]
+export interface IobjectAddTransfer {
+  headTransfer?: IHeadTransferData;
+  transferMovesGroups: ITransferMovesGroups[];
 }
 
-export interface IHeadTransferData{
-  actAdminDistrict: string,
-  actAdminSapiencia: string,
-  observations: string,
-  userCreate: string,
-  dateCreate: string,
-  userModify: string,
-  dateModify: string
+export interface IHeadTransferData {
+  actAdminDistrict: string;
+  actAdminSapiencia: string;
+  observations: string;
+  userCreate: string;
+  dateCreate: string;
+  userModify: string;
+  dateModify: string;
 }
 
-export interface ITransferMovesGroups{
-  id?: string,
-  data: IData[]
+export interface ITransferMovesGroups {
+  id?: string;
+  data: IData[];
 }
 
-export interface IData{
-  idCard: string,
-  type : string,
-  managerCenter : string,
-  projectId : number | string,
-  fundId : number | string,
-  budgetPosition : number | string,
-  functionalArea: string,
-  posPre: string,
-  value : number,
-  nameProject: string
-  totalProject?: string
+export interface IData {
+  idCard: string;
+  type: string;
+  managerCenter: string;
+  projectId: number | string;
+  fundId: number | string;
+  budgetPosition: number | string;
+  functionalArea: string;
+  posPre: string;
+  value: number;
+  nameProject: string;
+  totalProject?: string;
 }
 
-export interface IDataPaste extends IData{
-  isPaste: string
+export interface IDataPaste extends IData {
+  isPaste: string;
 }

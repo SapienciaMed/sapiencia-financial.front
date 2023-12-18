@@ -3,22 +3,33 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ITabsMenuTemplate } from "../../../common/interfaces/tabs-menu.interface";
 import AreaCreateAddition from "../forms/area-create-addition";
 import AreaCreateExpense from "../forms/area-create-expense";
-import { Control, useFormState, UseFormGetValues, UseFormWatch, UseFormRegister } from "react-hook-form";
+import {
+  Control,
+  useFormState,
+  UseFormGetValues,
+  UseFormWatch,
+  UseFormRegister,
+} from "react-hook-form";
 import { IAdditionsForm } from "../interfaces/Additions";
-import { IArrayDataSelect, IMessage } from "../../../common/interfaces/global.interface";
+import {
+  IArrayDataSelect,
+  IMessage,
+} from "../../../common/interfaces/global.interface";
 
 interface IAppProps {
   controlRegister: Control<IAdditionsForm, any>;
-  arrayDataSelect: IArrayDataSelect,
-  register: UseFormRegister<IAdditionsForm>,
+  arrayDataSelect: IArrayDataSelect;
+  register: UseFormRegister<IAdditionsForm>;
   showModal: (values: IMessage) => void;
-  watch:  UseFormWatch<IAdditionsForm>,
-  onSubmitTab: (e?: React.BaseSyntheticEvent<object, any, any>) => Promise<void>;
+  watch: UseFormWatch<IAdditionsForm>;
+  onSubmitTab: (
+    e?: React.BaseSyntheticEvent<object, any, any>
+  ) => Promise<void>;
   getValues: UseFormGetValues<IAdditionsForm>;
-  invalidCardsAdditionSt:any;
-  setValue:any;
-  tabSelected?:any;  
-  detail?:boolean;
+  invalidCardsAdditionSt: any;
+  setValue: any;
+  tabSelected?: any;
+  detail?: boolean;
 }
 
 function TabManagerAdditionPage({
@@ -31,13 +42,11 @@ function TabManagerAdditionPage({
   watch,
   invalidCardsAdditionSt,
   setValue,
-  tabSelected,  
-  detail
+  tabSelected,
+  detail,
 }: IAppProps) {
   const { option } = useParams();
   const navigate = useNavigate();
-
-  
 
   const { dirtyFields, isValid, errors } = useFormState({
     control: controlRegister,
@@ -48,7 +57,7 @@ function TabManagerAdditionPage({
       id: "ingreso",
       title: "Ingreso",
       content: (
-        <AreaCreateAddition          
+        <AreaCreateAddition
           titleAdd="ingreso"
           controlRegister={controlRegister}
           showModal={showModal}
@@ -87,7 +96,9 @@ function TabManagerAdditionPage({
   const start = tabs.find(
     (tab) => tab.id.toString().toLowerCase() === option?.toLowerCase()
   );
-  const [selectedTab, setSelectedTab] = useState<ITabsMenuTemplate>( start ? start : null );
+  const [selectedTab, setSelectedTab] = useState<ITabsMenuTemplate>(
+    start ? start : null
+  );
 
   const tabList = {};
   tabs.forEach(
@@ -101,7 +112,7 @@ function TabManagerAdditionPage({
   const handleTabClick = (tab: ITabsMenuTemplate) => {
     setSelectedTab(tab);
     // watch();
-     tabSelected(tab)
+    tabSelected(tab);
     // errors?.ingreso?.message == "datos duplicados en el sistema" &&
     //   showModal({
     //     title: "Validación de datos",
@@ -148,8 +159,12 @@ function TabManagerAdditionPage({
         </div>
         <div className="tabs-content">
           {/* {selectedTab ? tabList[`${selectedTab?.title}`].content : "no data"} */}
-          <div style={{ display: selectedTab?.id === "ingreso" ? "block" : "none" }}>
-            <AreaCreateAddition              
+          <div
+            style={{
+              display: selectedTab?.id === "ingreso" ? "block" : "none",
+            }}
+          >
+            <AreaCreateAddition
               titleAdd="ingreso"
               controlRegister={controlRegister}
               showModal={showModal}
@@ -162,7 +177,9 @@ function TabManagerAdditionPage({
               detail={detail}
             />
           </div>
-          <div style={{ display: selectedTab?.id === "gasto" ? "block" : "none" }}>
+          <div
+            style={{ display: selectedTab?.id === "gasto" ? "block" : "none" }}
+          >
             <AreaCreateExpense
               titleAdd="gasto"
               controlRegister={controlRegister}
@@ -179,8 +196,7 @@ function TabManagerAdditionPage({
         </div>
       </div>
     </div>
-);
-
+  );
 }
 
 export default React.memo(TabManagerAdditionPage);
