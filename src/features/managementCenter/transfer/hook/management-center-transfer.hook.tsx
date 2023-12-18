@@ -53,13 +53,6 @@ export function useManagementCenterTransfer() {
             onClick: (row) => {
                 navigate(`./view/${row.id}`);
             },
-        },
-        {
-            icon: "Edit",
-            hide:!validateActionAccess('TRASLADO_EDITAR'),
-            onClick: (row) => {
-                navigate(`./edit/${row.id}`);
-            },
         }
     ];
 
