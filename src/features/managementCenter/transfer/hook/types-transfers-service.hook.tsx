@@ -33,6 +33,11 @@ export function useTypesTranfersService() {
     const endpoint: string = `/get-by-id/${id}`;
     return get(`${roleUrl}${endpoint}`);
   }
+  
+  async function GetProjectsStrategicVinculation(data: Object): Promise<ApiResponse<any>> {
+    const endpoint: string = `/get-all-vinculation-project-strategic/`;
+    return post(`${roleUrl}${endpoint}`, data);
+  }
 
   return {
     GetTypesTransfers,
@@ -40,5 +45,6 @@ export function useTypesTranfersService() {
     validateCreateTransfer,
     createTransfer,
     getTransferById,
+    GetProjectsStrategicVinculation
   };
 }

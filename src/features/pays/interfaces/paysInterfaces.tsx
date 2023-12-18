@@ -23,12 +23,12 @@ export interface IPagoDataBasicEdit {
 }
 
 export interface IPagoDataSave {
-    tipoDocumento: string;
-    filedata: File;
-    tipoArchivo: string;
-    register: string;
-    mesDelAnio: number;
-    exercise?: string;
+  tipoDocumento: string;
+  filedata: File;
+  tipoArchivo: string;
+  register: string;
+  mesDelAnio: number;
+  exercise?: string;
 }
 
 export interface IPagoDataBasicOriginalDataEdit {
@@ -63,4 +63,20 @@ export interface IMonthOption {
   name: string;
 }
 
-
+export interface IRouteBudget {
+  row?:number;
+  codeProyectStrategic?:string;
+  id?: number;
+  idProjectVinculation: number;
+  managementCenter: string;
+  div: string;
+  idBudget: number;
+  idPospreSapiencia: number;
+  idFund: number;
+  balance: number;
+  initialBalance: number;
+  userModify?: string;
+  dateModify?: Date;
+  userCreate?: string;
+  dateCreate?: DateTime;
+}

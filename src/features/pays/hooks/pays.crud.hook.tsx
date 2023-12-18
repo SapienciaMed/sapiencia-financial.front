@@ -9,7 +9,9 @@ import { IErrorTablePac } from "../../pac/interface/Pac";
 import { usePaysServices } from "./pays-service";
 import * as XLSX from "xlsx";
 import useStorePays from "../../../store/store-pays";
-
+import { ValidateRouteAnInitialBudget } from "./validate-route-and-initial-budget";
+import { useBudgetRoutesService } from "../../budget-routes/hooks/budget-routes-service.hook";
+import { useTypesTranfersService } from "../../managementCenter/transfer/hook/types-transfers-service.hook";
 export function usePaysCrud() {
   const dateToday = new Date();
 
@@ -31,14 +33,27 @@ export function usePaysCrud() {
     setInfoSearchPays,
     exerciseLoad,
   } = useStorePays();
+  const { GetAllRoutesByExcercise } = useBudgetRoutesService()
+  const { GetProjectsStrategicVinculation } = useTypesTranfersService()
+  
   const [selection, setSelection] = useState("");
   const [dataEmpty, setDataEmpty] = useState(false);
-
+  const { checkBudgetRouteDoesNotExist,dataRoutesToInsertStRef, projectCodeSearchInStrategicRef, checkValueBudgetWithProjectPlanning, dataRoutesToInsertStFixedRef } = ValidateRouteAnInitialBudget()
   const api = usePaysServices();
 
   const onCancelNew = () => {
     navigate("./");
   };
+  const [dataBudgetRoutesCreatedSt, setDataBudgetRoutesCreatedSt] = useState([])
+  useEffect(() => {
+    const getAllRoutesIfExist = async (exercise: number) => {
+      let dataRoutesCreated = await GetAllRoutesByExcercise(exercise)
+      setDataBudgetRoutesCreatedSt(dataRoutesCreated.data)
+  }
+  getAllRoutesIfExist(2023)
+  }, [])
+  
+
 
   const {
     handleSubmit,
@@ -320,8 +335,9 @@ export function usePaysCrud() {
 
           if (isValidTitles) {
             const uniqueRows = new Set();
-
-            for (let R = range.s.r + 1; R <= range.e.r; ++R) {
+            console.log({range})
+            const totalRowsWithData = range.e.r;
+            for (let R = range.s.r + 1; R <= totalRowsWithData; ++R) {
               const merges = sheet["!merges"];
               if (merges !== undefined) {
                 const isMergedRow = merges.some(
@@ -345,7 +361,6 @@ export function usePaysCrud() {
                 const cell_address = { c: C, r: R };
                 const cell_ref = XLSX.utils.encode_cell(cell_address);
                 const value = sheet[cell_ref]?.v;
-
                 if (tipoDocumento == "Pagos") {
                   //validamos la existencia del RP
                   switch (titleDB[C]) {
@@ -779,139 +794,14 @@ export function usePaysCrud() {
                       break;
                   }
                 } else if (tipoDocumento == "RutaPptoInicial") {
-                  switch (titleDB[C]) {
-                    case "CentroGestor":
-                      if (
-                        typeof value !== "number" ||
-                        !Number.isInteger(value)
-                      ) {
-                        console.log(
-                          `Error en la fila ${R}, columna ${C + 1
-                          }: El valor '${value}' no es un número entero.`
-                        );
-                        if (value === undefined) {
-                        } else {
-                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                          let objErrors = {
-                            rowError: R,
-                            message: `el archivo no cumple la estructura`,
-                          };
-                          infoErrors.push(objErrors);
-                        }
-                      }
-                      break;
-                    case "PospreOrigen":
-                      if (
-                        typeof value !== "number" ||
-                        !Number.isInteger(value)
-                      ) {
-                        console.log(
-                          `Error en la fila ${R}, columna ${C + 1
-                          }: El valor '${value}' no es un número entero.`
-                        );
-                        if (value === undefined) {
-                        } else {
-                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                          let objErrors = {
-                            rowError: R,
-                            message: `el archivo no cumple la estructura`,
-                          };
-                          infoErrors.push(objErrors);
-                        }
-                      }
-                      break;
-                    case "PospreSapiencia":
-                      if (
-                        typeof value !== "number" ||
-                        !Number.isInteger(value)
-                      ) {
-                        console.log(
-                          `Error en la fila ${R}, columna ${C + 1
-                          }: El valor '${value}' no es un número entero.`
-                        );
-                        if (value === undefined) {
-                        } else {
-                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                          let objErrors = {
-                            rowError: R,
-                            message: `el archivo no cumple la estructura`,
-                          };
-                          infoErrors.push(objErrors);
-                        }
-                      }
-                      break;
-                    case "AreaFuncional":
-                      if (typeof value !== "string") {
-                        console.log(
-                          `Error en la fila ${R}, columna ${C + 1
-                          }: El valor '${value}' no es una cadena de texto.`
-                        );
-                        let objErrors = {
-                          rowError: R,
-                          message: `el archivo no cumple la estructura`,
-                        };
-                        infoErrors.push(objErrors);
-                      }
-
-                      break;
-                    case "Fondo":
-                      if (
-                        typeof value !== "number" ||
-                        !Number.isInteger(value)
-                      ) {
-                        console.log(
-                          `Error en la fila ${R}, columna ${C + 1
-                          }: El valor '${value}' no es un número entero.`
-                        );
-                        if (value === undefined) {
-                        } else {
-                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                          let objErrors = {
-                            rowError: R,
-                            message: `el archivo no cumple la estructura`,
-                          };
-                          infoErrors.push(objErrors);
-                        }
-                      }
-                      break;
-                    case "Proyecto":
-                      if (typeof value !== "string") {
-                        console.log(
-                          `Error en la fila ${R}, columna ${C + 1
-                          }: El valor '${value}' no es una cadena de texto.`
-                        );
-                        let objErrors = {
-                          rowError: R,
-                          message: `el archivo no cumple la estructura`,
-                        };
-                        infoErrors.push(objErrors);
-                      }
-                      break;
-                    case "ValorInicial":
-                      if (
-                        typeof value !== "number" ||
-                        !Number.isInteger(value)
-                      ) {
-                        console.log(
-                          `Error en la fila ${R}, columna ${C + 1
-                          }: El valor '${value}' no es un número entero.`
-                        );
-                        if (value === undefined) {
-                        } else {
-                          //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                          let objErrors = {
-                            rowError: R,
-                            message: `el archivo no cumple la estructura`,
-                          };
-                          infoErrors.push(objErrors);
-                        }
-                      }
-                      break;
-                  }
+                   
+                    if(C % 7 === 0 ) {
+                     await checkBudgetRouteDoesNotExist(dataBudgetRoutesCreatedSt,infoErrors,R, sheet[XLSX.utils.encode_cell({c:0,r:R})]?.v, sheet[XLSX.utils.encode_cell({c:1,r:R})]?.v,sheet[XLSX.utils.encode_cell({c:2,r:R})]?.v,sheet[XLSX.utils.encode_cell({c:3,r:R})]?.v,sheet[XLSX.utils.encode_cell({c:4,r:R})]?.v,sheet[XLSX.utils.encode_cell({c:5,r:R})]?.v,sheet[XLSX.utils.encode_cell({c:6,r:R})]?.v)
+                    }
+                   
                 }
 
                 // Validar si la celda está vacía
-
                 if (merges === undefined) {
                   if (value === null || value === undefined || value === "") {
                     console.log(
@@ -1037,9 +927,24 @@ export function usePaysCrud() {
                   infoErrors.push(objErrors);
                 }
               }
-            }
+            } // end cicle rows excel
+
             console.log("Datos fila de errores:", infoErrors);
-            setInfoErrors(infoErrors);
+              setInfoErrors(infoErrors);
+
+            
+            /* if(tipoDocumento=='RutaPptoInicial'){
+                let errors = await validaProyectRouteInitialBudget();
+              alert(errors)
+              setInfoErrors(prevInfoErrors=>[
+                ...prevInfoErrors,
+                ...errors
+              ])
+              
+            }
+
+            alert(infoErrors) */
+          
           } else {
             console.log(
               "El archivo Excel no tiene el formato esperado. Detalles:"
@@ -1060,9 +965,23 @@ export function usePaysCrud() {
       };
 
       reader.readAsBinaryString(blob);
-    });
-  }
 
+      
+
+    });
+  } // end processs ExcelFile
+
+  const validaProyectRouteInitialBudget = async()=>{
+    let proyects = await api.getProjectDataApi({
+      codeList: projectCodeSearchInStrategicRef.current
+  })
+    let proyectsVinculation = await GetProjectsStrategicVinculation({
+      projectsIds: projectCodeSearchInStrategicRef.current
+  })
+   return await checkValueBudgetWithProjectPlanning(proyects.data, dataRoutesToInsertStRef.current, proyectsVinculation.data)
+  }
+  
+ 
   const updateFieldError = (
     fieldName: keyof typeof fieldErrors,
     hasError: string
@@ -1075,14 +994,15 @@ export function usePaysCrud() {
   useEffect(() => {
     async (data: IPagoDataSave) => {
       const { tipoArchivo, mesDelAnio } = data;
-      console.log("hola mund", data);
     };
   }, []);
 
-  const onSubmitPagPays = handleSubmit(async (data: IPagoDataSave) => {
-    const { tipoArchivo, mesDelAnio, filedata } = data;
+  const onSubmitPagPays =  handleSubmit(async (data: IPagoDataSave) => {
+    const { tipoArchivo, mesDelAnio, filedata, register } = data;
     let tryReturn = false;
+    
 
+    
     // Validar campos
     if (data.tipoArchivo === undefined) {
       updateFieldError("tipoArchivo", "vacio");
@@ -1109,15 +1029,29 @@ export function usePaysCrud() {
     const mes = data.mesDelAnio;
     const ejercicio = exerciseLoad;
 
+
+
     const verification = await processExcelFile(base64Data, tipoDocumento);
+    
+    let errors=[];
+    if(tipoDocumento=='RutaPptoInicial'){
+      errors = await validaProyectRouteInitialBudget();
+    setInfoErrors(prevInfoErrors=>[
+      ...prevInfoErrors,
+      ...errors
+    ])
+    }
+    
 
-    if (verification === true) {
+
+    
+    if (verification === true && errors.length==0) {
       setLoadingSpinner(false);
-
+      console.log({dataRoutesToInsertStFixedRef})
       let exercise = ejercicio.toString();
 
       let obInfo = {
-        fileContent: base64Data,
+        fileContent: tipoDocumento=='RutaPptoInicial' ? dataRoutesToInsertStFixedRef.current : base64Data,
         documentType: tipoDocumento,
         usuarioCreo: authorization.user.numberDocument,
         mes: mes,
@@ -1193,6 +1127,8 @@ export function usePaysCrud() {
         background: true,
       });
     }
+  
+  
   });
 
   function loadTableData(searchCriteria?: object): void {

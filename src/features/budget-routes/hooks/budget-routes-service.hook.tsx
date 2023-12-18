@@ -47,6 +47,13 @@ export function useBudgetRoutesService() {
     const endpoint: string = `/get-pospre-by-project/${projectId}/fund/${fundId}`;
     return get(`${roleUrl}${endpoint}`);
   }
+  
+  async function GetAllRoutesByExcercise(
+    exercise: number
+  ): Promise<ApiResponse<IPosPreSapiencia[]>> {
+    const endpoint: string = `/get-all-routes-by-excercise/${exercise}`;
+    return get(`${roleUrl}${endpoint}`);
+  }
 
   return {
     GetBudgetRoutes,
@@ -54,5 +61,6 @@ export function useBudgetRoutesService() {
     UpdateBudgetRoutes,
     GetFundsByProjectId,
     GetPospreByProjectAndFundId,
+    GetAllRoutesByExcercise
   };
 }
