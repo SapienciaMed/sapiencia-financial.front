@@ -11,11 +11,15 @@ export function filterElementsMeetConditions(
 ): any[] {
   console.log({arrayDataSelect, transferMovesGroups})
   const functionalArea = (type) => {
-    const item = arrayDataSelect?.functionalArea?.find((item) =>
+    const item = Object(transferMovesGroups)[0].data[0]?.functionalArea==null 
+    ? arrayDataSelect?.functionalArea?.find(item => item.id == type)
+    : arrayDataSelect?.functionalArea?.find((item) =>
       item.area?.find((a) => a?.id == type)
-    );
+    )
     if (item) {
-      const areaItem = item?.area?.find((area) => area.id == type);
+      const areaItem = Object(transferMovesGroups)[0].data[0]?.functionalArea==null 
+        ? item?.area?.find(area => area.projectId == type)
+        : item?.area?.find((area) => area.id == type);
       return areaItem ? areaItem?.name : null;
     }
     return null;
