@@ -124,7 +124,6 @@ function AreaCreateAddition({
         })
       : showModal({
           title: "Validación de datos",
-          //description: "Se ha encontrado un error en los datos,revisa las rutas presupuestales",
           description:
             "Se ha encontrado un error en los datos valida inclusion de titulos o datos completos",
           show: true,

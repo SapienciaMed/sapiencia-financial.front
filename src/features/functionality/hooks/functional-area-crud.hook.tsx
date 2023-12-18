@@ -14,9 +14,7 @@ import {
   ITableAction,
   ITableElement,
 } from "../../../common/interfaces/table.interfaces";
-import {
-  IProjectsVinculation,
-} from "../interfaces/Projects";
+import { IProjectsVinculation } from "../interfaces/Projects";
 import { SwitchComponent } from "../../../common/components/Form";
 import { useProjectsLinkService } from "./projects-link-service.hook";
 import { IProjectAdditionList } from "../interfaces/AdditionsTransfersInterfaces";
@@ -28,7 +26,7 @@ export function useFunctionalAreaCrudData(id: string) {
   const { UnLinkVinculation, LinkVinculation, DeleteLinkVinculation } =
     useProjectsLinkService();
 
-    const { validateActionAccess } = useContext(AppContext)
+  const { validateActionAccess } = useContext(AppContext);
   const resolver = useYupValidationResolver(functionalAreaCrud);
   const {
     handleSubmit,
@@ -44,7 +42,6 @@ export function useFunctionalAreaCrudData(id: string) {
   const [projectsLink, setProjectsLink] = useState<number[]>([]);
   const [projectsUnLink, setProjectsUnLink] = useState<number[]>([]);
 
-
   const tableColumns: ITableElement<IProjectAdditionList>[] = [
     {
       fieldName: "projectId",
@@ -55,18 +52,17 @@ export function useFunctionalAreaCrudData(id: string) {
       header: "Nombre proyecto",
     },
     {
-      fieldName: "assignmentValue",
+      fieldName: "assignedValue",
       header: "Valor asignado",
     },
     {
-      fieldName: "plannedValue",
+      fieldName: "valuePlanning",
       header: "Valor planeado",
     },
     {
       fieldName: "",
       header: "Vincular",
       renderCell: (row) => {
-        console.log(row)
         let checked = row.linked === true;
         if (projectsLink.find((project) => project === row.id)) checked = true;
         if (projectsUnLink.find((project) => project === row.id))
@@ -138,27 +134,27 @@ export function useFunctionalAreaCrudData(id: string) {
 
   const tableColumnsView: ITableElement<IProjectsVinculation>[] = [
     {
-        fieldName: "projectId",
-        header: "Id proyecto",
-      },
-      {
-        fieldName: "conceptProject",
-        header: "Nombre proyecto",
-      },
-      {
-        fieldName: "assignmentValue",
-        header: "Valor asignado",
-      },
-      {
-        fieldName: "plannedValue",
-        header: "Valor planeado",
-      },
+      fieldName: "projectId",
+      header: "Id proyecto",
+    },
+    {
+      fieldName: "conceptProject",
+      header: "Nombre proyecto",
+    },
+    {
+      fieldName: "assignedValue",
+      header: "Valor asignado",
+    },
+    {
+      fieldName: "valuePlanning",
+      header: "Valor planeado",
+    },
   ];
 
   const tableActions: ITableAction<IProjectsVinculation>[] = [
     {
       icon: "Delete",
-      hide:!validateActionAccess('AREA_FUNCIONAL_ELIMINAR'),
+      hide: !validateActionAccess("AREA_FUNCIONAL_ELIMINAR"),
       onClick: (row) => {
         setMessage({
           title: "Eliminar proyecto",
