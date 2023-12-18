@@ -32,7 +32,6 @@ export function useAdditionAreaCrud(
     editAdition,
   } = useAdditionsTransfersService();
 
-
   const [arrayDataSelect, setArrayDataSelect] = useState<IArrayDataSelect>({
     functionalArea: [],
     funds: [],
@@ -117,6 +116,10 @@ export function useAdditionAreaCrud(
       let resValidate = await validateCreateAdition(addition);
 
       if (resValidate.operation.code == "FAIL") {
+        identifyInvalidcard(
+          addition.additionMove,
+          resValidate.operation.message
+        );
         showModal({
           //type?: EResponseCodes;
           title: "Validación de datos",
@@ -135,19 +138,9 @@ export function useAdditionAreaCrud(
           //cancelTitle: "Cancerlar",
           onOk: () => {
             setMessage({});
-            identifyInvalidcard(
-              addition.additionMove,
-              resValidate.operation.message
-            );
           },
-          // onCancel?: () => void;
-          // onClickOutClose?: boolean;
           onClose: () => {
             setMessage({});
-            identifyInvalidcard(
-              addition.additionMove,
-              resValidate.operation.message
-            );
           },
           // background?: boolean;
         });
@@ -213,6 +206,10 @@ export function useAdditionAreaCrud(
       let resValidate = await validateEditAdition(idMovement, addition);
 
       if (resValidate.operation.code == "FAIL") {
+        identifyInvalidcard(
+          addition.additionMove,
+          resValidate.operation.message
+        );
         showModal({
           //type?: EResponseCodes;
           title: "Validación de datos",
@@ -231,19 +228,11 @@ export function useAdditionAreaCrud(
           //cancelTitle: "Cancerlar",
           onOk: () => {
             setMessage({});
-            identifyInvalidcard(
-              addition.additionMove,
-              resValidate.operation.message
-            );
           },
           // onCancel?: () => void;
           // onClickOutClose?: boolean;
           onClose: () => {
             setMessage({});
-            identifyInvalidcard(
-              addition.additionMove,
-              resValidate.operation.message
-            );
           },
           // background?: boolean;
         });
