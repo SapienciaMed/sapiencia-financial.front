@@ -9,12 +9,17 @@ export function filterElementsMeetConditions(
   arrayDataSelect: IArrayDataSelect,
   transferMovesGroups: ITransferMovesGroups[]
 ): any[] {
+  
   const functionalArea = (type) => {
-    const item = arrayDataSelect?.functionalArea?.find((item) =>
+    const item = Object(transferMovesGroups)[0].data[0]?.functionalArea==null 
+    ? arrayDataSelect?.functionalArea?.find(item => item.id == type)
+    : arrayDataSelect?.functionalArea?.find((item) =>
       item.area?.find((a) => a?.id == type)
-    );
+    )
     if (item) {
-      const areaItem = item?.area?.find((area) => area.id == type);
+      const areaItem = Object(transferMovesGroups)[0].data[0]?.functionalArea==null 
+        ? item?.area?.find(area => area.projectId == type)
+        : item?.area?.find((area) => area.id == type);
       return areaItem ? areaItem?.name : null;
     }
     return null;
@@ -32,7 +37,6 @@ export function filterElementsMeetConditions(
     const testFindNamesMatchingPosPre = arrayDataSelect?.posPre?.find(
       (item1) => item1.value == parseInt(type)
     )?.name;
-    console.log({ testFindNamesMatchingPosPre });
     return arrayDataSelect?.posPre?.find(
       (item1) => item1.value == parseInt(type)
     )?.name;
@@ -42,7 +46,6 @@ export function filterElementsMeetConditions(
     const testFindNamesMatchingProject = arrayDataSelect?.functionalArea?.find(
       (item1) => item1.value == parseInt(type)
     )?.name;
-    console.log({ testFindNamesMatchingProject });
     return arrayDataSelect?.functionalArea?.find(
       (item1) => item1.value == parseInt(type)
     )?.name;
@@ -57,7 +60,7 @@ export function filterElementsMeetConditions(
         budgetPosition: namesMatchingPospre(it.budgetPosition),
         value: it.value,
         nameProject: it.nameProject,
-        functionalArea: functionalArea(it.functionalArea),
+        functionalArea: functionalArea(it.functionalArea ?? it.projectId),
       })),
       id: item.id,
     })),
