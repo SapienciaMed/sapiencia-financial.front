@@ -64,3 +64,20 @@ export interface IMonthOption {
 }
 
 
+export interface IRouteBudget {
+  row?:number;
+  codeProyectStrategic?:string;
+  id?: number;
+  idProjectVinculation: number;
+  managementCenter: string;
+  div: string;
+  idBudget: number;
+  idPospreSapiencia: number;
+  idFund: number;
+  balance: number;
+  initialBalance: number;
+  userModify?: string;
+  dateModify?: Date;
+  userCreate?: string;
+  dateCreate?: DateTime;
+}
