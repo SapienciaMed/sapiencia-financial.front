@@ -669,13 +669,16 @@ export function usePaysCrud() {
                         }
                         break;
                       case "ConsecutivoPospreSapiencia":
-                        if (typeof value !== 'number' || !Number.isInteger(value)) {
-                          console.log(`Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.`);
-                          if (value === undefined) { } else {
-                            //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
-                            let objErrors = { "rowError": R, "message": `El archivo no cumple la estructura` };
-                            infoErrors.push(objErrors);
-                          }
+                        if (typeof value !== "string") {
+                          console.log(
+                            `Error en la fila ${R}, columna ${C + 1
+                            }: El valor '${value}' no es una cadena de texto.`
+                          );
+                          let objErrors = {
+                            rowError: R,
+                            message: `El archivo no cumple la estructura`,
+                          };
+                          infoErrors.push(objErrors);
                         }
                         break;
                       case "Ejercicio":
