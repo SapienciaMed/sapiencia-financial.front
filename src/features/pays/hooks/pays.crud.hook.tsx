@@ -574,25 +574,7 @@ export function usePaysCrud() {
                           infoErrors.push(objErrors);
                         }
 
-                        /*    infoArrAF.forEach((element) => {
-                             if (element.number === value) {
-                               infoArrProject.forEach((datosProject) => {
-                                 if (datosProject.functionalAreaId === element.id) {
-                                   let objErrors = {
-                                     rowError: R,
-                                     message: `El Área funcional ya existe con ese proyecto`,
-                                   };
-                                   infoErrors.push(objErrors);
-                                 }
-                               });
-                             }
-                           }); */
-
                         infoArrAF.forEach((element) => {
-                          console.log(element);
-                          console.log(element.id);
-                          console.log(infoArrProject);
-                          
                           const matchingProject = infoArrProject.find((datosProject) => datosProject.functionalAreaId === element.id);         
                           if (element.number === value && matchingProject?.areaFuntional?.number) {
                             console.log("esta es la coincidencia",element.number,  matchingProject?.areaFuntional?.number, value );
