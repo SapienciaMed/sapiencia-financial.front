@@ -356,7 +356,9 @@ export function useAddFundsCrud() {
 
           setMessage({
             title: "Validación de datos",
-            description: messageResponse,
+            description: messageResponse.split('@')[1] == "Tipo Error: Se esta intentado trasladar de un Proyecto de Inversión a uno de Funcionamiento"
+                    ? 'El traslado no puede ser posible de un proyecto de inversión a uno de funcionamiento'
+                    :messageResponse,
             show: true,
             OkTitle: "Aceptar",
             onOk: () => {
