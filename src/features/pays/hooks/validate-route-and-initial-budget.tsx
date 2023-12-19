@@ -51,7 +51,7 @@ export function ValidateRouteAnInitialBudget() {
         !fundFoundObj && verifyFundExist(infoErrors, row)
 
         let fundFound = dataBudgetRoutesCreatedSt.find(e => e.idFund == fundFoundObj?.fund.id)
-
+        
         // registra la ruta presupuesta que no existe
         if (
             manageCenterFound &&

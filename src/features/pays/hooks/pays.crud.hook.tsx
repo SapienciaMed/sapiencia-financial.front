@@ -41,7 +41,7 @@ export function usePaysCrud() {
   const [selection, setSelection] = useState("");
   const [dataEmpty, setDataEmpty] = useState(false);
 
-  const { checkBudgetRouteDoesNotExist,dataRoutesToInsertStRef, projectCodeSearchInStrategicRef, checkValueBudgetWithProjectPlanning, dataRoutesToInsertStFixedRef } = ValidateRouteAnInitialBudget()
+  const { checkBudgetRouteDoesNotExist, dataRoutesToInsertStRef, projectCodeSearchInStrategicRef, checkValueBudgetWithProjectPlanning, dataRoutesToInsertStFixedRef } = ValidateRouteAnInitialBudget()
   const api = usePaysServices();
 
   const onCancelNew = () => {
@@ -53,8 +53,8 @@ export function usePaysCrud() {
     const getAllRoutesIfExist = async (exercise: number) => {
       let dataRoutesCreated = await GetAllRoutesByExcercise(exercise)
       setDataBudgetRoutesCreatedSt(dataRoutesCreated.data)
-  }
-  getAllRoutesIfExist(2023)
+    }
+    getAllRoutesIfExist(2023)
   }, [])
 
   const {
@@ -181,13 +181,13 @@ export function usePaysCrud() {
 
 
                 let responseVerifyData = await api.getPospreByParams(objData)
-         
-                
+
+
                 if (responseVerifyData.data.length > 0) {
                   let objErrors = { "rowError": index + 1, "message": `El Pospre sapiencia ya existe para esa vigencia` };
                   infoErrors.push(objErrors);
                 }
-            
+
               });
             }
 
@@ -372,10 +372,9 @@ export function usePaysCrud() {
                 const cell_ref = XLSX.utils.encode_cell(cell_address);
                 const value = sheet[cell_ref]?.v;
 
-                 // Validar si la celda está vacía
-
-                 if (merges === undefined) {
-                  if (value === null || value === undefined || value === "") {
+                // Validar si la celda está vacía
+                if (value === null || value === undefined || value === "") {
+                  if (merges === undefined) {
                     console.log(
                       `Error en la fila ${R}, columna ${C + 1
                       }: La celda está vacía.`
@@ -388,8 +387,7 @@ export function usePaysCrud() {
                     setDataEmpty(true);
                     dataVacia = true;
                   }
-                }else{
-
+                } else {
                   if (tipoDocumento == "Pagos") {
                     //validamos la existencia del RP
                     switch (titleDB[C]) {
@@ -537,10 +535,10 @@ export function usePaysCrud() {
                         break;
                     }
                   } else if (tipoDocumento == "AreaFuncional") {
-  
+
                     const validarEstructura = (value) => {
                       const patron = /^\d{8}\.\d{4}\.\d{2}$/;
-  
+
                       if (!patron.test(value)) {
                         console.log(
                           `Error en la validación de la fila ${R}, columna ${C + 1}: El valor '${value}' no cumple con la estructura esperada.`
@@ -552,10 +550,10 @@ export function usePaysCrud() {
                         infoErrors.push(objErrors);
                       }
                     }
-  
+
                     switch (titleDB[C]) {
                       case "Codigo":
-  
+
                         validarEstructura(value)
                         if (typeof value !== "string") {
                           console.log(
@@ -568,7 +566,7 @@ export function usePaysCrud() {
                           };
                           infoErrors.push(objErrors);
                         }
-  
+
                         /*    infoArrAF.forEach((element) => {
                              if (element.number === value) {
                                infoArrProject.forEach((datosProject) => {
@@ -582,10 +580,10 @@ export function usePaysCrud() {
                                });
                              }
                            }); */
-  
+
                         infoArrAF.forEach((element) => {
                           const matchingProject = infoArrProject.find((datosProject) => datosProject.functionalAreaId === element.id);
-  
+
                           if (element.number === value && matchingProject) {
                             let objErrors = {
                               rowError: R,
@@ -594,8 +592,8 @@ export function usePaysCrud() {
                             infoErrors.push(objErrors);
                           }
                         });
-  
-  
+
+
                         break;
                       case "TipoProyecto":
                         if (typeof value !== "string") {
@@ -609,7 +607,7 @@ export function usePaysCrud() {
                           };
                           infoErrors.push(objErrors);
                         }
-  
+
                         let valueFunction: string = "funcionamiento";
                         let valueInvertion: string = "inversion";
                         if (value == valueInvertion || value == valueFunction) {
@@ -620,7 +618,7 @@ export function usePaysCrud() {
                           };
                           infoErrors.push(objErrors);
                         }
-  
+
                         break;
                       case "Proyecto":
                         if (typeof value !== 'number' || !Number.isInteger(value)) {
@@ -633,7 +631,7 @@ export function usePaysCrud() {
                         break;
                     }
                   } else if (tipoDocumento == "PospreSapiencia") {
-  
+
                     switch (titleDB[C]) {
                       case "PospreOrigen":
                         if (typeof value !== 'number' || !Number.isInteger(value)) {
@@ -801,14 +799,12 @@ export function usePaysCrud() {
                         break;
                     }
                   } else if (tipoDocumento == "RutaPptoInicial") {
-                    if(C % 7 === 0 ) {
-                      await checkBudgetRouteDoesNotExist(dataBudgetRoutesCreatedSt,infoErrors,R, sheet[XLSX.utils.encode_cell({c:0,r:R})]?.v, sheet[XLSX.utils.encode_cell({c:1,r:R})]?.v,sheet[XLSX.utils.encode_cell({c:2,r:R})]?.v,sheet[XLSX.utils.encode_cell({c:3,r:R})]?.v,sheet[XLSX.utils.encode_cell({c:4,r:R})]?.v,sheet[XLSX.utils.encode_cell({c:5,r:R})]?.v,sheet[XLSX.utils.encode_cell({c:6,r:R})]?.v)
-                     }
+                    if (C % 7 === 0) {
+                      await checkBudgetRouteDoesNotExist(dataBudgetRoutesCreatedSt, infoErrors, R, sheet[XLSX.utils.encode_cell({ c: 0, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 1, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 2, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 3, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 4, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 5, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 6, r: R })]?.v)
+                    }
                   } // end RutaPptoInicial
                 }
 
-
-               
 
                 rowData[titleDB[C]] = value;
               }
@@ -963,14 +959,14 @@ export function usePaysCrud() {
     });
   }
 
-  const validaProyectRouteInitialBudget = async()=>{
+  const validaProyectRouteInitialBudget = async () => {
     let proyects = await api.getProjectDataApi({
       codeList: projectCodeSearchInStrategicRef.current
-  })
+    })
     let proyectsVinculation = await GetProjectsStrategicVinculation({
       projectsIds: projectCodeSearchInStrategicRef.current
-  })
-   return await checkValueBudgetWithProjectPlanning(proyects.data, dataRoutesToInsertStRef.current, proyectsVinculation.data)
+    })
+    return await checkValueBudgetWithProjectPlanning(proyects.data, dataRoutesToInsertStRef.current, proyectsVinculation.data)
   }
 
   const updateFieldError = (
@@ -1021,23 +1017,22 @@ export function usePaysCrud() {
 
     const verification = await processExcelFile(base64Data, tipoDocumento);
 
-    let errors=[];
-    if(tipoDocumento=='RutaPptoInicial'){
+    let errors = [];
+    if (tipoDocumento == 'RutaPptoInicial') {
       errors = await validaProyectRouteInitialBudget();
-    setInfoErrors(prevInfoErrors=>[
-      ...prevInfoErrors,
-      ...errors
-    ])
+      setInfoErrors(prevInfoErrors => [
+        ...prevInfoErrors,
+        ...errors
+      ])
     }
-    console.log({errors})
-
-    if (verification === true && errors.length==0) {
+    
+    if (verification === true && errors.length == 0) {
       setLoadingSpinner(false);
 
       let exercise = ejercicio.toString();
 
       let obInfo = {
-        fileContent: tipoDocumento=='RutaPptoInicial' ? dataRoutesToInsertStFixedRef.current : base64Data,
+        fileContent: tipoDocumento == 'RutaPptoInicial' ? dataRoutesToInsertStFixedRef.current : base64Data,
         documentType: tipoDocumento,
         usuarioCreo: authorization.user.numberDocument,
         mes: mes,
