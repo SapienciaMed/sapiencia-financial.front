@@ -159,7 +159,6 @@ function LoadPays() {
     color: '#533893',
     display: showBtnValidation ? 'flex' : 'none'
   }
-
   return (
     <div className="crud-page">
       <Backdrop
@@ -408,7 +407,7 @@ function LoadPays() {
           >
             <TableDataPropComponent
               ref={tableComponentRef}
-              dataTable={infoErrors}
+              dataTable={infoErrors.sort((a, b) => a.rowError - b.rowError)}
               columns={tableColumns}
               isShowModal={false}
               titleMessageModalNoResult={"No se encontraron registros"}
