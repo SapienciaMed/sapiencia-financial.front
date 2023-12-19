@@ -182,6 +182,7 @@ export function usePaysCrud() {
 
                 let responseVerifyData = await api.getPospreByParams(objData)
 
+          
 
                 if (responseVerifyData.data.length > 0) {
                   let objErrors = { "rowError": index + 1, "message": `El Pospre sapiencia ya existe para esa vigencia` };
@@ -197,14 +198,17 @@ export function usePaysCrud() {
                 arrayFilterProject.push(element.proyecto.toString());
               });
 
+              
               let objProjectInfo = {
                 "codeList": arrayFilterProject
               };
-
+              
               const getInfoProjectsApi = await api.getProjectDataApi(objProjectInfo);
               let arrInformation = getInfoProjectsApi.data;
-
+              console.log("informacion planecion",arrInformation);
+              
               let arrBpin = arrInformation.map(element => element.bpin);
+              console.log("informacion bpin",arrBpin);
 
               data.forEach((element, index) => {
                 if (!arrBpin.includes(element.proyecto.toString())) {
@@ -217,6 +221,9 @@ export function usePaysCrud() {
                 let objProjectInfo = { id: element.id, bpin: element.bpin, tipoProyecto: data[index].tipo_de_proyecto }
                 infoSendVPY.push(objProjectInfo)
               });
+
+              console.log("info Push VPY", infoSendVPY);
+              
             }
           }
           // Inicio de validaciones
@@ -567,24 +574,11 @@ export function usePaysCrud() {
                           infoErrors.push(objErrors);
                         }
 
-                        /*    infoArrAF.forEach((element) => {
-                             if (element.number === value) {
-                               infoArrProject.forEach((datosProject) => {
-                                 if (datosProject.functionalAreaId === element.id) {
-                                   let objErrors = {
-                                     rowError: R,
-                                     message: `El Área funcional ya existe con ese proyecto`,
-                                   };
-                                   infoErrors.push(objErrors);
-                                 }
-                               });
-                             }
-                           }); */
-
                         infoArrAF.forEach((element) => {
-                          const matchingProject = infoArrProject.find((datosProject) => datosProject.functionalAreaId === element.id);
-
-                          if (element.number === value && matchingProject) {
+                          const matchingProject = infoArrProject.find((datosProject) => datosProject.functionalAreaId === element.id);         
+                          if (element.number === value && matchingProject?.areaFuntional?.number) {
+                            console.log("esta es la coincidencia",element.number,  matchingProject?.areaFuntional?.number, value );
+                            
                             let objErrors = {
                               rowError: R,
                               message: `El Área funcional ya existe con ese proyecto`,
@@ -1040,7 +1034,7 @@ export function usePaysCrud() {
         usuarioCreo: authorization.user.numberDocument,
         mes: mes,
         ejercicio: ejercicio,
-        aditionalData: infoSendVPY
+        aditionalData: infoSendVPY.reverse()
       };
 
       setMessage({
