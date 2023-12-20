@@ -51,10 +51,10 @@ export function ValidateRouteAnInitialBudget() {
         !fundFoundObj && verifyFundExist(infoErrors, row)
 
         let fundFound = dataBudgetRoutesCreatedSt.find(e => e.idFund == fundFoundObj?.fund.id)
-        
+
         // registra la ruta presupuesta que no existe
-        if (
-            manageCenterFound &&
+        /* if (
+            !manageCenterFound &&
             PospreOrigenFound &&
             pospreSapienciaFound &&
             fundFound
@@ -63,24 +63,24 @@ export function ValidateRouteAnInitialBudget() {
                 rowError: row,
                 message: 'La ruta ya existe',
             })
-        } else {
-            dataRoutesToInsertStRef.current = [
-                ...dataRoutesToInsertStRef.current,
-                {
-                    row,
-                    codeProyectStrategic: proyecto,
-                    idProjectVinculation: null,
-                    managementCenter: CentroGestor,
-                    div: 'SAPI',
-                    idBudget: PospreOrigenFoundObj?.budget.id,
-                    idPospreSapiencia: pospreSapienciaFoundObj?.pospreSapiencia.id,
-                    idFund: fundFoundObj?.fund.id,
-                    balance: parseFloat(ValorInicial),
-                    initialBalance: parseFloat(ValorInicial),
-                    userCreate:authorization.user?.numberDocument
-                },
-            ];
-        }
+        } else { */
+        dataRoutesToInsertStRef.current = [
+            ...dataRoutesToInsertStRef.current,
+            {
+                row,
+                codeProyectStrategic: proyecto,
+                idProjectVinculation: null,
+                managementCenter: CentroGestor,
+                div: 'SAPI',
+                idBudget: PospreOrigenFoundObj?.budget.id,
+                idPospreSapiencia: pospreSapienciaFoundObj?.pospreSapiencia.id,
+                idFund: fundFoundObj?.fund.id,
+                balance: parseFloat(ValorInicial),
+                initialBalance: parseFloat(ValorInicial),
+                userCreate: authorization.user?.numberDocument
+            },
+        ];
+        /*  } */
     }
 
     const verifyBudgetPositionExists = async (infoErrors: any[], row: number) => {
@@ -109,44 +109,56 @@ export function ValidateRouteAnInitialBudget() {
     }
 
     const validateInitialBalance = async (arrayToInsert, proyectos, proyectsVinculation) => {
-        
+
+
         let infoErrors: Array<{ rowError: number, message: string }> = []
         for await (const objToInsert of arrayToInsert) {
-            
+
             const proyecto = proyectos.find((p) => p.bpin == objToInsert.codeProyectStrategic);
+            console.log({ proyecto, row: objToInsert.row, insert: objToInsert })
             if (proyecto) {
-                dataRoutesToInsertStFixedRef.current = [
-                    ...dataRoutesToInsertStFixedRef.current,
-                    {
-                        idProjectVinculation: proyectsVinculation.find(e=>e.investmentProjectId==proyecto.id).id,
-                        managementCenter: objToInsert.managementCenter,
-                        div: 'SAPI',
-                        idBudget: objToInsert.idBudget,
-                        idPospreSapiencia:objToInsert.idPospreSapiencia,
-                        idFund:objToInsert.idFund,
-                        balance:objToInsert.balance,
-                        initialBalance:objToInsert.initialBalance,
-                        userCreate:objToInsert.userCreate
-                    },
-                ];
 
-
-
-                const totalAmountUnitCost = await proyecto.activities.reduce(async (total, activity) => {
-                    const detail = await activity.detailActivities.find((detail) => detail.pospre === objToInsert.idBudget);
-
-                    if (detail) {
-                        return total + parseInt(detail.amount) * parseFloat(detail.unitCost);
-                    }
-
-                    return total;
-                }, 0);
-
-                if (totalAmountUnitCost !== objToInsert.initialBalance) {
+                if (
+                    objToInsert.managementCenter &&
+                    objToInsert.idBudget &&
+                    objToInsert.idFund &&
+                    objToInsert.idPospreSapiencia
+                ) {
                     infoErrors.push({
                         rowError: objToInsert.row,
-                        message: `El valor inicial del proyecto y pospre no coincide con planeación`
+                        message: 'La ruta ya existe',
                     })
+                } else {
+                    dataRoutesToInsertStFixedRef.current = [
+                        ...dataRoutesToInsertStFixedRef.current,
+                        {
+                            idProjectVinculation: proyectsVinculation.find(e => e.investmentProjectId == proyecto.id).id,
+                            managementCenter: objToInsert.managementCenter,
+                            div: 'SAPI',
+                            idBudget: objToInsert.idBudget,
+                            idPospreSapiencia: objToInsert.idPospreSapiencia,
+                            idFund: objToInsert.idFund,
+                            balance: objToInsert.balance,
+                            initialBalance: objToInsert.initialBalance,
+                            userCreate: objToInsert.userCreate
+                        },
+                    ];
+
+
+                    const totalAmountUnitCost = await proyecto.activities.reduce(async (total, activity) => {
+                        const detail = await activity.detailActivities.find((detail) => detail.pospre === objToInsert.idBudget);
+                        if (detail) {
+                            return total + parseInt(detail.amount) * parseFloat(detail.unitCost);
+                        }
+                        return total;
+                    }, 0);
+
+                    if (totalAmountUnitCost !== objToInsert.initialBalance) {
+                        infoErrors.push({
+                            rowError: objToInsert.row,
+                            message: `El valor inicial del proyecto y pospre no coincide con planeación`
+                        })
+                    }
                 }
             } else {
                 infoErrors.push({
