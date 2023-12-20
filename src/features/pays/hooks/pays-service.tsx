@@ -28,13 +28,14 @@ export function usePaysServices() {
   }
 
   async function getProjectDataApi(data): Promise<ApiResponse<any>> {
-    const endpoint: string = `https://sapiencia-strategic-direction-api-ukyunq2uxa-uc.a.run.app/api/v1/project/get-by-filters`;
+    const endpointdev: string = `https://sapiencia-strategic-direction-api-ukyunq2uxa-uc.a.run.app/api/v1/project/get-by-filters`;
+    const endpointqa: string = `https://sapiencia-strategic-direction-api-qq35phcegq-uc.a.run.app/api/v1/project/get-by-filters`;
     const token = localStorage.token;
     const headers = {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     };
-    return post(endpoint, data, { headers });
+    return post(endpointqa, data, { headers });
   }
 
   async function getAllAF(): Promise<ApiResponse<any>> {
