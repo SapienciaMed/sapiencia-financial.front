@@ -1016,11 +1016,22 @@ export function usePaysCrud() {
 
     let errors = [];
     if (tipoDocumento == 'RutaPptoInicial') {
-      errors = await validaProyectRouteInitialBudget();
+      
+      /* 
       setInfoErrors(prevInfoErrors => [
         ...prevInfoErrors,
         ...errors
-      ])
+      ]) */
+      errors = await validaProyectRouteInitialBudget();
+      setInfoErrors(prevInfoErrors => {
+        // Verificar si infoErrors ya tiene elementos
+        if (prevInfoErrors.length === 0) {
+          return [...prevInfoErrors, ...errors];
+        } else {
+          // No añadir errors si prevInfoErrors ya tiene elementos
+          return prevInfoErrors;
+        }
+      });
     }
     
     if (verification === true && errors.length == 0) {
