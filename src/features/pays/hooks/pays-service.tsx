@@ -3,6 +3,7 @@ import { ApiResponse } from "../../../common/utils/api-response";
 
 export function usePaysServices() {
   const baseURL: string = process.env.urlApiFinancial;
+  const baseURLStrategic: string = process.env.urlApiStrategicDirection;
   const roleUrl: string = "/api/v1/upload-masive";
   const roleUrlPagos: string = "/api/v1/pag-pagos";
   const { get, post } = useCrudService(baseURL);
@@ -28,14 +29,13 @@ export function usePaysServices() {
   }
 
   async function getProjectDataApi(data): Promise<ApiResponse<any>> {
-    const endpointdev: string = `https://sapiencia-strategic-direction-api-ukyunq2uxa-uc.a.run.app/api/v1/project/get-by-filters`;
-    const endpointqa: string = `https://sapiencia-strategic-direction-api-qq35phcegq-uc.a.run.app/api/v1/project/get-by-filters`;
+    const endpointdev: string = `${baseURLStrategic}/api/v1/project/get-by-filters`;
     const token = localStorage.token;
     const headers = {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     };
-    return post(endpointqa, data, { headers });
+    return post(endpointdev, data, { headers });
   }
 
   async function getAllAF(): Promise<ApiResponse<any>> {
