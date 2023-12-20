@@ -35,7 +35,8 @@ export const useSearchPays = () => {
   const [isBtnDisable, setIsBtnDisable] = useState<boolean>(true);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [arraySelect, setArraySelect] = useState<any>([]);
-  const { getPays } = usePaysServices()
+  const { getPays } = usePaysServices('financial')
+  
 
   const tableColumnsCdp: any[] = [
     {
