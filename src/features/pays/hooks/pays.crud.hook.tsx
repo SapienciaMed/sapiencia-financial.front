@@ -394,6 +394,7 @@ export function usePaysCrud() {
                     setDataEmpty(true);
                     dataVacia = true;
                   }
+                  
                 } else {
                   if (tipoDocumento == "Pagos") {
                     //validamos la existencia del RP
@@ -716,16 +717,23 @@ export function usePaysCrud() {
                         }
                         break;
                       case "Proyecto":
-                        if (typeof value !== "string") {
+                        if (
+                          typeof value !== "number" ||
+                          !Number.isInteger(value)
+                        ) {
                           console.log(
                             `Error en la fila ${R}, columna ${C + 1
-                            }: El valor '${value}' no es una cadena de texto.`
+                            }: El valor '${value}' no es un número entero.`
                           );
-                          let objErrors = {
-                            rowError: R,
-                            message: `El archivo no cumple la estructura`,
-                          };
-                          infoErrors.push(objErrors);
+                          if (value === undefined) {
+                          } else {
+                            //let objErrors = { "rowError": R, "message": `Error en la fila ${R}, columna ${C + 1}: El valor '${value}' no es un número entero.` };
+                            let objErrors = {
+                              rowError: R,
+                              message: `El archivo no cumple la estructura`,
+                            };
+                            infoErrors.push(objErrors);
+                          }
                         }
                         break;
                       case "CodigoProductoMGA":
@@ -749,19 +757,6 @@ export function usePaysCrud() {
                         }
                         break;
                       case "ProductoMGA":
-                        if (typeof value !== "string") {
-                          console.log(
-                            `Error en la fila ${R}, columna ${C + 1
-                            }: El valor '${value}' no es una cadena de texto.`
-                          );
-                          let objErrors = {
-                            rowError: R,
-                            message: `El archivo no cumple la estructura`,
-                          };
-                          infoErrors.push(objErrors);
-                        }
-                        break;
-                      case "CodigoActividadMGA":
                         if (
                           typeof value !== "number" ||
                           !Number.isInteger(value)
@@ -779,6 +774,19 @@ export function usePaysCrud() {
                             };
                             infoErrors.push(objErrors);
                           }
+                        }
+                        break;
+                      case "CodigoActividadMGA":
+                        if (typeof value !== "string") {
+                          console.log(
+                            `Error en la fila ${R}, columna ${C + 1
+                            }: El valor '${value}' no es una cadena de texto.`
+                          );
+                          let objErrors = {
+                            rowError: R,
+                            message: `El archivo no cumple la estructura`,
+                          };
+                          infoErrors.push(objErrors);
                         }
                         break;
                       case "NombreActividadDetalleMGA":
