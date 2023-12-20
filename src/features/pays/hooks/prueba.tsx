@@ -39,7 +39,8 @@ export function usePaysCrud() {
   const [selection, setSelection] = useState("");
   const [dataEmpty, setDataEmpty] = useState(false);
   const { checkBudgetRouteDoesNotExist,dataRoutesToInsertStRef, projectCodeSearchInStrategicRef, checkValueBudgetWithProjectPlanning, dataRoutesToInsertStFixedRef } = ValidateRouteAnInitialBudget()
-  const api = usePaysServices();
+  const api = usePaysServices('financial');
+  const strategicServices = usePaysServices('strategic');
 
   const onCancelNew = () => {
     navigate("./");
