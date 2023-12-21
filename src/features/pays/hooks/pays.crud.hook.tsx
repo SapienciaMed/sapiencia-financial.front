@@ -1074,7 +1074,7 @@ export function usePaysCrud() {
   }
 
   const validaProyectRouteInitialBudget = async () => {
-    let proyects = await api.getProjectDataApi({
+    let proyects = await strategicServices.getProjectDataApi({
       codeList: projectCodeSearchInStrategicRef.current
     })
     let proyectsVinculation = await GetProjectsStrategicVinculation({
