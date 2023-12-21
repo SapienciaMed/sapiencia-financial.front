@@ -21,6 +21,15 @@ export function usePaysServices(apiType: 'financial' | 'strategic') {
     const endpoint: string = `/api/v1/funds/get-funds-by-number/`;
     return post(`${endpoint}`, data);
   }
+  
+  async function getAllFundsList(): Promise<ApiResponse<any>> {
+    const endpoint: string = `/api/v1/funds/get-all`;
+    return get(`${endpoint}`);
+  }
+  async function getAllPospreSapienciaList(): Promise<ApiResponse<any>> {
+    const endpoint: string = `/api/v1/pospre-sapiencia/get-all`;
+    return get(`${endpoint}`);
+  }
 
   async function getPospreByParams(data): Promise<ApiResponse<any>> {
     const endpoint: string = `/api/v1/pospre-sapiencia/get-validate-masive/`;
@@ -77,6 +86,8 @@ export function usePaysServices(apiType: 'financial' | 'strategic') {
     getPospreByParams,
     getProjectDataApi,
     getAllBudgets,
-    getProjectDataApiMga
+    getProjectDataApiMga,
+    getAllFundsList,
+    getAllPospreSapienciaList
   };
 }

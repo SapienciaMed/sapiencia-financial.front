@@ -12,7 +12,10 @@ export function ValidateRouteAnInitialBudget() {
     const projectCodeSearchInStrategicRef = useRef<string[]>([]);
 
     const checkBudgetRouteDoesNotExist = async (
-        dataBudgetRoutesCreatedSt,
+        dataBudgetRoutesCreatedSt: any,
+        getAllFundsListSt: any,
+        getAllPospre: any,
+        getAllPospreSapienciaListSt: any,
         infoErrors: any[],
         row: number,
         CentroGestor: string,
@@ -23,47 +26,32 @@ export function ValidateRouteAnInitialBudget() {
         proyecto: string,
         ValorInicial: string
     ) => {
-
+        console.log({row})
+        if(row==1){
+            infoErrors=[]    
+        }
         // estructuración de datos de proyecto para consultar en planeación
         projectCodeSearchInStrategicRef.current = [
             ...projectCodeSearchInStrategicRef.current,
             proyecto
         ]
 
-        let manageCenterFound = dataBudgetRoutesCreatedSt.find(e => e.managementCenter == CentroGestor)
-        //console.log({manageCenterFound, dataBudgetRoutesCreatedSt})
-        let PospreOrigenFoundObj = dataBudgetRoutesCreatedSt.find(e => e.budget.number == PospreOrigen)
+        let PospreOrigenFoundObj = getAllPospre.find(e => e.number == PospreOrigen)
 
         // reporta pospre origen que no existe
         !PospreOrigenFoundObj && verifyBudgetPositionExists(infoErrors, row)
 
-        let PospreOrigenFound = dataBudgetRoutesCreatedSt.find(e => e.idBudget == PospreOrigenFoundObj?.budget.id)
-
-        let pospreSapienciaFoundObj = dataBudgetRoutesCreatedSt.find(e => e.pospreSapiencia.number == PospreSapiencia)
+        let pospreSapienciaFoundObj = getAllPospreSapienciaListSt.find(e => e.number == PospreSapiencia)
 
         // registra el pospre sapiensa que no existe
         !pospreSapienciaFoundObj && verifyExistPospreSapienceForExcercise(infoErrors, row)
 
-        let pospreSapienciaFound = dataBudgetRoutesCreatedSt.find(e => e.idPospreSapiencia == pospreSapienciaFoundObj?.pospreSapiencia.id)
-        let fundFoundObj = dataBudgetRoutesCreatedSt.find(e => e.fund.number == Fondo)
+        //let pospreSapienciaFound = dataBudgetRoutesCreatedSt.find(e => e.idPospreSapiencia == pospreSapienciaFoundObj?.pospreSapiencia.id)
+        let fundFoundObj = getAllFundsListSt.find(e => e.number == Fondo)
 
         // registra el fondo que no existe
         !fundFoundObj && verifyFundExist(infoErrors, row)
 
-        let fundFound = dataBudgetRoutesCreatedSt.find(e => e.idFund == fundFoundObj?.fund.id)
-
-        // registra la ruta presupuesta que no existe
-        /* if (
-            !manageCenterFound &&
-            PospreOrigenFound &&
-            pospreSapienciaFound &&
-            fundFound
-        ) {
-            infoErrors.push({
-                rowError: row,
-                message: 'La ruta ya existe',
-            })
-        } else { */
         dataRoutesToInsertStRef.current = [
             ...dataRoutesToInsertStRef.current,
             {
@@ -72,15 +60,14 @@ export function ValidateRouteAnInitialBudget() {
                 idProjectVinculation: null,
                 managementCenter: CentroGestor,
                 div: 'SAPI',
-                idBudget: PospreOrigenFoundObj?.budget.id,
-                idPospreSapiencia: pospreSapienciaFoundObj?.pospreSapiencia.id,
-                idFund: fundFoundObj?.fund.id,
+                idBudget: PospreOrigenFoundObj?.id,
+                idPospreSapiencia: pospreSapienciaFoundObj?.id,
+                idFund: fundFoundObj?.id,
                 balance: parseFloat(ValorInicial),
                 initialBalance: parseFloat(ValorInicial),
                 userCreate: authorization.user?.numberDocument
             },
         ];
-        /*  } */
     }
 
     const verifyBudgetPositionExists = async (infoErrors: any[], row: number) => {
@@ -115,9 +102,7 @@ export function ValidateRouteAnInitialBudget() {
         for await (const objToInsert of arrayToInsert) {
 
             const proyecto = proyectos.find((p) => p.bpin == objToInsert.codeProyectStrategic);
-            console.log({ proyecto, row: objToInsert.row, insert: objToInsert })
             if (proyecto) {
-
                 if (
                     objToInsert.managementCenter &&
                     objToInsert.idBudget &&
@@ -169,7 +154,6 @@ export function ValidateRouteAnInitialBudget() {
         }
         return infoErrors
     }
-
 
     return {
         checkBudgetRouteDoesNotExist,

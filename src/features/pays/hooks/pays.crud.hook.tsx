@@ -37,6 +37,9 @@ export function usePaysCrud() {
 
   const { GetAllRoutesByExcercise } = useBudgetRoutesService()
   const { GetProjectsStrategicVinculation } = useTypesTranfersService()
+  const [getAllPospre, setGetAllPospre] = useState([])
+  const [getAllFundsListSt, setGetAllFundsListSt] = useState([])
+  const [getAllPospreSapienciaListSt, setGetAllPospreSapienciaListSt] = useState([])
 
   const [selection, setSelection] = useState("");
   const [dataEmpty, setDataEmpty] = useState(false);
@@ -57,6 +60,15 @@ export function usePaysCrud() {
       setDataBudgetRoutesCreatedSt(dataRoutesCreated.data)
     }
     getAllRoutesIfExist(2023)
+    api.getAllBudgets().then(res => {
+      setGetAllPospre(res.data)
+    })
+    api.getAllFundsList().then(res => {
+      setGetAllFundsListSt(res.data)
+    })
+    api.getAllPospreSapienciaList().then(res => {
+      setGetAllPospreSapienciaListSt(res.data)
+    })
   }, [])
 
   const {
@@ -181,16 +193,12 @@ export function usePaysCrud() {
                   "ppsPosicion": element.consecutivo_pospre_sapiencia,
                 }
 
-
                 let responseVerifyData = await api.getPospreByParams(objData)
-
-
 
                 if (responseVerifyData.data.length > 0) {
                   let objErrors = { "rowError": index + 1, "message": `El Pospre sapiencia ya existe para esa vigencia` };
                   infoErrors.push(objErrors);
                 }
-
               });
             }
 
@@ -199,7 +207,6 @@ export function usePaysCrud() {
               data.forEach((element) => {
                 arrayFilterProject.push(element.proyecto.toString());
               });
-
 
               let objProjectInfo = {
                 "codeList": arrayFilterProject
@@ -223,9 +230,7 @@ export function usePaysCrud() {
                 let objProjectInfo = { id: element.id, bpin: element.bpin, tipoProyecto: data[index].tipo_de_proyecto }
                 infoSendVPY.push(objProjectInfo)
               });
-
               console.log("info Push VPY", infoSendVPY);
-
             }
 
             if (tipoDocumento === "PospreMGA") {
@@ -259,7 +264,6 @@ export function usePaysCrud() {
 
                 let idsPlanning = arrIdsPlaneacion[index]
 
-
                 const isPosPreLinked = arrInformation.some(info =>
                   info.pospre === posPreId && info.consecutive === element.consecutivo_actividad_detallada
                 );
@@ -279,11 +283,10 @@ export function usePaysCrud() {
                   infoErrorsTemp.push(objErrors);
                 } else {
                   arrInformation.forEach(datosPlanningV => {
-                    if (datosPlanningV.consecutive === element.consecutivo_actividad_detallada ) {
+                    if (datosPlanningV.consecutive === element.consecutivo_actividad_detallada) {
                       console.log(datosPlanningV.activity.idProject);
                       console.log(idsPlanning);
 
-                      
                       let finalObjectMatching = {
                         id: datosPlanningV?.activity?.id,
                         activityMGA: datosPlanningV?.activity?.activityMGA,
@@ -294,17 +297,11 @@ export function usePaysCrud() {
                       infoSendVPY.push(finalObjectMatching)
                     }
                   });
-
-
                 }
               }
               console.log(infoSendVPY);
-
               infoErrors.push(...infoErrorsTemp);
-
             }
-
-
           }
           // Inicio de validaciones
           let titleDB, titleExcel;
@@ -429,7 +426,6 @@ export function usePaysCrud() {
               infoErrors.push(objErrors);
               return false;
             }
-
             return true;
           });
 
@@ -889,7 +885,7 @@ export function usePaysCrud() {
                     }
                   } else if (tipoDocumento == "RutaPptoInicial") {
                     if (C % 7 === 0) {
-                      await checkBudgetRouteDoesNotExist(dataBudgetRoutesCreatedSt, infoErrors, R, sheet[XLSX.utils.encode_cell({ c: 0, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 1, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 2, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 3, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 4, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 5, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 6, r: R })]?.v)
+                      await checkBudgetRouteDoesNotExist(dataBudgetRoutesCreatedSt, getAllFundsListSt, getAllPospre, getAllPospreSapienciaListSt, infoErrors, R, sheet[XLSX.utils.encode_cell({ c: 0, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 1, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 2, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 3, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 4, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 5, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 6, r: R })]?.v)
                     }
                   } // end RutaPptoInicial
                 }
