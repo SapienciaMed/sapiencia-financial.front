@@ -26,9 +26,8 @@ export function ValidateRouteAnInitialBudget() {
         proyecto: string,
         ValorInicial: string
     ) => {
-        console.log({row})
-        if(row==1){
-            infoErrors=[]    
+        if (row == 1) {
+            infoErrors = []
         }
         // estructuración de datos de proyecto para consultar en planeación
         projectCodeSearchInStrategicRef.current = [
@@ -91,23 +90,24 @@ export function ValidateRouteAnInitialBudget() {
         })
     }
 
-    const checkValueBudgetWithProjectPlanning = async (proyectsPlanning: any[], dataRoutesToInsertArr: IRouteBudget[], proyectsVinculation: number[]) => {
-        return await validateInitialBalance(dataRoutesToInsertArr, proyectsPlanning, proyectsVinculation)
+    const checkValueBudgetWithProjectPlanning = async (proyectsPlanning: any[], dataRoutesToInsertArr: IRouteBudget[], proyectsVinculation: number[], dataBudgetRoutesCreatedSt: any[]) => {
+        return await validateInitialBalance(dataRoutesToInsertArr, proyectsPlanning, proyectsVinculation, dataBudgetRoutesCreatedSt)
     }
 
-    const validateInitialBalance = async (arrayToInsert, proyectos, proyectsVinculation) => {
-
+    const validateInitialBalance = async (arrayToInsert, proyectos, proyectsVinculation, dataBudgetRoutesCreatedSt) => {
+        console.log({ dataBudgetRoutesCreatedSt })
 
         let infoErrors: Array<{ rowError: number, message: string }> = []
         for await (const objToInsert of arrayToInsert) {
 
             const proyecto = proyectos.find((p) => p.bpin == objToInsert.codeProyectStrategic);
             if (proyecto) {
+                let budgetPositionCreated = dataBudgetRoutesCreatedSt.find(e => e.idFund == objToInsert.idFund &&
+                    e.idPospreSapiencia == objToInsert.idPospreSapiencia &&
+                    e.managementCenter == objToInsert.managementCenter
+                )
                 if (
-                    objToInsert.managementCenter &&
-                    objToInsert.idBudget &&
-                    objToInsert.idFund &&
-                    objToInsert.idPospreSapiencia
+                    budgetPositionCreated
                 ) {
                     infoErrors.push({
                         rowError: objToInsert.row,
@@ -138,6 +138,7 @@ export function ValidateRouteAnInitialBudget() {
                         return total;
                     }, 0);
 
+                    console.log({totalAmountUnitCost})
                     if (totalAmountUnitCost !== objToInsert.initialBalance) {
                         infoErrors.push({
                             rowError: objToInsert.row,

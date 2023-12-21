@@ -1103,7 +1103,7 @@ export function usePaysCrud() {
     let proyectsVinculation = await GetProjectsStrategicVinculation({
       projectsIds: projectCodeSearchInStrategicRef.current
     })
-    return await checkValueBudgetWithProjectPlanning(proyects.data, dataRoutesToInsertStRef.current, proyectsVinculation.data)
+    return await checkValueBudgetWithProjectPlanning(proyects.data, dataRoutesToInsertStRef.current, proyectsVinculation.data, dataBudgetRoutesCreatedSt)
   }
 
   const updateFieldError = (
