@@ -471,7 +471,7 @@ export function usePaysCrud() {
               }
             }
             const uniqueRows = new Set();
-
+            const rowsWithErrors = new Set();
             for (let R = range.s.r + 1; R <= range.e.r; ++R) {
               const merges = sheet["!merges"];
               if (merges !== undefined) {
@@ -479,11 +479,23 @@ export function usePaysCrud() {
                   (merge) => R >= merge.s.r && R <= merge.e.r
                 );
                 if (isMergedRow) {
-                  let objErrors = {
-                    rowError: R,
-                    message: `El archivo no cumple la estructura.`,
-                  };
-                  infoErrors.push(objErrors);
+                  if(tipoDocumento !== "PospreMGA"){
+                    let objErrors = {
+                      rowError: R,
+                      message: `El archivo no cumple la estructura.`,
+                    };
+                    infoErrors.push(objErrors);
+                    
+                  }else{
+                    if (!rowsWithErrors.has(R)) {
+                      let objErrors = {
+                        rowError: R,
+                        message: `El archivo no cumple la estructura.`,
+                      };
+                      infoErrors.push(objErrors);
+                      rowsWithErrors.add(R);
+                    }
+                  }
                   setDataEmpty(true);
                 }
               }
