@@ -142,7 +142,7 @@ export function ValidateRouteAnInitialBudget() {
                     if (totalAmountUnitCost !== objToInsert.initialBalance) {
                         infoErrors.push({
                             rowError: objToInsert.row,
-                            message: `El valor inicial del proyecto y pospre no coincide con planeación`
+                            message: `El valor inicial del proyecto y pospre no coincide con planeación, debe ser $${totalAmountUnitCost} `
                         })
                     }
                 }
