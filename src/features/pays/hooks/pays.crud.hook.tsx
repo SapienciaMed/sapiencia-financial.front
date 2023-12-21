@@ -303,7 +303,7 @@ export function usePaysCrud() {
 
                 if (dataSaved.length > 0) {
                   dataSaved.forEach((elementSaved, index) => {
-                    const objErrors = { "rowError": index + 1, "message": `No existe la MGA en planeación` };
+                    const objErrors = { "rowError": index + 1, "message": `Ya existe ese MGA vinculado` };
                     infoErrorsTemp.push(objErrors);
                   });
                 }
@@ -311,7 +311,7 @@ export function usePaysCrud() {
                 const isActivityInPlanning = arrInformation.some(info => info.consecutive === element.consecutivo_actividad_detallada);
 
                 if (!isActivityInPlanning) {
-                  const objErrors = { "rowError": index + 1, "message": `Ya existe ese MGA vinculado` };
+                  const objErrors = { "rowError": index + 1, "message": `No existe la MGA en planeación` };
                   infoErrorsTemp.push(objErrors);
                 } else {
                   arrInformation.forEach(datosPlanningV => {
