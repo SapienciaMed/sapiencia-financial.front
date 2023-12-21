@@ -253,8 +253,12 @@ export function usePaysCrud() {
                 let arrInformationPlaneacion = getInfoProjectsApiV2.data;
 
                 let arrIdsPlaneacion = []
-                arrInformationPlaneacion.forEach(element => {
+                let arrActivitisId = []
+                let detailsActivityId = []
+                arrInformationPlaneacion.forEach((element, index) => {
                   arrIdsPlaneacion.push(element.id)
+                  arrActivitisId.push(element.activities[index].id)
+                  // detailsActivityId.push(element.activities.detailActivities[index].id)
                 });
 
                 let idsPlanning = arrIdsPlaneacion[index]
@@ -263,6 +267,27 @@ export function usePaysCrud() {
                 const isPosPreLinked = arrInformation.some(info =>
                   info.pospre === posPreId && info.consecutive === element.consecutivo_actividad_detallada
                 );
+                let objInfoData = {
+                  'consecutive': element.consecutivo_actividad_detallada,
+                  'pospre': posPreId,
+                }
+
+                let verificationOne = await api.getVinculationMGAByPosPreVerify(objInfoData)
+                let dataSaved = verificationOne.data;
+
+
+
+
+                const matchingObjectV1 = arrInformation.find(obj => obj.pospre === posPreId && obj.consecutive === element.consecutivo_actividad_detallada);
+
+                console.log(matchingObjectV1);
+
+                // Verificar si se encontró un objeto que coincide
+                if (matchingObjectV1) {
+                  console.log("Objeto encontrado:", matchingObjectV1);
+                } else {
+                  console.log("No se encontró ningún objeto con los valores proporcionados.");
+                }
 
                 if (isPosPreLinked) {
                   const objErrors = { "rowError": index + 1, "message": `Ya existe ese MGA vinculado` };
@@ -272,18 +297,21 @@ export function usePaysCrud() {
                   console.log("Información relacionada:", matchingInfo);
                 }
 
+                if (dataSaved.length > 0) {
+                  dataSaved.forEach((elementSaved, index) => {
+                    const objErrors = { "rowError": index + 1, "message": `No existe la MGA en planeación` };
+                    infoErrorsTemp.push(objErrors);
+                  });
+                }
+
                 const isActivityInPlanning = arrInformation.some(info => info.consecutive === element.consecutivo_actividad_detallada);
 
                 if (!isActivityInPlanning) {
-                  const objErrors = { "rowError": index + 1, "message": `No existe la MGA en planeación` };
+                  const objErrors = { "rowError": index + 1, "message": `Ya existe ese MGA vinculado` };
                   infoErrorsTemp.push(objErrors);
                 } else {
                   arrInformation.forEach(datosPlanningV => {
-                    if (datosPlanningV.consecutive === element.consecutivo_actividad_detallada ) {
-                      console.log(datosPlanningV.activity.idProject);
-                      console.log(idsPlanning);
-
-                      
+                    if (datosPlanningV.consecutive === element.consecutivo_actividad_detallada) {
                       let finalObjectMatching = {
                         id: datosPlanningV?.activity?.id,
                         activityMGA: datosPlanningV?.activity?.activityMGA,
@@ -294,12 +322,9 @@ export function usePaysCrud() {
                       infoSendVPY.push(finalObjectMatching)
                     }
                   });
-
-
                 }
               }
-              console.log(infoSendVPY);
-
+           
               infoErrors.push(...infoErrorsTemp);
 
             }
