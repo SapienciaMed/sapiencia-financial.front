@@ -102,10 +102,7 @@ const PaysPage = () => {
                                     );
                                 }}
                             />
-
                         </div>
-
-
 
                         <div className="funcionality-buttons-container">
                             <ButtonComponent

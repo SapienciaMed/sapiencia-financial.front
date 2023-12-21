@@ -1,9 +1,8 @@
 import useCrudService from "../../../common/hooks/crud-service.hook";
 import { ApiResponse } from "../../../common/utils/api-response";
 
-export function usePaysServices() {
-  const baseURL: string = process.env.urlApiFinancial;
-  const baseURLStrategic: string = process.env.urlApiStrategicDirection;
+export function usePaysServices(apiType: 'financial' | 'strategic') {
+  const baseURL: string = apiType === 'financial' ? process.env.urlApiFinancial : process.env.urlApiStrategicDirection;
   const roleUrl: string = "/api/v1/upload-masive";
   const roleUrlPagos: string = "/api/v1/pag-pagos";
   const { get, post } = useCrudService(baseURL);
@@ -22,6 +21,20 @@ export function usePaysServices() {
     const endpoint: string = `/api/v1/funds/get-funds-by-number/`;
     return post(`${endpoint}`, data);
   }
+  
+  async function getAllFundsList(): Promise<ApiResponse<any>> {
+    const endpoint: string = `/api/v1/funds/get-all`;
+    return get(`${endpoint}`);
+  }
+  async function getAllPospreSapienciaList(): Promise<ApiResponse<any>> {
+    const endpoint: string = `/api/v1/pospre-sapiencia/get-all`;
+    return get(`${endpoint}`);
+  }
+
+  async function getVinculationMGAByPosPreVerify(data): Promise<ApiResponse<any>> {
+    const endpoint: string = `/api/v1/vinculation-mga/get-by-params-data/`;
+    return post(`${endpoint}`, data);
+  }
 
   async function getPospreByParams(data): Promise<ApiResponse<any>> {
     const endpoint: string = `/api/v1/pospre-sapiencia/get-validate-masive/`;
@@ -29,13 +42,23 @@ export function usePaysServices() {
   }
 
   async function getProjectDataApi(data): Promise<ApiResponse<any>> {
-    const endpointdev: string = `${baseURLStrategic}/api/v1/project/get-by-filters`;
+    const endpointdev: string = `/api/v1/project/get-by-filters`;
     const token = localStorage.token;
     const headers = {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     };
-    return post(endpointdev, data, { headers });
+    return post(`${endpointdev}`, data,{ headers });
+  }
+
+  async function getProjectDataApiMga(data): Promise<ApiResponse<any>> {
+    const endpointdev: string = `/api/v1/activities/get-by-filters`;
+    const token = localStorage.token;
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+    return post(`${endpointdev}`, data,{ headers });
   }
 
   async function getAllAF(): Promise<ApiResponse<any>> {
@@ -67,6 +90,10 @@ export function usePaysServices() {
     getAllProjects,
     getPospreByParams,
     getProjectDataApi,
-    getAllBudgets
+    getAllBudgets,
+    getProjectDataApiMga,
+    getAllFundsList,
+    getAllPospreSapienciaList,
+    getVinculationMGAByPosPreVerify
   };
 }
