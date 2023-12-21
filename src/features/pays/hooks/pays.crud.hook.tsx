@@ -163,175 +163,7 @@ export function usePaysCrud() {
             titles.push(sheet[cell_ref]?.v || "Undefined Title");
           }
 
-          if (tipoDocumento === "PospreSapiencia" || tipoDocumento === "AreaFuncional" || tipoDocumento === "PospreMGA") {
-            const data = [];
-            for (let row = range.s.r + 1; row <= range.e.r; row++) {
-              const rowData = {};
 
-              for (let col = range.s.c; col <= range.e.c; col++) {
-                const cellAddress = { c: col, r: row };
-                const cellRef = XLSX.utils.encode_cell(cellAddress);
-                const title = titles[col - range.s.c];
-                const value = sheet[cellRef] ? sheet[cellRef].v : undefined;
-                let titleNew = title.replace(/ /g, "_").toLowerCase();
-                rowData[titleNew] = value;
-              }
-
-              data.push(rowData);
-            }
-
-            if (tipoDocumento === "PospreSapiencia") {
-              const allBudget = await api.getAllBudgets();
-              let dataBudget = allBudget.data;
-
-              data.forEach(async (element, index) => {
-                const matchingObject = dataBudget.find(obj => parseInt(obj.number) === parseInt(element.pospre_origen));
-
-                let objData = {
-                  "pprNumero": element.pospre_origen.toString(),
-                  "pprEjercicio": parseInt(element.ejercicio),
-                  "ppsPosicion": element.consecutivo_pospre_sapiencia,
-                }
-
-                let responseVerifyData = await api.getPospreByParams(objData)
-
-                if (responseVerifyData.data.length > 0) {
-                  let objErrors = { "rowError": index + 1, "message": `El Pospre sapiencia ya existe para esa vigencia` };
-                  infoErrors.push(objErrors);
-                }
-              });
-            }
-
-            if (tipoDocumento === "AreaFuncional") {
-              let arrayFilterProject = [];
-              data.forEach((element) => {
-                arrayFilterProject.push(element.proyecto.toString());
-              });
-
-              let objProjectInfo = {
-                "codeList": arrayFilterProject
-              };
-
-              const getInfoProjectsApi = await strategicServices.getProjectDataApi(objProjectInfo);
-              let arrInformation = getInfoProjectsApi.data;
-              console.log("informacion planecion", arrInformation);
-
-              let arrBpin = arrInformation.map(element => element.bpin);
-              console.log("informacion bpin", arrBpin);
-
-              data.forEach((element, index) => {
-                if (!arrBpin.includes(element.proyecto.toString())) {
-                  let objErrors = { "rowError": index + 1, "message": `El proyecto no existe` };
-                  infoErrors.push(objErrors);
-                }
-              });
-
-              arrInformation.forEach((element, index) => {
-                let objProjectInfo = { id: element.id, bpin: element.bpin, tipoProyecto: data[index].tipo_de_proyecto }
-                infoSendVPY.push(objProjectInfo)
-              });
-              console.log("info Push VPY", infoSendVPY);
-            }
-
-            if (tipoDocumento === "PospreMGA") {
-              const allBudget = await api.getAllBudgets();
-              const dataBudget = allBudget.data;
-
-              const arrayFilterProject = data.map(element => element.proyecto.toString());
-              const objProjectInfo = { "codeList": arrayFilterProject };
-
-              const getInfoProjectsApi = await strategicServices.getProjectDataApiMga(objProjectInfo);
-              const arrInformation = getInfoProjectsApi.data;
-
-              const arrPosPreids = data.map(element => {
-                const matchingObject = dataBudget.find(obj => parseInt(obj.number) === parseInt(element.pospre_origen));
-                return matchingObject ? matchingObject.id : null;
-              });
-
-              const infoErrorsTemp = [];
-
-              const arrProjectIds = arrInformation.map(info => info.id);
-              for (const [index, element] of data.entries()) {
-                const posPreId = arrPosPreids[index];
-
-                const getInfoProjectsApiV2 = await strategicServices.getProjectDataApi(objProjectInfo);
-                let arrInformationPlaneacion = getInfoProjectsApiV2.data;
-
-                let arrIdsPlaneacion = []
-                let arrActivitisId = []
-                let detailsActivityId = []
-                arrInformationPlaneacion.forEach((element, index) => {
-                  arrIdsPlaneacion.push(element.id)
-                  arrActivitisId.push(element.activities[index].id)
-                  // detailsActivityId.push(element.activities.detailActivities[index].id)
-                });
-
-                let idsPlanning = arrIdsPlaneacion[index]
-
-                const isPosPreLinked = arrInformation.some(info =>
-                  info.pospre === posPreId && info.consecutive === element.consecutivo_actividad_detallada
-                );
-                let objInfoData = {
-                  'consecutive': element.consecutivo_actividad_detallada,
-                  'pospre': posPreId,
-                }
-
-                let verificationOne = await api.getVinculationMGAByPosPreVerify(objInfoData)
-                let dataSaved = verificationOne.data;
-
-
-
-
-                const matchingObjectV1 = arrInformation.find(obj => obj.pospre === posPreId && obj.consecutive === element.consecutivo_actividad_detallada);
-
-                console.log(matchingObjectV1);
-
-                // Verificar si se encontró un objeto que coincide
-                if (matchingObjectV1) {
-                  console.log("Objeto encontrado:", matchingObjectV1);
-                } else {
-                  console.log("No se encontró ningún objeto con los valores proporcionados.");
-                }
-
-                if (isPosPreLinked) {
-                  const objErrors = { "rowError": index + 1, "message": `Ya existe ese MGA vinculado` };
-                  infoErrorsTemp.push(objErrors);
-
-                  const matchingInfo = arrInformation.find(info => info.pospre === posPreId && info.consecutive === element.consecutivo_actividad_detallada);
-                  console.log("Información relacionada:", matchingInfo);
-                }
-
-                if (dataSaved.length > 0) {
-                  dataSaved.forEach((elementSaved, index) => {
-                    const objErrors = { "rowError": index + 1, "message": `Ya existe ese MGA vinculado` };
-                    infoErrorsTemp.push(objErrors);
-                  });
-                }
-
-                const isActivityInPlanning = arrInformation.some(info => info.consecutive === element.consecutivo_actividad_detallada);
-
-                if (!isActivityInPlanning) {
-                  const objErrors = { "rowError": index + 1, "message": `No existe la MGA en planeación` };
-                  infoErrorsTemp.push(objErrors);
-                } else {
-                  arrInformation.forEach(datosPlanningV => {
-                    if (datosPlanningV.consecutive === element.consecutivo_actividad_detallada) {
-                      let finalObjectMatching = {
-                        id: datosPlanningV?.activity?.id,
-                        activityMGA: datosPlanningV?.activity?.activityMGA,
-                        idProject: datosPlanningV?.activity?.idProject,
-                        posePre: posPreId,
-                        idDetail: datosPlanningV.id
-                      }
-                      infoSendVPY.push(finalObjectMatching)
-                    }
-                  });
-                }
-              }
-           
-              infoErrors.push(...infoErrorsTemp);
-            }
-          }
           // Inicio de validaciones
           let titleDB, titleExcel;
 
@@ -435,6 +267,15 @@ export function usePaysCrud() {
 
           const isValidTitles = titles.every((title, index) => {
             const isTitleEmpty = !title.trim();
+  
+            if (titles.length != titleExcel.length) {
+              let objErrors = {
+                rowError: 1,
+                message: `El archivo no cumple con la estructura`,
+              };
+              infoErrors.push(objErrors);
+              return false;
+            }
 
             if (isTitleEmpty) {
               console.log(`El título en la posición ${index} está vacío.`);
@@ -459,6 +300,176 @@ export function usePaysCrud() {
           });
 
           if (isValidTitles) {
+
+            if (tipoDocumento === "PospreSapiencia" || tipoDocumento === "AreaFuncional" || tipoDocumento === "PospreMGA") {
+              const data = [];
+              for (let row = range.s.r + 1; row <= range.e.r; row++) {
+                const rowData = {};
+
+                for (let col = range.s.c; col <= range.e.c; col++) {
+                  const cellAddress = { c: col, r: row };
+                  const cellRef = XLSX.utils.encode_cell(cellAddress);
+                  const title = titles[col - range.s.c];
+                  const value = sheet[cellRef] ? sheet[cellRef].v : undefined;
+                  let titleNew = title.replace(/ /g, "_").toLowerCase();
+                  rowData[titleNew] = value;
+                }
+
+                data.push(rowData);
+              }
+
+              if (tipoDocumento === "PospreSapiencia") {
+                const allBudget = await api.getAllBudgets();
+                let dataBudget = allBudget.data;
+
+                data.forEach(async (element, index) => {
+                  const matchingObject = dataBudget.find(obj => parseInt(obj.number) === parseInt(element.pospre_origen));
+
+                  let objData = {
+                    "pprNumero": element.pospre_origen.toString(),
+                    "pprEjercicio": parseInt(element.ejercicio),
+                    "ppsPosicion": element.consecutivo_pospre_sapiencia,
+                  }
+
+                  let responseVerifyData = await api.getPospreByParams(objData)
+
+                  if (responseVerifyData.data.length > 0) {
+                    let objErrors = { "rowError": index + 1, "message": `El Pospre sapiencia ya existe para esa vigencia` };
+                    infoErrors.push(objErrors);
+                  }
+                });
+              }
+
+              if (tipoDocumento === "AreaFuncional") {
+                let arrayFilterProject = [];
+                data.forEach((element) => {
+                  arrayFilterProject.push(element.proyecto.toString());
+                });
+
+                let objProjectInfo = {
+                  "codeList": arrayFilterProject
+                };
+
+                const getInfoProjectsApi = await strategicServices.getProjectDataApi(objProjectInfo);
+                let arrInformation = getInfoProjectsApi.data;
+                console.log("informacion planecion", arrInformation);
+
+                let arrBpin = arrInformation.map(element => element.bpin);
+                console.log("informacion bpin", arrBpin);
+
+                data.forEach((element, index) => {
+                  if (!arrBpin.includes(element.proyecto.toString())) {
+                    let objErrors = { "rowError": index + 1, "message": `El proyecto no existe` };
+                    infoErrors.push(objErrors);
+                  }
+                });
+
+                arrInformation.forEach((element, index) => {
+                  let objProjectInfo = { id: element.id, bpin: element.bpin, tipoProyecto: data[index].tipo_de_proyecto }
+                  infoSendVPY.push(objProjectInfo)
+                });
+                console.log("info Push VPY", infoSendVPY);
+              }
+
+              if (tipoDocumento === "PospreMGA") {
+                const allBudget = await api.getAllBudgets();
+                const dataBudget = allBudget.data;
+
+                const arrayFilterProject = data.map(element => element.proyecto.toString());
+                const objProjectInfo = { "codeList": arrayFilterProject };
+
+                const getInfoProjectsApi = await strategicServices.getProjectDataApiMga(objProjectInfo);
+                const arrInformation = getInfoProjectsApi.data;
+
+                const arrPosPreids = data.map(element => {
+                  const matchingObject = dataBudget.find(obj => parseInt(obj.number) === parseInt(element.pospre_origen));
+                  return matchingObject ? matchingObject.id : null;
+                });
+
+                const infoErrorsTemp = [];
+
+                const arrProjectIds = arrInformation.map(info => info.id);
+                for (const [index, element] of data.entries()) {
+                  const posPreId = arrPosPreids[index];
+
+                  const getInfoProjectsApiV2 = await strategicServices.getProjectDataApi(objProjectInfo);
+                  let arrInformationPlaneacion = getInfoProjectsApiV2.data;
+
+                  let arrIdsPlaneacion = []
+                  let arrActivitisId = []
+                  let detailsActivityId = []
+                  arrInformationPlaneacion.forEach((element, index) => {
+                    arrIdsPlaneacion.push(element.id)
+                    arrActivitisId.push(element.activities[index].id)
+                    // detailsActivityId.push(element.activities.detailActivities[index].id)
+                  });
+
+                  let idsPlanning = arrIdsPlaneacion[index]
+
+                  const isPosPreLinked = arrInformation.some(info =>
+                    info.pospre === posPreId && info.consecutive === element.consecutivo_actividad_detallada
+                  );
+                  let objInfoData = {
+                    'consecutive': element.consecutivo_actividad_detallada,
+                    'pospre': posPreId,
+                  }
+
+                  let verificationOne = await api.getVinculationMGAByPosPreVerify(objInfoData)
+                  let dataSaved = verificationOne.data;
+
+
+
+
+                  const matchingObjectV1 = arrInformation.find(obj => obj.pospre === posPreId && obj.consecutive === element.consecutivo_actividad_detallada);
+
+                  console.log(matchingObjectV1);
+
+                  // Verificar si se encontró un objeto que coincide
+                  if (matchingObjectV1) {
+                    console.log("Objeto encontrado:", matchingObjectV1);
+                  } else {
+                    console.log("No se encontró ningún objeto con los valores proporcionados.");
+                  }
+
+                  if (isPosPreLinked) {
+                    const objErrors = { "rowError": index + 1, "message": `Ya existe ese MGA vinculado` };
+                    infoErrorsTemp.push(objErrors);
+
+                    const matchingInfo = arrInformation.find(info => info.pospre === posPreId && info.consecutive === element.consecutivo_actividad_detallada);
+                    console.log("Información relacionada:", matchingInfo);
+                  }
+
+                  if (dataSaved.length > 0) {
+                    dataSaved.forEach((elementSaved, index) => {
+                      const objErrors = { "rowError": index + 1, "message": `Ya existe ese MGA vinculado` };
+                      infoErrorsTemp.push(objErrors);
+                    });
+                  }
+
+                  const isActivityInPlanning = arrInformation.some(info => info.consecutive === element.consecutivo_actividad_detallada);
+
+                  if (!isActivityInPlanning) {
+                    const objErrors = { "rowError": index + 1, "message": `No existe la MGA en planeación` };
+                    infoErrorsTemp.push(objErrors);
+                  } else {
+                    arrInformation.forEach(datosPlanningV => {
+                      if (datosPlanningV.consecutive === element.consecutivo_actividad_detallada) {
+                        let finalObjectMatching = {
+                          id: datosPlanningV?.activity?.id,
+                          activityMGA: datosPlanningV?.activity?.activityMGA,
+                          idProject: datosPlanningV?.activity?.idProject,
+                          posePre: posPreId,
+                          idDetail: datosPlanningV.id
+                        }
+                        infoSendVPY.push(finalObjectMatching)
+                      }
+                    });
+                  }
+                }
+
+                infoErrors.push(...infoErrorsTemp);
+              }
+            }
             const uniqueRows = new Set();
 
             for (let R = range.s.r + 1; R <= range.e.r; ++R) {
