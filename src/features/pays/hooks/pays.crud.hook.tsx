@@ -34,11 +34,13 @@ export function usePaysCrud() {
     setInfoSearchPays,
     exerciseLoad,
   } = useStorePays();
+  const currentYear = new Date().getFullYear();
 
+  let newYear = currentYear.toString();
   useEffect(() =>{
-    console.log(exerciseLoad);
-    
-  },[])
+    newYear = exerciseLoad;
+    console.log(newYear);
+  },[exerciseLoad])
 
   const { GetAllRoutesByExcercise } = useBudgetRoutesService()
   const { GetProjectsStrategicVinculation } = useTypesTranfersService()
@@ -64,7 +66,7 @@ export function usePaysCrud() {
       let dataRoutesCreated = await GetAllRoutesByExcercise(exercise)
       setDataBudgetRoutesCreatedSt(dataRoutesCreated.data)
     }
-    getAllRoutesIfExist(2023)
+    getAllRoutesIfExist(parseInt(newYear))
     api.getAllBudgets().then(res => {
       setGetAllPospre(res.data)
     })
