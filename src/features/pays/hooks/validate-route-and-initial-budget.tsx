@@ -26,9 +26,8 @@ export function ValidateRouteAnInitialBudget() {
         proyecto: string,
         ValorInicial: string
     ) => {
-        console.log({row})
-        if(row==1){
-            infoErrors=[]    
+        if (row == 1) {
+            infoErrors = []
         }
         // estructuración de datos de proyecto para consultar en planeación
         projectCodeSearchInStrategicRef.current = [
@@ -91,59 +90,65 @@ export function ValidateRouteAnInitialBudget() {
         })
     }
 
-    const checkValueBudgetWithProjectPlanning = async (proyectsPlanning: any[], dataRoutesToInsertArr: IRouteBudget[], proyectsVinculation: number[], dataBudgetRoutesCreatedSt: any[] ) => {
-        return await validateInitialBalance(dataRoutesToInsertArr, proyectsPlanning, proyectsVinculation,dataBudgetRoutesCreatedSt)
+    const checkValueBudgetWithProjectPlanning = async (proyectsPlanning: any[], dataRoutesToInsertArr: IRouteBudget[], proyectsVinculation: number[], dataBudgetRoutesCreatedSt: any[]) => {
+        return await validateInitialBalance(dataRoutesToInsertArr, proyectsPlanning, proyectsVinculation, dataBudgetRoutesCreatedSt)
     }
 
-    
-    const validateInitialBalance = async (arrayToInsert, proyectos, proyectsVinculation,dataBudgetRoutesCreatedSt) => {
-        console.log("Vamos aveeer",dataBudgetRoutesCreatedSt);
-
+    const validateInitialBalance = async (arrayToInsert, proyectos, proyectsVinculation, dataBudgetRoutesCreatedSt) => {
+        console.log({ dataBudgetRoutesCreatedSt })
 
         let infoErrors: Array<{ rowError: number, message: string }> = []
         for await (const objToInsert of arrayToInsert) {
 
             const proyecto = proyectos.find((p) => p.bpin == objToInsert.codeProyectStrategic);
             if (proyecto) {
+                let proyectsVinculationFound = proyectsVinculation.find(e => e.investmentProjectId == proyecto.id)
+                let budgetPositionCreated = dataBudgetRoutesCreatedSt.find(e => e.idFund == objToInsert.idFund &&
+                    e.idPospreSapiencia == objToInsert.idPospreSapiencia &&
+                    e.managementCenter == objToInsert.managementCenter
+                )
                 if (
-                    objToInsert.managementCenter &&
-                    objToInsert.idBudget &&
-                    objToInsert.idFund &&
-                    objToInsert.idPospreSapiencia
+                    budgetPositionCreated && proyectsVinculationFound
                 ) {
                     infoErrors.push({
                         rowError: objToInsert.row,
                         message: 'La ruta ya existe',
                     })
                 } else {
-                    dataRoutesToInsertStFixedRef.current = [
-                        ...dataRoutesToInsertStFixedRef.current,
-                        {
-                            idProjectVinculation: proyectsVinculation.find(e => e.investmentProjectId == proyecto.id).id,
-                            managementCenter: objToInsert.managementCenter,
-                            div: 'SAPI',
-                            idBudget: objToInsert.idBudget,
-                            idPospreSapiencia: objToInsert.idPospreSapiencia,
-                            idFund: objToInsert.idFund,
-                            balance: objToInsert.balance,
-                            initialBalance: objToInsert.initialBalance,
-                            userCreate: objToInsert.userCreate
-                        },
-                    ];
+                    if (proyectsVinculationFound) {
+                        dataRoutesToInsertStFixedRef.current = [
+                            ...dataRoutesToInsertStFixedRef.current,
+                            {
+                                idProjectVinculation: proyectsVinculation.find(e => e.investmentProjectId == proyecto.id).id,
+                                managementCenter: objToInsert.managementCenter,
+                                div: 'SAPI',
+                                idBudget: objToInsert.idBudget,
+                                idPospreSapiencia: objToInsert.idPospreSapiencia,
+                                idFund: objToInsert.idFund,
+                                balance: objToInsert.balance,
+                                initialBalance: objToInsert.initialBalance,
+                                userCreate: objToInsert.userCreate
+                            },
+                        ];
 
+                        const totalAmountUnitCost = await proyecto.activities.reduce(async (total, activity) => {
+                            const detail = await activity.detailActivities.find((detail) => detail.pospre === objToInsert.idBudget);
+                            if (detail) {
+                                return total + parseInt(detail.amount) * parseFloat(detail.unitCost);
+                            }
+                            return total;
+                        }, 0);
 
-                    const totalAmountUnitCost = await proyecto.activities.reduce(async (total, activity) => {
-                        const detail = await activity.detailActivities.find((detail) => detail.pospre === objToInsert.idBudget);
-                        if (detail) {
-                            return total + parseInt(detail.amount) * parseFloat(detail.unitCost);
+                        if (totalAmountUnitCost !== objToInsert.initialBalance) {
+                            infoErrors.push({
+                                rowError: objToInsert.row,
+                                message: `El valor inicial del proyecto y pospre no coincide con planeación, debe ser $${totalAmountUnitCost} `
+                            })
                         }
-                        return total;
-                    }, 0);
-
-                    if (totalAmountUnitCost !== objToInsert.initialBalance) {
+                    } else {
                         infoErrors.push({
                             rowError: objToInsert.row,
-                            message: `El valor inicial del proyecto y pospre no coincide con planeación`
+                            message: 'No existe MGA vinculado'
                         })
                     }
                 }
