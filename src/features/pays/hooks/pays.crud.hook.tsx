@@ -34,6 +34,13 @@ export function usePaysCrud() {
     setInfoSearchPays,
     exerciseLoad,
   } = useStorePays();
+  const currentYear = new Date().getFullYear();
+
+  let newYear = currentYear.toString();
+  useEffect(() =>{
+    newYear = exerciseLoad;
+    console.log(newYear);
+  },[exerciseLoad])
 
   const { GetAllRoutesByExcercise } = useBudgetRoutesService()
   const { GetProjectsStrategicVinculation } = useTypesTranfersService()
@@ -59,7 +66,7 @@ export function usePaysCrud() {
       let dataRoutesCreated = await GetAllRoutesByExcercise(exercise)
       setDataBudgetRoutesCreatedSt(dataRoutesCreated.data)
     }
-    getAllRoutesIfExist(2023)
+    getAllRoutesIfExist(parseInt(newYear))
     api.getAllBudgets().then(res => {
       setGetAllPospre(res.data)
     })
@@ -343,7 +350,9 @@ export function usePaysCrud() {
               if (tipoDocumento === "AreaFuncional") {
                 let arrayFilterProject = [];
                 data.forEach((element) => {
-                  arrayFilterProject.push(element.proyecto.toString());
+                  if(element.proyecto !== undefined) {
+                    arrayFilterProject.push(element?.proyecto?.toString());
+                  }
                 });
 
                 let objProjectInfo = {
@@ -358,7 +367,7 @@ export function usePaysCrud() {
                 console.log("informacion bpin", arrBpin);
 
                 data.forEach((element, index) => {
-                  if (!arrBpin.includes(element.proyecto.toString())) {
+                  if (!arrBpin.includes(element?.proyecto?.toString())) {
                     let objErrors = { "rowError": index + 1, "message": `El proyecto no existe` };
                     infoErrors.push(objErrors);
                   }
