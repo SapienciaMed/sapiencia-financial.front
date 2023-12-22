@@ -91,11 +91,13 @@ export function ValidateRouteAnInitialBudget() {
         })
     }
 
-    const checkValueBudgetWithProjectPlanning = async (proyectsPlanning: any[], dataRoutesToInsertArr: IRouteBudget[], proyectsVinculation: number[]) => {
-        return await validateInitialBalance(dataRoutesToInsertArr, proyectsPlanning, proyectsVinculation)
+    const checkValueBudgetWithProjectPlanning = async (proyectsPlanning: any[], dataRoutesToInsertArr: IRouteBudget[], proyectsVinculation: number[], dataBudgetRoutesCreatedSt: any[] ) => {
+        return await validateInitialBalance(dataRoutesToInsertArr, proyectsPlanning, proyectsVinculation,dataBudgetRoutesCreatedSt)
     }
 
-    const validateInitialBalance = async (arrayToInsert, proyectos, proyectsVinculation) => {
+    
+    const validateInitialBalance = async (arrayToInsert, proyectos, proyectsVinculation,dataBudgetRoutesCreatedSt) => {
+        console.log("Vamos aveeer",dataBudgetRoutesCreatedSt);
 
 
         let infoErrors: Array<{ rowError: number, message: string }> = []

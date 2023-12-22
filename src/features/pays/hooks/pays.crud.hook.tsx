@@ -35,6 +35,11 @@ export function usePaysCrud() {
     exerciseLoad,
   } = useStorePays();
 
+  useEffect(() =>{
+    console.log(exerciseLoad);
+    
+  },[])
+
   const { GetAllRoutesByExcercise } = useBudgetRoutesService()
   const { GetProjectsStrategicVinculation } = useTypesTranfersService()
   const [getAllPospre, setGetAllPospre] = useState([])
@@ -343,7 +348,9 @@ export function usePaysCrud() {
               if (tipoDocumento === "AreaFuncional") {
                 let arrayFilterProject = [];
                 data.forEach((element) => {
-                  arrayFilterProject.push(element.proyecto.toString());
+                  if(element.proyecto !== undefined) {
+                    arrayFilterProject.push(element?.proyecto?.toString());
+                  }
                 });
 
                 let objProjectInfo = {
@@ -358,7 +365,7 @@ export function usePaysCrud() {
                 console.log("informacion bpin", arrBpin);
 
                 data.forEach((element, index) => {
-                  if (!arrBpin.includes(element.proyecto.toString())) {
+                  if (!arrBpin.includes(element?.proyecto?.toString())) {
                     let objErrors = { "rowError": index + 1, "message": `El proyecto no existe` };
                     infoErrors.push(objErrors);
                   }
@@ -1103,7 +1110,7 @@ export function usePaysCrud() {
     let proyectsVinculation = await GetProjectsStrategicVinculation({
       projectsIds: projectCodeSearchInStrategicRef.current
     })
-    return await checkValueBudgetWithProjectPlanning(proyects.data, dataRoutesToInsertStRef.current, proyectsVinculation.data)
+    return await checkValueBudgetWithProjectPlanning(proyects.data, dataRoutesToInsertStRef.current, proyectsVinculation.data,dataBudgetRoutesCreatedSt)
   }
 
   const updateFieldError = (
