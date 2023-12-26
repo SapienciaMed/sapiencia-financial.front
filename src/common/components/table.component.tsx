@@ -277,13 +277,14 @@ function getIconElement(
       return element == "name" ? (
         "Detalle"
       ) : (
-        <Icons.FaEye className="button grid-button button-detail" />
+        <Icons.FaEye className="button grid-button button-detail" title="Visualizar"/>
       );
     case "Edit":
       return element == "name" ? (
         "Editar"
       ) : (
         <Icons.FaPencilAlt
+          title='Editar'
           className={`button grid-button button-edit ${
             isDisabled && "disable"
           }`}
@@ -293,31 +294,31 @@ function getIconElement(
       return element == "name" ? (
         "Eliminar"
       ) : (
-        <Icons.FaTrashAlt className="button grid-button button-delete" />
+        <Icons.FaTrashAlt className="button grid-button button-delete" title="Eliminar" />
       );
     case "Link":
       return element == "name" ? (
         "Vincular"
       ) : (
-        <Icons.FaLink className="button grid-button button-link" />
+        <Icons.FaLink className="button grid-button button-link" title="Vincular"/>
       );
     case "Add":
       return element == "name" ? (
         "Agregar"
       ) : (
-        <Icons.FaPlus className="button grid-button button-add" />
+        <Icons.FaPlus className="button grid-button button-add" title='Agregar'/>
       );
     case "Rp":
       return element == "name" ? (
         "Rp"
       ) : (
-        <Icons.FaRegistered className="button grid-button button-add" />
+        <Icons.FaRegistered className="button grid-button button-add" title='Agregar RP'/>
       );
     case "":
       return element == "name" ? (
         "LinkMga"
       ) : (
-        <Icons.FaLink className="button grid-button button-add" />
+        <Icons.FaLink className="button grid-button button-add" title='Vincular MGA'/>
       );
     default:
       return "";
