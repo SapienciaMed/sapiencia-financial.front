@@ -188,7 +188,7 @@ function BudgetRecordEditRpPage() {
                                         id={field.name}
                                         idInput={field.name}
                                         className="input-basic medium"
-                                        typeInput="number"
+                                        typeInput="text"
                                         register={register}
                                         label="No. contrato"
                                         classNameLabel="text-black big bold"
