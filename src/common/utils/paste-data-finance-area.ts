@@ -16,7 +16,7 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
     let rawRows = pastedInput.split("\n").filter(line => line.trim() !== "");
     let headersArray = rawRows[0]?.split("\t");
     let output = [];
-
+    
     let dataMovementByTransfer = [];
     let countTransfer=1;
     let valorContracredito = 0;
@@ -89,7 +89,7 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
             OkTitle: "Aceptar",
         })
 
-    const mapOutputItem = (item) => {
+        const mapOutputItem = (item) => {
         const commonFields = {
             isPaste: true,
             cardId: generarIdAleatorio(20),
@@ -121,19 +121,19 @@ const constructJSONFromPastedInput = ({ pastedInput, setMessage, setDataPaste, a
     
         return camposVacios.length > 0 ? camposVacios : null;
     }
-
     try {    
+        console.log({dataMovementByTransfer})
         if ( output.length > 0 && dataMovementByTransfer.every(item => item.data.every(isFullField)) ) {      
             const mappedOutput = output.map((item) => mapOutputItem(item))
             setDataPaste(mappedOutput);
             return dataMovementByTransfer
         }else {
-            throw new Error("Los datos contienen campos vacíos o valores inválidos");
+        throw new Error("Los datos contienen campos vacíos o valores inválidos");
         }
     } catch (error) {
         //Usar en una mejora o cambios y mostrar el mensaje mas detallado de que campo es =>  msError[0].campo
         const msError = findEmptyField(dataMovementByTransfer)
-    
+        console.log({error})
         setMessage({
             title: "Validación de datos",
             description: "Se ha encontrado un error en los datos, verifiqué que no tenga campos vacios o valores invalidos",

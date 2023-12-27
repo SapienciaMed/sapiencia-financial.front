@@ -1,5 +1,5 @@
 import React from "react";
-import { ButtonComponent, FormComponent, InputComponent } from "../../../common/components/Form";
+import { ButtonComponent, FormComponent, InputComponent, SelectComponent } from "../../../common/components/Form";
 import TableComponent from "../../../common/components/table.component";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { useFunctionalAreaData } from "../hooks/functional-area.hook";
@@ -10,7 +10,7 @@ interface IAppProps { }
 
 function FunctionalAreaPage(props: IAppProps): React.JSX.Element {
     const { tableActions, tableColumns, tableComponentRef, showTable, isBtnDisable, control, setShowTable, setIsBtnDisable,
-        navigate, register, errors, reset, onSubmit, validateActionAccess } = useFunctionalAreaData();
+        navigate, register, errors, reset, onSubmit, validateActionAccess, allFunctionalAreasSt } = useFunctionalAreaData();
     return (
         <div className='main-page'>
             <div className='card-table'>
@@ -35,7 +35,21 @@ function FunctionalAreaPage(props: IAppProps): React.JSX.Element {
 
                         </div>
                         <div className="one-filter-container">
-                            <Controller
+                            <SelectComponent
+                                idInput="number"
+                                control={control}
+                                label="Código"
+                                className="select-basic medium"
+                                classNameLabel="text-black big bold text-required"
+                                placeholder={"Seleccionar"}
+                                data={allFunctionalAreasSt}
+                                filter={true}
+                                errors={errors}
+                                direction={EDirection.column}
+                            />
+
+
+                            {/* <Controller
                                 control={control}
                                 name={"number"}
                                 defaultValue=""
@@ -56,7 +70,7 @@ function FunctionalAreaPage(props: IAppProps): React.JSX.Element {
                                         />
                                     )
                                 }}
-                            />
+                            /> */}
                         </div>
                     </div>
                     <div className="funcionality-buttons-container">
