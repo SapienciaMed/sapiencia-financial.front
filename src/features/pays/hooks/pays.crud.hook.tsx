@@ -481,7 +481,7 @@ export function usePaysCrud() {
             }
             const uniqueRows = new Set();
             const rowsWithErrors = new Set();
-            for (let R = range.s.r + 1; R <= range.e.r; ++R) {
+            for (let R = range.s.r + 1; R <= range.e.r -1; ++R) {
               const merges = sheet["!merges"];
               if (merges !== undefined) {
                 const isMergedRow = merges.some(
