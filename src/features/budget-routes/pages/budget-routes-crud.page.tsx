@@ -114,7 +114,7 @@ function BudgetRoutesCrudPage({ action }: IAppProps) {
                   control={controlRegister}
                   errors={errors}
                   label="Pospre sapiencia"
-                  classNameLabel="text-black biggest bold text-required"
+                  classNameLabel="text-black biggest bold"
                   direction={EDirection.column}
                   data={pospreSapienciaData}
                   filter={true}
