@@ -205,9 +205,21 @@ export function useCdpCrud(cdpId?: string) {
     setValueRegister("sapConsecutive", Object(cdpFoundSt).sapConsecutive);
     setValueRegister("date", Object(cdpFoundSt).date);
     setValueRegister("contractObject", Object(cdpFoundSt).contractObject);
+    
+    let count = 0;
+
+    Object(cdpFoundSt).amounts.forEach(item => {
+          if (item.linkRpcdps && Array.isArray(item.linkRpcdps)) {
+            // Filtra los elementos con isActive: 1
+            const activeElements = item.linkRpcdps.filter(link => link.isActive === 1);
+            count += activeElements.length;
+          }
+        });
+    
+    
     setValueRegister(
       "rpAssoc",
-      Object(cdpFoundSt).amounts.map((e) => e.linkRpcdps).length > 0
+      count > 0
         ? "Si"
         : "No"
     );

@@ -115,6 +115,7 @@ export function SelectComponent({
                   field.onChange(e.value);
                   optionSelected && optionSelected(e.value);
                 }}
+
                 options={data}
                 optionLabel="name"
                 placeholder={placeholder}

@@ -23,7 +23,9 @@ function BudgetRecordCrudPagev2() {
     isBtnSearchAmountsSt,
     setIsBtnSearchAmountsSt,
     consecutiveCdpSap,
-    isAllowSave
+    isAllowSave,
+    isContractObjectList,
+    setIsContractObjectList
   } = useBudgeRecordCrudv2();
 
   const navigate = useNavigate();
@@ -132,18 +134,63 @@ function BudgetRecordCrudPagev2() {
                 errors={errors}
                 direction={EDirection.column}
               />
-              <SelectComponent
-                idInput="contractualObject"
-                control={control}
-                label="Actividad del objeto contractual"
-                className="select-basic medium"
-                classNameLabel="text-black big bold text-required"
-                placeholder={"Seleccionar"}
-                data={activityObjectContractData}
-                filter={true}
-                errors={errors}
-                direction={EDirection.column}
-              />
+              <div className="medium" style={{ display: 'flex', alignItems: 'flex-end' }}>
+
+                {
+                  isContractObjectList && (
+                    <div style={{ width: '100%' }}>
+                      <SelectComponent
+                        idInput="contractualObject"
+                        control={control}
+                        label="Actividad del objeto contractual"
+                        className="complete-mediun"
+                        classNameLabel="text-black big bold text-required"
+                        placeholder={"Seleccionar"}
+                        data={activityObjectContractData}
+                        filter={true}
+                        errors={errors}
+                        direction={EDirection.column}
+                      />
+                    </div>
+                  )
+                }
+
+                {
+                  !isContractObjectList && (
+                    <div style={{ width: '100%' }}>
+                      <Controller
+                        control={control}
+                        name={"contractualObject"}
+                        render={({ field }) => (
+                          <InputComponent
+                            id={field.name}
+                            idInput={field.name}
+                            className="input-basic medium"
+                            typeInput="text"
+                            register={register}
+                            label="Actividad del objeto contractual"
+                            classNameLabel="text-black big bold text-required"
+                            direction={EDirection.column}
+                            errors={errors}
+                            onBlur={(value) => field.onChange(value)}
+                          />
+                        )} />
+                    </div>
+
+                  )
+                }
+
+
+                <button type='button' style={{ height: '35px' }} 
+                  onClick={() => setIsContractObjectList(!isContractObjectList)}
+                  >
+                    {
+                      isContractObjectList
+                       ? 'Nuevo'
+                       : 'Lista'
+                    }
+                    </button>
+              </div>
 
               <SelectComponent
                 idInput="componentId"
@@ -240,7 +287,7 @@ function BudgetRecordCrudPagev2() {
         </FormComponent>
       </div>
       {
-        isAllowSave && dataAmounts.length>0 && (
+        isAllowSave && dataAmounts.length > 0 && (
           <div className="funcionality-buttons-container">
             <span
               className="bold text-center button"

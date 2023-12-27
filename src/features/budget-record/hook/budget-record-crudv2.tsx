@@ -35,6 +35,7 @@ export function useBudgeRecordCrudv2() {
     const [selectedAmounts, setSelectedAmounts] = useState([]);
     const [confirmChangeAmountSt, setConfirmChangeAmountSt] = useState({ id: null, amount: null })
     const [isAllowSave, setIsAllowSave] = useState(false)
+    const [isContractObjectList, setIsContractObjectList] = useState(true)
     const navigate = useNavigate();
 
     const tableComponentRef = useRef(null);
@@ -572,6 +573,8 @@ export function useBudgeRecordCrudv2() {
         isBtnSearchAmountsSt,
         setIsBtnSearchAmountsSt,
         consecutiveCdpSap,
-        isAllowSave
+        isAllowSave,
+        isContractObjectList, 
+        setIsContractObjectList
     };
 }

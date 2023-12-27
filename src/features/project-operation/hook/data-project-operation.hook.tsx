@@ -77,6 +77,7 @@ export function useDataProjectOperation() {
     const tableActions: ITableAction<IProjectOperation>[] = [
        {
             icon: "Edit",
+            customName:'Editar',
             hide:!validateActionAccess('PROYECTO_FUNCIONAMIENTO_EDITAR'),
             onClick: (row) => {
                 navigate(`./edit/${row.id}`);

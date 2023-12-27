@@ -61,11 +61,21 @@ export const useSearchCdp = () => {
       fieldName: "partnersRp",
       header: "RP asociados",
       renderCell: (row) => {
-        const containRp = row.amounts.filter((amount) => {
-          return amount.linkRpcdps.filter((e) => e.isActive === 1);
+        /* const containRp = row.amounts.filter((amount) => {
+          
+          return amount.linkRpcdps.filter((e) => e?.isActive === 1);
+        }); */
+        let count = 0;
+
+        row.amounts.forEach(item => {
+          if (item.linkRpcdps && Array.isArray(item.linkRpcdps)) {
+            // Filtra los elementos con isActive: 1
+            const activeElements = item.linkRpcdps.filter(link => link.isActive === 1);
+            count += activeElements.length;
+          }
         });
 
-        return <>{containRp.length > 0 ? "Si" : "No"}</>;
+        return <>{count > 0 ? "Si" : "No"}</>;
       },
     },
     {
