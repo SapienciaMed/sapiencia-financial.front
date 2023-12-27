@@ -1033,10 +1033,10 @@ export function usePaysCrud() {
                     let sumValues =
                       parseInt(rowData["PAG_VALOR_CAUSADO"]) +
                       parseInt(rowData["PAG_VALOR_PAGADO"]);
-                    if (sumValues < valorFinal) {
+                    if (sumValues > valorFinal) {
                       let objErrors = {
                         rowError: R,
-                        message: `El valor del RP es mayor del valor causado+pagado`,
+                        message: `El valor causado+pagado no puede ser mayor al valor del RP`,
                       };
                       infoErrors.push(objErrors);
                     }

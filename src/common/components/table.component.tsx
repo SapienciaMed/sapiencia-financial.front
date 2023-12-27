@@ -312,7 +312,7 @@ function getIconElement(
       return element == "name" ? (
         "Rp"
       ) : (
-        <Icons.FaRegistered className="button grid-button button-add" title='Agregar RP'/>
+        <Icons.FaRegistered className="button grid-button button-add" title='Visualizar RP'/>
       );
     case "":
       return element == "name" ? (

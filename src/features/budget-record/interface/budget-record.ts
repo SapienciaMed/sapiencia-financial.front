@@ -34,10 +34,11 @@ export interface IBudgetRecord {
 export interface IBudgetRecordv2 {
     id?: number;
     supplierType?: string;
-    supplierName?:string;
-    consecutiveCdpSap?:number;
-    consecutiveCdpAurora?:number;
+    supplierName?: string;
+    consecutiveCdpSap?: number;
+    consecutiveCdpAurora?: number;
     supplierId?: number;
+    isNewContractObject: boolean;
     contractorDocument?: string;
     documentDate?: Date;
     dateValidity?: Date;
@@ -54,9 +55,9 @@ export interface IBudgetRecordv2 {
     dateModify?: string;
     linksRp?: ILinkRPCDP[];
     creditor?: any[];
-    idAmountToModify?:number;
-    newAmount?:number;
-    maxAmount?:number;
+    idAmountToModify?: number;
+    newAmount?: number;
+    maxAmount?: number;
 
 }
 
@@ -68,14 +69,14 @@ export interface ILinkRPCDP {
     initialAmount?: number;
     isActive?: boolean;
     reasonCancellation?: string;
-    creditAmount?:number;
-    againtsAmount?:number;
-    fixedCompleted?:number;
-    finalAmount?:number;
-    position?:number;
-    observation?:string;
-    amountBudgetAvailability?:any[];
-    budgetRecord?:any[];
+    creditAmount?: number;
+    againtsAmount?: number;
+    fixedCompleted?: number;
+    finalAmount?: number;
+    position?: number;
+    observation?: string;
+    amountBudgetAvailability?: any[];
+    budgetRecord?: any[];
 }
 
 export interface IBudgetRecordFilter {
@@ -87,7 +88,7 @@ export interface IBudgetRecordFilter {
     supplierId?: number;
     rpId?: number;
     reasonCancellation?: string;
-    taxIdentificationId?:string;
+    taxIdentificationId?: string;
 }
 
 /* export interface IBudgetRecordEditBasic {

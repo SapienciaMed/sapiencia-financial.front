@@ -34,23 +34,7 @@ function GetPaysPage(props: IAppProps): React.JSX.Element {
         </div>
         <FormComponent action={onSubmit}>
           <div className="card-form">
-            <div className="title-area">
-              <label className="text-black biggest bold">Consultar pago</label>
-
-              {
-                validateActionAccess('PAGOS_CARGAR') && (
-                  <div
-                    className="title-button text-main biggest"
-                    onClick={() => {
-                      navigate("./carga-masiva");
-                    }}
-                  >
-                    Cargar pago <AiOutlinePlusCircle />
-                  </div>
-
-                )
-              }
-            </div>
+            
             <div className="funcionality-filters-container">
               <InputComponent
                 idInput="exercise"
