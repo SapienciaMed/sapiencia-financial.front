@@ -37,10 +37,10 @@ export function usePaysCrud() {
   const currentYear = new Date().getFullYear();
 
   let newYear = currentYear.toString();
-  useEffect(() =>{
+  useEffect(() => {
     newYear = exerciseLoad;
     console.log(newYear);
-  },[exerciseLoad])
+  }, [exerciseLoad])
 
   const { GetAllRoutesByExcercise } = useBudgetRoutesService()
   const { GetProjectsStrategicVinculation } = useTypesTranfersService()
@@ -106,6 +106,28 @@ export function usePaysCrud() {
     },
   ];
 
+  function eliminarDuplicados(infoErrors, titlleDB) {
+
+    const mensajesPorRowError = {};
+
+    infoErrors.forEach((error) => {
+      const key = `${error.rowError}-${error.message}`;
+
+      if (!mensajesPorRowError[key]) {
+        mensajesPorRowError[key] = 1;
+      } else {
+        mensajesPorRowError[key]++;
+      }
+    });
+
+    const nuevoInfoErrors = infoErrors.filter((error) => {
+      const key = `${error.rowError}-${error.message}`;
+      return mensajesPorRowError[key] !== titlleDB.length;
+    });
+
+    return nuevoInfoErrors;
+  }
+
   const readFileAsBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -133,7 +155,7 @@ export function usePaysCrud() {
     setDataEmpty(false)
     setSelection(tipoDocumento)
     setInfoErrors([])
-
+    console.log("tipo de documento 00", tipoDocumento);
 
     const responseAllAF = await api.getAllAF();
     const responseAllProject = await api.getAllProjects();
@@ -271,10 +293,10 @@ export function usePaysCrud() {
               ];
               break;
           }
-
+          console.log("tipo de documento 0.1", tipoDocumento);
           const isValidTitles = titles.every((title, index) => {
             const isTitleEmpty = !title.trim();
-  
+
             if (titles.length != titleExcel.length) {
               let objErrors = {
                 rowError: 1,
@@ -350,7 +372,7 @@ export function usePaysCrud() {
               if (tipoDocumento === "AreaFuncional") {
                 let arrayFilterProject = [];
                 data.forEach((element) => {
-                  if(element.proyecto !== undefined) {
+                  if (element.proyecto !== undefined) {
                     arrayFilterProject.push(element?.proyecto?.toString());
                   }
                 });
@@ -367,9 +389,12 @@ export function usePaysCrud() {
                 console.log("informacion bpin", arrBpin);
 
                 data.forEach((element, index) => {
-                  if (!arrBpin.includes(element?.proyecto?.toString())) {
-                    let objErrors = { "rowError": index + 1, "message": `El proyecto no existe` };
-                    infoErrors.push(objErrors);
+                  console.log(element);
+                  if (element.codigo !== undefined && element.proyecto !== undefined) {
+                    if (!arrBpin.includes(element?.proyecto?.toString())) {
+                      let objErrors = { "rowError": index + 1, "message": `El proyecto no existe` };
+                      infoErrors.push(objErrors);
+                    }
                   }
                 });
 
@@ -481,21 +506,24 @@ export function usePaysCrud() {
             }
             const uniqueRows = new Set();
             const rowsWithErrors = new Set();
-            for (let R = range.s.r + 1; R <= range.e.r -1; ++R) {
+            for (let R = range.s.r + 1; R <= range.e.r; ++R) {
+              console.log("tipo de documento 0.2", tipoDocumento);
               const merges = sheet["!merges"];
               if (merges !== undefined) {
                 const isMergedRow = merges.some(
                   (merge) => R >= merge.s.r && R <= merge.e.r
                 );
+                console.log("tipo de documento 1", tipoDocumento);
+
                 if (isMergedRow) {
-                  if(tipoDocumento !== "PospreMGA"){
+                  if (tipoDocumento !== "PospreMGA") {
                     let objErrors = {
                       rowError: R,
                       message: `El archivo no cumple la estructura.`,
                     };
                     infoErrors.push(objErrors);
-                    
-                  }else{
+
+                  } else {
                     if (!rowsWithErrors.has(R)) {
                       let objErrors = {
                         rowError: R,
@@ -954,7 +982,7 @@ export function usePaysCrud() {
 
                 rowData[titleDB[C]] = value;
               }
-
+              console.log("tipo de documento 2", tipoDocumento);
               let rpSapValue, posicionValue;
               if (tipoDocumento == "Pagos") {
                 rpSapValue = rowData["PAG_CODVRP_VINCULACION_RP"];
@@ -997,7 +1025,10 @@ export function usePaysCrud() {
                 }
               }
 
+              console.log("tipo de documento 3", tipoDocumento);
               if (tipoDocumento == "Pagos") {
+
+
                 if (
                   rowData["PAG_VALOR_CAUSADO"] === 0 &&
                   rowData["PAG_VALOR_PAGADO"] === 0
@@ -1012,8 +1043,9 @@ export function usePaysCrud() {
                   };
                   infoErrors.push(objErrors);
                 }
-              }
-              if (tipoDocumento === "Pagos") {
+
+                console.log("entramosa pagos");
+
                 const posicionValue = rowData["POSICION"];
                 const rpSapValue = rowData["PAG_CODVRP_VINCULACION_RP"];
 
@@ -1033,6 +1065,11 @@ export function usePaysCrud() {
                     let sumValues =
                       parseInt(rowData["PAG_VALOR_CAUSADO"]) +
                       parseInt(rowData["PAG_VALOR_PAGADO"]);
+
+                    console.log("VALOR FINAL", valorFinal);
+                    console.log("VALOR SUMV", sumValues);
+
+
                     if (sumValues > valorFinal) {
                       let objErrors = {
                         rowError: R,
@@ -1075,7 +1112,8 @@ export function usePaysCrud() {
                 }
               }
             }
-            console.log("Datos fila de errores:", infoErrors);
+            console.log("este es el tipoD", tipoDocumento);
+
             setTimeout(() =>
               setInfoErrors(infoErrors), 2000);
           } else {
@@ -1084,12 +1122,12 @@ export function usePaysCrud() {
             );
             setTimeout(() =>
               setInfoErrors(infoErrors), 2000);
-            // Puedes mostrar un mensaje al usuario o manejar la situación de alguna otra manera
           }
-          setTimeout(() => {
-            if (infoErrors.length > 0) {
-              console.log(infoErrors);
 
+          setTimeout(() => {
+            const newErrors = eliminarDuplicados(infoErrors, titleDB)
+            setInfoErrors(newErrors)
+            if (newErrors.length > 0) {
               resolve(false);
             } else {
               resolve(true);
@@ -1111,7 +1149,7 @@ export function usePaysCrud() {
     })
 
     let proyectsVinculation = await GetProjectsStrategicVinculation({
-      projectsIds: proyects.data.map(e=>e.id)
+      projectsIds: proyects.data.map(e => e.id)
     })
     return await checkValueBudgetWithProjectPlanning(proyects.data, dataRoutesToInsertStRef.current, proyectsVinculation.data, dataBudgetRoutesCreatedSt)
   }
