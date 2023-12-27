@@ -41,7 +41,7 @@ export function useBudgeRecordCrudv2() {
     const tableComponentRef = useRef(null);
 
     // Crea un objeto Date con el primer día del mes siguiente
-    
+
     const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth() + 1;
@@ -50,7 +50,7 @@ export function useBudgeRecordCrudv2() {
 
     // Resta un día al primer día del mes siguiente para obtener el último día del mes actual
     const lastDayMonth = new Date(siguienteMes.getTime() - 1).getDate();
-    
+
     const {
         handleSubmit,
         register,
@@ -66,9 +66,10 @@ export function useBudgeRecordCrudv2() {
             consecutiveCdpSap: null,
             consecutiveCdpAurora: null,
             supplierId: null,
+            isNewContractObject: false,
             contractorDocument: '',
             documentDate: new Date(today),
-            dateValidity: new Date(year,month-1,lastDayMonth,23,59,59),
+            dateValidity: new Date(year, month - 1, lastDayMonth, 23, 59, 59),
             dependencyId: null,
             contractualObject: '',
             componentId: null,
@@ -123,18 +124,27 @@ export function useBudgeRecordCrudv2() {
     }, [])
 
 
-    const { supplierType, contractorDocument, consecutiveCdpAurora, consecutiveCdpSap} = watch()
+    const { supplierType, contractorDocument, consecutiveCdpAurora, consecutiveCdpSap } = watch()
 
     useEffect(() => {
         if (
-            selectedAmounts?.length>0
-            ) {
+            selectedAmounts?.length > 0
+        ) {
             setIsAllowSave(true)
-        }else{
+        } else {
             setIsAllowSave(false)
         }
     }, [isBtnSearchAmountsSt, selectedAmounts])
+
+    useEffect(() => {
+      if(!isContractObjectList){
+        setValueRegister('isNewContractObject',true)
+    }else{
+          setValueRegister('isNewContractObject',false)
+      }
+    }, [isContractObjectList])
     
+
 
     const messageValidateSupplier = (type: string) => {
         setMessage({
@@ -254,9 +264,9 @@ export function useBudgeRecordCrudv2() {
                 return (
                     <div className="flex align-items-center">
                         {
-                           validateActionAccess('RP_ASOCIAR_RUTAS') && (
-                               <Checkbox inputId={row.id} name="row" value={row} onChange={onAmountChange} checked={selectedAmounts?.some((item) => item.id == row.id)} />
-                           ) 
+                            validateActionAccess('RP_ASOCIAR_RUTAS') && (
+                                <Checkbox inputId={row.id} name="row" value={row} onChange={onAmountChange} checked={selectedAmounts?.some((item) => item.id == row.id)} />
+                            )
                         }
                     </div>)
             }
@@ -281,8 +291,8 @@ export function useBudgeRecordCrudv2() {
                 consecutiveSap: consecutiveCdpSap,
                 consecutiveAurora: consecutiveCdpAurora,
             }).then(res => {
-               
-                if(res.data.array.length==0){
+
+                if (res.data.array.length == 0) {
                     setMessage({
                         title: `Datos no encontrados`,
                         description: 'No existe CDP asociado a los valores de búsqueda',
@@ -296,11 +306,11 @@ export function useBudgeRecordCrudv2() {
                 }
 
                 const dataCdp = res.data.array.map(e => {
-                    return e.amounts.filter(e=>e.isActive==1).map(el => {
+                    return e.amounts.filter(e => e.isActive == 1).map(el => {
 
                         let rpAmountsAssoc = el.linkRpcdps.reduce((acumulator, obj) => {
                             return acumulator + obj.finalAmount;
-                          }, 0);
+                        }, 0);
 
                         return ({
                             id: el.id,
@@ -380,7 +390,7 @@ export function useBudgeRecordCrudv2() {
                 reasonCancellation: "",
                 rpId: null,
                 position: index + 1,
-                finalAmount:confirmChangeAmountSt?.amount && confirmChangeAmountSt.id == e.id ? confirmChangeAmountSt.amount : e.amount,
+                finalAmount: confirmChangeAmountSt?.amount && confirmChangeAmountSt.id == e.id ? confirmChangeAmountSt.amount : e.amount,
             })
         })
         let amountRouteToSave = [];
@@ -409,7 +419,7 @@ export function useBudgeRecordCrudv2() {
     const onSubmitRP = handleSubmit(async (data: IBudgetRecord) => {
         data.documentDate = formatDate(new Date(data.documentDate))
         data.dateValidity = formatDate(new Date(data.dateValidity))
-        
+
         showModal({
             title: "Guardar",
             description: "¿Está segur@ de guardar la información?",
@@ -574,7 +584,7 @@ export function useBudgeRecordCrudv2() {
         setIsBtnSearchAmountsSt,
         consecutiveCdpSap,
         isAllowSave,
-        isContractObjectList, 
+        isContractObjectList,
         setIsContractObjectList
     };
 }
