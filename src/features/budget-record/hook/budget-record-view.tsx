@@ -401,6 +401,7 @@ export function useBudgeRecordView() {
                 <Icons.FaPencilAlt
                     className="button grid-button button-edit"
                     style={{ color: '#4caf50', fontSize: '1.5em' }}
+                    title="Editar"
                     onClick={() => navigate(`editar-rp/${JSON.stringify(rowData.consecutiveRpAurora)}`)}
                 />
             )
