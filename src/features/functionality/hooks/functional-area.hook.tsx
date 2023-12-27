@@ -13,11 +13,16 @@ import {
 } from "../../../common/interfaces/table.interfaces";
 import { IProjectsVinculation } from "../interfaces/Projects";
 import { AppContext } from "../../../common/contexts/app.context";
+import { useFunctionalAreaService } from "./functional-area-service.hook";
 
 export function useFunctionalAreaData() {
   const tableComponentRef = useRef(null);
   const navigate = useNavigate();
   const resolver = useYupValidationResolver(functionalArea);
+  const { GetAllFunctionalAreas } = useFunctionalAreaService()
+
+  const [allFunctionalAreasSt, setAllFunctionalAreasSt] = useState([])
+
   const {
     handleSubmit,
     register,
@@ -98,6 +103,20 @@ const { validateActionAccess } = useContext(AppContext)
     );
   }, [inputValue]);
 
+  useEffect(() => {
+    GetAllFunctionalAreas().then(res=>{
+        const areaList = res.data.map(e=>{
+          return ({
+            id:e.number,
+            value:e.number,
+            name:e.number
+          })
+        })
+        setAllFunctionalAreasSt(areaList)
+    })
+  }, [])
+  
+
   return {
     tableActions,
     tableColumns,
@@ -112,6 +131,7 @@ const { validateActionAccess } = useContext(AppContext)
     errors,
     reset,
     onSubmit,
-    validateActionAccess
+    validateActionAccess,
+    allFunctionalAreasSt
   };
 }
