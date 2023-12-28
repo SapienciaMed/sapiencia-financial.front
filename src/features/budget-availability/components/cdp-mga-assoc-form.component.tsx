@@ -50,7 +50,7 @@ function CdpMgaAssocFormComponent(props: ICdpMgaAssocFromProps) {
     return (
       <div className="spc-table-action-button">
         <div onClick={() => deleteElement(row.id)}>
-          <Icons.FaTrashAlt className="button grid-button button-delete" />
+          <Icons.FaTrashAlt className="button grid-button button-delete" title='Eliminar' />
         </div>
       </div>
     );
