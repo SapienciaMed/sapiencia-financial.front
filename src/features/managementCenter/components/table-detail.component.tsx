@@ -157,25 +157,25 @@ function getIconElement(icon: string, element: "name" | "src") {
       return element == "name" ? (
         "Detalle"
       ) : (
-        <Icons.FaEye className="button grid-button button-detail" />
+        <Icons.FaEye className="button grid-button button-detail" title='Visualizar'/>
       );
     case "Edit":
       return element == "name" ? (
         "Editar"
       ) : (
-        <Icons.FaPencilAlt className="button grid-button button-edit" />
+        <Icons.FaPencilAlt className="button grid-button button-edit" title='Editar'/>
       );
     case "Delete":
       return element == "name" ? (
         "Eliminar"
       ) : (
-        <Icons.FaTrashAlt className="button grid-button button-delete" />
+        <Icons.FaTrashAlt className="button grid-button button-delete" title='Eliminar'/>
       );
     case "Link":
       return element == "name" ? (
         "Vincular"
       ) : (
-        <Icons.FaLink className="button grid-button button-link" />
+        <Icons.FaLink className="button grid-button button-link" title='Vincular'/>
       );
     default:
       return "";
