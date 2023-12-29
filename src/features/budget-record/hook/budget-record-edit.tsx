@@ -35,7 +35,8 @@ export function useBudgeRecordEdit(id) {
         })
 
         GetAllDependencies().then(res => {
-            const dependencies = Object(res).data.data?.map(e => ({ id: e.id, name: e.name, value: e.id }))
+            const dependencies = Object(res).data.data?.map(e => ({ id: Number(e.id), name: e.name, value: Number(e.id) }))
+            console.log({dependencies})
             setDependeciesData(dependencies)
         })
 
@@ -134,10 +135,9 @@ export function useBudgeRecordEdit(id) {
     }, [id, contractorListSt])
 
     const onSubmitEditRp = handleSubmit(async (data: IBudgetRecord) => {
-
         data.documentDate = formatDate(data.documentDate);
         data.dateValidity = formatDate(data.dateValidity);
-
+        
         showModal({
             title: "Guardar",
             description: "¿Está segur@ de guardar la información?",
