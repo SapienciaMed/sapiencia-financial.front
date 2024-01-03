@@ -3,6 +3,7 @@ import useAuthService from "./common/hooks/auth-service.hook";
 import { AppContext } from "./common/contexts/app.context";
 import { EResponseCodes } from "./common/constants/api.enum";
 
+
 interface IPropsAppProvider {
     children: React.JSX.Element;
 }
@@ -10,6 +11,7 @@ interface IPropsAppProvider {
 function ApplicationProvider({ children }: IPropsAppProvider): React.JSX.Element {
     const { getAuthorization } = useAuthService();
     const { setAuthorization } = useContext(AppContext);
+
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
@@ -19,6 +21,7 @@ function ApplicationProvider({ children }: IPropsAppProvider): React.JSX.Element
                 setAuthorization(res.data);
               } else {
                 localStorage.removeItem("token");
+
               }
             })
             .catch(() => {});
