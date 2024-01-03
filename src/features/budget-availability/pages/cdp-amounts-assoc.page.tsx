@@ -59,7 +59,7 @@ const CdpAmountAssoc = () => {
   const totalForms = formularios.length;
   const [countNewFormsSt, setCountNewFormsSt] = useState([]);
   // const [totalPages, setTotalPages] = useState(Math.ceil(totalForms / formsPerPage));
-  let totalPages = Math.ceil(totalForms / formsPerPage);
+  let totalPages = Math.ceil(countNewFormsSt.length / formsPerPage);
   const [deleteRouteTwo, setDeleteRouteTwo] = useState(false);
   const { getCdpById } = useCdpService();
   const [dataHead, setDataHead] = useState<FormHeadInfo>({
@@ -100,6 +100,8 @@ const CdpAmountAssoc = () => {
     setCountNewFormsSt(arrData);
     setTimeout(() => {
       setFormularios(arrData);
+      totalPages = Math.ceil(arrData.length / 2)
+      console.log(Math.ceil(arrData.length / 2));
     }, 540);
 
   };
