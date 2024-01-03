@@ -407,7 +407,10 @@ function LoadPays() {
           >
             <TableDataPropComponent
               ref={tableComponentRef}
-              dataTable={infoErrors.sort((a, b) => a.rowError - b.rowError)}
+              dataTable={infoErrors.filter(
+                (value, index, self) =>
+                  index === self.findIndex((v) => v.rowError === value.rowError && v.message === value.message)
+              ).sort((a, b) => a.rowError - b.rowError)}
               columns={tableColumns}
               isShowModal={false}
               titleMessageModalNoResult={"No se encontraron registros"}

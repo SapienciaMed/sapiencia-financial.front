@@ -69,7 +69,7 @@ function FundsForm({ action }: IAppProps) {
                         idInput={field.name}
                         value={`${field.value}`}
                         className="input-basic"
-                        typeInput="number"
+                        typeInput="text"
                         register={register}
                         label="Fondo"
                         classNameLabel="text-black biggest bold text-required"
