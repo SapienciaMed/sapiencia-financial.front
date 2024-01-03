@@ -95,11 +95,12 @@ const CdpAmountAssoc = () => {
       posicion: nextId2,
       ...othersParams,
     };
-
     setFormularios([]);
     arrData.push(newFormulario);
     setCountNewFormsSt(arrData);
-    setFormularios(countNewFormsSt);
+    setTimeout(() => {
+      setFormularios(arrData);
+    }, 540);
 
   };
 
@@ -107,36 +108,56 @@ const CdpAmountAssoc = () => {
     handleAgregarFormulario();
   }, []);
 
-  const handleEliminar = (formNumber) => {
+  const handleEliminar = async (formNumber) => {
     let newSize = 0;
-
+    let posibleNew = [];
     setCountNewFormsSt((prevFormularios) => {
-      const updatedFormularios = prevFormularios.filter((data) => data.id !== formNumber);
+      const updatedFormularios = prevFormularios.filter((data) => data.id !== (formNumber));
+      posibleNew = updatedFormularios
       newSize = updatedFormularios.length;
       return updatedFormularios;
     });
 
+    setTimeout(() => {
+      setFormularios([])
+      setFormularios(posibleNew)
+    }, 400);
+ 
+/*     setFormularios((prevFormularios) => {
+      const updatedFormularios = prevFormularios.filter((data,index) => data.id !== (formNumber));
+      newSize = updatedFormularios.length;
+      return updatedFormularios;
+    }); */
+
     setObjectSendData((prevFormularios) => {
       let arrDataInformation = prevFormularios['amounts']
       let newArrDataObj = []
-      const updatedFormularios = arrDataInformation?.filter((data) => data.id !== formNumber);
+      const updatedFormularios = arrDataInformation?.filter((data) => data.id !== (formNumber));
       return updatedFormularios;
     });
+
+    setTimeout(() => {
+      setObjectSendData(objectSendData)
+    }, 500);
+    
 
     setFormCount((prevCount) => prevCount - 1)
     const handleVerifyToDelete = () => {
       let totalPagesNew = newSize / 2;
       let formulaTotalData = newSize / totalPagesNew;
       if (currentPage > 1) {
-        if (Number.isInteger(currentPage)) {
+        
+        if (!Number.isInteger(totalPagesNew)) {
         } else {
           setCurrentPage(
             (prevPage) => prevPage - 1)
         }
       }
+   
     }
 
-    setTimeout(handleVerifyToDelete, 200)
+   // await handleVerifyToDelete()
+    setTimeout(handleVerifyToDelete, 520)
   };
 
   useEffect(() => {
@@ -156,7 +177,7 @@ const CdpAmountAssoc = () => {
           const updatedFormularios = [
             ...formularios,
             { ...amountInfo, id: id },
-          ]; // Asegura que el objeto tenga la propiedad id
+          ]; 
           setFormularios(updatedFormularios);
         }
       }
