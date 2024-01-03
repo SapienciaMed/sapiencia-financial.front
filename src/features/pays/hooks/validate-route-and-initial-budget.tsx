@@ -47,7 +47,7 @@ export function ValidateRouteAnInitialBudget() {
 
         //let pospreSapienciaFound = dataBudgetRoutesCreatedSt.find(e => e.idPospreSapiencia == pospreSapienciaFoundObj?.pospreSapiencia.id)
         let fundFoundObj = getAllFundsListSt.find(e => e.number == Fondo)
-
+        console.log({fundFoundObj})
         // registra el fondo que no existe
         !fundFoundObj && verifyFundExist(infoErrors, row)
 
@@ -67,6 +67,7 @@ export function ValidateRouteAnInitialBudget() {
                 userCreate: authorization.user?.numberDocument
             },
         ];
+        return infoErrors;
     }
 
     const verifyBudgetPositionExists = async (infoErrors: any[], row: number) => {
@@ -91,6 +92,7 @@ export function ValidateRouteAnInitialBudget() {
     }
 
     const checkValueBudgetWithProjectPlanning = async (proyectsPlanning: any[], dataRoutesToInsertArr: IRouteBudget[], proyectsVinculation: number[], dataBudgetRoutesCreatedSt: any[]) => {
+        console.log("***********************2")
         return await validateInitialBalance(dataRoutesToInsertArr, proyectsPlanning, proyectsVinculation, dataBudgetRoutesCreatedSt)
     }
 
