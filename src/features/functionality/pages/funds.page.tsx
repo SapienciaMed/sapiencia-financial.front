@@ -73,7 +73,7 @@ function FoundsPage(props: IAppProps): React.JSX.Element {
                       idInput={field.name}
                       value={`${field.value}`}
                       className="input-basic"
-                      typeInput="number"
+                      typeInput="text"
                       register={register}
                       label="Fondos"
                       classNameLabel="text-black biggest bold"
