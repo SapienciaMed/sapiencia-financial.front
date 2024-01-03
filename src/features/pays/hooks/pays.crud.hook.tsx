@@ -974,7 +974,8 @@ export function usePaysCrud() {
                     }
                   } else if (tipoDocumento == "RutaPptoInicial") {
                     if (C % 7 === 0) {
-                      await checkBudgetRouteDoesNotExist(dataBudgetRoutesCreatedSt, getAllFundsListSt, getAllPospre, getAllPospreSapienciaListSt, infoErrors, R, sheet[XLSX.utils.encode_cell({ c: 0, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 1, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 2, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 3, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 4, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 5, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 6, r: R })]?.v)
+                      let err = await checkBudgetRouteDoesNotExist(dataBudgetRoutesCreatedSt, getAllFundsListSt, getAllPospre, getAllPospreSapienciaListSt, infoErrors, R, sheet[XLSX.utils.encode_cell({ c: 0, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 1, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 2, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 3, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 4, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 5, r: R })]?.v, sheet[XLSX.utils.encode_cell({ c: 6, r: R })]?.v)
+                      infoErrors.push(...err);
                     }
                   } // end RutaPptoInicial
                 }
@@ -1151,6 +1152,7 @@ export function usePaysCrud() {
     let proyectsVinculation = await GetProjectsStrategicVinculation({
       projectsIds: proyects.data.map(e => e.id)
     })
+    console.log("********111 ", infoErrors)
     return await checkValueBudgetWithProjectPlanning(proyects.data, dataRoutesToInsertStRef.current, proyectsVinculation.data, dataBudgetRoutesCreatedSt)
   }
 

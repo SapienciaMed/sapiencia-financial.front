@@ -37,6 +37,13 @@ export function useFundsData() {
 
   const inputValue = watch(["entity", "number", "dateFrom", "dateTo"]);
 
+  const formatDate = (inputDate:string)=> {
+    const parts = inputDate.split('-');
+    const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+    return formattedDate;
+  }
+  
+
   const tableColumns: ITableElement<IFunds>[] = [
     {
       fieldName: "entity.name",
@@ -54,14 +61,14 @@ export function useFundsData() {
       fieldName: "dateFrom",
       header: "Validez de",
       renderCell: (row) => {
-        return <>{DateTime.fromISO(row.dateFrom).toLocaleString()}</>;
+        return <>{formatDate((row.dateFrom).toString().split('T')[0])}</>;
       },
     },
     {
       fieldName: "dateTo",
       header: "Validez a",
       renderCell: (row) => {
-        return <>{DateTime.fromISO(row.dateTo).toLocaleString()}</>;
+        return <>{formatDate((row.dateTo).toString().split('T')[0])}</>;
       },
     },
   ];
