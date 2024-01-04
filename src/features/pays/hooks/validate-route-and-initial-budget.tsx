@@ -1,4 +1,4 @@
-import { useContext, useRef } from "react"
+import { useContext, useRef, useState } from "react"
 import { IRouteBudget } from "../interfaces/paysInterfaces"
 import { AppContext } from "../../../common/contexts/app.context"
 
@@ -30,6 +30,10 @@ export function ValidateRouteAnInitialBudget() {
             infoErrors = []
         }
         // estructuración de datos de proyecto para consultar en planeación
+
+        console.log({dataRoutesToInsertStRef})
+
+        
         projectCodeSearchInStrategicRef.current = [
             ...projectCodeSearchInStrategicRef.current,
             proyecto
@@ -47,9 +51,26 @@ export function ValidateRouteAnInitialBudget() {
 
         //let pospreSapienciaFound = dataBudgetRoutesCreatedSt.find(e => e.idPospreSapiencia == pospreSapienciaFoundObj?.pospreSapiencia.id)
         let fundFoundObj = getAllFundsListSt.find(e => e.number == Fondo)
-        console.log({fundFoundObj})
         // registra el fondo que no existe
         !fundFoundObj && verifyFundExist(infoErrors, row)
+        console.log({proyecto})
+        let rowDuplicate =dataRoutesToInsertStRef.current.find(e =>
+            e.codeProyectStrategic == proyecto &&
+            e.managementCenter == CentroGestor &&
+            e.div == 'SAPI' &&
+            e.idBudget == PospreOrigenFoundObj?.id &&
+            e.idPospreSapiencia == pospreSapienciaFoundObj?.id &&
+            e.idFund == fundFoundObj?.id &&
+            e.balance == parseFloat(ValorInicial) &&
+            e.initialBalance == parseFloat(ValorInicial)
+        )
+        if(rowDuplicate){
+            infoErrors.push({
+                rowError: row,
+                message: 'Tiene datos duplicados en el archivo',
+            })
+        }
+
 
         dataRoutesToInsertStRef.current = [
             ...dataRoutesToInsertStRef.current,
