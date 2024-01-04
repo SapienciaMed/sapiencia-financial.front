@@ -27,6 +27,7 @@ export function ValidateRouteAnInitialBudget() {
         ValorInicial: string
     ) => {
         if (row == 1) {
+            dataRoutesToInsertStRef.current = []
             infoErrors = []
         }
         // estructuración de datos de proyecto para consultar en planeación
@@ -53,7 +54,6 @@ export function ValidateRouteAnInitialBudget() {
         let fundFoundObj = getAllFundsListSt.find(e => e.number == Fondo)
         // registra el fondo que no existe
         !fundFoundObj && verifyFundExist(infoErrors, row)
-        console.log({proyecto})
         let rowDuplicate =dataRoutesToInsertStRef.current.find(e =>
             e.codeProyectStrategic == proyecto &&
             e.managementCenter == CentroGestor &&
@@ -63,8 +63,9 @@ export function ValidateRouteAnInitialBudget() {
             e.idFund == fundFoundObj?.id &&
             e.balance == parseFloat(ValorInicial) &&
             e.initialBalance == parseFloat(ValorInicial)
-        )
-        if(rowDuplicate){
+            )
+            console.log({rowDuplicate})
+            if(rowDuplicate){
             infoErrors.push({
                 rowError: row,
                 message: 'Tiene datos duplicados en el archivo',
