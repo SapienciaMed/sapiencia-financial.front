@@ -358,8 +358,7 @@ const CdpAmountAssoc = () => {
       .map((form, index) => {
         const currentId = form.id;
         const foundObject = totalDataRuta.find((obj,index) => index === (currentId - 1));
-       
-
+      
         return (
           <FormCreateRutaCDPComponent
             key={currentId + 1}
