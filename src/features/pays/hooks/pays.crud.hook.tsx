@@ -1152,7 +1152,6 @@ export function usePaysCrud() {
     let proyectsVinculation = await GetProjectsStrategicVinculation({
       projectsIds: proyects.data.map(e => e.id)
     })
-    console.log("********111 ", infoErrors)
     return await checkValueBudgetWithProjectPlanning(proyects.data, dataRoutesToInsertStRef.current, proyectsVinculation.data, dataBudgetRoutesCreatedSt)
   }
 
