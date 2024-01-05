@@ -3,6 +3,7 @@ import CdpAssociation from "../components/cdp-head-assoc.component";
 import "../../../styles/from-create-cdp.scss";
 import CdpPaginator from "../components/cdp-paginator.component";
 import FormCreateRutaCDPComponent from "../components/form-create-ruta-cdp.component";
+import FormCreateRutaCDPAssocComponent from "../components/form-create-ruta-cdp-assoc.component";
 import { useCdpService } from "../hooks/cdp-service";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../../common/contexts/app.context";
@@ -11,6 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 import useStore from "../../../store/store";
 import useStoreTwo from "../../../store/storeTwo";
 import useStoreIcd from "../../../store/store-icd";
+
 
 interface FormInfoType {
   id: number;
@@ -75,8 +77,71 @@ const CdpAmountAssoc = () => {
   const [lastValue, setLastValue] = useState(0);
   const [cdpPosition, setCdpPosition] = useState(0);
   const [indexData, setIndexData] = useState(0);
+  const [formDataArray, setFormDataArray] = useState([]);
 
-  const handleAgregarFormulario = () => {
+
+  function organizarIds(array) {
+    let idActual = 1;
+
+    let arrReturn = array.map((obj) => {
+      if (obj.id !== idActual) {
+        obj = { ...obj, id: idActual };
+      }
+
+      idActual++;
+
+      return obj;
+    });
+    const arrayFiltrado = filtrarPorIds(arrReturn, countNewFormsSt);
+
+    return arrayFiltrado
+  }
+
+  function filtrarPorIds(arrayPrincipal, arrayFormularios) {
+    const idsFormularios = arrayFormularios.map((formulario) => formulario.id);
+  
+    return arrayPrincipal.filter((objeto) => idsFormularios.includes(objeto.id));
+  }
+
+  function eliminarObjetosDuplicados(array) {
+    console.log("couts", countNewFormsSt)
+    const idsUnicos = new Set();
+    return array.filter((objeto) => {
+      if (!idsUnicos.has(objeto.id)) {
+        idsUnicos.add(objeto.id);
+        return true;
+      }
+      return false;
+    });
+  }
+  
+  const handleFormSubmitSaveData = (formData) => {
+    const existingIndex = formDataArray.findIndex((obj) => obj.id === formData.id);
+  
+    if (existingIndex === -1 && formDataArray.length < formularios.length) {
+      setFormDataArray((prevArray) => [...prevArray, formData]);
+    } else if (existingIndex !== -1) {
+      const updatedArray = formDataArray.map((obj) =>
+        obj.id === formData.id ? formData : obj
+      );
+  
+      if (updatedArray.length === countNewFormsSt.length) {
+        setFormDataArray(updatedArray);
+        console.log(`Ya existe un objeto con id ${formData.id}. Objeto actualizado.`);
+        console.log("Array actualizado:", updatedArray); // Agrega este console.log
+      }
+      console.log(organizarIds(updatedArray));
+      setDataComplete(organizarIds(updatedArray));
+      setTotalDataRuta(organizarIds(updatedArray))
+    }
+  
+  };
+  
+  
+  
+  
+
+  /* const handleAgregarFormulario = () => {
     let arrData = formularios;
     const nextId =
       formularios.reduce((max, obj) => (obj.id > max ? obj.id : max), 0) + 1;
@@ -104,7 +169,42 @@ const CdpAmountAssoc = () => {
       console.log(Math.ceil(arrData.length / 2));
     }, 540);
 
+  }; */
+
+  const handleAgregarFormulario = () => {
+    // Genera los nuevos IDs
+    const nextId =
+      formularios.reduce((max, obj) => (obj.id > max ? obj.id : max), 0) + 1;
+    const nextId2 =
+      countNewFormsSt.reduce((max, obj) => (obj.id > max ? obj.id : max), 0) + 1;
+
+    // Define los valores por defecto
+    let othersParams = {
+      idRppCode: "0",
+      valorInicial: "0",
+      balance: "0",
+    };
+
+    // Crea el nuevo formulario
+    const newFormulario = {
+      id: nextId2,
+      posicion: nextId2,
+      ...othersParams,
+    };
+
+    // Actualiza los estados utilizando funciones callback
+    setFormularios(prevFormularios => [...prevFormularios, newFormulario]);
+    setCountNewFormsSt(prevCountNewForms => [...prevCountNewForms, newFormulario]);
+
+    // Calcula y loguea el total de páginas
+    setTimeout(() => {
+      totalPages = Math.ceil((formularios.length + 1) / 2);
+      console.log(totalPages);
+
+
+    }, 540);
   };
+
 
   useEffect(() => {
     handleAgregarFormulario();
@@ -124,12 +224,12 @@ const CdpAmountAssoc = () => {
       setFormularios([])
       setFormularios(posibleNew)
     }, 400);
- 
-/*     setFormularios((prevFormularios) => {
-      const updatedFormularios = prevFormularios.filter((data,index) => data.id !== (formNumber));
-      newSize = updatedFormularios.length;
-      return updatedFormularios;
-    }); */
+
+    /*     setFormularios((prevFormularios) => {
+          const updatedFormularios = prevFormularios.filter((data,index) => data.id !== (formNumber));
+          newSize = updatedFormularios.length;
+          return updatedFormularios;
+        }); */
 
     setObjectSendData((prevFormularios) => {
       let arrDataInformation = prevFormularios['amounts']
@@ -141,24 +241,24 @@ const CdpAmountAssoc = () => {
     setTimeout(() => {
       setObjectSendData(objectSendData)
     }, 500);
-    
+
 
     setFormCount((prevCount) => prevCount - 1)
     const handleVerifyToDelete = () => {
       let totalPagesNew = newSize / 2;
       let formulaTotalData = newSize / totalPagesNew;
       if (currentPage > 1) {
-        
+
         if (!Number.isInteger(totalPagesNew)) {
         } else {
           setCurrentPage(
             (prevPage) => prevPage - 1)
         }
       }
-   
+
     }
 
-   // await handleVerifyToDelete()
+    // await handleVerifyToDelete()
     setTimeout(handleVerifyToDelete, 520)
   };
 
@@ -179,7 +279,7 @@ const CdpAmountAssoc = () => {
           const updatedFormularios = [
             ...formularios,
             { ...amountInfo, id: id },
-          ]; 
+          ];
           setFormularios(updatedFormularios);
         }
       }
@@ -357,10 +457,18 @@ const CdpAmountAssoc = () => {
       .slice(indexOfFirstForm, indexOfLastForm)
       .map((form, index) => {
         const currentId = form.id;
-        const foundObject = totalDataRuta.find((obj,index) => index === (currentId - 1));
-      
+        const foundObject = totalDataRuta.find((obj, index) => {
+          console.log(`Index: ${index}, Obj:`, obj);
+          console.log(`objID: ${obj.id}, Current:`, currentId);
+          return obj.id === (currentId);
+        });
+        // console.log("currentId",currentId);
+        console.log("totalDataRuta", totalDataRuta);
+        // console.log("foundObject",foundObject);
+
+
         return (
-          <FormCreateRutaCDPComponent
+          <FormCreateRutaCDPAssocComponent
             key={currentId + 1}
             isRequired={currentId === 1 ? true : false}
             formNumber={indexOfFirstForm + (countNewFormsSt.length - 1)}
@@ -375,45 +483,13 @@ const CdpAmountAssoc = () => {
                 ? cdpPosition + index + 1
                 : cdpPosition + index + 1 + (currentPage - 1) * formsPerPage
             }
+            setFormDataArray={setFormDataArray}
+            handleFormSubmitSaveData={handleFormSubmitSaveData}
           />
         );
       });
   };
 
-
-  useEffect(() => {
-    // Check if formDataCdpRoute is not empty
-    if (formDataCdpRoute.length > 0) {
-      // Update dataComplete based on formDataCdpRoute
-      const newDataComplete = dataComplete.map((existingObj) => {
-        const matchingIndex = formDataCdpRoute.findIndex(
-          (newObj) => newObj.id === existingObj.id
-        );
-
-        if (matchingIndex !== -1) {
-          // If the object exists in formDataCdpRoute, update it
-          return formDataCdpRoute[matchingIndex];
-        }
-
-        return existingObj;
-      });
-
-      // Add new objects from formDataCdpRoute that don't exist in dataComplete
-      formDataCdpRoute.forEach((newObj) => {
-        const isNewObject = newDataComplete.every(
-          (existingObj) => existingObj.id !== newObj.id
-        );
-
-        if (isNewObject) {
-          newDataComplete.push(newObj);
-        }
-      });
-
-      setDataComplete(newDataComplete);
-    }
-
-    setTotalDataRuta(dataComplete);
-  }, [formDataCdpRoute]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
